@@ -6,6 +6,7 @@ import { SpeedInsights } from '@vercel/speed-insights/next'
 import { CurrencyProvider } from '@/lib/context/CurrencyContext'
 import { ToastProvider } from '@/lib/context/ToastContext'
 import { ThemeProvider } from '@/lib/context/ThemeContext'
+import { LanguageProvider } from '@/lib/context/LanguageContext'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import BottomNav from '@/components/layout/BottomNav'
@@ -20,30 +21,30 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://freelance-hub-gamma.vercel.app'),
+  metadataBase: new URL('https://www.freelance-hub.kz'),
   title: {
-    default: 'FreelanceHub — фриланс-платформа для СНГ',
+    default: 'FreelanceHub — децентрализованное фриланс-пространство',
     template: '%s | FreelanceHub',
   },
   description:
-    'Найдите лучших фрилансеров для вашего проекта или получайте заказы. AI-подбор специалистов, современные профессии, рынок СНГ.',
-  keywords: ['фриланс', 'фрилансеры', 'заказы', 'удалённая работа', 'СНГ', 'Россия', 'Казахстан', 'Украина'],
-  authors: [{ name: 'FreelanceHub' }],
-  creator: 'FreelanceHub',
+    'Работайте напрямую. Без комиссий, без посредников. Оплата любым способом. Создано в Казахстане для всего мира.',
+  keywords: ['фриланс', 'фрилансеры', 'заказы', 'удалённая работа', 'Казахстан', 'СНГ', 'freelance', 'SITS', 'Sariyev IT Solutions'],
+  authors: [{ name: 'Сариев Алижан · SITS Sariyev IT Solutions' }],
+  creator: 'SITS Sariyev IT Solutions',
   robots: { index: true, follow: true, googleBot: { index: true, follow: true } },
   manifest: '/manifest.json',
   appleWebApp: { capable: true, statusBarStyle: 'black-translucent', title: 'FreelanceHub' },
   icons: { icon: '/icon.svg', apple: '/icon.svg' },
   openGraph: {
-    title: 'FreelanceHub — фриланс-платформа для СНГ',
-    description: 'Находите фрилансеров и заказы с AI-подбором',
+    title: 'FreelanceHub — децентрализованное фриланс-пространство',
+    description: 'Работайте напрямую. 0% комиссии. Создано в Казахстане для всего мира.',
     type: 'website', locale: 'ru_RU', siteName: 'FreelanceHub',
-    url: 'https://freelance-hub-gamma.vercel.app',
+    url: 'https://www.freelance-hub.kz',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'FreelanceHub — фриланс-платформа для СНГ',
-    description: 'Находите фрилансеров и заказы с AI-подбором',
+    title: 'FreelanceHub — децентрализованное фриланс-пространство',
+    description: '0% комиссии навсегда. Работайте напрямую из любой страны.',
   },
 }
 
@@ -76,6 +77,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className={`${inter.variable} font-sans antialiased min-h-screen flex flex-col`}>
         <ThemeProvider>
+          <LanguageProvider>
           <ToastProvider>
             <CurrencyProvider>
               <Header />
@@ -86,6 +88,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <InstallPrompt />
             </CurrencyProvider>
           </ToastProvider>
+          </LanguageProvider>
         </ThemeProvider>
         <Analytics />
         <SpeedInsights />
