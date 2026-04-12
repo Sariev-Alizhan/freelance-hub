@@ -1,0 +1,355 @@
+import type { Metadata } from 'next'
+import { notFound } from 'next/navigation'
+import Image from 'next/image'
+import Link from 'next/link'
+import { ArrowLeft, Clock, Users, Zap, FileText, Shield } from 'lucide-react'
+import { CATEGORIES } from '@/lib/mock/categories'
+import PriceDisplay from '@/components/shared/PriceDisplay'
+import RatingStars from '@/components/shared/RatingStars'
+import RespondButton from '@/components/orders/RespondButton'
+import OrderStatusActions from '@/components/orders/OrderStatusActions'
+import { createClient } from '@/lib/supabase/server'
+import { Order } from '@/lib/types'
+
+async function getOrder(id: string): Promise<Order | null> {
+  try {
+    const supabase = await createClient()
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const db = supabase as any
+    const { data, error } = await db
+      .from('orders')
+      .select(`
+        id, title, description, category,
+        budget_min, budget_max, budget_type,
+        deadline, skills, status, is_urgent,
+        responses_count, created_at, client_id,
+        profiles!inner (full_name, username, avatar_url)
+      `)
+      .eq('id', id)
+      .single()
+
+    if (error || !data) return null
+
+    const profile    = data.profiles
+    const clientName = profile?.full_name || profile?.username || 'Заказчик'
+    const clientAvatar =
+      profile?.avatar_url ||
+      `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(clientName)}&backgroundColor=4338CA&textColor=ffffff`
+
+    return {
+      id:             data.id,
+      title:          data.title,
+      description:    data.description,
+      category:       data.category,
+      budget:         { min: data.budget_min ?? 0, max: data.budget_max ?? 0, type: data.budget_type ?? 'fixed' },
+      deadline:       data.deadline,
+      skills:         data.skills ?? [],
+      client:         { name: clientName, avatar: clientAvatar, ordersPosted: 1, rating: 0, id: data.client_id },
+      postedAt:       data.created_at,
+      responsesCount: data.responses_count ?? 0,
+      status:         data.status ?? 'open',
+      isUrgent:       data.is_urgent ?? false,
+    }
+  } catch {
+    return null
+  }
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>
+}): Promise<Metadata> {
+  const { id } = await params
+  const order = await getOrder(id)
+  if (!order) return { title: 'Заказ не найден — FreelanceHub' }
+
+  const category = CATEGORIES.find((c) => c.slug === order.category)
+  const desc = order.description.slice(0, 155)
+
+  return {
+    title: `${order.title} — FreelanceHub`,
+    description: desc,
+    openGraph: { title: order.title, description: desc, type: 'website', locale: 'ru_RU', siteName: 'FreelanceHub' },
+    twitter: { card: 'summary', title: order.title, description: desc },
+    alternates: { canonical: `/orders/${id}` },
+    other: {
+      'script:ld+json': JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'JobPosting',
+        title: order.title,
+        description: order.description,
+        datePosted: new Date().toISOString().split('T')[0],
+        employmentType: 'CONTRACTOR',
+        jobLocationType: 'TELECOMMUTE',
+        baseSalary: {
+          '@type': 'MonetaryAmount',
+          currency: 'RUB',
+          value: { '@type': 'QuantitativeValue', minValue: order.budget.min, maxValue: order.budget.max, unitText: 'FIXED' },
+        },
+        occupationalCategory: category?.label ?? '',
+        skills: order.skills.join(', '),
+      }),
+    },
+  }
+}
+
+export default async function OrderPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
+  const supabase = await createClient()
+  const [order, { data: { user } }] = await Promise.all([
+    getOrder(id),
+    supabase.auth.getUser(),
+  ])
+  if (!order) notFound()
+
+  const category = CATEGORIES.find((c) => c.slug === order.category)
+  const isOwner  = !!user && user.id === order.client.id
+
+  return (
+    <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-10" style={{ minHeight: 'calc(100vh - 52px)' }}>
+      <Link
+        href="/orders"
+        className="inline-flex items-center gap-2 mb-8 transition-colors"
+        style={{ fontSize: '13px', color: '#62666d', fontWeight: 400 }}
+      >
+        <ArrowLeft className="h-3.5 w-3.5" /> Назад к заказам
+      </Link>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Main */}
+        <div className="lg:col-span-2 space-y-4">
+          {/* Order card */}
+          <div
+            className="rounded-xl p-6"
+            style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.08)' }}
+          >
+            <div className="flex items-center gap-2 mb-4 flex-wrap">
+              {category && (
+                <span
+                  className="rounded-full"
+                  style={{
+                    padding: '3px 12px',
+                    fontSize: '12px',
+                    fontWeight: 590,
+                    background: `${category.color}14`,
+                    color: category.color,
+                  }}
+                >
+                  {category.label}
+                </span>
+              )}
+              {order.isUrgent && (
+                <span
+                  className="flex items-center gap-1 rounded-full"
+                  style={{ padding: '3px 12px', fontSize: '12px', fontWeight: 590, background: 'rgba(229,72,77,0.1)', color: '#e5484d' }}
+                >
+                  <Zap className="h-3 w-3" /> Срочно
+                </span>
+              )}
+              <span
+                className="ml-auto rounded-full"
+                style={{
+                  padding: '3px 10px',
+                  fontSize: '11px',
+                  fontWeight: 510,
+                  background: order.status === 'open' ? 'rgba(39,166,68,0.08)' : 'rgba(255,255,255,0.04)',
+                  color: order.status === 'open' ? '#27a644' : '#8a8f98',
+                  border: order.status === 'open' ? '1px solid rgba(39,166,68,0.2)' : '1px solid rgba(255,255,255,0.06)',
+                }}
+              >
+                {order.status === 'open' ? 'Открыт' : order.status === 'in_progress' ? 'В работе' : order.status === 'completed' ? 'Завершён' : 'Отменён'}
+              </span>
+            </div>
+
+            <h1
+              style={{
+                fontSize: 'clamp(18px, 3vw, 24px)',
+                fontWeight: 510,
+                letterSpacing: '-0.04em',
+                color: '#f7f8f8',
+                marginBottom: '14px',
+                fontFeatureSettings: '"cv01", "ss03"',
+                lineHeight: 1.2,
+              }}
+            >
+              {order.title}
+            </h1>
+            <p style={{ fontSize: '14px', color: '#8a8f98', lineHeight: 1.75, whiteSpace: 'pre-line', fontWeight: 400, letterSpacing: '-0.005em' }}>
+              {order.description}
+            </p>
+
+            <div
+              className="mt-6 grid grid-cols-2 sm:grid-cols-3 gap-4 pt-5"
+              style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}
+            >
+              <div>
+                <div style={{ fontSize: '11px', color: '#62666d', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 510 }}>
+                  Бюджет
+                </div>
+                <div style={{ fontSize: '15px', fontWeight: 590, color: '#7170ff', letterSpacing: '-0.02em' }}>
+                  {order.budget.min > 0 ? (
+                    <>
+                      <PriceDisplay amountRub={order.budget.min} prefix="" size="md" />
+                      {' — '}
+                      <PriceDisplay amountRub={order.budget.max} prefix="" size="md" />
+                    </>
+                  ) : 'Договорная'}
+                </div>
+              </div>
+              <div>
+                <div style={{ fontSize: '11px', color: '#62666d', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 510 }}>
+                  Срок
+                </div>
+                <div style={{ fontSize: '14px', fontWeight: 510, color: '#f7f8f8', letterSpacing: '-0.01em' }}>{order.deadline}</div>
+              </div>
+              <div>
+                <div style={{ fontSize: '11px', color: '#62666d', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 510 }}>
+                  Откликов
+                </div>
+                <div style={{ fontSize: '14px', fontWeight: 510, color: '#f7f8f8' }}>{order.responsesCount}</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Skills */}
+          {order.skills.length > 0 && (
+            <div
+              className="rounded-xl p-5"
+              style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.08)' }}
+            >
+              <h2 style={{ fontSize: '13px', fontWeight: 590, color: '#f7f8f8', marginBottom: '12px', letterSpacing: '-0.01em' }}>
+                Требуемые навыки
+              </h2>
+              <div className="flex flex-wrap gap-2">
+                {order.skills.map((skill) => (
+                  <span
+                    key={skill}
+                    style={{
+                      padding: '5px 12px',
+                      borderRadius: '5px',
+                      background: 'rgba(113,112,255,0.08)',
+                      border: '1px solid rgba(113,112,255,0.18)',
+                      color: '#7170ff',
+                      fontSize: '12px',
+                      fontWeight: 510,
+                    }}
+                  >
+                    {skill}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Owner: responses + status workflow */}
+          {isOwner && (
+            <OrderStatusActions
+              orderId={order.id}
+              orderStatus={order.status}
+              isOwner={true}
+            />
+          )}
+        </div>
+
+        {/* Right sidebar */}
+        <div className="space-y-4">
+          <div
+            className="sticky top-20 rounded-xl p-5"
+            style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.08)' }}
+          >
+            {!isOwner && (
+              <>
+                <RespondButton
+                  orderId={order.id}
+                  orderTitle={order.title}
+                  orderDescription={order.description}
+                  category={order.category}
+                  budgetMin={order.budget.min}
+                  budgetMax={order.budget.max}
+                />
+                <Link
+                  href="/messages"
+                  className="w-full mt-2.5 flex items-center justify-center gap-2 transition-all"
+                  style={{
+                    padding: '10px 16px',
+                    borderRadius: '6px',
+                    background: 'rgba(255,255,255,0.03)',
+                    border: '1px solid rgba(255,255,255,0.08)',
+                    color: '#d0d6e0',
+                    fontSize: '13px',
+                    fontWeight: 510,
+                  }}
+                >
+                  Написать клиенту
+                </Link>
+                <Link
+                  href={`/contracts?description=${encodeURIComponent(order.description.slice(0, 300))}&deadline=${encodeURIComponent(order.deadline)}&budget=${order.budget.max}`}
+                  className="w-full mt-2 flex items-center justify-center gap-2 transition-all"
+                  style={{
+                    padding: '10px 16px',
+                    borderRadius: '6px',
+                    background: 'rgba(94,106,210,0.06)',
+                    border: '1px solid rgba(94,106,210,0.2)',
+                    color: '#7170ff',
+                    fontSize: '13px',
+                    fontWeight: 510,
+                  }}
+                >
+                  <FileText className="h-4 w-4" />
+                  Создать контракт
+                </Link>
+
+                {/* Escrow info for freelancers */}
+                <div
+                  className="mt-4 rounded-lg px-3.5 py-3 flex items-start gap-2.5"
+                  style={{ background: 'rgba(39,166,68,0.04)', border: '1px solid rgba(39,166,68,0.12)' }}
+                >
+                  <Shield className="h-4 w-4 flex-shrink-0 mt-0.5" style={{ color: '#27a644' }} />
+                  <div>
+                    <p style={{ fontSize: '12px', fontWeight: 590, color: '#27a644', marginBottom: '3px' }}>Безопасная сделка</p>
+                    <p style={{ fontSize: '11px', color: '#62666d', lineHeight: 1.5, fontWeight: 400 }}>
+                      Договаривайтесь об оплате частями. Аванс 30–50%, остаток — после сдачи работы.
+                    </p>
+                  </div>
+                </div>
+              </>
+            )}
+
+            <div
+              className="mt-4 pt-4 space-y-2.5"
+              style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}
+            >
+              <div className="flex items-center gap-2" style={{ color: '#62666d' }}>
+                <Clock className="h-3.5 w-3.5 flex-shrink-0" />
+                <span style={{ fontSize: '12px', fontWeight: 400 }}>{order.deadline}</span>
+              </div>
+              <div className="flex items-center gap-2" style={{ color: '#62666d' }}>
+                <Users className="h-3.5 w-3.5 flex-shrink-0" />
+                <span style={{ fontSize: '12px', fontWeight: 400 }}>{order.responsesCount} откликов</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Client card */}
+          <div
+            className="rounded-xl p-5"
+            style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.08)' }}
+          >
+            <h3 style={{ fontSize: '12px', fontWeight: 590, color: '#62666d', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '12px' }}>
+              О заказчике
+            </h3>
+            <div className="flex items-center gap-3 mb-3">
+              <Image src={order.client.avatar} alt={order.client.name} width={38} height={38} className="rounded-lg" unoptimized />
+              <div>
+                <div style={{ fontSize: '13px', fontWeight: 590, color: '#f7f8f8' }}>{order.client.name}</div>
+                <div style={{ fontSize: '11px', color: '#62666d', fontWeight: 400 }}>{order.client.ordersPosted} заказов на платформе</div>
+              </div>
+            </div>
+            {order.client.rating > 0 && <RatingStars rating={order.client.rating} />}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}

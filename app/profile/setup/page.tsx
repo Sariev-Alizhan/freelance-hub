@@ -1,0 +1,40 @@
+import FreelancerSetupForm from '@/components/profile/FreelancerSetupForm'
+import { UserCircle2 } from 'lucide-react'
+
+export default function ProfileSetupPage() {
+  return (
+    <div className="min-h-[calc(100vh-52px)] py-12 px-4 sm:px-6" style={{ background: '#08090a' }}>
+      <div className="mx-auto max-w-2xl">
+        <div className="text-center mb-10">
+          <div
+            className="inline-flex items-center justify-center rounded-xl mb-5"
+            style={{
+              width: '52px',
+              height: '52px',
+              background: 'rgba(94,106,210,0.1)',
+              border: '1px solid rgba(94,106,210,0.2)',
+            }}
+          >
+            <UserCircle2 className="h-6 w-6" style={{ color: '#7170ff' }} />
+          </div>
+          <h1
+            style={{
+              fontSize: 'clamp(22px, 3.5vw, 30px)',
+              fontWeight: 510,
+              letterSpacing: '-0.04em',
+              color: '#f7f8f8',
+              marginBottom: '8px',
+              fontFeatureSettings: '"cv01", "ss03"',
+            }}
+          >
+            Настройка профиля
+          </h1>
+          <p style={{ fontSize: '14px', color: '#8a8f98', fontWeight: 400, letterSpacing: '-0.01em' }}>
+            Заполните профиль — это поможет заказчикам найти именно вас
+          </p>
+        </div>
+        <FreelancerSetupForm />
+      </div>
+    </div>
+  )
+}

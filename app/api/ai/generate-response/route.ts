@@ -1,0 +1,77 @@
+import Anthropic from '@anthropic-ai/sdk'
+
+const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+
+const SYSTEM = `Ты помогаешь фрилансерам писать убедительные отклики на заказы.
+По заголовку и описанию заказа, категории и предложенной цене составь профессиональное сопроводительное письмо.
+Структура: 1) Краткое приветствие и понимание задачи, 2) Почему именно я — опыт и подход, 3) Что конкретно предлагаю и почему мой бюджет обоснован, 4) Призыв к действию.
+Стиль: дружелюбный, профессиональный, конкретный. Без шаблонных фраз вроде «Я подхожу идеально». 4-5 предложений.
+Отвечай только на русском языке. Без вступлений — сразу текст отклика.`
+
+export async function POST(request: Request) {
+  try {
+    const { orderTitle, orderDescription, category, proposedPrice } = await request.json()
+
+    if (!process.env.ANTHROPIC_API_KEY) {
+      return Response.json({ message: getMockResponse(orderTitle, proposedPrice) })
+    }
+
+    const priceText = proposedPrice ? `Предлагаемая цена: ${Number(proposedPrice).toLocaleString('ru')} ₽` : 'Цена: обсудим'
+
+    const response = await client.messages.create({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 400,
+      system: SYSTEM,
+      messages: [{
+        role: 'user',
+        content: `Категория: ${category}\nЗаказ: ${orderTitle}\nОписание: ${orderDescription?.slice(0, 300) || ''}\n${priceText}`,
+      }],
+    })
+
+    const message = response.content[0].type === 'text' ? response.content[0].text : ''
+    return Response.json({ message })
+  } catch (e) {
+    console.error(e)
+    return Response.json({ message: '' })
+  }
+}
+
+const ADVICE_SYSTEM = `Ты эксперт по фрилансу и помогаешь фрилансерам улучшить отклики на заказы.
+Оцени отклик по шкале 1-10 и дай 2-3 конкретных совета по улучшению.
+Формат ответа — строго JSON: {"score": 8, "tips": ["совет 1", "совет 2", "совет 3"]}
+Только JSON, без пояснений.`
+
+export async function PUT(request: Request) {
+  try {
+    const { message, orderTitle, proposedPrice } = await request.json()
+
+    if (!process.env.ANTHROPIC_API_KEY || !message?.trim()) {
+      return Response.json({ score: 7, tips: ['Укажите конкретный опыт в данной области', 'Объясните ваш подход к задаче', 'Добавьте срок выполнения работы'] })
+    }
+
+    const response = await client.messages.create({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 256,
+      system: ADVICE_SYSTEM,
+      messages: [{
+        role: 'user',
+        content: `Заказ: ${orderTitle}\nЦена: ${proposedPrice || 'не указана'}\nОтклик:\n${message}`,
+      }],
+    })
+
+    const text = response.content[0].type === 'text' ? response.content[0].text : '{}'
+    const parsed = JSON.parse(text)
+    return Response.json(parsed)
+  } catch (e) {
+    console.error(e)
+    return Response.json({ score: 7, tips: ['Укажите конкретный опыт', 'Обоснуйте цену', 'Добавьте сроки'] })
+  }
+}
+
+function getMockResponse(title: string, price: number | null): string {
+  return `Здравствуйте! Ознакомился с вашим заказом «${title}» — задача мне понятна и я уже реализовывал подобные проекты.
+
+Работаю в данной сфере более 3 лет, портфолио включает 20+ завершённых проектов. Работаю чётко по ТЗ, всегда на связи и придерживаюсь сроков.${price ? ` Предложенная цена ${Number(price).toLocaleString('ru')} ₽ включает все этапы работы, финальные правки и сдачу исходников.` : ''}
+
+Готов обсудить детали и приступить в ближайшее время. Напишите — отвечу в течение часа!`
+}
