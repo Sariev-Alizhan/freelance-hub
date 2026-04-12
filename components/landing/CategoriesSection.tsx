@@ -11,7 +11,7 @@ const ICONS: Record<string, React.ComponentType<{ className?: string; style?: Re
 
 export default function CategoriesSection() {
   return (
-    <section className="py-20 px-4 sm:px-6 lg:px-8" style={{ background: '#0f1011' }}>
+    <section className="py-20 px-4 sm:px-6 lg:px-8" style={{ background: 'var(--card)' }}>
       <div className="mx-auto max-w-7xl">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
@@ -24,7 +24,7 @@ export default function CategoriesSection() {
               fontSize: 'clamp(24px, 4vw, 36px)',
               fontWeight: 510,
               letterSpacing: '-0.04em',
-              color: '#f7f8f8',
+              color: 'var(--fh-t1)',
               lineHeight: 1.1,
               marginBottom: '12px',
               fontFeatureSettings: '"cv01", "ss03"',
@@ -32,7 +32,7 @@ export default function CategoriesSection() {
           >
             Современные профессии
           </h2>
-          <p style={{ fontSize: '15px', color: '#8a8f98', fontWeight: 400, letterSpacing: '-0.01em', lineHeight: 1.6 }}>
+          <p style={{ fontSize: '15px', color: 'var(--fh-t3)', fontWeight: 400, letterSpacing: '-0.01em', lineHeight: 1.6 }}>
             Найдите специалиста или разместите заказ в своей нише
           </p>
         </motion.div>
@@ -52,16 +52,16 @@ export default function CategoriesSection() {
                   <div
                     className="group flex flex-col items-center gap-3 p-4 rounded-xl text-center transition-all"
                     style={{
-                      background: 'rgba(255,255,255,0.02)',
-                      border: '1px solid rgba(255,255,255,0.06)',
+                      background: 'var(--fh-surface)',
+                      border: '1px solid var(--fh-border)',
                     }}
                     onMouseEnter={e => {
-                      e.currentTarget.style.background = 'rgba(255,255,255,0.04)'
-                      e.currentTarget.style.border = '1px solid rgba(255,255,255,0.1)'
+                      e.currentTarget.style.background = 'var(--fh-surface-3)'
+                      e.currentTarget.style.border = '1px solid var(--fh-border-2)'
                     }}
                     onMouseLeave={e => {
-                      e.currentTarget.style.background = 'rgba(255,255,255,0.02)'
-                      e.currentTarget.style.border = '1px solid rgba(255,255,255,0.06)'
+                      e.currentTarget.style.background = 'var(--fh-surface)'
+                      e.currentTarget.style.border = '1px solid var(--fh-border)'
                     }}
                   >
                     <div
@@ -70,7 +70,7 @@ export default function CategoriesSection() {
                     >
                       <Icon className="h-5 w-5" style={{ color: cat.color }} />
                     </div>
-                    <span style={{ fontSize: '13px', fontWeight: 510, color: '#d0d6e0', letterSpacing: '-0.01em' }}>
+                    <span style={{ fontSize: '13px', fontWeight: 510, color: 'var(--fh-t2)', letterSpacing: '-0.01em' }}>
                       {cat.label}
                     </span>
                   </div>

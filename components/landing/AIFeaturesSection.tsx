@@ -41,7 +41,7 @@ const FEATURES = [
 
 export default function AIFeaturesSection() {
   return (
-    <section className="py-20 px-4 sm:px-6 lg:px-8" style={{ background: '#08090a' }}>
+    <section className="py-20 px-4 sm:px-6 lg:px-8" style={{ background: 'var(--fh-canvas)' }}>
       <div className="mx-auto max-w-7xl">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
@@ -67,7 +67,7 @@ export default function AIFeaturesSection() {
               fontSize: 'clamp(24px, 4vw, 36px)',
               fontWeight: 510,
               letterSpacing: '-0.04em',
-              color: '#f7f8f8',
+              color: 'var(--fh-t1)',
               lineHeight: 1.1,
               marginBottom: '12px',
               fontFeatureSettings: '"cv01", "ss03"',
@@ -92,8 +92,8 @@ export default function AIFeaturesSection() {
                 transition={{ delay: i * 0.08 }}
                 className="rounded-xl p-6"
                 style={{
-                  background: 'rgba(255,255,255,0.02)',
-                  border: '1px solid rgba(255,255,255,0.06)',
+                  background: 'var(--fh-surface)',
+                  border: '1px solid var(--fh-border)',
                 }}
               >
                 <div className="flex items-center justify-between mb-5">
@@ -117,7 +117,7 @@ export default function AIFeaturesSection() {
                     {f.badge}
                   </span>
                 </div>
-                <h3 style={{ fontSize: '15px', fontWeight: 590, color: '#f7f8f8', marginBottom: '8px', letterSpacing: '-0.02em' }}>
+                <h3 style={{ fontSize: '15px', fontWeight: 590, color: 'var(--fh-t1)', marginBottom: '8px', letterSpacing: '-0.02em' }}>
                   {f.title}
                 </h3>
                 <p style={{ fontSize: '13px', color: '#8a8f98', lineHeight: 1.6, fontWeight: 400, letterSpacing: '-0.01em' }}>

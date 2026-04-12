@@ -239,6 +239,47 @@
 }
 
 /* ═══════════════════════════════════════════════════════════
+   ADAPTIVE SURFACE TOKENS — use these in components
+   instead of hardcoded rgba(255,255,255,X) for light-mode compat
+   ═══════════════════════════════════════════════════════════ */
+:root {
+  --fh-surface:    #ffffff;
+  --fh-surface-2:  rgba(0,0,0,0.025);
+  --fh-surface-3:  rgba(0,0,0,0.04);
+  --fh-border:     rgba(0,0,0,0.07);
+  --fh-border-2:   rgba(0,0,0,0.11);
+  --fh-header-bg:  rgba(247,248,248,0.90);
+  --fh-footer-bg:  #f0f1f3;
+  --fh-t1:         #1a1d21;
+  --fh-t2:         #4a4f57;
+  --fh-t3:         #8a8f98;
+  --fh-t4:         #9ea4ae;
+  --fh-canvas:     #f7f8f8;
+  --fh-sep:        rgba(0,0,0,0.06);
+  --fh-skill-bg:   rgba(0,0,0,0.04);
+  --fh-skill-bd:   rgba(0,0,0,0.07);
+  --fh-online-bd:  #f7f8f8;
+}
+.dark {
+  --fh-surface:    rgba(255,255,255,0.02);
+  --fh-surface-2:  rgba(255,255,255,0.03);
+  --fh-surface-3:  rgba(255,255,255,0.04);
+  --fh-border:     rgba(255,255,255,0.06);
+  --fh-border-2:   rgba(255,255,255,0.10);
+  --fh-header-bg:  rgba(8,9,10,0.85);
+  --fh-footer-bg:  #08090a;
+  --fh-t1:         #f7f8f8;
+  --fh-t2:         #d0d6e0;
+  --fh-t3:         #8a8f98;
+  --fh-t4:         #62666d;
+  --fh-canvas:     #08090a;
+  --fh-sep:        rgba(255,255,255,0.05);
+  --fh-skill-bg:   rgba(255,255,255,0.04);
+  --fh-skill-bd:   rgba(255,255,255,0.06);
+  --fh-online-bd:  #08090a;
+}
+
+/* ═══════════════════════════════════════════════════════════
    ADAPTIVE UTILITIES
    ═══════════════════════════════════════════════════════════ */
 @layer utilities {
@@ -391,13 +432,24 @@
 .typing-dot:nth-child(3) { animation: typing 1.2s infinite 0.4s; }
 
 /* ═══════════════════════════════════════════════════════════
-   MOBILE SAFE AREA
+   MOBILE SAFE AREA — Dynamic Island / Notch aware
    ═══════════════════════════════════════════════════════════ */
 .pb-safe-mobile { padding-bottom: 0; }
 @media (max-width: 767px) {
   .pb-safe-mobile {
-    padding-bottom: calc(4rem + env(safe-area-inset-bottom));
+    padding-bottom: calc(4rem + env(safe-area-inset-bottom, 0px));
   }
+}
+
+/* Sticky header safe area for Dynamic Island (iPhone 14 Pro+) */
+.header-safe {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+/* Full-bleed sections: compensate for the notch */
+@supports (padding-top: env(safe-area-inset-top)) {
+  .pt-safe { padding-top: env(safe-area-inset-top); }
+  .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
 }
 
 /* Hide scrollbar */

@@ -52,6 +52,7 @@ export interface Freelancer {
   languages: string[]
   registeredAt: string
   reviews?: Review[]
+  isPromoted?: boolean
 }
 
 export interface Order {
@@ -77,6 +78,7 @@ export interface Order {
   responsesCount: number
   status: 'open' | 'in_progress' | 'completed'
   isUrgent: boolean
+  isPromoted?: boolean
 }
 
 export interface Category {
