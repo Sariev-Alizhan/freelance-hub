@@ -1,0 +1,153 @@
+'use client'
+import Link from 'next/link'
+import { motion } from 'framer-motion'
+import { ArrowRight, Zap, Globe, Briefcase } from 'lucide-react'
+
+const PERKS = [
+  {
+    icon: Zap,
+    color: '#7170ff',
+    bg: 'rgba(113,112,255,0.08)',
+    title: '0% комиссии',
+    text: 'Забирайте 100% оплаты от заказчика. Никакой комиссии сейчас и в будущем.',
+  },
+  {
+    icon: Globe,
+    color: '#27a644',
+    bg: 'rgba(39,166,68,0.08)',
+    title: 'СНГ и весь мир',
+    text: 'Сейчас работаем для Казахстана, России, Украины. Скоро — международная версия.',
+  },
+  {
+    icon: Briefcase,
+    color: '#fbbf24',
+    bg: 'rgba(251,191,36,0.08)',
+    title: 'Прямые сделки',
+    text: 'Заказчик и фрилансер напрямую — без посредников, без скрытых платежей.',
+  },
+]
+
+export default function TopFreelancers() {
+  return (
+    <section className="py-20 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: '#0f1011' }}>
+      <div className="mx-auto max-w-7xl">
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mb-14"
+        >
+          <h2
+            style={{
+              fontSize: 'clamp(24px, 4vw, 36px)',
+              fontWeight: 510,
+              letterSpacing: '-0.04em',
+              color: '#f7f8f8',
+              lineHeight: 1.1,
+              marginBottom: '12px',
+              fontFeatureSettings: '"cv01", "ss03"',
+            }}
+          >
+            Почему FreelanceHub?
+          </h2>
+          <p style={{ fontSize: '15px', color: '#8a8f98', fontWeight: 400, letterSpacing: '-0.01em', maxWidth: '400px', margin: '0 auto', lineHeight: 1.6 }}>
+            Честная платформа без посредников и скрытых платежей
+          </p>
+        </motion.div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-10">
+          {PERKS.map((perk, i) => {
+            const Icon = perk.icon
+            return (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.08 }}
+                className="rounded-xl p-6"
+                style={{
+                  background: 'rgba(255,255,255,0.02)',
+                  border: '1px solid rgba(255,255,255,0.06)',
+                }}
+              >
+                <div
+                  className="h-10 w-10 rounded-lg flex items-center justify-center mb-5"
+                  style={{ background: perk.bg }}
+                >
+                  <Icon className="h-5 w-5" style={{ color: perk.color }} />
+                </div>
+                <h3 style={{ fontSize: '15px', fontWeight: 590, color: '#f7f8f8', marginBottom: '8px', letterSpacing: '-0.02em' }}>
+                  {perk.title}
+                </h3>
+                <p style={{ fontSize: '13px', color: '#8a8f98', lineHeight: 1.6, fontWeight: 400, letterSpacing: '-0.01em' }}>
+                  {perk.text}
+                </p>
+              </motion.div>
+            )
+          })}
+        </div>
+
+        {/* Join CTA */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="rounded-xl p-8 flex flex-col sm:flex-row items-center justify-between gap-6"
+          style={{
+            background: 'rgba(94,106,210,0.06)',
+            border: '1px solid rgba(94,106,210,0.2)',
+          }}
+        >
+          <div>
+            <p style={{ fontSize: '11px', fontWeight: 590, color: '#7170ff', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '6px' }}>
+              Только запустились
+            </p>
+            <h3 style={{ fontSize: '18px', fontWeight: 510, color: '#f7f8f8', letterSpacing: '-0.03em', marginBottom: '6px' }}>
+              Станьте одним из первых
+            </h3>
+            <p style={{ fontSize: '13px', color: '#8a8f98', fontWeight: 400, letterSpacing: '-0.01em', lineHeight: 1.6 }}>
+              Ранние участники получают преимущество в поиске и отметку «Первопроходец».
+            </p>
+          </div>
+          <div className="flex gap-2.5 shrink-0">
+            <Link
+              href="/auth/register"
+              className="flex items-center gap-2 transition-all whitespace-nowrap"
+              style={{
+                padding: '9px 20px',
+                borderRadius: '6px',
+                background: '#5e6ad2',
+                color: '#ffffff',
+                fontSize: '14px',
+                fontWeight: 510,
+                letterSpacing: '-0.01em',
+              }}
+              onMouseEnter={e => { e.currentTarget.style.background = '#828fff' }}
+              onMouseLeave={e => { e.currentTarget.style.background = '#5e6ad2' }}
+            >
+              Присоединиться
+            </Link>
+            <Link
+              href="/freelancers"
+              className="hidden sm:flex items-center gap-1.5 transition-all whitespace-nowrap"
+              style={{
+                padding: '9px 16px',
+                borderRadius: '6px',
+                background: 'rgba(255,255,255,0.04)',
+                border: '1px solid rgba(255,255,255,0.08)',
+                color: '#8a8f98',
+                fontSize: '13px',
+                fontWeight: 510,
+              }}
+              onMouseEnter={e => { e.currentTarget.style.color = '#f7f8f8'; e.currentTarget.style.background = 'rgba(255,255,255,0.06)' }}
+              onMouseLeave={e => { e.currentTarget.style.color = '#8a8f98'; e.currentTarget.style.background = 'rgba(255,255,255,0.04)' }}
+            >
+              Фрилансеры <ArrowRight className="h-3.5 w-3.5" />
+            </Link>
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  )
+}

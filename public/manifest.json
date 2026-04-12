@@ -1,0 +1,47 @@
+{
+  "name": "FreelanceHub — фриланс-платформа",
+  "short_name": "FreelanceHub",
+  "description": "Находите фрилансеров и заказы для СНГ-рынка с AI-подбором",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0D1117",
+  "theme_color": "#4338CA",
+  "lang": "ru",
+  "scope": "/",
+  "categories": ["business", "productivity"],
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Найти заказы",
+      "short_name": "Заказы",
+      "url": "/orders",
+      "icons": [{ "src": "/icon.svg", "sizes": "any" }]
+    },
+    {
+      "name": "Создать заказ",
+      "short_name": "Создать",
+      "url": "/orders/new",
+      "icons": [{ "src": "/icon.svg", "sizes": "any" }]
+    },
+    {
+      "name": "Сообщения",
+      "short_name": "Чат",
+      "url": "/messages",
+      "icons": [{ "src": "/icon.svg", "sizes": "any" }]
+    }
+  ]
+}

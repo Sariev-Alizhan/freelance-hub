@@ -1,0 +1,104 @@
+import type { Metadata } from 'next'
+import { Suspense } from 'react'
+import FreelancersClient from './FreelancersClient'
+import { createClient } from '@/lib/supabase/server'
+import { Freelancer } from '@/lib/types'
+
+export const metadata: Metadata = {
+  title: 'Фрилансеры — FreelanceHub',
+  description:
+    'Найдите лучшего специалиста для вашего проекта. Разработчики, дизайнеры, маркетологи и другие фрилансеры из России, Украины и Казахстана.',
+  openGraph: {
+    title: 'Фрилансеры — FreelanceHub',
+    description: 'Лучшие фрилансеры СНГ: разработчики, дизайнеры, маркетологи',
+    type: 'website',
+    locale: 'ru_RU',
+    siteName: 'FreelanceHub',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Фрилансеры — FreelanceHub',
+    description: 'Лучшие фрилансеры СНГ: разработчики, дизайнеры, маркетологи',
+  },
+  alternates: { canonical: '/freelancers' },
+}
+
+async function fetchRealFreelancers(): Promise<Freelancer[]> {
+  try {
+    const supabase = await createClient()
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const db = supabase as any
+    const { data, error } = await db
+      .from('freelancer_profiles')
+      .select(`
+        id,
+        user_id,
+        title,
+        category,
+        skills,
+        price_from,
+        price_to,
+        level,
+        response_time,
+        languages,
+        is_verified,
+        rating,
+        reviews_count,
+        completed_orders,
+        created_at,
+        profiles!inner (
+          full_name,
+          username,
+          avatar_url,
+          location,
+          bio
+        )
+      `)
+      .order('rating', { ascending: false })
+      .limit(50)
+
+    if (error || !data) return []
+
+    return data.map((fp: any): Freelancer => {
+      const profile = fp.profiles
+      const name = profile?.full_name || profile?.username || 'Пользователь'
+      const avatar =
+        profile?.avatar_url ||
+        `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(name)}&backgroundColor=4338CA&textColor=ffffff`
+
+      return {
+        id: fp.user_id,
+        name,
+        avatar,
+        title: fp.title,
+        category: fp.category,
+        skills: fp.skills ?? [],
+        rating: fp.rating ?? 0,
+        reviewsCount: fp.reviews_count ?? 0,
+        completedOrders: fp.completed_orders ?? 0,
+        responseTime: fp.response_time ?? '1 час',
+        priceFrom: fp.price_from ?? 0,
+        priceTo: fp.price_to ?? undefined,
+        location: profile?.location || 'СНГ',
+        isOnline: false,
+        isVerified: fp.is_verified ?? false,
+        portfolio: [],
+        description: profile?.bio || '',
+        level: fp.level ?? 'new',
+        languages: fp.languages ?? ['ru'],
+        registeredAt: fp.created_at,
+      }
+    })
+  } catch {
+    return []
+  }
+}
+
+export default async function FreelancersPage() {
+  const realFreelancers = await fetchRealFreelancers()
+  return (
+    <Suspense fallback={<div className="mx-auto max-w-7xl px-4 py-20 text-center" style={{ color: '#62666d', fontSize: '14px' }}>Загрузка…</div>}>
+      <FreelancersClient realFreelancers={realFreelancers} />
+    </Suspense>
+  )
+}

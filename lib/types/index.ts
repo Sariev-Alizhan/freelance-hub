@@ -1,0 +1,96 @@
+export type CategorySlug =
+  | 'smm'
+  | 'targeting'
+  | 'dev'
+  | 'ux-ui'
+  | 'copywriting'
+  | 'video'
+  | 'tg-bots'
+  | 'ai-ml'
+  | 'nocode'
+  | '3d-art'
+
+export type FreelancerLevel = 'new' | 'junior' | 'middle' | 'senior' | 'top'
+export type Currency = 'RUB' | 'UAH' | 'KZT'
+
+export interface PortfolioItem {
+  id: string
+  title: string
+  image: string
+  category: string
+}
+
+export interface Review {
+  id: string
+  authorName: string
+  authorAvatar: string
+  rating: number
+  text: string
+  date: string
+  orderTitle: string
+}
+
+export interface Freelancer {
+  id: string
+  name: string
+  avatar: string
+  title: string
+  category: CategorySlug
+  skills: string[]
+  rating: number
+  reviewsCount: number
+  completedOrders: number
+  responseTime: string
+  priceFrom: number
+  priceTo?: number
+  location: string
+  isOnline: boolean
+  isVerified: boolean
+  portfolio: PortfolioItem[]
+  description: string
+  level: FreelancerLevel
+  languages: string[]
+  registeredAt: string
+  reviews?: Review[]
+}
+
+export interface Order {
+  id: string
+  title: string
+  description: string
+  category: CategorySlug
+  budget: {
+    min: number
+    max: number
+    type: 'fixed' | 'hourly'
+  }
+  deadline: string
+  skills: string[]
+  client: {
+    id?: string
+    name: string
+    avatar: string
+    ordersPosted: number
+    rating: number
+  }
+  postedAt: string
+  responsesCount: number
+  status: 'open' | 'in_progress' | 'completed'
+  isUrgent: boolean
+}
+
+export interface Category {
+  slug: CategorySlug
+  label: string
+  icon: string
+  color: string
+  count: number
+}
+
+export interface ChatMessage {
+  id: string
+  role: 'user' | 'assistant'
+  content: string
+  timestamp: Date
+  matchedFreelancers?: Freelancer[]
+}

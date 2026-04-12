@@ -1,0 +1,281 @@
+import type { Metadata } from 'next'
+import { notFound } from 'next/navigation'
+import Image from 'next/image'
+import Link from 'next/link'
+import { MapPin, CheckCircle, Clock, Star, Package, ArrowLeft, MessageCircle } from 'lucide-react'
+import { getFreelancerById, MOCK_FREELANCERS } from '@/lib/mock'
+import RatingStars from '@/components/shared/RatingStars'
+import PriceDisplay from '@/components/shared/PriceDisplay'
+import OnlineStatus from '@/components/shared/OnlineStatus'
+import ReviewsSection from '@/components/shared/ReviewsSection'
+import { CATEGORIES } from '@/lib/mock/categories'
+import { createClient } from '@/lib/supabase/server'
+import { Freelancer } from '@/lib/types'
+
+const LEVEL_LABELS = {
+  new: 'Новичок', junior: 'Junior', middle: 'Middle', senior: 'Senior', top: 'TOP',
+}
+
+async function getFreelancerFromSupabase(userId: string): Promise<Freelancer | null> {
+  try {
+    const supabase = await createClient()
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const db = supabase as any
+    const { data, error } = await db
+      .from('freelancer_profiles')
+      .select(`
+        id, user_id, title, category, skills, price_from, price_to,
+        level, response_time, languages, is_verified, rating,
+        reviews_count, completed_orders, created_at,
+        profiles!inner (full_name, username, avatar_url, location, bio)
+      `)
+      .eq('user_id', userId)
+      .single()
+
+    if (error || !data) return null
+
+    const profile = data.profiles
+    const name = profile?.full_name || profile?.username || 'Пользователь'
+    const avatar =
+      profile?.avatar_url ||
+      `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(name)}&backgroundColor=4338CA&textColor=ffffff`
+
+    return {
+      id: data.user_id,
+      name,
+      avatar,
+      title: data.title,
+      category: data.category,
+      skills: data.skills ?? [],
+      rating: data.rating ?? 0,
+      reviewsCount: data.reviews_count ?? 0,
+      completedOrders: data.completed_orders ?? 0,
+      responseTime: data.response_time ?? '1 час',
+      priceFrom: data.price_from ?? 0,
+      priceTo: data.price_to ?? undefined,
+      location: profile?.location || 'СНГ',
+      isOnline: false,
+      isVerified: data.is_verified ?? false,
+      portfolio: [],
+      description: profile?.bio || '',
+      level: data.level ?? 'new',
+      languages: data.languages ?? ['ru'],
+      registeredAt: data.created_at,
+    }
+  } catch {
+    return null
+  }
+}
+
+export async function generateStaticParams() {
+  return MOCK_FREELANCERS.map((f) => ({ id: f.id }))
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>
+}): Promise<Metadata> {
+  const { id } = await params
+  const f = getFreelancerById(id) ?? await getFreelancerFromSupabase(id)
+  if (!f) return { title: 'Профиль не найден — FreelanceHub' }
+
+  const desc = `${f.name} — ${f.title}. Рейтинг ${f.rating}, ${f.reviewsCount} отзывов. Выполнено ${f.completedOrders} заказов на FreelanceHub.`
+
+  return {
+    title: `${f.name} — ${f.title} | FreelanceHub`,
+    description: desc,
+    openGraph: {
+      title: `${f.name} — ${f.title}`,
+      description: desc,
+      type: 'profile',
+      locale: 'ru_RU',
+      siteName: 'FreelanceHub',
+      images: f.avatar ? [{ url: f.avatar, width: 400, height: 400, alt: f.name }] : [],
+    },
+    twitter: {
+      card: 'summary',
+      title: `${f.name} — ${f.title}`,
+      description: desc,
+      images: f.avatar ? [f.avatar] : [],
+    },
+    alternates: {
+      canonical: `/freelancers/${id}`,
+    },
+    other: {
+      'script:ld+json': JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'Person',
+        name: f.name,
+        jobTitle: f.title,
+        description: f.description,
+        image: f.avatar,
+        url: `https://freelance-hub-gamma.vercel.app/freelancers/${id}`,
+        knowsAbout: f.skills,
+        aggregateRating: f.reviewsCount > 0 ? {
+          '@type': 'AggregateRating',
+          ratingValue: f.rating,
+          reviewCount: f.reviewsCount,
+          bestRating: 5,
+        } : undefined,
+      }),
+    },
+  }
+}
+
+export default async function FreelancerPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
+  const supabase = await createClient()
+  const [freelancer, { data: { user } }] = await Promise.all([
+    (async () => getFreelancerById(id) ?? await getFreelancerFromSupabase(id))(),
+    supabase.auth.getUser(),
+  ])
+  const f = freelancer
+  if (!f) notFound()
+  const category = CATEGORIES.find((c) => c.slug === f.category)
+  const isLoggedIn = !!user
+
+  return (
+    <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-10">
+      {/* Back */}
+      <Link href="/freelancers" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-8 transition-colors">
+        <ArrowLeft className="h-4 w-4" /> Назад к фрилансерам
+      </Link>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Left: Profile */}
+        <div className="lg:col-span-2 space-y-6">
+          {/* Header card */}
+          <div className="rounded-2xl border border-subtle bg-card p-6">
+            <div className="flex items-start gap-5">
+              <div className="relative shrink-0">
+                <Image src={f.avatar} alt={f.name} width={80} height={80} className="rounded-2xl" unoptimized />
+                {f.isOnline && (
+                  <div className="absolute -bottom-1 -right-1 h-4 w-4 rounded-full bg-green-500 border-2 border-card pulse-green" />
+                )}
+              </div>
+              <div className="flex-1">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h1 className="text-xl font-bold">{f.name}</h1>
+                  {f.isVerified && <CheckCircle className="h-5 w-5 text-primary" />}
+                  <span className="text-xs px-2.5 py-1 rounded-full bg-primary/10 text-primary font-semibold">
+                    {LEVEL_LABELS[f.level]}
+                  </span>
+                </div>
+                <p className="text-muted-foreground mt-1">{f.title}</p>
+                <div className="flex items-center gap-4 mt-3 flex-wrap">
+                  {f.reviewsCount > 0 ? (
+                    <RatingStars rating={f.rating} size="md" count={f.reviewsCount} />
+                  ) : (
+                    <span className="text-sm text-muted-foreground">Новый участник</span>
+                  )}
+                  <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                    <MapPin className="h-4 w-4" /> {f.location}
+                  </div>
+                  <OnlineStatus isOnline={f.isOnline} />
+                </div>
+              </div>
+            </div>
+            <p className="mt-5 text-sm text-muted-foreground leading-relaxed">{f.description}</p>
+
+            {/* Stats row */}
+            <div className="mt-5 grid grid-cols-3 gap-4 pt-5 border-t border-subtle">
+              <div className="text-center">
+                <div className="text-xl font-bold">{f.completedOrders}</div>
+                <div className="text-xs text-muted-foreground">заказов</div>
+              </div>
+              <div className="text-center">
+                <div className="text-xl font-bold">{f.reviewsCount > 0 ? f.rating : '—'}</div>
+                <div className="text-xs text-muted-foreground">рейтинг</div>
+              </div>
+              <div className="text-center">
+                <div className="text-xl font-bold">{f.reviewsCount}</div>
+                <div className="text-xs text-muted-foreground">отзывов</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Skills */}
+          <div className="rounded-2xl border border-subtle bg-card p-6">
+            <h2 className="font-semibold mb-4">Навыки</h2>
+            <div className="flex flex-wrap gap-2">
+              {f.skills.map((skill) => (
+                <span key={skill} className="px-3 py-1.5 rounded-xl bg-primary/10 text-primary text-sm font-medium border border-primary/20">
+                  {skill}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          {/* Portfolio */}
+          {f.portfolio.length > 0 && (
+            <div className="rounded-2xl border border-subtle bg-card p-6">
+              <h2 className="font-semibold mb-4">Портфолио</h2>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                {f.portfolio.map((item) => (
+                  <div key={item.id} className="group rounded-xl overflow-hidden border border-subtle">
+                    <div className="relative h-32">
+                      <Image src={item.image} alt={item.title} fill className="object-cover group-hover:scale-105 transition-transform duration-300" unoptimized />
+                    </div>
+                    <div className="p-2.5 text-xs font-medium truncate">{item.title}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Reviews — real Supabase + mock combined */}
+          <ReviewsSection
+            freelancerId={f.id}
+            freelancerName={f.name}
+            mockReviews={f.reviews}
+            isLoggedIn={isLoggedIn}
+          />
+        </div>
+
+        {/* Right: Hire */}
+        <div className="space-y-4">
+          <div className="sticky top-20 rounded-2xl border border-subtle bg-card p-6">
+            <div className="mb-4">
+              <div className="text-xs text-muted-foreground mb-1">Стоимость</div>
+              <div className="flex items-baseline gap-1">
+                <PriceDisplay amountRub={f.priceFrom} prefix="от " size="lg" className="text-primary" />
+                {f.priceTo && (
+                  <>
+                    <span className="text-muted-foreground text-sm">—</span>
+                    <PriceDisplay amountRub={f.priceTo} prefix="" size="lg" />
+                  </>
+                )}
+                <span className="text-muted-foreground text-sm"> / час</span>
+              </div>
+            </div>
+
+            <div className="space-y-3 mb-5 text-sm text-muted-foreground">
+              <div className="flex items-center gap-2">
+                <Clock className="h-4 w-4 shrink-0" />
+                Ответит {f.responseTime}
+              </div>
+              <div className="flex items-center gap-2">
+                <Package className="h-4 w-4 shrink-0" />
+                {f.completedOrders} выполненных заказов
+              </div>
+              {category && (
+                <div className="flex items-center gap-2">
+                  <span className="h-4 w-4 shrink-0 text-center text-xs">📂</span>
+                  {category.label}
+                </div>
+              )}
+            </div>
+
+            <button className="w-full py-3 rounded-xl bg-primary text-white font-semibold hover:bg-primary/90 transition-colors mb-3">
+              Написать фрилансеру
+            </button>
+            <button className="w-full py-3 rounded-xl border border-subtle bg-subtle font-semibold hover:bg-surface transition-colors text-sm">
+              Предложить заказ
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
