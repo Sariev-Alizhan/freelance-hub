@@ -11,7 +11,7 @@ export type CategorySlug =
   | '3d-art'
 
 export type FreelancerLevel = 'new' | 'junior' | 'middle' | 'senior' | 'top'
-export type Currency = 'RUB' | 'UAH' | 'KZT'
+export type Currency = 'KZT' | 'RUB' | 'USD' | 'EUR' | 'GBP' | 'USDT' | 'UAH' | 'CNY' | 'AED' | 'TRY'
 
 export interface PortfolioItem {
   id: string

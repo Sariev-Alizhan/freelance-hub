@@ -13,16 +13,22 @@ import { createClient } from '@/lib/supabase/client'
 import { Currency } from '@/lib/types'
 import { useRouter } from 'next/navigation'
 
-const CURRENCIES: Currency[] = ['RUB', 'UAH', 'KZT']
-const CURRENCY_LABELS: Record<Currency, string> = { RUB: '₽', UAH: '₴', KZT: '₸' }
+const CURRENCIES: Currency[] = ['KZT', 'RUB', 'USD', 'EUR', 'USDT', 'GBP', 'UAH', 'CNY', 'AED', 'TRY']
+const CURRENCY_LABELS: Record<Currency, string> = {
+  KZT: '₸', RUB: '₽', USD: '$', EUR: '€', GBP: '£',
+  USDT: '₮', UAH: '₴', CNY: '¥', AED: 'د.إ', TRY: '₺',
+}
+// Show only top 5 in compact pill, rest in dropdown
+const CURRENCY_COMPACT: Currency[] = ['KZT', 'RUB', 'USD', 'EUR', 'USDT']
 const LANGS: Lang[] = ['ru', 'kz', 'en']
 
 export default function Header() {
   const { currency, setCurrency } = useCurrency()
   const { lang, setLang, t } = useLang()
-  const [mobileOpen, setMobileOpen] = useState(false)
-  const [menuOpen,   setMenuOpen]   = useState(false)
-  const [langOpen,   setLangOpen]   = useState(false)
+  const [mobileOpen,    setMobileOpen]    = useState(false)
+  const [menuOpen,      setMenuOpen]      = useState(false)
+  const [langOpen,      setLangOpen]      = useState(false)
+  const [currencyOpen,  setCurrencyOpen]  = useState(false)
   const { user, loading } = useUser()
   const router = useRouter()
 
@@ -80,25 +86,50 @@ export default function Header() {
           {/* Right side */}
           <div className="flex items-center gap-1.5 shrink-0">
 
-            {/* Currency switcher — hidden on small screens */}
-            <div
-              className="hidden md:flex items-center gap-0.5 p-0.5 rounded-md"
-              style={{ background: 'var(--fh-surface-2)', border: '1px solid var(--fh-border)' }}
-            >
-              {CURRENCIES.map((c) => (
-                <button
-                  key={c}
-                  onClick={() => setCurrency(c)}
-                  className="px-2 py-0.5 rounded text-[11px] transition-all"
+            {/* Currency switcher — dropdown on desktop */}
+            <div className="relative hidden md:block">
+              <button
+                onClick={() => setCurrencyOpen(!currencyOpen)}
+                className="flex items-center gap-1 px-2 py-1.5 rounded-md text-[12px] transition-colors"
+                style={{
+                  background: currencyOpen ? 'var(--fh-surface-3)' : 'var(--fh-surface-2)',
+                  border: '1px solid var(--fh-border)',
+                  color: 'var(--fh-t3)',
+                  fontWeight: 590,
+                }}
+              >
+                <span style={{ color: '#5e6ad2', fontWeight: 590 }}>{CURRENCY_LABELS[currency]}</span>
+                <ChevronDown className="h-3 w-3" />
+              </button>
+              {currencyOpen && (
+                <div
+                  className="absolute right-0 top-full mt-1.5 rounded-xl overflow-hidden py-1 z-50 grid grid-cols-2"
                   style={{
-                    fontWeight: 510,
-                    background: currency === c ? '#5e6ad2' : 'transparent',
-                    color: currency === c ? '#ffffff' : 'var(--fh-t3)',
+                    minWidth: '130px',
+                    background: 'var(--popover)',
+                    border: '1px solid var(--fh-border-2)',
+                    boxShadow: 'var(--shadow-dropdown)',
                   }}
                 >
-                  {CURRENCY_LABELS[c]}
-                </button>
-              ))}
+                  {CURRENCIES.map(c => (
+                    <button
+                      key={c}
+                      onClick={() => { setCurrency(c); setCurrencyOpen(false) }}
+                      className="flex items-center gap-1.5 px-3 py-2 text-[12px] transition-colors"
+                      style={{
+                        fontWeight: c === currency ? 590 : 400,
+                        color: c === currency ? '#7170ff' : 'var(--fh-t2)',
+                        background: c === currency ? 'rgba(113,112,255,0.06)' : 'transparent',
+                      }}
+                      onMouseEnter={e => { if (c !== currency) e.currentTarget.style.background = 'var(--fh-surface-2)' }}
+                      onMouseLeave={e => { if (c !== currency) e.currentTarget.style.background = 'transparent' }}
+                    >
+                      <span style={{ fontWeight: 700, width: '14px', textAlign: 'center' }}>{CURRENCY_LABELS[c]}</span>
+                      <span>{c}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Language switcher */}
@@ -349,7 +380,7 @@ export default function Header() {
               </div>
               {/* Currency */}
               <div className="flex items-center gap-0.5 p-0.5 rounded-md" style={{ background: 'var(--fh-surface-2)', border: '1px solid var(--fh-border)' }}>
-                {CURRENCIES.map((c) => (
+                {CURRENCY_COMPACT.map((c) => (
                   <button
                     key={c}
                     onClick={() => setCurrency(c)}

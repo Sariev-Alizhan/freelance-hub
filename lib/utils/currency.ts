@@ -1,15 +1,30 @@
 import { Currency } from '@/lib/types'
 
+// Base: RUB. Approximate rates (update via API in production).
 export const EXCHANGE_RATES: Record<Currency, number> = {
-  RUB: 1,
-  UAH: 0.38,
-  KZT: 4.9,
+  RUB:  1,
+  KZT:  4.9,
+  UAH:  0.38,
+  USD:  0.011,
+  EUR:  0.010,
+  GBP:  0.0087,
+  USDT: 0.011,
+  CNY:  0.079,
+  AED:  0.040,
+  TRY:  0.37,
 }
 
 export const CURRENCY_SYMBOLS: Record<Currency, string> = {
-  RUB: '₽',
-  UAH: '₴',
-  KZT: '₸',
+  KZT:  '₸',
+  RUB:  '₽',
+  USD:  '$',
+  EUR:  '€',
+  GBP:  '£',
+  USDT: '₮',
+  UAH:  '₴',
+  CNY:  '¥',
+  AED:  'د.إ',
+  TRY:  '₺',
 }
 
 export function convertPrice(amountRub: number, toCurrency: Currency): number {
