@@ -1,5 +1,5 @@
-// FreelanceHub Service Worker v2
-const CACHE = 'fh-v2'
+// FreelanceHub Service Worker v3
+const CACHE = 'fh-v3'
 const OFFLINE_URL = '/'
 
 const PRECACHE = [

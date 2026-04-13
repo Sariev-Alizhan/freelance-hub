@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react'
 import { RefreshCw, X } from 'lucide-react'
 
-const APP_VERSION = '1.1.0'
+const APP_VERSION = '1.3.0'
 
 export default function UpdateNotification() {
   const [show, setShow] = useState(false)
@@ -11,11 +11,15 @@ export default function UpdateNotification() {
   useEffect(() => {
     if (!('serviceWorker' in navigator)) return
 
+    function trackWaiting(sw: ServiceWorker) {
+      setWaiting(sw)
+      setShow(true)
+    }
+
     navigator.serviceWorker.ready.then((registration) => {
-      // Already waiting worker (e.g. page refreshed)
+      // Already waiting (e.g. page refreshed after update found)
       if (registration.waiting) {
-        setWaiting(registration.waiting)
-        setShow(true)
+        trackWaiting(registration.waiting)
       }
 
       registration.addEventListener('updatefound', () => {
@@ -23,17 +27,32 @@ export default function UpdateNotification() {
         if (!newWorker) return
         newWorker.addEventListener('statechange', () => {
           if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-            setWaiting(newWorker)
-            setShow(true)
+            trackWaiting(newWorker)
           }
         })
       })
+
+      // Check for SW updates every 30 minutes for long-running sessions
+      const interval = setInterval(() => registration.update(), 30 * 60 * 1000)
+      return () => clearInterval(interval)
     })
+
+    // Also check on tab visibility change (user comes back after a while)
+    function onVisible() {
+      if (document.visibilityState === 'visible') {
+        navigator.serviceWorker.ready.then(r => r.update())
+      }
+    }
+    document.addEventListener('visibilitychange', onVisible)
 
     // After skipWaiting fires, reload to activate new SW
     navigator.serviceWorker.addEventListener('controllerchange', () => {
       window.location.reload()
     })
+
+    return () => {
+      document.removeEventListener('visibilitychange', onVisible)
+    }
   }, [])
 
   function handleUpdate() {
@@ -63,8 +82,16 @@ export default function UpdateNotification() {
         maxWidth: '380px',
         marginLeft: 'auto',
         marginRight: 'auto',
+        animation: 'slideUp 0.3s ease',
       }}
     >
+      <style>{`
+        @keyframes slideUp {
+          from { transform: translateY(16px); opacity: 0; }
+          to   { transform: translateY(0);    opacity: 1; }
+        }
+      `}</style>
+
       {/* Icon */}
       <div
         style={{
@@ -85,10 +112,10 @@ export default function UpdateNotification() {
       {/* Text */}
       <div style={{ flex: 1, minWidth: 0 }}>
         <p style={{ fontSize: '13px', fontWeight: 590, color: 'var(--fh-t1)', margin: 0, lineHeight: 1.3 }}>
-          Вышло обновление
+          Доступно обновление
         </p>
         <p style={{ fontSize: '11px', color: 'var(--fh-t4)', margin: 0, marginTop: '2px' }}>
-          FreelanceHub v{APP_VERSION}
+          FreelanceHub v{APP_VERSION} — обновите кэш
         </p>
       </div>
 
