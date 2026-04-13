@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { MapPin, CheckCircle, Clock, TrendingUp } from 'lucide-react'
+import { MapPin, CheckCircle, Clock, TrendingUp, Crown } from 'lucide-react'
 import RatingStars from '@/components/shared/RatingStars'
 import PriceDisplay from '@/components/shared/PriceDisplay'
 import FavoriteButton from '@/components/shared/FavoriteButton'
@@ -33,8 +33,19 @@ export default function FreelancerCard({ freelancer: f }: Props) {
         className="absolute top-3 right-3 z-10 opacity-0 group-hover/card:opacity-100 transition-opacity"
       />
 
+      {/* Premium badge */}
+      {f.isPremium && (
+        <div
+          className="absolute top-3 left-3 z-10 flex items-center gap-1 rounded-full"
+          style={{ padding: '2px 8px', background: 'rgba(94,106,210,0.12)', border: '1px solid rgba(94,106,210,0.3)' }}
+        >
+          <Crown className="h-2.5 w-2.5" style={{ color: '#5e6ad2' }} />
+          <span style={{ fontSize: '10px', fontWeight: 590, color: '#5e6ad2', letterSpacing: '0.04em' }}>Premium</span>
+        </div>
+      )}
+
       {/* Promoted badge */}
-      {f.isPromoted && (
+      {f.isPromoted && !f.isPremium && (
         <div
           className="absolute top-3 left-3 z-10 flex items-center gap-1 rounded-full"
           style={{ padding: '2px 8px', background: 'rgba(251,191,36,0.12)', border: '1px solid rgba(251,191,36,0.3)' }}

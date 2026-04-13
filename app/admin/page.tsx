@@ -6,8 +6,9 @@ import { createClient } from '@supabase/supabase-js'
 import {
   Users, Briefcase, MessageSquare, TrendingUp,
   Activity, Bell, Heart, BarChart3, ExternalLink,
-  ArrowUpRight, ArrowDownRight, Clock
+  ArrowUpRight, ArrowDownRight, Clock, ShieldCheck, Crown
 } from 'lucide-react'
+import AdminManageButtons from '@/components/admin/AdminManageButtons'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
@@ -46,6 +47,19 @@ interface UserRow {
   avatar_url: string | null
   created_at: string
   role: string | null
+}
+
+interface VerifyRow {
+  user_id: string
+  verification_requested_at: string
+  profiles: { full_name: string | null; email: string | null } | null
+}
+
+interface PremiumRow {
+  user_id: string
+  is_premium: boolean
+  premium_until: string | null
+  profiles: { full_name: string | null } | null
 }
 
 // ── Data fetching ────────────────────────────────────────────
@@ -100,6 +114,23 @@ async function fetchStats() {
     db.from('orders').select('category').limit(500),
   ])
 
+  // Verification requests
+  const { data: verifyRequests } = await db
+    .from('freelancer_profiles')
+    .select('user_id, verification_requested_at, profiles!inner(full_name, email)')
+    .eq('verification_requested', true)
+    .eq('is_verified', false)
+    .order('verification_requested_at', { ascending: true })
+    .limit(20)
+
+  // Premium freelancers
+  const { data: premiumFreelancers } = await db
+    .from('freelancer_profiles')
+    .select('user_id, is_premium, premium_until, profiles!inner(full_name)')
+    .eq('is_premium', true)
+    .order('premium_until', { ascending: true })
+    .limit(20)
+
   // Count orders by category manually
   const catMap: Record<string, number> = {}
   for (const row of (ordersByCat.data ?? [])) {
@@ -121,6 +152,8 @@ async function fetchStats() {
     ordersByDay:  (ordersByDay.data  ?? []) as DayRow[],
     usersByDay:   (usersByDay.data   ?? []) as DayRow[],
     topCategories,
+    verifyRequests: (verifyRequests ?? []) as VerifyRow[],
+    premiumFreelancers: (premiumFreelancers ?? []) as PremiumRow[],
   }
 }
 
@@ -386,6 +419,74 @@ export default async function AdminPage() {
             ))}
           </div>
         </div>
+      </div>
+
+      {/* ── Verification queue ── */}
+      <div className="rounded-2xl border border-subtle bg-card p-5">
+        <div className="flex items-center gap-2 mb-4">
+          <ShieldCheck className="h-4 w-4 text-primary" />
+          <h2 className="text-sm font-semibold">Заявки на верификацию</h2>
+          {stats.verifyRequests.length > 0 && (
+            <span className="ml-auto text-xs px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400 font-semibold">
+              {stats.verifyRequests.length}
+            </span>
+          )}
+        </div>
+        {stats.verifyRequests.length === 0 ? (
+          <p className="text-xs text-muted-foreground">Нет заявок</p>
+        ) : (
+          <div className="space-y-3">
+            {stats.verifyRequests.map((row) => (
+              <div key={row.user_id} className="flex items-center gap-3 flex-wrap">
+                <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 text-xs font-bold text-primary">
+                  {(row.profiles?.full_name ?? row.profiles?.email ?? '?')[0].toUpperCase()}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-medium truncate">{row.profiles?.full_name ?? row.profiles?.email ?? row.user_id}</p>
+                  <p className="text-[10px] text-muted-foreground">
+                    {new Date(row.verification_requested_at).toLocaleDateString('ru', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                  </p>
+                </div>
+                <AdminManageButtons userId={row.user_id} mode="verify" />
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* ── Premium management ── */}
+      <div className="rounded-2xl border border-subtle bg-card p-5">
+        <div className="flex items-center gap-2 mb-4">
+          <Crown className="h-4 w-4 text-primary" />
+          <h2 className="text-sm font-semibold">Premium фрилансеры</h2>
+          {stats.premiumFreelancers.length > 0 && (
+            <span className="ml-auto text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary font-semibold">
+              {stats.premiumFreelancers.length}
+            </span>
+          )}
+        </div>
+        {stats.premiumFreelancers.length === 0 ? (
+          <p className="text-xs text-muted-foreground">Нет активных Premium</p>
+        ) : (
+          <div className="space-y-3">
+            {stats.premiumFreelancers.map((row) => (
+              <div key={row.user_id} className="flex items-center gap-3 flex-wrap">
+                <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 text-xs font-bold text-primary">
+                  {(row.profiles?.full_name ?? '?')[0].toUpperCase()}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-medium truncate">{row.profiles?.full_name ?? row.user_id}</p>
+                  <p className="text-[10px] text-muted-foreground">
+                    {row.premium_until
+                      ? `до ${new Date(row.premium_until).toLocaleDateString('ru', { day: 'numeric', month: 'short' })}`
+                      : 'бессрочно'}
+                  </p>
+                </div>
+                <AdminManageButtons userId={row.user_id} mode="premium" isActive />
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Vercel Analytics promo card */}

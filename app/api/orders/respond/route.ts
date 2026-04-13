@@ -19,6 +19,25 @@ export async function POST(request: Request) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const db = supabase as any
 
+  // ── Response limit check (5/month for free users) ──────────────────────────
+  const { data: fp } = await db
+    .from('freelancer_profiles')
+    .select('is_premium, premium_until')
+    .eq('user_id', user.id)
+    .single()
+
+  const isPremium = fp?.is_premium && (!fp.premium_until || new Date(fp.premium_until) > new Date())
+
+  if (!isPremium) {
+    const { data: limitCount } = await db.rpc('responses_this_month', { uid: user.id })
+    if ((limitCount ?? 0) >= 5) {
+      return Response.json(
+        { error: 'Достигнут лимит откликов (5 в месяц). Перейдите на Premium для безлимитных откликов.' },
+        { status: 429 }
+      )
+    }
+  }
+
   // Insert the response
   const { data: responseData, error: insertError } = await db
     .from('order_responses')

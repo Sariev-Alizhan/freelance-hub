@@ -42,6 +42,9 @@ async function fetchRealFreelancers(): Promise<Freelancer[]> {
         response_time,
         languages,
         is_verified,
+        is_premium,
+        premium_until,
+        availability_status,
         rating,
         reviews_count,
         completed_orders,
@@ -55,7 +58,7 @@ async function fetchRealFreelancers(): Promise<Freelancer[]> {
         )
       `)
       .order('rating', { ascending: false })
-      .limit(50)
+      .limit(100)
 
     if (error || !data) return []
 
@@ -82,12 +85,20 @@ async function fetchRealFreelancers(): Promise<Freelancer[]> {
         location: profile?.location || 'СНГ',
         isOnline: false,
         isVerified: fp.is_verified ?? false,
+        isPremium: (fp.is_premium && (!fp.premium_until || new Date(fp.premium_until) > new Date())) ?? false,
+        availability: fp.availability_status ?? 'open',
         portfolio: [],
         description: profile?.bio || '',
         level: fp.level ?? 'new',
         languages: fp.languages ?? ['ru'],
         registeredAt: fp.created_at,
       }
+    })
+    // Premium → Verified → rest (within each group, rating order preserved)
+    .sort((a: Freelancer, b: Freelancer) => {
+      const scoreA = (a.isPremium ? 2 : 0) + (a.isVerified ? 1 : 0)
+      const scoreB = (b.isPremium ? 2 : 0) + (b.isVerified ? 1 : 0)
+      return scoreB - scoreA
     })
   } catch {
     return []

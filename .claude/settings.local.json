@@ -9,7 +9,9 @@
       "Bash(tsc --noEmit)",
       "Bash(git:*)",
       "Bash(curl:*)",
-      "Read(//c/Users/Элит/**)"
+      "Read(//c/Users/Элит/**)",
+      "Bash(node:*)",
+      "Bash(ls:*)"
     ]
   }
 }

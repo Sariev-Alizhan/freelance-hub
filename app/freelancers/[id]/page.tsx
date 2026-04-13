@@ -2,13 +2,14 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
-import { MapPin, CheckCircle, Clock, Star, Package, ArrowLeft, MessageCircle, Circle } from 'lucide-react'
+import { MapPin, CheckCircle, Clock, Star, Package, ArrowLeft, MessageCircle, Circle, Crown } from 'lucide-react'
 import { getFreelancerById, MOCK_FREELANCERS } from '@/lib/mock'
 import RatingStars from '@/components/shared/RatingStars'
 import PriceDisplay from '@/components/shared/PriceDisplay'
 import OnlineStatus from '@/components/shared/OnlineStatus'
 import ReviewsSection from '@/components/shared/ReviewsSection'
 import PortfolioSection from '@/components/freelancers/PortfolioSection'
+import ProfileViewLogger from '@/components/shared/ProfileViewLogger'
 import { CATEGORIES } from '@/lib/mock/categories'
 import { createClient } from '@/lib/supabase/server'
 import { Freelancer, PortfolioItem } from '@/lib/types'
@@ -34,7 +35,7 @@ async function getFreelancerFromSupabase(userId: string): Promise<Freelancer | n
       .from('freelancer_profiles')
       .select(`
         id, user_id, title, category, skills, price_from, price_to,
-        level, response_time, languages, is_verified, rating,
+        level, response_time, languages, is_verified, is_premium, premium_until, rating,
         reviews_count, completed_orders, created_at, availability_status,
         profiles!inner (full_name, username, avatar_url, location, bio)
       `)
@@ -82,6 +83,7 @@ async function getFreelancerFromSupabase(userId: string): Promise<Freelancer | n
       location: profile?.location || 'СНГ',
       isOnline: false,
       isVerified: data.is_verified ?? false,
+      isPremium: (data.is_premium && (!data.premium_until || new Date(data.premium_until) > new Date())) ?? false,
       portfolio,
       description: profile?.bio || '',
       level: data.level ?? 'new',
@@ -164,6 +166,7 @@ export default async function FreelancerPage({ params }: { params: Promise<{ id:
 
   return (
     <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-10">
+      <ProfileViewLogger freelancerId={f.id} />
       {/* Back */}
       <Link href="/freelancers" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-8 transition-colors">
         <ArrowLeft className="h-4 w-4" /> Назад к фрилансерам
@@ -185,6 +188,12 @@ export default async function FreelancerPage({ params }: { params: Promise<{ id:
                 <div className="flex items-center gap-2 flex-wrap">
                   <h1 className="text-xl font-bold">{f.name}</h1>
                   {f.isVerified && <CheckCircle className="h-5 w-5 text-primary" />}
+                  {f.isPremium && (
+                    <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full font-semibold"
+                      style={{ background: 'rgba(94,106,210,0.12)', color: '#5e6ad2', border: '1px solid rgba(94,106,210,0.25)' }}>
+                      <Crown className="h-3 w-3" /> Premium
+                    </span>
+                  )}
                   <span className="text-xs px-2.5 py-1 rounded-full bg-primary/10 text-primary font-semibold">
                     {LEVEL_LABELS[f.level]}
                   </span>

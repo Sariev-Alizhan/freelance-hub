@@ -49,6 +49,7 @@ export interface Freelancer {
   location: string
   isOnline: boolean
   isVerified: boolean
+  isPremium?: boolean
   portfolio: PortfolioItem[]
   description: string
   level: FreelancerLevel

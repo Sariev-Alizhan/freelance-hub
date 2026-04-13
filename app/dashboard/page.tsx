@@ -6,7 +6,7 @@ import {
   Briefcase, Star, DollarSign, Clock, CheckCircle,
   ArrowRight, Sparkles, User, LogIn, MapPin,
   Tag, Edit3, Zap, MessageSquare, Heart, ChevronRight,
-  Circle
+  Circle, Eye, Crown, ShieldCheck, TrendingUp
 } from 'lucide-react'
 import { useUser } from '@/lib/hooks/useUser'
 import { useFavorites } from '@/lib/hooks/useFavorites'
@@ -76,6 +76,14 @@ export default function DashboardPage() {
   const [profileLoading, setProfileLoading] = useState(true)
   const [ordersLoading, setOrdersLoading] = useState(false)
 
+  // Analytics
+  const [analytics, setAnalytics] = useState<{
+    views7: number; views30: number; responsesThisMonth: number
+    responseLimit: number | null; isPremium: boolean; isVerified: boolean
+    verificationRequested: boolean
+  } | null>(null)
+  const [verifyLoading, setVerifyLoading] = useState(false)
+
   useEffect(() => {
     if (!user) { setProfileLoading(false); return }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -93,6 +101,14 @@ export default function DashboardPage() {
         if (fpRes.data.availability_status) setAvailability(fpRes.data.availability_status)
       }
       setProfileLoading(false)
+
+      // Load analytics for freelancers
+      if (fpRes.data) {
+        fetch('/api/profile/analytics')
+          .then(r => r.ok ? r.json() : null)
+          .then(d => { if (d) setAnalytics(d) })
+          .catch(() => {})
+      }
     }
     load()
   }, [user])
@@ -157,6 +173,16 @@ export default function DashboardPage() {
         </div>
       </div>
     )
+  }
+
+  async function requestVerification() {
+    setVerifyLoading(true)
+    try {
+      await fetch('/api/profile/verify-request', { method: 'POST' })
+      setAnalytics(prev => prev ? { ...prev, verificationRequested: true } : prev)
+    } finally {
+      setVerifyLoading(false)
+    }
   }
 
   async function saveAvailability(status: AvailabilityStatus) {
@@ -296,6 +322,109 @@ export default function DashboardPage() {
               </div>
             )
           })}
+        </div>
+      )}
+
+      {/* ── Analytics (freelancers only) ── */}
+      {analytics && fp && (
+        <div className="mb-6 rounded-2xl border border-subtle bg-card p-5 space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <TrendingUp className="h-4 w-4 text-primary" />
+              <span className="text-sm font-semibold">Аналитика профиля</span>
+            </div>
+            {/* Premium / Verified badges */}
+            <div className="flex items-center gap-2">
+              {analytics.isPremium && (
+                <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full font-semibold"
+                  style={{ background: 'rgba(94,106,210,0.1)', color: '#5e6ad2', border: '1px solid rgba(94,106,210,0.2)' }}>
+                  <Crown className="h-3 w-3" /> Premium
+                </span>
+              )}
+              {analytics.isVerified && (
+                <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full font-semibold"
+                  style={{ background: 'rgba(39,166,68,0.08)', color: '#27a644', border: '1px solid rgba(39,166,68,0.2)' }}>
+                  <ShieldCheck className="h-3 w-3" /> Верифицирован
+                </span>
+              )}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-3 gap-3">
+            <div className="rounded-xl p-3" style={{ background: 'var(--fh-skill-bg)', border: '1px solid var(--fh-border-2)' }}>
+              <div className="flex items-center gap-1.5 mb-1">
+                <Eye className="h-3.5 w-3.5 text-muted-foreground" />
+                <span className="text-xs text-muted-foreground">За 7 дней</span>
+              </div>
+              <div className="text-xl font-bold">{analytics.views7}</div>
+              <div className="text-xs text-muted-foreground">просмотров</div>
+            </div>
+            <div className="rounded-xl p-3" style={{ background: 'var(--fh-skill-bg)', border: '1px solid var(--fh-border-2)' }}>
+              <div className="flex items-center gap-1.5 mb-1">
+                <Eye className="h-3.5 w-3.5 text-muted-foreground" />
+                <span className="text-xs text-muted-foreground">За 30 дней</span>
+              </div>
+              <div className="text-xl font-bold">{analytics.views30}</div>
+              <div className="text-xs text-muted-foreground">просмотров</div>
+            </div>
+            <div className="rounded-xl p-3" style={{ background: 'var(--fh-skill-bg)', border: '1px solid var(--fh-border-2)' }}>
+              <div className="flex items-center gap-1.5 mb-1">
+                <Zap className="h-3.5 w-3.5 text-muted-foreground" />
+                <span className="text-xs text-muted-foreground">Отклики</span>
+              </div>
+              <div className="text-xl font-bold">
+                {analytics.responsesThisMonth}
+                {analytics.responseLimit !== null && (
+                  <span className="text-sm font-normal text-muted-foreground"> / {analytics.responseLimit}</span>
+                )}
+              </div>
+              <div className="text-xs text-muted-foreground">в этом месяце</div>
+            </div>
+          </div>
+
+          {/* Response limit bar */}
+          {analytics.responseLimit !== null && (
+            <div>
+              <div className="flex justify-between text-xs text-muted-foreground mb-1">
+                <span>Лимит откликов</span>
+                <span>{analytics.responsesThisMonth} / {analytics.responseLimit}</span>
+              </div>
+              <div className="h-1.5 rounded-full overflow-hidden" style={{ background: 'var(--fh-border-2)' }}>
+                <div
+                  className="h-full rounded-full transition-all"
+                  style={{
+                    width: `${Math.min(100, (analytics.responsesThisMonth / analytics.responseLimit) * 100)}%`,
+                    background: analytics.responsesThisMonth >= analytics.responseLimit ? '#ef4444' : '#5e6ad2',
+                  }}
+                />
+              </div>
+              {!analytics.isPremium && (
+                <p className="text-xs text-muted-foreground mt-2">
+                  Premium снимает лимит и даёт приоритет в поиске.{' '}
+                  <span className="text-primary font-medium">2 000 ₸/мес</span>
+                </p>
+              )}
+            </div>
+          )}
+
+          {/* Verification CTA */}
+          {!analytics.isVerified && !analytics.verificationRequested && (
+            <button
+              onClick={requestVerification}
+              disabled={verifyLoading}
+              className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-medium transition-all disabled:opacity-50"
+              style={{ background: 'rgba(94,106,210,0.08)', border: '1px solid rgba(94,106,210,0.2)', color: '#5e6ad2' }}
+            >
+              <ShieldCheck className="h-4 w-4" />
+              {verifyLoading ? 'Отправка…' : 'Подать заявку на верификацию — 5 000 ₸'}
+            </button>
+          )}
+          {!analytics.isVerified && analytics.verificationRequested && (
+            <div className="flex items-center gap-2 text-xs text-muted-foreground py-2">
+              <ShieldCheck className="h-3.5 w-3.5" />
+              Заявка на верификацию отправлена — ожидайте проверки
+            </div>
+          )}
         </div>
       )}
 
