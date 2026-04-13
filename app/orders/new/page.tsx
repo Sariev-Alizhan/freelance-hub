@@ -27,10 +27,10 @@ export default function NewOrderPage() {
               fontFeatureSettings: '"cv01", "ss03"',
             }}
           >
-            Новый заказ
+            Post a Job
           </h1>
           <p style={{ fontSize: '14px', color: '#8a8f98', fontWeight: 400, letterSpacing: '-0.01em' }}>
-            Опишите задачу — и получите отклики от лучших специалистов
+            Describe your task — and get responses from top specialists
           </p>
         </div>
         <CreateOrderForm />

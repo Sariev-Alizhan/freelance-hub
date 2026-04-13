@@ -70,7 +70,7 @@ export default function PortfolioLightbox({ items, index, onClose, onPrev, onNex
                   border: '1px solid rgba(113,112,255,0.25)',
                 }}
               >
-                <ExternalLink className="h-3 w-3" /> Открыть проект
+                <ExternalLink className="h-3 w-3" /> Open project
               </a>
             )}
             <button
@@ -104,7 +104,7 @@ export default function PortfolioLightbox({ items, index, onClose, onPrev, onNex
               className="w-full flex items-center justify-center"
               style={{ height: '400px', background: 'rgba(255,255,255,0.04)', borderRadius: '12px' }}
             >
-              <span style={{ color: '#62666d', fontSize: '14px' }}>Нет изображения</span>
+              <span style={{ color: '#62666d', fontSize: '14px' }}>No image</span>
             </div>
           )}
         </div>

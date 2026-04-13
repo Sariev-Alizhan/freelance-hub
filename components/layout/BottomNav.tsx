@@ -6,11 +6,11 @@ import { Briefcase, Users, Plus, MessageSquare, LayoutDashboard } from 'lucide-r
 import { useUser } from '@/lib/hooks/useUser'
 
 const ITEMS = [
-  { href: '/orders',      label: 'Заказы',  icon: Briefcase       },
-  { href: '/freelancers', label: 'Люди',    icon: Users           },
+  { href: '/orders',      label: 'Orders',  icon: Briefcase       },
+  { href: '/freelancers', label: 'People',  icon: Users           },
   { href: '/orders/new',  label: '',        icon: Plus, isCenter: true },
-  { href: '/messages',    label: 'Чат',     icon: MessageSquare   },
-  { href: '/dashboard',   label: 'Профиль', icon: LayoutDashboard },
+  { href: '/messages',    label: 'Chat',    icon: MessageSquare   },
+  { href: '/dashboard',   label: 'Profile', icon: LayoutDashboard },
 ]
 
 export default function BottomNav() {

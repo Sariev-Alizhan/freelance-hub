@@ -15,15 +15,15 @@ import { createClient } from '@/lib/supabase/server'
 import { Freelancer, PortfolioItem } from '@/lib/types'
 
 const AVAILABILITY_LABELS = {
-  open:     { label: 'Открыт к заказам', dot: '#27a644' },
-  busy:     { label: 'Занят',            dot: '#f59e0b' },
-  vacation: { label: 'В отпуске',        dot: '#8a8f98' },
+  open:     { label: 'Available',   dot: '#27a644' },
+  busy:     { label: 'Busy',        dot: '#f59e0b' },
+  vacation: { label: 'On vacation', dot: '#8a8f98' },
 }
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.freelance-hub.kz'
 
 const LEVEL_LABELS = {
-  new: 'Новичок', junior: 'Junior', middle: 'Middle', senior: 'Senior', top: 'TOP',
+  new: 'Newcomer', junior: 'Junior', middle: 'Middle', senior: 'Senior', top: 'TOP',
 }
 
 async function getFreelancerFromSupabase(userId: string): Promise<Freelancer | null> {
@@ -62,7 +62,7 @@ async function getFreelancerFromSupabase(userId: string): Promise<Freelancer | n
     }))
 
     const profile = data.profiles
-    const name = profile?.full_name || profile?.username || 'Пользователь'
+    const name = profile?.full_name || profile?.username || 'User'
     const avatar =
       profile?.avatar_url ||
       `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(name)}&backgroundColor=4338CA&textColor=ffffff`
@@ -77,10 +77,10 @@ async function getFreelancerFromSupabase(userId: string): Promise<Freelancer | n
       rating: data.rating ?? 0,
       reviewsCount: data.reviews_count ?? 0,
       completedOrders: data.completed_orders ?? 0,
-      responseTime: data.response_time ?? '1 час',
+      responseTime: data.response_time ?? '1 hour',
       priceFrom: data.price_from ?? 0,
       priceTo: data.price_to ?? undefined,
-      location: profile?.location || 'СНГ',
+      location: profile?.location || 'CIS',
       isOnline: false,
       isVerified: data.is_verified ?? false,
       isPremium: (data.is_premium && (!data.premium_until || new Date(data.premium_until) > new Date())) ?? false,
@@ -107,9 +107,9 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { id } = await params
   const f = getFreelancerById(id) ?? await getFreelancerFromSupabase(id)
-  if (!f) return { title: 'Профиль не найден — FreelanceHub' }
+  if (!f) return { title: 'Profile not found — FreelanceHub' }
 
-  const desc = `${f.name} — ${f.title}. Рейтинг ${f.rating}, ${f.reviewsCount} отзывов. Выполнено ${f.completedOrders} заказов на FreelanceHub.`
+  const desc = `${f.name} — ${f.title}. Rating ${f.rating}, ${f.reviewsCount} reviews. Completed ${f.completedOrders} orders on FreelanceHub.`
 
   return {
     title: `${f.name} — ${f.title} | FreelanceHub`,
@@ -118,7 +118,7 @@ export async function generateMetadata({
       title: `${f.name} — ${f.title}`,
       description: desc,
       type: 'profile',
-      locale: 'ru_RU',
+      locale: 'en_US',
       siteName: 'FreelanceHub',
       images: f.avatar ? [{ url: f.avatar, width: 400, height: 400, alt: f.name }] : [],
     },
@@ -169,7 +169,7 @@ export default async function FreelancerPage({ params }: { params: Promise<{ id:
       <ProfileViewLogger freelancerId={f.id} />
       {/* Back */}
       <Link href="/freelancers" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-8 transition-colors">
-        <ArrowLeft className="h-4 w-4" /> Назад к фрилансерам
+        <ArrowLeft className="h-4 w-4" /> Back to freelancers
       </Link>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -203,7 +203,7 @@ export default async function FreelancerPage({ params }: { params: Promise<{ id:
                   {f.reviewsCount > 0 ? (
                     <RatingStars rating={f.rating} size="md" count={f.reviewsCount} />
                   ) : (
-                    <span className="text-sm text-muted-foreground">Новый участник</span>
+                    <span className="text-sm text-muted-foreground">New member</span>
                   )}
                   <div className="flex items-center gap-1 text-sm text-muted-foreground">
                     <MapPin className="h-4 w-4" /> {f.location}
@@ -227,22 +227,22 @@ export default async function FreelancerPage({ params }: { params: Promise<{ id:
             <div className="mt-5 grid grid-cols-3 gap-4 pt-5 border-t border-subtle">
               <div className="text-center">
                 <div className="text-xl font-bold">{f.completedOrders}</div>
-                <div className="text-xs text-muted-foreground">заказов</div>
+                <div className="text-xs text-muted-foreground">orders</div>
               </div>
               <div className="text-center">
                 <div className="text-xl font-bold">{f.reviewsCount > 0 ? f.rating : '—'}</div>
-                <div className="text-xs text-muted-foreground">рейтинг</div>
+                <div className="text-xs text-muted-foreground">rating</div>
               </div>
               <div className="text-center">
                 <div className="text-xl font-bold">{f.reviewsCount}</div>
-                <div className="text-xs text-muted-foreground">отзывов</div>
+                <div className="text-xs text-muted-foreground">reviews</div>
               </div>
             </div>
           </div>
 
           {/* Skills */}
           <div className="rounded-2xl border border-subtle bg-card p-6">
-            <h2 className="font-semibold mb-4">Навыки</h2>
+            <h2 className="font-semibold mb-4">Skills</h2>
             <div className="flex flex-wrap gap-2">
               {f.skills.map((skill) => (
                 <span key={skill} className="px-3 py-1.5 rounded-xl bg-primary/10 text-primary text-sm font-medium border border-primary/20">
@@ -268,27 +268,27 @@ export default async function FreelancerPage({ params }: { params: Promise<{ id:
         <div className="space-y-4">
           <div className="sticky top-20 rounded-2xl border border-subtle bg-card p-6">
             <div className="mb-4">
-              <div className="text-xs text-muted-foreground mb-1">Стоимость</div>
+              <div className="text-xs text-muted-foreground mb-1">Rate</div>
               <div className="flex items-baseline gap-1">
-                <PriceDisplay amountRub={f.priceFrom} prefix="от " size="lg" className="text-primary" />
+                <PriceDisplay amountRub={f.priceFrom} prefix="from " size="lg" className="text-primary" />
                 {f.priceTo && (
                   <>
                     <span className="text-muted-foreground text-sm">—</span>
                     <PriceDisplay amountRub={f.priceTo} prefix="" size="lg" />
                   </>
                 )}
-                <span className="text-muted-foreground text-sm"> / час</span>
+                <span className="text-muted-foreground text-sm"> / hr</span>
               </div>
             </div>
 
             <div className="space-y-3 mb-5 text-sm text-muted-foreground">
               <div className="flex items-center gap-2">
                 <Clock className="h-4 w-4 shrink-0" />
-                Ответит {f.responseTime}
+                Responds in {f.responseTime}
               </div>
               <div className="flex items-center gap-2">
                 <Package className="h-4 w-4 shrink-0" />
-                {f.completedOrders} выполненных заказов
+                {f.completedOrders} completed orders
               </div>
               {category && (
                 <div className="flex items-center gap-2">
@@ -299,10 +299,10 @@ export default async function FreelancerPage({ params }: { params: Promise<{ id:
             </div>
 
             <Link href={`/messages?open=${f.id}`} className="w-full py-3 rounded-xl bg-primary text-white font-semibold hover:bg-primary/90 transition-colors mb-3 flex items-center justify-center gap-2">
-              <MessageCircle className="h-4 w-4" /> Написать фрилансеру
+              <MessageCircle className="h-4 w-4" /> Message freelancer
             </Link>
             <Link href="/orders/new" className="w-full py-3 rounded-xl border border-subtle bg-subtle font-semibold hover:bg-surface transition-colors text-sm flex items-center justify-center">
-              Предложить заказ
+              Post a job
             </Link>
           </div>
         </div>

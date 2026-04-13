@@ -31,7 +31,7 @@ export default function FavoriteButton({ type, targetId, className = '' }: Props
           ? 'bg-red-500/20 text-red-400'
           : 'bg-black/40 backdrop-blur-sm text-white/50 hover:text-red-400 hover:bg-red-500/20'
       } ${className}`}
-      aria-label={faved ? 'Убрать из избранного' : 'Добавить в избранное'}
+      aria-label={faved ? 'Remove from favorites' : 'Add to favorites'}
     >
       <Heart
         className={`h-3.5 w-3.5 transition-all duration-200 ${faved ? 'fill-red-400 stroke-red-400' : ''}`}

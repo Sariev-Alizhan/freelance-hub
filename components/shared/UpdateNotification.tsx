@@ -112,10 +112,10 @@ export default function UpdateNotification() {
       {/* Text */}
       <div style={{ flex: 1, minWidth: 0 }}>
         <p style={{ fontSize: '13px', fontWeight: 590, color: 'var(--fh-t1)', margin: 0, lineHeight: 1.3 }}>
-          Доступно обновление
+          Update available
         </p>
         <p style={{ fontSize: '11px', color: 'var(--fh-t4)', margin: 0, marginTop: '2px' }}>
-          FreelanceHub v{APP_VERSION} — обновите кэш
+          FreelanceHub v{APP_VERSION} — refresh to apply
         </p>
       </div>
 
@@ -136,7 +136,7 @@ export default function UpdateNotification() {
         onMouseEnter={e => { e.currentTarget.style.background = '#828fff' }}
         onMouseLeave={e => { e.currentTarget.style.background = '#5e6ad2' }}
       >
-        Обновить
+        Update
       </button>
 
       {/* Dismiss */}

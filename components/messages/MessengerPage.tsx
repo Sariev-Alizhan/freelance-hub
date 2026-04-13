@@ -52,9 +52,9 @@ function formatDate(iso: string) {
   const today = new Date()
   const yesterday = new Date(today)
   yesterday.setDate(today.getDate() - 1)
-  if (d.toDateString() === today.toDateString()) return 'Сегодня'
-  if (d.toDateString() === yesterday.toDateString()) return 'Вчера'
-  return d.toLocaleDateString('ru', { day: 'numeric', month: 'long' })
+  if (d.toDateString() === today.toDateString()) return 'Today'
+  if (d.toDateString() === yesterday.toDateString()) return 'Yesterday'
+  return d.toLocaleDateString('en-US', { day: 'numeric', month: 'long' })
 }
 
 function isSameDay(a: string, b: string) {
@@ -66,9 +66,9 @@ function isImage(type: string | null | undefined) {
 }
 
 function humanSize(bytes: number) {
-  if (bytes < 1024) return `${bytes} Б`
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} КБ`
-  return `${(bytes / 1024 / 1024).toFixed(1)} МБ`
+  if (bytes < 1024) return `${bytes} B`
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`
+  return `${(bytes / 1024 / 1024).toFixed(1)} MB`
 }
 
 // ── Avatar ─────────────────────────────────────────────────
@@ -130,7 +130,7 @@ function AttachmentBubble({ msg, isMine }: { msg: Message; isMine: boolean }) {
     >
       <FileText className="h-4 w-4 flex-shrink-0" style={{ color: isMine ? '#fff' : 'var(--fh-t3)' }} />
       <span style={{ fontSize: '12px', color: isMine ? '#fff' : 'var(--fh-t2)', fontWeight: 510, flex: 1, minWidth: 0 }} className="truncate">
-        {msg.attachment_name || 'Файл'}
+        {msg.attachment_name || 'File'}
       </span>
       <Download className="h-3.5 w-3.5 flex-shrink-0" style={{ color: isMine ? '#ffffffaa' : 'var(--fh-t4)' }} />
     </a>
@@ -209,7 +209,7 @@ export default function MessengerPage() {
             participant_2: c.participant_2,
             last_message: c.last_message,
             last_message_at: c.last_message_at,
-            other_user: other ?? { id: '', full_name: 'Пользователь', avatar_url: null },
+            other_user: other ?? { id: '', full_name: 'User', avatar_url: null },
             unread: unreadMap[c.id] ?? 0,
           }
         })
@@ -462,11 +462,11 @@ export default function MessengerPage() {
           <LogIn className="h-10 w-10 text-primary" />
         </div>
         <div className="text-center">
-          <h1 className="text-2xl font-bold mb-2">Войдите в аккаунт</h1>
-          <p className="text-muted-foreground">Чтобы открыть сообщения, нужна авторизация</p>
+          <h1 className="text-2xl font-bold mb-2">Sign in to your account</h1>
+          <p className="text-muted-foreground">You need to be signed in to view messages</p>
         </div>
         <Link href="/auth/login" className="px-6 py-3 rounded-xl bg-primary text-white font-semibold hover:bg-primary/90 transition-colors">
-          Войти
+          Sign in
         </Link>
       </div>
     )
@@ -481,13 +481,13 @@ export default function MessengerPage() {
         ${showList ? 'flex' : 'hidden md:flex'}
       `}>
         <div className="px-4 pt-4 pb-3 border-b border-subtle">
-          <h1 className="text-lg font-bold mb-3">Сообщения</h1>
+          <h1 className="text-lg font-bold mb-3">Messages</h1>
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <input
               value={search}
               onChange={e => setSearch(e.target.value)}
-              placeholder="Поиск..."
+              placeholder="Search..."
               className="w-full pl-9 pr-4 py-2 rounded-xl bg-background border border-subtle text-sm placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 transition-colors"
             />
           </div>
@@ -502,11 +502,11 @@ export default function MessengerPage() {
             <div className="flex flex-col items-center justify-center h-48 gap-3 text-center px-6">
               <MessageSquare className="h-10 w-10 text-muted-foreground/30" />
               <p className="text-sm text-muted-foreground">
-                {search ? 'Ничего не найдено' : 'Диалогов пока нет'}
+                {search ? 'Nothing found' : 'No conversations yet'}
               </p>
               {!search && (
                 <p className="text-xs text-muted-foreground/60">
-                  Откликнитесь на заказ или напишите фрилансеру
+                  Apply to an order or message a freelancer
                 </p>
               )}
             </div>
@@ -533,7 +533,7 @@ export default function MessengerPage() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between mb-0.5">
                     <span className={`text-sm truncate ${conv.unread > 0 ? 'font-bold' : 'font-semibold'}`}>
-                      {conv.other_user.full_name || 'Пользователь'}
+                      {conv.other_user.full_name || 'User'}
                     </span>
                     {conv.last_message_at && (
                       <span className="text-xs text-muted-foreground flex-shrink-0 ml-2">
@@ -542,7 +542,7 @@ export default function MessengerPage() {
                     )}
                   </div>
                   <p className={`text-xs truncate ${conv.unread > 0 ? 'text-foreground font-medium' : 'text-muted-foreground'}`}>
-                    {conv.last_message || 'Нет сообщений'}
+                    {conv.last_message || 'No messages'}
                   </p>
                 </div>
               </button>
@@ -569,11 +569,11 @@ export default function MessengerPage() {
               <Avatar user={activeConv.other_user} size={40} />
               <div className="flex-1 min-w-0">
                 <div className="font-semibold truncate">
-                  {activeConv.other_user.full_name || 'Пользователь'}
+                  {activeConv.other_user.full_name || 'User'}
                 </div>
                 <div className="flex items-center gap-1.5">
                   <div className="h-2 w-2 rounded-full bg-green-400" />
-                  <span className="text-xs text-muted-foreground">в сети</span>
+                  <span className="text-xs text-muted-foreground">online</span>
                 </div>
               </div>
               <button className="p-2 rounded-lg hover:bg-surface text-muted-foreground transition-colors">
@@ -592,8 +592,8 @@ export default function MessengerPage() {
                   <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center">
                     <MessageSquare className="h-8 w-8 text-primary" />
                   </div>
-                  <p className="text-sm font-medium">Начните диалог</p>
-                  <p className="text-xs text-muted-foreground">Напишите первое сообщение</p>
+                  <p className="text-sm font-medium">Start a conversation</p>
+                  <p className="text-xs text-muted-foreground">Write the first message</p>
                 </div>
               ) : (
                 <AnimatePresence initial={false}>
@@ -714,7 +714,7 @@ export default function MessengerPage() {
                   }}
                   onMouseEnter={e => { e.currentTarget.style.color = 'var(--fh-t2)' }}
                   onMouseLeave={e => { e.currentTarget.style.color = 'var(--fh-t4)' }}
-                  title="Прикрепить файл"
+                  title="Attach file"
                 >
                   <Paperclip className="h-4 w-4" />
                 </button>
@@ -740,7 +740,7 @@ export default function MessengerPage() {
                       sendMessage()
                     }
                   }}
-                  placeholder="Написать сообщение..."
+                  placeholder="Write a message..."
                   rows={1}
                   className="flex-1 px-4 py-2.5 rounded-xl bg-background border border-subtle text-sm placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 transition-colors resize-none max-h-[120px] leading-relaxed"
                 />
@@ -755,7 +755,7 @@ export default function MessengerPage() {
                   }
                 </button>
               </div>
-              <p className="text-xs text-muted-foreground mt-1.5 ml-1">Enter — отправить · Shift+Enter — новая строка</p>
+              <p className="text-xs text-muted-foreground mt-1.5 ml-1">Enter — send · Shift+Enter — new line</p>
             </div>
           </>
         ) : (
@@ -764,16 +764,16 @@ export default function MessengerPage() {
               <MessageSquare className="h-12 w-12 text-primary" />
             </div>
             <div>
-              <h2 className="text-xl font-bold mb-2">Ваши сообщения</h2>
+              <h2 className="text-xl font-bold mb-2">Your messages</h2>
               <p className="text-muted-foreground text-sm max-w-xs">
-                Выберите диалог слева или напишите кому-нибудь первым
+                Select a conversation on the left or be the first to write
               </p>
             </div>
             <Link
               href="/freelancers"
               className="px-5 py-2.5 rounded-xl bg-primary/10 text-primary text-sm font-medium hover:bg-primary/20 transition-colors border border-primary/20"
             >
-              Найти фрилансеров
+              Find freelancers
             </Link>
           </div>
         )}

@@ -8,22 +8,22 @@ const PERKS = [
     icon: Zap,
     color: '#7170ff',
     bg: 'rgba(113,112,255,0.08)',
-    title: '0% комиссии',
-    text: 'Забирайте 100% оплаты от заказчика. Никакой комиссии сейчас и в будущем.',
+    title: '0% commission',
+    text: 'Keep 100% of payment from the client. No commission now or in the future.',
   },
   {
     icon: Globe,
     color: '#27a644',
     bg: 'rgba(39,166,68,0.08)',
-    title: 'СНГ и весь мир',
-    text: 'Сейчас работаем для Казахстана, России, Украины. Скоро — международная версия.',
+    title: 'Global platform',
+    text: 'Work from anywhere, with anyone. No regional restrictions, no currency limits.',
   },
   {
     icon: Briefcase,
     color: '#fbbf24',
     bg: 'rgba(251,191,36,0.08)',
-    title: 'Прямые сделки',
-    text: 'Заказчик и фрилансер напрямую — без посредников, без скрытых платежей.',
+    title: 'Direct deals',
+    text: 'Client and freelancer work directly — no middlemen, no hidden fees.',
   },
 ]
 
@@ -48,10 +48,10 @@ export default function TopFreelancers() {
               fontFeatureSettings: '"cv01", "ss03"',
             }}
           >
-            Почему FreelanceHub?
+            Why FreelanceHub?
           </h2>
           <p style={{ fontSize: '15px', color: '#8a8f98', fontWeight: 400, letterSpacing: '-0.01em', maxWidth: '400px', margin: '0 auto', lineHeight: 1.6 }}>
-            Честная платформа без посредников и скрытых платежей
+            A fair platform with no middlemen and no hidden fees
           </p>
         </motion.div>
 
@@ -101,13 +101,13 @@ export default function TopFreelancers() {
         >
           <div>
             <p style={{ fontSize: '11px', fontWeight: 590, color: '#7170ff', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '6px' }}>
-              Только запустились
+              Just launched
             </p>
             <h3 style={{ fontSize: '18px', fontWeight: 510, color: 'var(--fh-t1)', letterSpacing: '-0.03em', marginBottom: '6px' }}>
-              Станьте одним из первых
+              Be among the first
             </h3>
             <p style={{ fontSize: '13px', color: '#8a8f98', fontWeight: 400, letterSpacing: '-0.01em', lineHeight: 1.6 }}>
-              Ранние участники получают преимущество в поиске и отметку «Первопроходец».
+              Early members get priority in search and the &quot;Pioneer&quot; badge.
             </p>
           </div>
           <div className="flex gap-2.5 shrink-0">
@@ -126,7 +126,7 @@ export default function TopFreelancers() {
               onMouseEnter={e => { e.currentTarget.style.background = '#828fff' }}
               onMouseLeave={e => { e.currentTarget.style.background = '#5e6ad2' }}
             >
-              Присоединиться
+              Join now
             </Link>
             <Link
               href="/freelancers"
@@ -143,7 +143,7 @@ export default function TopFreelancers() {
               onMouseEnter={e => { e.currentTarget.style.color = 'var(--fh-t1)'; e.currentTarget.style.background = 'var(--fh-surface-3)' }}
               onMouseLeave={e => { e.currentTarget.style.color = 'var(--fh-t3)'; e.currentTarget.style.background = 'var(--fh-surface-2)' }}
             >
-              Фрилансеры <ArrowRight className="h-3.5 w-3.5" />
+              Freelancers <ArrowRight className="h-3.5 w-3.5" />
             </Link>
           </div>
         </motion.div>

@@ -41,10 +41,10 @@ export default function PromoteModal({ type, title, onClose }: Props) {
             </div>
             <div>
               <h2 style={{ fontSize: '14px', fontWeight: 590, color: 'var(--fh-t1)', letterSpacing: '-0.02em' }}>
-                Продвижение в ленте
+                Boost in feed
               </h2>
               <p style={{ fontSize: '12px', color: 'var(--fh-t4)', fontWeight: 400 }}>
-                {type === 'order' ? 'Заказ' : 'Профиль'}: {title}
+                {type === 'order' ? 'Order' : 'Profile'}: {title}
               </p>
             </div>
           </div>
@@ -63,14 +63,14 @@ export default function PromoteModal({ type, title, onClose }: Props) {
           {/* How it works */}
           <div className="rounded-xl p-4" style={{ background: 'var(--fh-surface-2)', border: '1px solid var(--fh-border)' }}>
             <p style={{ fontSize: '13px', fontWeight: 590, color: 'var(--fh-t1)', marginBottom: '8px' }}>
-              Как работает продвижение?
+              How does boosting work?
             </p>
             <ul className="space-y-1.5">
               {[
-                'Ваш профиль/заказ показывается первым в ленте',
-                'Золотой бейдж «TOP» привлекает внимание',
-                'Срок продвижения — 7 дней с момента оплаты',
-                'Продление — повторная оплата',
+                'Your profile/order appears first in the feed',
+                'Golden "TOP" badge attracts attention',
+                'Boost duration — 7 days from payment',
+                'Renewal — repeat payment',
               ].map(item => (
                 <li key={item} className="flex items-start gap-2" style={{ fontSize: '13px', color: 'var(--fh-t3)', fontWeight: 400 }}>
                   <span style={{ color: '#fbbf24', marginTop: '1px' }}>›</span>
@@ -83,7 +83,7 @@ export default function PromoteModal({ type, title, onClose }: Props) {
           {/* Price */}
           <div className="flex items-center justify-between rounded-xl p-4" style={{ background: 'rgba(251,191,36,0.05)', border: '1px solid rgba(251,191,36,0.15)' }}>
             <div>
-              <p style={{ fontSize: '11px', color: '#fbbf24', fontWeight: 590, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '3px' }}>Стоимость / 7 дней</p>
+              <p style={{ fontSize: '11px', color: '#fbbf24', fontWeight: 590, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '3px' }}>Price / 7 days</p>
               <p style={{ fontSize: '22px', fontWeight: 590, color: 'var(--fh-t1)', letterSpacing: '-0.03em' }}>
                 2 000 ₸ <span style={{ fontSize: '14px', color: 'var(--fh-t3)', fontWeight: 400 }}>/ ~400 ₽ / $4.5</span>
               </p>
@@ -93,11 +93,11 @@ export default function PromoteModal({ type, title, onClose }: Props) {
 
           {/* Pay instructions */}
           <p style={{ fontSize: '13px', color: 'var(--fh-t3)', fontWeight: 400 }}>
-            Оплатите на карту ниже и напишите в Telegram{' '}
+            Pay to a card below and message on Telegram{' '}
             <a href="https://t.me/zhanmate_zhan" target="_blank" rel="noopener noreferrer" style={{ color: '#7170ff', fontWeight: 510 }}>
               @zhanmate_zhan
             </a>{' '}
-            с подтверждением — активируем в течение часа.
+            with confirmation — we will activate within an hour.
           </p>
 
           {/* Cards */}
@@ -120,7 +120,7 @@ export default function PromoteModal({ type, title, onClose }: Props) {
                   onClick={() => copy(card.raw, card.label)}
                   className="flex items-center justify-center h-8 w-8 rounded-lg transition-all"
                   style={{ background: `${card.color}20`, color: card.color }}
-                  title="Скопировать"
+                  title="Copy"
                 >
                   {copied === card.label ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
                 </button>
@@ -147,7 +147,7 @@ export default function PromoteModal({ type, title, onClose }: Props) {
             onMouseLeave={e => { e.currentTarget.style.background = 'rgba(113,112,255,0.08)' }}
           >
             <MessageCircle className="h-4 w-4" />
-            Написать в Telegram после оплаты
+            Message on Telegram after payment
           </a>
         </div>
       </div>

@@ -64,7 +64,7 @@ async function fetchRealFreelancers(): Promise<Freelancer[]> {
 
     return data.map((fp: any): Freelancer => {
       const profile = fp.profiles
-      const name = profile?.full_name || profile?.username || 'Пользователь'
+      const name = profile?.full_name || profile?.username || 'User'
       const avatar =
         profile?.avatar_url ||
         `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(name)}&backgroundColor=4338CA&textColor=ffffff`
@@ -79,10 +79,10 @@ async function fetchRealFreelancers(): Promise<Freelancer[]> {
         rating: fp.rating ?? 0,
         reviewsCount: fp.reviews_count ?? 0,
         completedOrders: fp.completed_orders ?? 0,
-        responseTime: fp.response_time ?? '1 час',
+        responseTime: fp.response_time ?? '1 hour',
         priceFrom: fp.price_from ?? 0,
         priceTo: fp.price_to ?? undefined,
-        location: profile?.location || 'СНГ',
+        location: profile?.location || 'CIS',
         isOnline: false,
         isVerified: fp.is_verified ?? false,
         isPremium: (fp.is_premium && (!fp.premium_until || new Date(fp.premium_until) > new Date())) ?? false,
@@ -108,7 +108,7 @@ async function fetchRealFreelancers(): Promise<Freelancer[]> {
 export default async function FreelancersPage() {
   const realFreelancers = await fetchRealFreelancers()
   return (
-    <Suspense fallback={<div className="mx-auto max-w-7xl px-4 py-20 text-center" style={{ color: '#62666d', fontSize: '14px' }}>Загрузка…</div>}>
+    <Suspense fallback={<div className="mx-auto max-w-7xl px-4 py-20 text-center" style={{ color: '#62666d', fontSize: '14px' }}>Loading…</div>}>
       <FreelancersClient realFreelancers={realFreelancers} />
     </Suspense>
   )

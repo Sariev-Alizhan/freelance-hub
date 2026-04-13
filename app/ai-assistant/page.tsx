@@ -11,9 +11,9 @@ export default function AIAssistantPage() {
           <Sparkles className="h-4 w-4" />
           Powered by Claude AI
         </div>
-        <h1 className="text-3xl font-bold mb-3">AI-подбор фрилансера</h1>
+        <h1 className="text-3xl font-bold mb-3">AI freelancer matching</h1>
         <p className="text-muted-foreground max-w-xl mx-auto">
-          Опишите задачу простыми словами — ИИ задаст уточняющие вопросы и подберёт идеального специалиста из 32 000+ фрилансеров
+          Describe your task in plain words — AI will ask clarifying questions and find the perfect specialist from 32,000+ freelancers
         </p>
       </div>
 

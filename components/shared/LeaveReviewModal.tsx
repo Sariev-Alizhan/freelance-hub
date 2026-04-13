@@ -28,18 +28,18 @@ export default function LeaveReviewModal({ freelancerId, freelancerName, onClose
         body: JSON.stringify({ freelancerId, rating, text }),
       })
       const json = await res.json()
-      if (!res.ok) { setError(json.error || 'Ошибка'); return }
+      if (!res.ok) { setError(json.error || 'Error'); return }
       setDone(true)
       onSuccess(json.review)
       setTimeout(onClose, 1800)
     } catch {
-      setError('Не удалось отправить отзыв')
+      setError('Failed to submit review')
     } finally {
       setLoading(false)
     }
   }
 
-  const LABELS = ['', 'Плохо', 'Ниже среднего', 'Нормально', 'Хорошо', 'Отлично!']
+  const LABELS = ['', 'Poor', 'Below average', 'Okay', 'Good', 'Excellent!']
 
   return (
     <div className="fixed inset-0 z-[200] flex items-center justify-center p-4" onClick={onClose}>
@@ -55,14 +55,14 @@ export default function LeaveReviewModal({ freelancerId, freelancerName, onClose
         {done ? (
           <div className="flex flex-col items-center gap-3 py-6 text-center">
             <CheckCircle className="h-12 w-12 text-green-500" />
-            <p className="font-semibold text-lg">Отзыв опубликован!</p>
-            <p className="text-sm text-muted-foreground">Спасибо за обратную связь</p>
+            <p className="font-semibold text-lg">Review published!</p>
+            <p className="text-sm text-muted-foreground">Thank you for your feedback</p>
           </div>
         ) : (
           <>
-            <h2 className="text-lg font-bold mb-1">Оставить отзыв</h2>
+            <h2 className="text-lg font-bold mb-1">Leave a review</h2>
             <p className="text-sm text-muted-foreground mb-5">
-              Поделитесь опытом работы с <span className="font-medium text-foreground">{freelancerName}</span>
+              Share your experience working with <span className="font-medium text-foreground">{freelancerName}</span>
             </p>
 
             {/* Star picker */}
@@ -93,7 +93,7 @@ export default function LeaveReviewModal({ freelancerId, freelancerName, onClose
             <textarea
               value={text}
               onChange={(e) => setText(e.target.value)}
-              placeholder="Расскажите о качестве работы, соблюдении сроков, общении…"
+              placeholder="Tell us about the quality, deadlines, communication…"
               className="w-full min-h-[110px] resize-none px-3 py-2.5 rounded-xl bg-subtle border border-subtle text-sm placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 transition-colors mb-4"
             />
 
@@ -105,7 +105,7 @@ export default function LeaveReviewModal({ freelancerId, freelancerName, onClose
               className="w-full py-3 rounded-xl bg-primary text-white font-semibold hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {loading && <Loader2 className="h-4 w-4 animate-spin" />}
-              Опубликовать отзыв
+              Publish review
             </button>
           </>
         )}

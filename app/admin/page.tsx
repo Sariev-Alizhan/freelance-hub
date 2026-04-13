@@ -12,7 +12,7 @@ import AdminManageButtons from '@/components/admin/AdminManageButtons'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
-  title: 'Аналитика — FreelanceHub',
+  title: 'Analytics — FreelanceHub',
   robots: { index: false, follow: false },
 }
 
@@ -229,9 +229,9 @@ export default async function AdminPage() {
   const vercelUrl = `https://vercel.com/alizhan/freelance-hub/analytics`
 
   const CATEGORY_LABELS: Record<string, string> = {
-    development: 'Разработка', design: 'Дизайн', marketing: 'Маркетинг',
-    copywriting: 'Копирайтинг', video: 'Видео', photo: 'Фото',
-    translation: 'Переводы', business: 'Бизнес', other: 'Другое',
+    development: 'Development', design: 'Design', marketing: 'Marketing',
+    copywriting: 'Copywriting', video: 'Video', photo: 'Photo',
+    translation: 'Translation', business: 'Business', other: 'Other',
   }
 
   return (
@@ -244,8 +244,8 @@ export default async function AdminPage() {
             <BarChart3 className="h-5 w-5 text-primary" />
             <span className="text-xs font-medium text-primary uppercase tracking-widest">Admin</span>
           </div>
-          <h1 className="text-2xl font-bold">Аналитика платформы</h1>
-          <p className="text-sm text-muted-foreground mt-0.5">Реальные данные из Supabase</p>
+          <h1 className="text-2xl font-bold">Platform Analytics</h1>
+          <p className="text-sm text-muted-foreground mt-0.5">Live data from Supabase</p>
         </div>
         <Link
           href={vercelUrl}
@@ -262,34 +262,34 @@ export default async function AdminPage() {
       {/* Main stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <StatCard
-          label="Пользователей" value={stats.users.total}
-          sub={`+${stats.users.today} сегодня · +${stats.users.week} за 7 дн`}
+          label="Users" value={stats.users.total}
+          sub={`+${stats.users.today} today · +${stats.users.week} this week`}
           icon={Users} color="text-blue-400" trend="up"
         />
         <StatCard
-          label="Заказов" value={stats.orders.total}
-          sub={`+${stats.orders.today} сегодня · +${stats.orders.week} за 7 дн`}
+          label="Orders" value={stats.orders.total}
+          sub={`+${stats.orders.today} today · +${stats.orders.week} this week`}
           icon={Briefcase} color="text-primary" trend={stats.orders.today > 0 ? 'up' : 'neutral'}
         />
         <StatCard
-          label="Откликов" value={stats.responses.total}
-          sub={`+${stats.responses.today} сегодня`}
+          label="Applications" value={stats.responses.total}
+          sub={`+${stats.responses.today} today`}
           icon={TrendingUp} color="text-green-400" trend={stats.responses.today > 0 ? 'up' : 'neutral'}
         />
         <StatCard
-          label="Сообщений" value={stats.messages.total}
-          sub={`+${stats.messages.today} сегодня`}
+          label="Messages" value={stats.messages.total}
+          sub={`+${stats.messages.today} today`}
           icon={MessageSquare} color="text-amber-400" trend={stats.messages.today > 0 ? 'up' : 'neutral'}
         />
       </div>
 
       {/* Secondary stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard label="В избранном"    value={stats.favorites}     icon={Heart}   color="text-red-400" />
-        <StatCard label="Уведомлений"    value={stats.notifications} icon={Bell}    color="text-purple-400" />
-        <StatCard label="Активных 7 дн"  value={stats.users.week}    icon={Activity} color="text-cyan-400" />
+        <StatCard label="Favorites"       value={stats.favorites}     icon={Heart}   color="text-red-400" />
+        <StatCard label="Notifications"   value={stats.notifications} icon={Bell}    color="text-purple-400" />
+        <StatCard label="Active (7d)"     value={stats.users.week}    icon={Activity} color="text-cyan-400" />
         <StatCard
-          label="Конверсия откликов"
+          label="Application rate"
           value={stats.orders.total > 0
             ? `${Math.round((stats.responses.total / stats.orders.total) * 10) / 10}x`
             : '—'
@@ -306,8 +306,8 @@ export default async function AdminPage() {
           {/* Users chart */}
           <div className="rounded-2xl border border-subtle bg-card p-5">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-sm font-semibold">Новые пользователи</h2>
-              <span className="text-xs text-muted-foreground">14 дней</span>
+              <h2 className="text-sm font-semibold">New users</h2>
+              <span className="text-xs text-muted-foreground">14 days</span>
             </div>
             {stats.usersByDay.length > 0 ? (
               <>
@@ -322,15 +322,15 @@ export default async function AdminPage() {
                 </div>
               </>
             ) : (
-              <NoDataChart label="пользователи" />
+              <NoDataChart label="users" />
             )}
           </div>
 
           {/* Orders chart */}
           <div className="rounded-2xl border border-subtle bg-card p-5">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-sm font-semibold">Новые заказы</h2>
-              <span className="text-xs text-muted-foreground">14 дней</span>
+              <h2 className="text-sm font-semibold">New orders</h2>
+              <span className="text-xs text-muted-foreground">14 days</span>
             </div>
             {stats.ordersByDay.length > 0 ? (
               <>
@@ -345,14 +345,14 @@ export default async function AdminPage() {
                 </div>
               </>
             ) : (
-              <NoDataChart label="заказы" />
+              <NoDataChart label="orders" />
             )}
           </div>
 
           {/* Top categories */}
           {stats.topCategories.length > 0 && (
             <div className="rounded-2xl border border-subtle bg-card p-5">
-              <h2 className="text-sm font-semibold mb-4">Топ категорий</h2>
+              <h2 className="text-sm font-semibold mb-4">Top categories</h2>
               <div className="space-y-3">
                 {stats.topCategories.map(({ category, count }) => {
                   const maxCount = stats.topCategories[0].count
@@ -374,11 +374,11 @@ export default async function AdminPage() {
         <div className="rounded-2xl border border-subtle bg-card p-5">
           <div className="flex items-center gap-2 mb-4">
             <Users className="h-4 w-4 text-primary" />
-            <h2 className="text-sm font-semibold">Последние регистрации</h2>
+            <h2 className="text-sm font-semibold">Recent signups</h2>
           </div>
           <div className="space-y-3">
             {stats.recentUsers.length === 0 ? (
-              <p className="text-xs text-muted-foreground">Нет пользователей</p>
+              <p className="text-xs text-muted-foreground">No users yet</p>
             ) : (
               stats.recentUsers.map((u) => (
                 <div key={u.id} className="flex items-center gap-3">
@@ -389,7 +389,7 @@ export default async function AdminPage() {
                     <p className="text-xs font-medium truncate">{u.full_name ?? u.email?.split('@')[0]}</p>
                     <p className="text-[10px] text-muted-foreground flex items-center gap-1">
                       <Clock className="h-2.5 w-2.5" />
-                      {new Date(u.created_at).toLocaleDateString('ru', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                      {new Date(u.created_at).toLocaleDateString('en-US', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
                     </p>
                   </div>
                   <span className={`text-[10px] px-1.5 py-0.5 rounded-full ${
@@ -406,11 +406,11 @@ export default async function AdminPage() {
 
           {/* Platform health */}
           <div className="mt-6 pt-5 border-t border-subtle space-y-2">
-            <p className="text-xs font-semibold text-muted-foreground mb-3">Здоровье платформы</p>
+            <p className="text-xs font-semibold text-muted-foreground mb-3">Platform health</p>
             {[
-              { label: 'Заказы / пользователь', value: stats.users.total > 0 ? (stats.orders.total / stats.users.total).toFixed(1) : '0', good: true },
-              { label: 'Откликов / заказ',        value: stats.orders.total > 0 ? (stats.responses.total / stats.orders.total).toFixed(1) : '0', good: true },
-              { label: 'Сообщений / день',        value: stats.messages.today.toString(), good: stats.messages.today > 0 },
+              { label: 'Orders / user',       value: stats.users.total > 0 ? (stats.orders.total / stats.users.total).toFixed(1) : '0', good: true },
+              { label: 'Applications / order', value: stats.orders.total > 0 ? (stats.responses.total / stats.orders.total).toFixed(1) : '0', good: true },
+              { label: 'Messages / day',       value: stats.messages.today.toString(), good: stats.messages.today > 0 },
             ].map(({ label, value, good }) => (
               <div key={label} className="flex items-center justify-between">
                 <span className="text-xs text-muted-foreground">{label}</span>
@@ -425,7 +425,7 @@ export default async function AdminPage() {
       <div className="rounded-2xl border border-subtle bg-card p-5">
         <div className="flex items-center gap-2 mb-4">
           <ShieldCheck className="h-4 w-4 text-primary" />
-          <h2 className="text-sm font-semibold">Заявки на верификацию</h2>
+          <h2 className="text-sm font-semibold">Verification requests</h2>
           {stats.verifyRequests.length > 0 && (
             <span className="ml-auto text-xs px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400 font-semibold">
               {stats.verifyRequests.length}
@@ -433,7 +433,7 @@ export default async function AdminPage() {
           )}
         </div>
         {stats.verifyRequests.length === 0 ? (
-          <p className="text-xs text-muted-foreground">Нет заявок</p>
+          <p className="text-xs text-muted-foreground">No pending requests</p>
         ) : (
           <div className="space-y-3">
             {stats.verifyRequests.map((row) => (
@@ -444,7 +444,7 @@ export default async function AdminPage() {
                 <div className="flex-1 min-w-0">
                   <p className="text-xs font-medium truncate">{row.profiles?.full_name ?? row.profiles?.email ?? row.user_id}</p>
                   <p className="text-[10px] text-muted-foreground">
-                    {new Date(row.verification_requested_at).toLocaleDateString('ru', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                    {new Date(row.verification_requested_at).toLocaleDateString('en-US', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
                   </p>
                 </div>
                 <AdminManageButtons userId={row.user_id} mode="verify" />
@@ -458,7 +458,7 @@ export default async function AdminPage() {
       <div className="rounded-2xl border border-subtle bg-card p-5">
         <div className="flex items-center gap-2 mb-4">
           <Crown className="h-4 w-4 text-primary" />
-          <h2 className="text-sm font-semibold">Premium фрилансеры</h2>
+          <h2 className="text-sm font-semibold">Premium freelancers</h2>
           {stats.premiumFreelancers.length > 0 && (
             <span className="ml-auto text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary font-semibold">
               {stats.premiumFreelancers.length}
@@ -466,7 +466,7 @@ export default async function AdminPage() {
           )}
         </div>
         {stats.premiumFreelancers.length === 0 ? (
-          <p className="text-xs text-muted-foreground">Нет активных Premium</p>
+          <p className="text-xs text-muted-foreground">No active Premium members</p>
         ) : (
           <div className="space-y-3">
             {stats.premiumFreelancers.map((row) => (
@@ -478,8 +478,8 @@ export default async function AdminPage() {
                   <p className="text-xs font-medium truncate">{row.profiles?.full_name ?? row.user_id}</p>
                   <p className="text-[10px] text-muted-foreground">
                     {row.premium_until
-                      ? `до ${new Date(row.premium_until).toLocaleDateString('ru', { day: 'numeric', month: 'short' })}`
-                      : 'бессрочно'}
+                      ? `until ${new Date(row.premium_until).toLocaleDateString('en-US', { day: 'numeric', month: 'short' })}`
+                      : 'lifetime'}
                   </p>
                 </div>
                 <AdminManageButtons userId={row.user_id} mode="premium" isActive />
@@ -495,9 +495,9 @@ export default async function AdminPage() {
           <Activity className="h-6 w-6 text-primary" />
         </div>
         <div className="flex-1">
-          <p className="font-semibold mb-0.5">Vercel Analytics подключён</p>
+          <p className="font-semibold mb-0.5">Vercel Analytics connected</p>
           <p className="text-sm text-muted-foreground">
-            Трафик, источники, страницы, страны, устройства — всё автоматически. Данные появятся после первых посещений.
+            Traffic, sources, pages, countries, devices — all automatic. Data will appear after the first visits.
           </p>
         </div>
         <Link
@@ -506,7 +506,7 @@ export default async function AdminPage() {
           rel="noopener noreferrer"
           className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary text-white text-sm font-semibold hover:bg-primary/90 transition-colors flex-shrink-0"
         >
-          Открыть
+          Open
           <ExternalLink className="h-3.5 w-3.5" />
         </Link>
       </div>
@@ -518,7 +518,7 @@ export default async function AdminPage() {
 function NoDataChart({ label }: { label: string }) {
   return (
     <div className="h-10 flex items-center justify-center">
-      <span className="text-xs text-muted-foreground">Нет данных по {label}</span>
+      <span className="text-xs text-muted-foreground">No data for {label}</span>
     </div>
   )
 }

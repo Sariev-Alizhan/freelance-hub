@@ -4,14 +4,14 @@ import { FileText, Shield, Sparkles, Download } from 'lucide-react'
 import ContractClient from './ContractClient'
 
 export const metadata: Metadata = {
-  title: 'AI Генератор договора — FreelanceHub',
-  description: 'Сгенерируй профессиональный ГПХ-договор для фриланс-проекта с помощью AI за несколько секунд.',
+  title: 'AI Contract Generator — FreelanceHub',
+  description: 'Generate a professional freelance contract with AI in seconds.',
 }
 
 const FEATURES = [
-  { icon: Sparkles, text: 'Пишет полный ГПХ-договор по вашим параметрам' },
-  { icon: Shield,   text: 'Учитывает законодательство РФ, РК и РБ' },
-  { icon: Download, text: 'Скачай готовый файл или скопируй текст' },
+  { icon: Sparkles, text: 'Writes a full contract based on your parameters' },
+  { icon: Shield,   text: 'Legally structured for freelance agreements worldwide' },
+  { icon: Download, text: 'Download the ready file or copy the text' },
 ]
 
 export default function ContractsPage() {
@@ -23,10 +23,10 @@ export default function ContractsPage() {
           <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center">
             <FileText className="h-5 w-5 text-primary" />
           </div>
-          <h1 className="text-3xl font-bold">AI Генератор договора</h1>
+          <h1 className="text-3xl font-bold">AI Contract Generator</h1>
         </div>
         <p className="text-muted-foreground mb-4">
-          Заполни параметры — AI напишет полный профессиональный договор ГПХ за секунды.
+          Fill in the parameters — AI will write a full professional contract in seconds.
         </p>
         <div className="flex flex-wrap gap-4">
           {FEATURES.map(({ icon: Icon, text }) => (
@@ -39,7 +39,7 @@ export default function ContractsPage() {
       </div>
 
       <div className="mb-4 rounded-xl border border-amber-500/20 bg-amber-500/5 px-4 py-3 text-sm text-amber-600 dark:text-amber-400">
-        ⚠️ Договор носит ознакомительный характер. Перед подписанием рекомендуем проконсультироваться с юристом.
+        ⚠️ This contract is for informational purposes only. We recommend consulting a lawyer before signing.
       </div>
 
       <Suspense>

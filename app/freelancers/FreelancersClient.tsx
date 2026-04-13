@@ -150,10 +150,10 @@ export default function FreelancersClient({ realFreelancers = [] }: Props) {
             fontFeatureSettings: '"cv01", "ss03"',
           }}
         >
-          Фрилансеры
+          Freelancers
         </h1>
         <p style={{ fontSize: '14px', color: 'var(--fh-t3)', fontWeight: 400 }}>
-          Найдите идеального специалиста для вашего проекта
+          Find the perfect specialist for your project
         </p>
       </div>
 
@@ -167,7 +167,7 @@ export default function FreelancersClient({ realFreelancers = [] }: Props) {
               value={aiQuery}
               onChange={(e) => setAiQuery(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && runSmartSearch()}
-              placeholder="Опишите кого ищете — например: React-разработчик для стартапа"
+              placeholder="Describe who you're looking for — e.g. React developer for a startup"
               className="w-full outline-none transition-all"
               style={{
                 padding: '10px 14px 10px 36px',
@@ -185,7 +185,7 @@ export default function FreelancersClient({ realFreelancers = [] }: Props) {
             <input
               value={inputVal}
               onChange={(e) => setInputVal(e.target.value)}
-              placeholder="Поиск по имени, навыкам..."
+              placeholder="Search by name, skills..."
               className="w-full outline-none transition-all"
               style={{
                 padding: '10px 14px 10px 36px',
@@ -219,7 +219,7 @@ export default function FreelancersClient({ realFreelancers = [] }: Props) {
               onMouseLeave={e => { e.currentTarget.style.background = '#5e6ad2' }}
             >
               {aiLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
-              Найти
+              Search
             </button>
             <button
               onClick={disableAiMode}
@@ -234,7 +234,7 @@ export default function FreelancersClient({ realFreelancers = [] }: Props) {
                 fontWeight: 510,
               }}
             >
-              <X className="h-4 w-4" /> Обычный
+              <X className="h-4 w-4" /> Classic
             </button>
           </div>
         ) : (
@@ -253,9 +253,9 @@ export default function FreelancersClient({ realFreelancers = [] }: Props) {
                 fontWeight: 510,
               }}
             >
-              <option value="rating">По рейтингу</option>
-              <option value="price">По цене</option>
-              <option value="orders">По заказам</option>
+              <option value="rating">By rating</option>
+              <option value="price">By price</option>
+              <option value="orders">By orders</option>
             </select>
             <button
               onClick={() => setShowFilters(p => !p)}
@@ -297,7 +297,7 @@ export default function FreelancersClient({ realFreelancers = [] }: Props) {
               onMouseLeave={e => { e.currentTarget.style.background = 'rgba(113,112,255,0.06)' }}
             >
               <Sparkles className="h-4 w-4" />
-              AI Поиск
+              AI Search
             </button>
           </div>
         )}
@@ -313,7 +313,7 @@ export default function FreelancersClient({ realFreelancers = [] }: Props) {
             {/* Price min */}
             <div>
               <label style={{ fontSize: '11px', color: 'var(--fh-t4)', fontWeight: 510, textTransform: 'uppercase', letterSpacing: '0.04em', display: 'block', marginBottom: '6px' }}>
-                Цена от (₽)
+                Price from
               </label>
               <input
                 type="number"
@@ -331,7 +331,7 @@ export default function FreelancersClient({ realFreelancers = [] }: Props) {
             {/* Price max */}
             <div>
               <label style={{ fontSize: '11px', color: 'var(--fh-t4)', fontWeight: 510, textTransform: 'uppercase', letterSpacing: '0.04em', display: 'block', marginBottom: '6px' }}>
-                Цена до (₽)
+                Price to
               </label>
               <input
                 type="number"
@@ -349,7 +349,7 @@ export default function FreelancersClient({ realFreelancers = [] }: Props) {
             {/* Min rating */}
             <div>
               <label style={{ fontSize: '11px', color: 'var(--fh-t4)', fontWeight: 510, textTransform: 'uppercase', letterSpacing: '0.04em', display: 'block', marginBottom: '6px' }}>
-                Рейтинг от
+                Min rating
               </label>
               <select
                 value={filters.minRating}
@@ -361,7 +361,7 @@ export default function FreelancersClient({ realFreelancers = [] }: Props) {
                   color: 'var(--fh-t1)',
                 }}
               >
-                <option value={0}>Любой</option>
+                <option value={0}>Any</option>
                 <option value={3}>3+</option>
                 <option value={4}>4+</option>
                 <option value={4.5}>4.5+</option>
@@ -371,7 +371,7 @@ export default function FreelancersClient({ realFreelancers = [] }: Props) {
             {/* Availability */}
             <div>
               <label style={{ fontSize: '11px', color: 'var(--fh-t4)', fontWeight: 510, textTransform: 'uppercase', letterSpacing: '0.04em', display: 'block', marginBottom: '6px' }}>
-                Доступность
+                Availability
               </label>
               <select
                 value={filters.availability}
@@ -383,10 +383,10 @@ export default function FreelancersClient({ realFreelancers = [] }: Props) {
                   color: 'var(--fh-t1)',
                 }}
               >
-                <option value="all">Все</option>
-                <option value="open">Открыт</option>
-                <option value="busy">Занят</option>
-                <option value="vacation">В отпуске</option>
+                <option value="all">All</option>
+                <option value="open">Available</option>
+                <option value="busy">Busy</option>
+                <option value="vacation">On vacation</option>
               </select>
             </div>
           </div>
@@ -395,7 +395,7 @@ export default function FreelancersClient({ realFreelancers = [] }: Props) {
               onClick={() => { setFilters({ priceMin: '', priceMax: '', minRating: 0, availability: 'all' }); setPage(1) }}
               style={{ marginTop: '10px', fontSize: '12px', color: '#7170ff', fontWeight: 510, cursor: 'pointer', background: 'none', border: 'none', padding: 0 }}
             >
-              Сбросить фильтры
+              Reset filters
             </button>
           )}
         </div>
@@ -404,7 +404,7 @@ export default function FreelancersClient({ realFreelancers = [] }: Props) {
       {/* Category tabs */}
       {!(aiMode && aiResults) && (
         <div className="flex gap-1.5 flex-wrap mb-8">
-          {[{ slug: 'all' as const, label: 'Все' }, ...CATEGORIES].map((cat) => {
+          {[{ slug: 'all' as const, label: 'All' }, ...CATEGORIES].map((cat) => {
             const active = category === cat.slug
             return (
               <button
@@ -438,21 +438,21 @@ export default function FreelancersClient({ realFreelancers = [] }: Props) {
             >
               <Sparkles className="h-4 w-4 flex-shrink-0 mt-0.5" style={{ color: '#7170ff' }} />
               <div style={{ fontSize: '13px' }}>
-                <span style={{ color: 'var(--fh-t3)' }}>AI понял запрос как: </span>
+                <span style={{ color: 'var(--fh-t3)' }}>AI interpreted as: </span>
                 <span style={{ color: 'var(--fh-t1)', fontWeight: 510 }}>{aiInterpret}</span>
               </div>
             </div>
           )}
 
           <div className="mb-4" style={{ fontSize: '13px', color: 'var(--fh-t4)' }}>
-            AI нашёл: <span style={{ color: 'var(--fh-t1)', fontWeight: 590 }}>{aiRanked.length}</span> подходящих фрилансеров
+            AI found: <span style={{ color: 'var(--fh-t1)', fontWeight: 590 }}>{aiRanked.length}</span> matching freelancers
           </div>
 
           {aiRanked.length === 0 ? (
             <div className="text-center py-20">
               <Sparkles className="h-10 w-10 mx-auto mb-3" style={{ color: 'var(--fh-t4)', opacity: 0.4 }} />
-              <p style={{ fontSize: '16px', fontWeight: 510, color: 'var(--fh-t1)', marginBottom: '8px' }}>Ничего не найдено</p>
-              <p style={{ fontSize: '13px', color: 'var(--fh-t3)' }}>Попробуй другой запрос или используй обычный поиск</p>
+              <p style={{ fontSize: '16px', fontWeight: 510, color: 'var(--fh-t1)', marginBottom: '8px' }}>Nothing found</p>
+              <p style={{ fontSize: '13px', color: 'var(--fh-t3)' }}>Try a different query or use classic search</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
@@ -481,19 +481,19 @@ export default function FreelancersClient({ realFreelancers = [] }: Props) {
         <>
           {!aiMode && (
             <div className="mb-4" style={{ fontSize: '13px', color: 'var(--fh-t4)' }}>
-              Найдено: <span style={{ color: 'var(--fh-t1)', fontWeight: 590 }}>{filtered.length}</span> фрилансеров
+              Found: <span style={{ color: 'var(--fh-t1)', fontWeight: 590 }}>{filtered.length}</span> freelancers
             </div>
           )}
 
           {filtered.length === 0 ? (
             <div className="text-center py-20">
               <p style={{ fontSize: '16px', fontWeight: 510, color: 'var(--fh-t1)', marginBottom: '8px' }}>
-                {search || category !== 'all' ? 'Ничего не найдено' : 'Фрилансеров пока нет'}
+                {search || category !== 'all' ? 'Nothing found' : 'No freelancers yet'}
               </p>
               <p style={{ fontSize: '13px', color: 'var(--fh-t3)', maxWidth: '320px', margin: '0 auto', lineHeight: 1.6 }}>
                 {search || category !== 'all'
-                  ? 'Попробуйте изменить фильтры или поисковый запрос.'
-                  : 'Платформа только запустилась. Зарегистрируйтесь как фрилансер и станьте одним из первых!'}
+                  ? 'Try changing the filters or search query.'
+                  : 'The platform just launched. Register as a freelancer and be one of the first!'}
               </p>
               {!search && category === 'all' && (
                 <a
@@ -508,7 +508,7 @@ export default function FreelancersClient({ realFreelancers = [] }: Props) {
                     fontWeight: 510,
                   }}
                 >
-                  Зарегистрироваться бесплатно
+                  Register for free
                 </a>
               )}
             </div>
@@ -538,7 +538,7 @@ export default function FreelancersClient({ realFreelancers = [] }: Props) {
                     onMouseLeave={e => { e.currentTarget.style.background = 'var(--fh-surface-2)' }}
                   >
                     <ChevronDown className="h-4 w-4" />
-                    Показать ещё ({filtered.length - paginated.length})
+                    Show more ({filtered.length - paginated.length})
                   </button>
                 </div>
               )}

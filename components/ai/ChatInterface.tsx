@@ -9,7 +9,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 const WELCOME: ChatMsg = {
   id: 'welcome',
   role: 'assistant',
-  content: 'Привет! Я AI-ассистент FreelanceHub 👋\n\nОпишите вашу задачу, и я подберу идеального фрилансера. Можно написать просто: «нужен сайт», «хочу настроить рекламу» или «ищу дизайнера для приложения».',
+  content: 'Hi! I\'m the FreelanceHub AI assistant 👋\n\nDescribe your task and I\'ll find the perfect freelancer. You can simply say: "need a website", "want to set up ads", or "looking for an app designer".',
   timestamp: new Date(),
 }
 
@@ -124,7 +124,7 @@ export default function ChatInterface() {
                 {/* Matched freelancers */}
                 {msg.matchedFreelancers && msg.matchedFreelancers.length > 0 && (
                   <div className="w-full max-w-2xl space-y-3 mt-1">
-                    <p className="text-xs text-muted-foreground font-medium">Подобрано фрилансеров:</p>
+                    <p className="text-xs text-muted-foreground font-medium">Matched freelancers:</p>
                     {msg.matchedFreelancers.map((f) => (
                       <FreelancerCard key={f.id} freelancer={f} />
                     ))}
@@ -161,7 +161,7 @@ export default function ChatInterface() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && sendMessage()}
-            placeholder="Опишите вашу задачу..."
+            placeholder="Describe your task..."
             className="flex-1 px-4 py-3 rounded-xl bg-card border border-subtle text-sm placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 transition-colors"
           />
           <button

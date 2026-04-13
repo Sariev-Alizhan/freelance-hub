@@ -91,10 +91,10 @@ export default function OrdersClient({ realOrders = [] }: Props) {
               fontFeatureSettings: '"cv01", "ss03"',
             }}
           >
-            Заказы
+            Orders
           </h1>
           <p style={{ fontSize: '14px', color: 'var(--fh-t3)', fontWeight: 400 }}>
-            Находите проекты по своей специальности
+            Find projects in your field
           </p>
         </div>
         <Link
@@ -113,7 +113,7 @@ export default function OrdersClient({ realOrders = [] }: Props) {
           onMouseLeave={e => { e.currentTarget.style.background = '#5e6ad2' }}
         >
           <Plus className="h-4 w-4" />
-          Разместить заказ
+          Post a Job
         </Link>
       </div>
 
@@ -127,7 +127,7 @@ export default function OrdersClient({ realOrders = [] }: Props) {
           <input
             value={inputVal}
             onChange={(e) => setInputVal(e.target.value)}
-            placeholder="Поиск по заказам..."
+            placeholder="Search orders..."
             className="w-full transition-all outline-none"
             style={{
               padding: '10px 14px 10px 36px',
@@ -156,13 +156,13 @@ export default function OrdersClient({ realOrders = [] }: Props) {
           }}
         >
           <Zap className="h-4 w-4" />
-          Срочные
+          Urgent
         </button>
       </div>
 
       {/* Category tabs */}
       <div className="flex gap-1.5 flex-wrap mb-8">
-        {[{ slug: 'all' as const, label: 'Все' }, ...CATEGORIES].map((cat) => {
+        {[{ slug: 'all' as const, label: 'All' }, ...CATEGORIES].map((cat) => {
           const active = category === cat.slug
           return (
             <button
@@ -187,8 +187,8 @@ export default function OrdersClient({ realOrders = [] }: Props) {
 
       {/* Count */}
       <div className="mb-4" style={{ fontSize: '13px', color: 'var(--fh-t4)', fontWeight: 400 }}>
-        Найдено:{' '}
-        <span style={{ color: 'var(--fh-t1)', fontWeight: 590 }}>{filtered.length}</span> заказов
+        Found:{' '}
+        <span style={{ color: 'var(--fh-t1)', fontWeight: 590 }}>{filtered.length}</span> orders
       </div>
 
       {/* Results */}
@@ -202,12 +202,12 @@ export default function OrdersClient({ realOrders = [] }: Props) {
           </div>
           <div className="text-center">
             <p style={{ fontSize: '16px', fontWeight: 510, color: 'var(--fh-t1)', marginBottom: '8px', letterSpacing: '-0.02em' }}>
-              {search || urgentOnly || category !== 'all' ? 'Ничего не найдено' : 'Заказов пока нет'}
+              {search || urgentOnly || category !== 'all' ? 'Nothing found' : 'No orders yet'}
             </p>
             <p style={{ fontSize: '14px', color: 'var(--fh-t3)', maxWidth: '360px', lineHeight: 1.6 }}>
               {search || urgentOnly || category !== 'all'
-                ? 'Попробуйте изменить фильтры или сбросить поиск.'
-                : 'Платформа только запустилась — будьте первым! Разместите задачу бесплатно.'}
+                ? 'Try changing the filters or clearing the search.'
+                : 'The platform just launched — be the first! Post a job for free.'}
             </p>
           </div>
           {!search && !urgentOnly && category === 'all' && (
@@ -223,7 +223,7 @@ export default function OrdersClient({ realOrders = [] }: Props) {
                 fontWeight: 510,
               }}
             >
-              Разместить заказ бесплатно
+              Post a Job — Free
             </Link>
           )}
         </div>
@@ -253,7 +253,7 @@ export default function OrdersClient({ realOrders = [] }: Props) {
                 onMouseLeave={e => { e.currentTarget.style.background = 'var(--fh-surface-2)' }}
               >
                 <ChevronDown className="h-4 w-4" />
-                Показать ещё ({filtered.length - paginated.length})
+                Show more ({filtered.length - paginated.length})
               </button>
             </div>
           )}

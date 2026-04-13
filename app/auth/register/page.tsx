@@ -47,17 +47,17 @@ export default function RegisterPage() {
               fontFeatureSettings: '"cv01", "ss03"',
             }}
           >
-            Создать аккаунт
+            Create Account
           </h1>
           <p style={{ fontSize: '13px', color: 'var(--fh-t4)', fontWeight: 400 }}>
-            Уже есть аккаунт?{' '}
+            Already have an account?{' '}
             <Link
               href="/auth/login"
               style={{ color: '#7170ff', fontWeight: 510 }}
               onMouseEnter={e => { e.currentTarget.style.color = '#828fff' }}
               onMouseLeave={e => { e.currentTarget.style.color = '#7170ff' }}
             >
-              Войти
+              Sign In
             </Link>
           </p>
         </div>
@@ -72,12 +72,12 @@ export default function RegisterPage() {
           {/* Role selector */}
           <div>
             <p style={{ fontSize: '12px', fontWeight: 590, color: 'var(--fh-t3)', marginBottom: '10px', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-              Вы регистрируетесь как
+              I am registering as
             </p>
             <div className="grid grid-cols-2 gap-2.5">
               {([
-                { value: 'client' as UserRole, icon: Briefcase, label: 'Заказчик', sub: 'Размещаю задачи' },
-                { value: 'freelancer' as UserRole, icon: Code2, label: 'Фрилансер', sub: 'Выполняю заказы' },
+                { value: 'client' as UserRole, icon: Briefcase, label: 'Client', sub: 'I post jobs' },
+                { value: 'freelancer' as UserRole, icon: Code2, label: 'Freelancer', sub: 'I take jobs' },
               ]).map(({ value, icon: Icon, label, sub }) => {
                 const active = role === value
                 return (
@@ -130,7 +130,7 @@ export default function RegisterPage() {
                   <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="white" fillOpacity="0.9"/>
                 </svg>
               )}
-              Продолжить с Google
+              Continue with Google
             </button>
 
             <button
@@ -157,21 +157,21 @@ export default function RegisterPage() {
                   <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
                 </svg>
               )}
-              Продолжить с GitHub
+              Continue with GitHub
             </button>
           </div>
 
           <p className="text-center" style={{ fontSize: '12px', color: 'var(--fh-t2)', fontWeight: 400 }}>
-            Комиссия платформы:{' '}
+            Platform commission:{' '}
             <span style={{ color: '#27a644', fontWeight: 590 }}>0%</span>{' '}
-            — навсегда
+            — forever
           </p>
         </div>
 
         <p className="text-center mt-5" style={{ fontSize: '12px', color: 'var(--fh-t2)', fontWeight: 400 }}>
-          Регистрируясь, вы принимаете{' '}
+          By registering you agree to our{' '}
           <Link href="#" style={{ color: 'var(--fh-t3)' }} onMouseEnter={e => { e.currentTarget.style.color = 'var(--fh-t2)' }} onMouseLeave={e => { e.currentTarget.style.color = 'var(--fh-t3)' }}>
-            условия использования
+            Terms of Use
           </Link>
         </p>
       </div>

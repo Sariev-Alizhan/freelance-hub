@@ -4,16 +4,16 @@ import { useSearchParams } from 'next/navigation'
 import { FileText, Sparkles, Copy, Download, Check, Loader2, ChevronDown } from 'lucide-react'
 
 const PAYMENT_OPTIONS = [
-  { value: 'Предоплата 100% до начала работ', label: '100% предоплата' },
-  { value: 'Постоплата 100% после сдачи работ', label: '100% постоплата' },
-  { value: '50% предоплата, 50% после сдачи', label: '50/50' },
-  { value: 'Поэтапная оплата по актам выполненных работ', label: 'Поэтапно' },
+  { value: '100% prepayment before work begins', label: '100% upfront' },
+  { value: '100% payment after delivery', label: '100% on delivery' },
+  { value: '50% upfront, 50% after delivery', label: '50/50' },
+  { value: 'Milestone payments per completed stages', label: 'By milestones' },
 ]
 
 const IP_OPTIONS = [
-  { value: 'Исключительные права на результат полностью передаются Заказчику с момента оплаты', label: 'Полная передача Заказчику' },
-  { value: 'Заказчику передаётся простая (неисключительная) лицензия на использование результата', label: 'Лицензия Заказчику' },
-  { value: 'Исключительные права остаются у Исполнителя; Заказчик получает право использования', label: 'Остаются у Исполнителя' },
+  { value: 'Exclusive rights to the result are fully transferred to the Client upon payment', label: 'Full transfer to Client' },
+  { value: 'Client receives a simple (non-exclusive) license to use the result', label: 'License to Client' },
+  { value: 'Exclusive rights remain with the Freelancer; Client receives usage rights', label: 'Remains with Freelancer' },
 ]
 
 export default function ContractClient() {
@@ -27,7 +27,7 @@ export default function ContractClient() {
     amount:          params.get('budget')      ?? '',
     paymentOrder:    PAYMENT_OPTIONS[0].value,
     ipRights:        IP_OPTIONS[0].value,
-    city:            'Москва',
+    city:            'Almaty',
   })
 
   const [contract,  setContract]  = useState('')
@@ -68,7 +68,7 @@ export default function ContractClient() {
       }
     } catch (e: unknown) {
       if (e instanceof Error && e.name !== 'AbortError') {
-        setContract('Не удалось сгенерировать договор. Попробуй ещё раз.')
+        setContract('Failed to generate contract. Please try again.')
       }
     } finally {
       setLoading(false)
@@ -99,48 +99,48 @@ export default function ContractClient() {
       {/* ── Form ── */}
       <div className="space-y-4">
         <div className="rounded-2xl border border-subtle bg-card p-6 space-y-4">
-          <h2 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider">Стороны договора</h2>
+          <h2 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider">Contract parties</h2>
 
           <div>
-            <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Заказчик (ФИО или название)</label>
-            <input className={inputCls} placeholder="ИП Иванов Иван Иванович" value={form.clientName} onChange={set('clientName')} />
+            <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Client (name or company)</label>
+            <input className={inputCls} placeholder="John Smith / Acme Corp" value={form.clientName} onChange={set('clientName')} />
           </div>
           <div>
-            <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Исполнитель (ФИО фрилансера)</label>
-            <input className={inputCls} placeholder="Петров Пётр Петрович" value={form.freelancerName} onChange={set('freelancerName')} />
+            <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Freelancer (full name)</label>
+            <input className={inputCls} placeholder="Jane Doe" value={form.freelancerName} onChange={set('freelancerName')} />
           </div>
           <div>
-            <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Город составления</label>
-            <input className={inputCls} placeholder="Москва" value={form.city} onChange={set('city')} />
+            <label className="text-xs font-medium text-muted-foreground mb-1.5 block">City of signing</label>
+            <input className={inputCls} placeholder="Almaty" value={form.city} onChange={set('city')} />
           </div>
         </div>
 
         <div className="rounded-2xl border border-subtle bg-card p-6 space-y-4">
-          <h2 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider">Условия работы</h2>
+          <h2 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider">Work terms</h2>
 
           <div>
             <label className="text-xs font-medium text-muted-foreground mb-1.5 block">
-              Описание работ <span className="text-red-500">*</span>
+              Scope of work <span className="text-red-500">*</span>
             </label>
             <textarea
               className={`${inputCls} min-h-[110px] resize-none`}
-              placeholder="Разработка лендинга на Next.js с интеграцией платёжной системы…"
+              placeholder="Landing page development on Next.js with payment system integration…"
               value={form.workDescription}
               onChange={set('workDescription')}
             />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Срок выполнения</label>
-              <input className={inputCls} placeholder="14 дней" value={form.deadline} onChange={set('deadline')} />
+              <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Timeline</label>
+              <input className={inputCls} placeholder="14 days" value={form.deadline} onChange={set('deadline')} />
             </div>
             <div>
-              <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Сумма (₽)</label>
-              <input className={inputCls} type="number" placeholder="50000" value={form.amount} onChange={set('amount')} />
+              <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Amount ($)</label>
+              <input className={inputCls} type="number" placeholder="1000" value={form.amount} onChange={set('amount')} />
             </div>
           </div>
           <div>
-            <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Порядок оплаты</label>
+            <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Payment terms</label>
             <div className="relative">
               <select className={`${inputCls} appearance-none pr-8`} value={form.paymentOrder} onChange={set('paymentOrder')}>
                 {PAYMENT_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
@@ -149,7 +149,7 @@ export default function ContractClient() {
             </div>
           </div>
           <div>
-            <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Права на результат (ИС)</label>
+            <label className="text-xs font-medium text-muted-foreground mb-1.5 block">IP rights</label>
             <div className="relative">
               <select className={`${inputCls} appearance-none pr-8`} value={form.ipRights} onChange={set('ipRights')}>
                 {IP_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
@@ -165,9 +165,9 @@ export default function ContractClient() {
           className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl bg-primary text-white font-semibold hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {loading ? (
-            <><Loader2 className="h-4 w-4 animate-spin" /> Генерирую договор…</>
+            <><Loader2 className="h-4 w-4 animate-spin" /> Generating contract…</>
           ) : (
-            <><Sparkles className="h-4 w-4" /> Сгенерировать договор</>
+            <><Sparkles className="h-4 w-4" /> Generate contract</>
           )}
         </button>
       </div>
@@ -179,7 +179,7 @@ export default function ContractClient() {
             <div className="flex items-center justify-between px-5 py-4 border-b border-subtle">
               <div className="flex items-center gap-2 text-sm font-semibold">
                 <FileText className="h-4 w-4 text-primary" />
-                Договор готов
+                Contract ready
               </div>
               <div className="flex items-center gap-2">
                 <button
@@ -187,14 +187,14 @@ export default function ContractClient() {
                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-subtle bg-subtle hover:bg-surface text-xs font-medium transition-colors"
                 >
                   {copied ? <Check className="h-3.5 w-3.5 text-green-500" /> : <Copy className="h-3.5 w-3.5" />}
-                  {copied ? 'Скопировано' : 'Копировать'}
+                  {copied ? 'Copied!' : 'Copy'}
                 </button>
                 <button
                   onClick={download}
                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary text-white text-xs font-medium hover:bg-primary/90 transition-colors"
                 >
                   <Download className="h-3.5 w-3.5" />
-                  Скачать .txt
+                  Download .txt
                 </button>
               </div>
             </div>
@@ -208,15 +208,15 @@ export default function ContractClient() {
               <FileText className="h-8 w-8 text-primary" />
             </div>
             <div>
-              <p className="font-semibold mb-1">Договор появится здесь</p>
+              <p className="font-semibold mb-1">Contract will appear here</p>
               <p className="text-sm text-muted-foreground max-w-xs">
-                Заполни описание работ и нажми «Сгенерировать» — AI напишет полный ГПХ-договор за несколько секунд
+                Fill in the work description and click "Generate" — AI will write a full contract in seconds
               </p>
             </div>
             {loading && (
               <div className="flex items-center gap-2 text-sm text-primary animate-pulse">
                 <Loader2 className="h-4 w-4 animate-spin" />
-                Генерирую…
+                Generating…
               </div>
             )}
           </div>

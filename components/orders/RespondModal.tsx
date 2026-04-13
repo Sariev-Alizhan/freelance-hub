@@ -111,13 +111,13 @@ export default function RespondModal({
       })
       if (!res.ok) {
         const json = await res.json()
-        throw new Error(json.error || 'Ошибка')
+        throw new Error(json.error || 'Error')
       }
       setStep('success')
-      success('Отклик отправлен!', 'Заказчик получит уведомление')
+      success('Application sent!', 'The client will be notified')
     } catch (e) {
       console.error(e)
-      toastError('Ошибка отправки', 'Попробуйте ещё раз')
+      toastError('Failed to send', 'Please try again')
     } finally {
       setSubmitting(false)
     }
@@ -163,16 +163,16 @@ export default function RespondModal({
               <Check className="h-10 w-10 text-green-400" />
             </motion.div>
             <div>
-              <h2 className="text-xl font-bold mb-1">Отклик отправлен!</h2>
+              <h2 className="text-xl font-bold mb-1">Application sent!</h2>
               <p className="text-muted-foreground text-sm">
-                Заказчик получит уведомление и свяжется с вами в ближайшее время
+                The client will be notified and will reach out to you soon
               </p>
             </div>
             <button
               onClick={onClose}
               className="mt-2 px-8 py-3 rounded-xl bg-primary text-white font-semibold hover:bg-primary/90 transition-colors"
             >
-              Отлично!
+              Great!
             </button>
           </div>
         ) : (
@@ -180,7 +180,7 @@ export default function RespondModal({
             {/* Header */}
             <div className="flex items-start justify-between p-5 border-b border-subtle flex-shrink-0">
               <div className="pr-4">
-                <h2 className="font-bold text-lg leading-tight">Отклик на заказ</h2>
+                <h2 className="font-bold text-lg leading-tight">Apply for order</h2>
                 <p className="text-sm text-muted-foreground mt-0.5 line-clamp-1">{orderTitle}</p>
               </div>
               <button
@@ -198,8 +198,8 @@ export default function RespondModal({
               <div>
                 <label className="text-sm font-medium mb-2 flex items-center gap-1.5 block">
                   <DollarSign className="h-3.5 w-3.5 text-muted-foreground" />
-                  Ваша цена
-                  <span className="text-muted-foreground font-normal text-xs ml-1">(необязательно)</span>
+                  Your price
+                  <span className="text-muted-foreground font-normal text-xs ml-1">(optional)</span>
                 </label>
                 <div className="flex items-center gap-3">
                   <div className="relative flex-1">
@@ -209,8 +209,8 @@ export default function RespondModal({
                       onChange={e => setPrice(e.target.value)}
                       placeholder={
                         budgetMin && budgetMax
-                          ? `${budgetMin.toLocaleString('ru')} – ${budgetMax.toLocaleString('ru')} ₽`
-                          : 'Предложите цену'
+                          ? `${budgetMin.toLocaleString()} – ${budgetMax.toLocaleString()} ₽`
+                          : 'Propose a price'
                       }
                       className="w-full pl-4 pr-12 py-3 rounded-xl bg-background border border-subtle text-sm placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 transition-colors"
                     />
@@ -218,7 +218,7 @@ export default function RespondModal({
                   </div>
                   {budgetMin > 0 && budgetMax > 0 && (
                     <div className="text-xs text-muted-foreground whitespace-nowrap">
-                      Бюджет: {budgetMin.toLocaleString('ru')}–{budgetMax.toLocaleString('ru')} ₽
+                      Budget: {budgetMin.toLocaleString()}–{budgetMax.toLocaleString()} ₽
                     </div>
                   )}
                 </div>
@@ -227,7 +227,7 @@ export default function RespondModal({
               {/* Message */}
               <div>
                 <div className="flex items-center justify-between mb-2">
-                  <label className="text-sm font-medium">Сопроводительное письмо</label>
+                  <label className="text-sm font-medium">Cover letter</label>
                   <button
                     onClick={generateMessage}
                     disabled={aiLoading}
@@ -237,7 +237,7 @@ export default function RespondModal({
                       ? <Loader2 className="h-3 w-3 animate-spin" />
                       : <Wand2 className="h-3 w-3" />
                     }
-                    AI-черновик
+                    AI draft
                   </button>
                 </div>
 
@@ -246,7 +246,7 @@ export default function RespondModal({
                     ref={textareaRef}
                     value={message}
                     onChange={e => { setMessage(e.target.value); setAdvice(null) }}
-                    placeholder="Расскажите почему вы подходите для этой задачи, ваш опыт и подход к работе..."
+                    placeholder="Tell us why you're a great fit for this task, your experience and approach..."
                     rows={5}
                     className="w-full px-4 py-3 rounded-xl bg-background border border-subtle text-sm placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 transition-colors resize-none min-h-[120px]"
                   />
@@ -257,7 +257,7 @@ export default function RespondModal({
 
                 <div className="flex items-center justify-between mt-1.5">
                   <span className={`text-xs ${isReady ? 'text-green-400' : 'text-muted-foreground'}`}>
-                    {isReady ? '✓ Достаточно' : `Минимум 50 символов (ещё ${50 - charCount})`}
+                    {isReady ? '✓ Good to go' : `Minimum 50 characters (${50 - charCount} more)`}
                   </span>
                   {isReady && (
                     <button
@@ -266,7 +266,7 @@ export default function RespondModal({
                       className="flex items-center gap-1 text-xs text-primary hover:text-primary/80 transition-colors"
                     >
                       {adviceLoading ? <Loader2 className="h-3 w-3 animate-spin" /> : <Sparkles className="h-3 w-3" />}
-                      Оценить AI
+                      AI rate
                     </button>
                   )}
                 </div>
@@ -285,14 +285,14 @@ export default function RespondModal({
                       {adviceLoading ? (
                         <div className="flex items-center gap-2 text-sm text-muted-foreground">
                           <Loader2 className="h-4 w-4 animate-spin text-primary" />
-                          AI анализирует ваш отклик...
+                          AI is analyzing your application...
                         </div>
                       ) : advice && (
                         <>
                           <div className="flex items-center justify-between mb-3">
                             <div className="flex items-center gap-2">
                               <Sparkles className={`h-4 w-4 ${scoreColor(advice.score)}`} />
-                              <span className="text-sm font-semibold">Оценка AI</span>
+                              <span className="text-sm font-semibold">AI score</span>
                             </div>
                             <div className="flex items-center gap-2">
                               <span className={`text-xl font-bold ${scoreColor(advice.score)}`}>
@@ -327,8 +327,8 @@ export default function RespondModal({
               {/* Auth warning */}
               {!user && (
                 <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-4 text-sm text-amber-400">
-                  Для отправки отклика нужно{' '}
-                  <a href="/auth/login" className="underline font-medium">войти в аккаунт</a>
+                  To submit an application you need to{' '}
+                  <a href="/auth/login" className="underline font-medium">sign in</a>
                 </div>
               )}
             </div>
@@ -339,7 +339,7 @@ export default function RespondModal({
                 onClick={onClose}
                 className="flex-1 py-3 rounded-xl border border-subtle text-sm font-medium hover:bg-subtle transition-colors"
               >
-                Отмена
+                Cancel
               </button>
               <button
                 onClick={handleSubmit}
@@ -347,8 +347,8 @@ export default function RespondModal({
                 className="flex-[2] flex items-center justify-center gap-2 py-3 rounded-xl bg-primary text-white text-sm font-semibold hover:bg-primary/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 {submitting
-                  ? <><Loader2 className="h-4 w-4 animate-spin" /> Отправляю...</>
-                  : <><Send className="h-4 w-4" /> Отправить отклик</>
+                  ? <><Loader2 className="h-4 w-4 animate-spin" /> Sending...</>
+                  : <><Send className="h-4 w-4" /> Send application</>
                 }
               </button>
             </div>

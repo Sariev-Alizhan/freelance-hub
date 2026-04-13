@@ -21,7 +21,7 @@ const CURRENCY_LABELS: Record<Currency, string> = {
 }
 // Show only top 5 in compact pill, rest in dropdown
 const CURRENCY_COMPACT: Currency[] = ['KZT', 'RUB', 'USD', 'EUR', 'USDT']
-const LANGS: Lang[] = ['ru', 'kz', 'en']
+const LANGS: Lang[] = ['en', 'ru']
 
 export default function Header() {
   const { currency, setCurrency } = useCurrency()
@@ -37,6 +37,7 @@ export default function Header() {
   const NAV_LINKS = [
     { href: '/orders',       label: t.nav.orders      },
     { href: '/freelancers',  label: t.nav.freelancers  },
+    { href: '/agents',       label: t.nav.agents       },
     { href: '/ai-assistant', label: t.nav.ai           },
     { href: '/contracts',    label: t.nav.contracts    },
   ]
@@ -145,7 +146,7 @@ export default function Header() {
                   color: 'var(--fh-t3)',
                   fontWeight: 590,
                 }}
-                aria-label="Выбрать язык"
+                aria-label="Select language"
               >
                 <Languages className="h-3.5 w-3.5" />
                 <span>{LANG_LABELS[lang]}</span>
@@ -174,7 +175,6 @@ export default function Header() {
                       onMouseEnter={e => { if (l !== lang) e.currentTarget.style.background = 'var(--fh-surface-2)' }}
                       onMouseLeave={e => { if (l !== lang) e.currentTarget.style.background = 'transparent' }}
                     >
-                      {l === 'kz' ? '🇰🇿' : null}
                       {LANG_LABELS[l]}
                     </button>
                   ))}
@@ -277,7 +277,7 @@ export default function Header() {
                             onClick={() => setMenuOpen(false)}
                           >
                             <BarChart3 className="h-3.5 w-3.5" />
-                            Аналитика
+                            Admin
                           </Link>
                         )}
                         <div className="my-1 h-px mx-3" style={{ background: 'var(--fh-sep)' }} />
@@ -324,7 +324,7 @@ export default function Header() {
               className="md:hidden flex items-center justify-center h-8 w-8 rounded-md transition-colors"
               style={{ color: 'var(--fh-t3)' }}
               onClick={() => setMobileOpen(!mobileOpen)}
-              aria-label="Меню"
+              aria-label="Menu"
             >
               {mobileOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
             </button>

@@ -3,34 +3,34 @@ import { createClient } from '@/lib/supabase/server'
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
-const SYSTEM = `Ты — юридический ассистент, специализирующийся на договорах гражданско-правового характера (ГПХ) для фриланс-рынка СНГ.
-Сгенерируй полный профессиональный договор на оказание услуг/выполнение работ.
+const SYSTEM = `You are a legal assistant specializing in freelance service agreements for the global market.
+Generate a complete, professional services contract.
 
-Структура договора:
-1. Заголовок (город, дата)
-2. Стороны договора
-3. Предмет договора
-4. Права и обязанности Заказчика
-5. Права и обязанности Исполнителя
-6. Сроки выполнения работ
-7. Стоимость и порядок оплаты
-8. Права на результат интеллектуальной деятельности
-9. Конфиденциальность
-10. Ответственность сторон
-11. Форс-мажор
-12. Порядок разрешения споров
-13. Заключительные положения
-14. Реквизиты и подписи сторон
+Contract structure:
+1. Header (city, date)
+2. Parties
+3. Scope of work
+4. Client rights and obligations
+5. Freelancer rights and obligations
+6. Timeline
+7. Payment terms
+8. Intellectual property rights
+9. Confidentiality
+10. Liability
+11. Force majeure
+12. Dispute resolution
+13. General provisions
+14. Signatures
 
-Требования:
-- Юридически грамотный язык
-- Защищает интересы обеих сторон
-- Чёткие формулировки без двусмысленности
-- Соответствует законодательству РФ/РК/РБ
-- Используй конкретные данные из запроса
-- Пиши дату как: г. [город], «__» __________ 202__ г.
-- В реквизитах оставь поля для заполнения: ____________
-Отвечай только текстом договора, без пояснений до и после.`
+Requirements:
+- Professional legal language
+- Protects both parties equally
+- Clear, unambiguous terms
+- Suitable for international freelance agreements
+- Use the specific data from the request
+- Write date as: [City], __________, 202__
+- Leave blank fields for manual completion: ____________
+Respond with the contract text only — no explanations before or after.`
 
 export async function POST(request: Request) {
   const supabase = await createClient()
@@ -45,7 +45,7 @@ export async function POST(request: Request) {
     amount,
     paymentOrder,
     ipRights,
-    city = 'Москва',
+    city = 'Almaty',
   } = await request.json()
 
   if (!process.env.ANTHROPIC_API_KEY) {
@@ -53,15 +53,15 @@ export async function POST(request: Request) {
     return new Response(mock, { headers: { 'Content-Type': 'text/plain; charset=utf-8' } })
   }
 
-  const userPrompt = `Составь договор со следующими параметрами:
-Город: ${city}
-Заказчик: ${clientName || 'ИП Иванов Иван Иванович'}
-Исполнитель: ${freelancerName || 'Петров Пётр Петрович'}
-Описание работ: ${workDescription}
-Срок выполнения: ${deadline}
-Стоимость: ${Number(amount).toLocaleString('ru-RU')} ₽
-Порядок оплаты: ${paymentOrder}
-Права на результат: ${ipRights}`
+  const userPrompt = `Generate a contract with the following parameters:
+City: ${city}
+Client: ${clientName || 'John Smith'}
+Freelancer: ${freelancerName || 'Jane Doe'}
+Scope of work: ${workDescription}
+Timeline: ${deadline}
+Amount: $${Number(amount).toLocaleString()}
+Payment terms: ${paymentOrder}
+IP rights: ${ipRights}`
 
   const stream = client.messages.stream({
     model: 'claude-sonnet-4-6',
@@ -97,58 +97,58 @@ function getMockContract(p: {
   clientName: string; freelancerName: string; workDescription: string
   deadline: string; amount: string; paymentOrder: string; ipRights: string; city: string
 }) {
-  return `ДОГОВОР НА ОКАЗАНИЕ УСЛУГ № ___
+  return `FREELANCE SERVICES AGREEMENT No. ___
 
-г. ${p.city}, «__» __________ 202__ г.
+${p.city}, __________, 202__
 
-СТОРОНЫ
+PARTIES
 
-Заказчик: ${p.clientName || 'ИП Иванов Иван Иванович'}, именуемый в дальнейшем «Заказчик», с одной стороны,
-и
-Исполнитель: ${p.freelancerName || 'Петров Пётр Петрович'}, именуемый в дальнейшем «Исполнитель», с другой стороны,
-совместно именуемые «Стороны», заключили настоящий договор о нижеследующем:
+Client: ${p.clientName || 'John Smith'}, hereinafter referred to as the "Client",
+and
+Freelancer: ${p.freelancerName || 'Jane Doe'}, hereinafter referred to as the "Freelancer",
+collectively referred to as the "Parties", have entered into this Agreement as follows:
 
-1. ПРЕДМЕТ ДОГОВОРА
+1. SCOPE OF WORK
 
-1.1. Исполнитель обязуется выполнить следующие работы (услуги):
+1.1. The Freelancer agrees to perform the following services:
 ${p.workDescription}
 
-1.2. Результат работ передаётся Заказчику в согласованном формате.
+1.2. The deliverables shall be provided to the Client in the agreed format.
 
-2. СРОКИ
+2. TIMELINE
 
-2.1. Срок выполнения работ: ${p.deadline}.
-2.2. Срок может быть изменён по письменному соглашению сторон.
+2.1. Completion deadline: ${p.deadline}.
+2.2. The deadline may be extended by written agreement of both Parties.
 
-3. СТОИМОСТЬ И ПОРЯДОК ОПЛАТЫ
+3. PAYMENT
 
-3.1. Вознаграждение Исполнителя составляет ${Number(p.amount).toLocaleString('ru-RU')} (${p.amount} рублей 00 копеек).
-3.2. Порядок оплаты: ${p.paymentOrder}.
-3.3. Оплата производится на реквизиты Исполнителя, указанные в разделе 8.
+3.1. The Freelancer's fee is $${Number(p.amount).toLocaleString()} (${p.amount} US dollars).
+3.2. Payment terms: ${p.paymentOrder}.
+3.3. Payment shall be made to the Freelancer's details specified in Section 8.
 
-4. ПРАВА НА РЕЗУЛЬТАТ
+4. INTELLECTUAL PROPERTY
 
 4.1. ${p.ipRights}.
 
-5. КОНФИДЕНЦИАЛЬНОСТЬ
+5. CONFIDENTIALITY
 
-5.1. Стороны обязуются не разглашать сведения, полученные в ходе исполнения настоящего договора, третьим лицам.
+5.1. Both Parties agree not to disclose any information obtained in the course of this Agreement to third parties.
 
-6. ОТВЕТСТВЕННОСТЬ СТОРОН
+6. LIABILITY
 
-6.1. За нарушение сроков оплаты Заказчик уплачивает пени в размере 0,1% от суммы за каждый день просрочки.
-6.2. За нарушение сроков выполнения Исполнитель уплачивает пени в размере 0,1% от суммы за каждый день просрочки.
+6.1. For late payment, the Client shall pay a penalty of 0.1% of the amount for each day of delay.
+6.2. For late delivery, the Freelancer shall pay a penalty of 0.1% of the amount for each day of delay.
 
-7. РАЗРЕШЕНИЕ СПОРОВ
+7. DISPUTE RESOLUTION
 
-7.1. Споры решаются путём переговоров. При недостижении соглашения — в суде по месту нахождения Ответчика.
+7.1. Disputes shall be resolved through negotiation. If no agreement is reached — through the courts at the Defendant's location.
 
-8. РЕКВИЗИТЫ И ПОДПИСИ
+8. SIGNATURES
 
-Заказчик:                          Исполнитель:
-ФИО: ___________________           ФИО: ___________________
-Телефон: _______________           Телефон: _______________
-Email: _________________           Email: _________________
-Подпись: _______________           Подпись: _______________
-Дата: __________________           Дата: __________________`
+Client:                            Freelancer:
+Name: ___________________          Name: ___________________
+Phone: __________________          Phone: __________________
+Email: __________________          Email: __________________
+Signature: ______________          Signature: ______________
+Date: ___________________          Date: ___________________`
 }

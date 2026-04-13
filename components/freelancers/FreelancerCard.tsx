@@ -7,7 +7,7 @@ import FavoriteButton from '@/components/shared/FavoriteButton'
 import { Freelancer } from '@/lib/types'
 
 const LEVEL_LABELS = {
-  new:    { label: 'Новичок', color: 'var(--fh-skill-bg)',         text: 'var(--fh-t3)'  },
+  new:    { label: 'Newcomer', color: 'var(--fh-skill-bg)',         text: 'var(--fh-t3)'  },
   junior: { label: 'Junior',  color: 'rgba(56,189,248,0.1)',        text: '#38bdf8'       },
   middle: { label: 'Middle',  color: 'rgba(39,166,68,0.1)',         text: '#27a644'       },
   senior: { label: 'Senior',  color: 'rgba(113,112,255,0.12)',      text: '#7170ff'       },
@@ -15,9 +15,9 @@ const LEVEL_LABELS = {
 }
 
 const AVAILABILITY_LABELS = {
-  open:     { label: 'Открыт',    dot: '#27a644' },
-  busy:     { label: 'Занят',     dot: '#f59e0b' },
-  vacation: { label: 'Отпуск',    dot: '#8a8f98' },
+  open:     { label: 'Available',   dot: '#27a644' },
+  busy:     { label: 'Busy',        dot: '#f59e0b' },
+  vacation: { label: 'On vacation', dot: '#8a8f98' },
 }
 
 interface Props { freelancer: Freelancer }
@@ -51,7 +51,7 @@ export default function FreelancerCard({ freelancer: f }: Props) {
           style={{ padding: '2px 8px', background: 'rgba(251,191,36,0.12)', border: '1px solid rgba(251,191,36,0.3)' }}
         >
           <TrendingUp className="h-2.5 w-2.5" style={{ color: '#fbbf24' }} />
-          <span style={{ fontSize: '10px', fontWeight: 590, color: '#fbbf24', letterSpacing: '0.04em' }}>ТОП</span>
+          <span style={{ fontSize: '10px', fontWeight: 590, color: '#fbbf24', letterSpacing: '0.04em' }}>TOP</span>
         </div>
       )}
 
@@ -117,7 +117,7 @@ export default function FreelancerCard({ freelancer: f }: Props) {
             {f.reviewsCount > 0 ? (
               <RatingStars rating={f.rating} count={f.reviewsCount} />
             ) : (
-              <span style={{ fontSize: '12px', color: 'var(--fh-t4)', fontWeight: 400 }}>Новый участник</span>
+              <span style={{ fontSize: '12px', color: 'var(--fh-t4)', fontWeight: 400 }}>New member</span>
             )}
             <div className="flex items-center gap-1" style={{ color: 'var(--fh-t4)' }}>
               <MapPin className="h-3 w-3" />
@@ -170,8 +170,8 @@ export default function FreelancerCard({ freelancer: f }: Props) {
             style={{ borderTop: '1px solid var(--fh-sep)' }}
           >
             <div>
-              <PriceDisplay amountRub={f.priceFrom} prefix="от " size="sm" className="font-medium" />
-              <span style={{ fontSize: '11px', color: 'var(--fh-t4)' }}> / час</span>
+              <PriceDisplay amountRub={f.priceFrom} prefix="from " size="sm" className="font-medium" />
+              <span style={{ fontSize: '11px', color: 'var(--fh-t4)' }}> / hr</span>
             </div>
             <div className="flex items-center gap-1" style={{ color: 'var(--fh-t4)' }}>
               <Clock className="h-3 w-3" />

@@ -7,6 +7,7 @@ const LINKS = {
   platform: [
     { href: '/orders',       ru: 'Найти заказ',       kz: 'Тапсырыс табу',  en: 'Find Order'       },
     { href: '/freelancers',  ru: 'Найти фрилансера',  kz: 'Фрилансер табу', en: 'Find Freelancer'  },
+    { href: '/agents',       ru: 'AI Агенты',          kz: 'AI Агенттер',    en: 'AI Agents'        },
     { href: '/ai-assistant', ru: 'AI‑подбор',          kz: 'AI‑іздеу',       en: 'AI Match'         },
     { href: '/contracts',    ru: 'AI Контракты',       kz: 'AI Келісімшарт', en: 'AI Contracts'     },
     { href: '/dashboard',    ru: 'Личный кабинет',    kz: 'Жеке кабинет',   en: 'Dashboard'        },
@@ -18,7 +19,7 @@ const LINKS = {
     { href: '/freelancers?category=ai-ml', ru: 'AI / ML',     kz: 'AI / ML',        en: 'AI / ML'     },
   ],
   company: [
-    { href: '/about',  ru: 'О создателе',           kz: 'Жасаушы туралы', en: 'About Creator', external: false },
+    { href: '/about',  ru: 'О нас',                  kz: 'Біз туралы',     en: 'About Us',      external: false },
     { href: '#terms',  ru: 'Условия',               kz: 'Шарттар',        en: 'Terms',         external: false },
     { href: '#privacy',ru: 'Конфиденциальность',   kz: 'Құпиялылық',     en: 'Privacy',       external: false },
     { href: 'https://www.instagram.com/sariyev.it.solutions/?hl=ru', ru: 'SITS Instagram', kz: 'SITS Instagram', en: 'SITS Instagram', external: true },
@@ -95,11 +96,10 @@ export default function Footer() {
         >
           <div className="flex-1">
             <p style={{ fontSize: '13px', fontWeight: 590, color: '#27a644', marginBottom: '3px' }}>
-              {lang === 'en' ? '💬 Community & Feedback' : lang === 'kz' ? '💬 Қауымдастық және пікірлер' : '💬 Сообщество и обратная связь'}
+              {lang === 'en' ? '💬 Community & Feedback' : '💬 Сообщество и обратная связь'}
             </p>
             <p style={{ fontSize: '12px', color: 'var(--fh-t4)', fontWeight: 400 }}>
               {lang === 'en' ? 'Share your ideas, report bugs, or just say hi!'
-                : lang === 'kz' ? 'Идеяларыңызды бөлісіңіз, қателерді хабарлаңыз немесе сәлемдесіңіз!'
                 : 'Делитесь идеями, сообщайте о багах или просто пишите!'}
             </p>
           </div>
@@ -161,7 +161,7 @@ export default function Footer() {
             {t.footer.copyright.split('SITS')[1]}
           </p>
           <p style={{ fontSize: '12px', color: 'var(--fh-t4)', fontWeight: 400 }}>
-            🇰🇿 🇷🇺 🇺🇦 🇧🇾 🇬🇪 · {lang === 'ru' ? 'Весь мир' : lang === 'kz' ? 'Бүкіл әлем' : 'The World'}
+            🇰🇿 🇷🇺 🇺🇦 🇧🇾 🇬🇪 · {lang === 'ru' ? 'Весь мир' : 'The World'}
           </p>
         </div>
       </div>

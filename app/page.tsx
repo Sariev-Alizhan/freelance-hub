@@ -3,6 +3,7 @@ import CategoriesSection from '@/components/landing/CategoriesSection'
 import TopFreelancers from '@/components/landing/TopFreelancers'
 import HowItWorks from '@/components/landing/HowItWorks'
 import AIFeaturesSection from '@/components/landing/AIFeaturesSection'
+import AgentsSection from '@/components/landing/AgentsSection'
 import CTASection from '@/components/landing/CTASection'
 
 export default function Home() {
@@ -13,6 +14,7 @@ export default function Home() {
       <TopFreelancers />
       <HowItWorks />
       <AIFeaturesSection />
+      <AgentsSection />
       <CTASection />
     </>
   )

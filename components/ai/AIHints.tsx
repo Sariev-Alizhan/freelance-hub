@@ -1,14 +1,14 @@
 'use client'
 
 const HINTS = [
-  'Нужен React разработчик для сайта, бюджет 80К',
-  'Ищу дизайнера для мобильного приложения',
-  'Хочу настроить рекламу в ВКонтакте',
+  'Need a React developer for a website, budget $800',
+  'Looking for a designer for a mobile app',
+  'Want to set up targeted ads on Instagram',
 ]
 
 export default function AIHints() {
   function applyHint(hint: string) {
-    const input = document.querySelector('input[placeholder="Опишите вашу задачу..."]') as HTMLInputElement
+    const input = document.querySelector('input[placeholder="Describe your task..."]') as HTMLInputElement
     if (input) {
       const nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value')?.set
       nativeInputValueSetter?.call(input, hint)

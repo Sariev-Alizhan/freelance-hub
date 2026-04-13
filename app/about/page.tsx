@@ -2,9 +2,9 @@ import type { Metadata } from 'next'
 import AboutContent from './AboutContent'
 
 export const metadata: Metadata = {
-  title: 'О создателе — FreelanceHub',
+  title: 'About Us — FreelanceHub',
   description:
-    'Сариев Алижан Сабитулы — разработчик из Казахстана. Создал FreelanceHub, чтобы фрилансеры СНГ могли работать без комиссий и сложных западных платформ.',
+    'FreelanceHub is a global freelance platform built to remove barriers: no commissions, no complex registrations, no regional restrictions. Built in Almaty, open to the world.',
 }
 
 export default function AboutPage() {

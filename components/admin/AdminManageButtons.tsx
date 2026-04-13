@@ -27,7 +27,7 @@ export default function AdminManageButtons({ userId, mode, isActive }: Props) {
   }
 
   if (done) {
-    return <span className="text-xs text-green-400">Готово</span>
+    return <span className="text-xs text-green-400">Done</span>
   }
 
   if (mode === 'verify') {
@@ -39,7 +39,7 @@ export default function AdminManageButtons({ userId, mode, isActive }: Props) {
           className="flex items-center gap-1 text-xs px-2.5 py-1 rounded-lg font-medium transition-all disabled:opacity-50"
           style={{ background: 'rgba(39,166,68,0.1)', color: '#27a644', border: '1px solid rgba(39,166,68,0.2)' }}
         >
-          <CheckCircle className="h-3 w-3" /> Подтвердить
+          <CheckCircle className="h-3 w-3" /> Verify
         </button>
         <button
           onClick={() => act('reject_verification')}
@@ -47,7 +47,7 @@ export default function AdminManageButtons({ userId, mode, isActive }: Props) {
           className="flex items-center gap-1 text-xs px-2.5 py-1 rounded-lg font-medium transition-all disabled:opacity-50"
           style={{ background: 'rgba(239,68,68,0.08)', color: '#ef4444', border: '1px solid rgba(239,68,68,0.15)' }}
         >
-          <XCircle className="h-3 w-3" /> Отклонить
+          <XCircle className="h-3 w-3" /> Reject
         </button>
       </div>
     )
@@ -63,7 +63,7 @@ export default function AdminManageButtons({ userId, mode, isActive }: Props) {
           className="flex items-center gap-1 text-xs px-2.5 py-1 rounded-lg font-medium transition-all disabled:opacity-50"
           style={{ background: 'rgba(94,106,210,0.1)', color: '#5e6ad2', border: '1px solid rgba(94,106,210,0.2)' }}
         >
-          <Crown className="h-3 w-3" /> Выдать Premium
+          <Crown className="h-3 w-3" /> Grant Premium
         </button>
       ) : (
         <button
@@ -72,7 +72,7 @@ export default function AdminManageButtons({ userId, mode, isActive }: Props) {
           className="flex items-center gap-1 text-xs px-2.5 py-1 rounded-lg font-medium transition-all disabled:opacity-50"
           style={{ background: 'rgba(239,68,68,0.08)', color: '#ef4444', border: '1px solid rgba(239,68,68,0.15)' }}
         >
-          <ShieldOff className="h-3 w-3" /> Отозвать
+          <ShieldOff className="h-3 w-3" /> Revoke
         </button>
       )}
     </div>

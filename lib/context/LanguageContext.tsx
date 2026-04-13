@@ -18,6 +18,7 @@ export const T: Record<Lang, any> = {
       freelancers: 'Freelancers',
       ai:          'AI Match',
       contracts:   'Contracts',
+      agents:      'AI Agents',
     },
     auth: {
       login:    'Sign In',
@@ -101,6 +102,7 @@ export const T: Record<Lang, any> = {
       freelancers: 'Фрилансеры',
       ai:          'AI‑подбор',
       contracts:   'Контракты',
+      agents:      'AI Агенты',
     },
     auth: {
       login:    'Войти',
@@ -151,7 +153,7 @@ export const T: Record<Lang, any> = {
     aiFeatures: {
       badge:   'Powered by Claude AI',
       heading: 'Искусственный интеллект',
-      sub:     'Первая фриланс-платформа для СНГ с настоящим AI-ассистентом внутри',
+      sub:     'Глобальная фриланс-платформа с настоящим AI-ассистентом внутри',
       cta:     'Попробовать AI-подбор',
       features: [
         { title: 'AI-ассистент',       text: 'Общайтесь с ИИ как с менеджером: описываете задачу → получаете топ-3 идеальных кандидата с объяснением выбора.', badge: 'Новинка' },
@@ -184,6 +186,7 @@ export const T: Record<Lang, any> = {
       freelancers: 'Фрилансерлер',
       ai:          'AI‑іздеу',
       contracts:   'Келісімшарт',
+      agents:      'AI Агенттер',
     },
     auth: {
       login:    'Кіру',
@@ -279,7 +282,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     try {
       const saved = localStorage.getItem('fh-lang') as Lang | null
-      if (saved && (saved === 'ru' || saved === 'kz' || saved === 'en')) {
+      if (saved && (saved === 'ru' || saved === 'en')) {
         setLangState(saved)
       }
     } catch {}

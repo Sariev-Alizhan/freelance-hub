@@ -18,7 +18,7 @@ interface Response {
 }
 
 const LEVEL_LABELS: Record<string, string> = {
-  new: 'Новичок', junior: 'Junior', middle: 'Middle', senior: 'Senior', top: 'TOP',
+  new: 'Newcomer', junior: 'Junior', middle: 'Middle', senior: 'Senior', top: 'TOP',
 }
 const LEVEL_COLOR: Record<string, string> = {
   new: '#62666d', junior: '#27a644', middle: '#5e6ad2', senior: '#7170ff', top: '#fbbf24',
@@ -26,9 +26,9 @@ const LEVEL_COLOR: Record<string, string> = {
 
 function timeAgo(iso: string) {
   const d = (Date.now() - new Date(iso).getTime()) / 1000
-  if (d < 3600) return `${Math.floor(d / 60)} мин назад`
-  if (d < 86400) return `${Math.floor(d / 3600)} ч назад`
-  return new Date(iso).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' })
+  if (d < 3600) return `${Math.floor(d / 60)} min ago`
+  if (d < 86400) return `${Math.floor(d / 3600)} hr ago`
+  return new Date(iso).toLocaleDateString('en-US', { day: 'numeric', month: 'short' })
 }
 
 interface Props {
@@ -123,7 +123,7 @@ export default function OrderStatusActions({ orderId, orderStatus, isOwner }: Pr
             fontWeight: 510,
             color: status === 'completed' ? '#27a644' : status === 'in_progress' ? '#7170ff' : '#e5484d',
           }}>
-            {status === 'completed' ? 'Заказ завершён' : status === 'in_progress' ? 'В работе' : 'Заказ отменён'}
+            {status === 'completed' ? 'Order completed' : status === 'in_progress' ? 'In progress' : 'Order cancelled'}
           </span>
           {status === 'in_progress' && (
             <button
@@ -138,7 +138,7 @@ export default function OrderStatusActions({ orderId, orderStatus, isOwner }: Pr
                 fontWeight: 590,
               }}
             >
-              <CheckCircle className="h-3.5 w-3.5" /> Завершить
+              <CheckCircle className="h-3.5 w-3.5" /> Complete
             </button>
           )}
         </div>
@@ -157,7 +157,7 @@ export default function OrderStatusActions({ orderId, orderStatus, isOwner }: Pr
           <div className="flex items-center gap-2">
             <Users className="h-4 w-4" style={{ color: '#62666d' }} />
             <span style={{ fontSize: '13px', fontWeight: 590, color: '#f7f8f8', letterSpacing: '-0.01em' }}>
-              Отклики
+              Applications
             </span>
           </div>
           <div className="flex items-center gap-2">
@@ -173,7 +173,7 @@ export default function OrderStatusActions({ orderId, orderStatus, isOwner }: Pr
                   color: '#7170ff',
                 }}
               >
-                {pending.length} новых
+                {pending.length} new
               </span>
             )}
           </div>
@@ -182,18 +182,18 @@ export default function OrderStatusActions({ orderId, orderStatus, isOwner }: Pr
         {loading ? (
           <div className="flex items-center justify-center py-10 gap-2" style={{ color: '#62666d' }}>
             <Loader2 className="h-4 w-4 animate-spin" />
-            <span style={{ fontSize: '13px' }}>Загружаем отклики…</span>
+            <span style={{ fontSize: '13px' }}>Loading applications…</span>
           </div>
         ) : responses.length === 0 ? (
           <div className="flex flex-col items-center gap-2 py-10 text-center">
             <Users className="h-8 w-8" style={{ color: '#4a4f57' }} />
-            <p style={{ fontSize: '13px', color: '#62666d', fontWeight: 400 }}>Откликов пока нет</p>
-            <p style={{ fontSize: '12px', color: '#4a4f57' }}>Они появятся здесь, когда фрилансеры начнут откликаться</p>
+            <p style={{ fontSize: '13px', color: '#62666d', fontWeight: 400 }}>No applications yet</p>
+            <p style={{ fontSize: '12px', color: '#4a4f57' }}>They will appear here once freelancers start applying</p>
           </div>
         ) : (
           <div>
             {[...pending, ...accepted, ...rejected].map((resp, idx) => {
-              const name   = resp.profiles?.full_name || resp.profiles?.username || 'Фрилансер'
+              const name   = resp.profiles?.full_name || resp.profiles?.username || 'Freelancer'
               const avatar = resp.profiles?.avatar_url ||
                 `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(name)}&backgroundColor=4338CA&textColor=ffffff`
               const fp     = resp.freelancer_profiles
@@ -246,24 +246,24 @@ export default function OrderStatusActions({ orderId, orderStatus, isOwner }: Pr
                         )}
                         {isAccepted && (
                           <span style={{ fontSize: '10px', color: '#27a644', fontWeight: 590, display: 'flex', alignItems: 'center', gap: '3px' }}>
-                            <CheckCircle className="h-3 w-3" /> Принят
+                            <CheckCircle className="h-3 w-3" /> Accepted
                           </span>
                         )}
                         {resp.status === 'rejected' && (
-                          <span style={{ fontSize: '10px', color: '#62666d', fontWeight: 510 }}>Отклонён</span>
+                          <span style={{ fontSize: '10px', color: '#62666d', fontWeight: 510 }}>Rejected</span>
                         )}
                         <span className="ml-auto" style={{ fontSize: '11px', color: '#4a4f57' }}>{timeAgo(resp.created_at)}</span>
                       </div>
 
                       {fp && (
                         <p style={{ fontSize: '12px', color: '#62666d', marginBottom: '6px' }}>
-                          {fp.title}{fp.rating ? ` · ★ ${fp.rating}` : ''}{fp.completed_orders ? ` · ${fp.completed_orders} заказов` : ''}
+                          {fp.title}{fp.rating ? ` · ★ ${fp.rating}` : ''}{fp.completed_orders ? ` · ${fp.completed_orders} orders` : ''}
                         </p>
                       )}
 
                       {resp.proposed_price && (
                         <p style={{ fontSize: '13px', fontWeight: 590, color: '#7170ff', marginBottom: '6px' }}>
-                          {resp.proposed_price.toLocaleString('ru')} ₽
+                          ${resp.proposed_price.toLocaleString()}
                         </p>
                       )}
 
@@ -298,7 +298,7 @@ export default function OrderStatusActions({ orderId, orderStatus, isOwner }: Pr
                             }}
                           >
                             {actioning === resp.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <CheckCircle className="h-3.5 w-3.5" />}
-                            Принять
+                            Accept
                           </button>
                           <button
                             onClick={() => act(resp.id, 'reject')}
@@ -314,7 +314,7 @@ export default function OrderStatusActions({ orderId, orderStatus, isOwner }: Pr
                               fontWeight: 590,
                             }}
                           >
-                            <XCircle className="h-3.5 w-3.5" /> Отклонить
+                            <XCircle className="h-3.5 w-3.5" /> Decline
                           </button>
                           <Link
                             href={`/messages`}
@@ -329,7 +329,7 @@ export default function OrderStatusActions({ orderId, orderStatus, isOwner }: Pr
                               fontWeight: 510,
                             }}
                           >
-                            <ChevronRight className="h-3.5 w-3.5" /> Написать
+                            <ChevronRight className="h-3.5 w-3.5" /> Message
                           </Link>
                         </div>
                       )}
@@ -350,10 +350,10 @@ export default function OrderStatusActions({ orderId, orderStatus, isOwner }: Pr
         <Shield className="h-4 w-4 flex-shrink-0 mt-0.5" style={{ color: '#27a644' }} />
         <div>
           <p style={{ fontSize: '12px', fontWeight: 590, color: '#27a644', marginBottom: '3px' }}>
-            Безопасная оплата
+            Safe payment
           </p>
           <p style={{ fontSize: '12px', color: '#62666d', lineHeight: 1.6, fontWeight: 400 }}>
-            Договаривайтесь с фрилансером напрямую. Мы рекомендуем оплачивать частями: аванс 30–50%, остаток после приёмки работы.
+            Agree directly with the freelancer. We recommend milestone payments: 30–50% upfront, the rest after delivery.
           </p>
         </div>
       </div>

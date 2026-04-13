@@ -21,7 +21,7 @@ export default function RespondButton({ orderId, orderTitle, orderDescription, c
         onClick={() => setOpen(true)}
         className="w-full py-3 rounded-xl bg-primary text-white font-semibold hover:bg-primary/90 transition-colors"
       >
-        Откликнуться
+        Apply
       </button>
 
       <AnimatePresence>

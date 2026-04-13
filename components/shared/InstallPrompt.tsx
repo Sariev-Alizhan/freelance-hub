@@ -58,36 +58,36 @@ function IOSModal({ onClose }: { onClose: () => void }) {
           <X className="h-5 w-5" />
         </button>
 
-        <h2 className="text-lg font-bold mb-1">Добавить на iPhone / iPad</h2>
+        <h2 className="text-lg font-bold mb-1">Add to iPhone / iPad</h2>
         <p className="text-sm text-muted-foreground mb-5">
-          Открой FreelanceHub как приложение — без браузерной строки, быстрее.
+          Open FreelanceHub as an app — no browser bar, faster.
         </p>
 
         <ol className="space-y-4">
           <li className="flex items-start gap-3">
             <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary text-white text-sm font-bold">1</span>
             <div>
-              <p className="text-sm font-medium">Нажми кнопку «Поделиться»</p>
+              <p className="text-sm font-medium">Tap the Share button</p>
               <p className="text-xs text-muted-foreground mt-0.5">
-                Кнопка <Share className="inline h-3.5 w-3.5 mx-0.5" /> находится внизу Safari (на iPhone) или вверху (iPad)
+                The <Share className="inline h-3.5 w-3.5 mx-0.5" /> button is at the bottom of Safari (iPhone) or top (iPad)
               </p>
             </div>
           </li>
           <li className="flex items-start gap-3">
             <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary text-white text-sm font-bold">2</span>
             <div>
-              <p className="text-sm font-medium">Выбери «На экран «Домой»»</p>
+              <p className="text-sm font-medium">Select &quot;Add to Home Screen&quot;</p>
               <p className="text-xs text-muted-foreground mt-0.5">
-                Прокрути список вниз — ищи иконку <Plus className="inline h-3.5 w-3.5 mx-0.5" /> На экран «Домой»
+                Scroll down the list — look for the <Plus className="inline h-3.5 w-3.5 mx-0.5" /> Add to Home Screen icon
               </p>
             </div>
           </li>
           <li className="flex items-start gap-3">
             <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary text-white text-sm font-bold">3</span>
             <div>
-              <p className="text-sm font-medium">Нажми «Добавить»</p>
+              <p className="text-sm font-medium">Tap &quot;Add&quot;</p>
               <p className="text-xs text-muted-foreground mt-0.5">
-                Подтверди название и нажми «Добавить» в правом верхнем углу
+                Confirm the name and tap &quot;Add&quot; in the top right corner
               </p>
             </div>
           </li>
@@ -97,7 +97,7 @@ function IOSModal({ onClose }: { onClose: () => void }) {
           onClick={onClose}
           className="mt-6 w-full py-3 rounded-xl bg-primary text-white font-semibold hover:bg-primary/90 transition-colors"
         >
-          Понятно!
+          Got it!
         </button>
       </div>
     </div>
@@ -119,28 +119,28 @@ function MacModal({ onClose }: { onClose: () => void }) {
           <X className="h-5 w-5" />
         </button>
 
-        <h2 className="text-lg font-bold mb-1">Добавить на Mac</h2>
+        <h2 className="text-lg font-bold mb-1">Add to Mac</h2>
         <p className="text-sm text-muted-foreground mb-5">
-          Два способа открывать FreelanceHub как отдельное приложение из Dock.
+          Two ways to open FreelanceHub as a standalone app from the Dock.
         </p>
 
         <div className="space-y-4">
           <div className="rounded-xl border border-subtle p-4">
             <p className="text-sm font-semibold mb-2 flex items-center gap-2">
-              <Share className="h-4 w-4 text-primary" /> Через кнопку «Поделиться»
+              <Share className="h-4 w-4 text-primary" /> Via the Share button
             </p>
             <p className="text-xs text-muted-foreground leading-relaxed">
-              В Safari нажми кнопку <Share className="inline h-3 w-3 mx-0.5" /> вверху справа →<br/>
-              выбери <strong>«Добавить в Dock»</strong> → нажми «Добавить»
+              In Safari tap <Share className="inline h-3 w-3 mx-0.5" /> top right →<br/>
+              select <strong>&quot;Add to Dock&quot;</strong> → tap &quot;Add&quot;
             </p>
           </div>
           <div className="rounded-xl border border-subtle p-4">
             <p className="text-sm font-semibold mb-2 flex items-center gap-2">
-              <Monitor className="h-4 w-4 text-primary" /> Через меню Safari
+              <Monitor className="h-4 w-4 text-primary" /> Via Safari menu
             </p>
             <p className="text-xs text-muted-foreground leading-relaxed">
-              В строке меню: <strong>Файл → Добавить в Dock…</strong><br/>
-              (macOS Sonoma и новее)
+              In the menu bar: <strong>File → Add to Dock…</strong><br/>
+              (macOS Sonoma and newer)
             </p>
           </div>
         </div>
@@ -149,7 +149,7 @@ function MacModal({ onClose }: { onClose: () => void }) {
           onClick={onClose}
           className="mt-5 w-full py-3 rounded-xl bg-primary text-white font-semibold hover:bg-primary/90 transition-colors"
         >
-          Понятно!
+          Got it!
         </button>
       </div>
     </div>
@@ -215,13 +215,13 @@ export default function InstallPrompt() {
         <Logo size={36} showWordmark={false} />
 
         <div className="flex-1 min-w-0">
-          <p className="text-sm font-semibold leading-tight">Установить приложение</p>
+          <p className="text-sm font-semibold leading-tight">Install app</p>
           <p className="text-xs text-muted-foreground mt-0.5 leading-tight">
             {mode === 'ios'
-              ? 'Добавь на экран iPhone / iPad'
+              ? 'Add to iPhone / iPad home screen'
               : mode === 'macos'
-              ? 'Добавь в Dock на Mac'
-              : 'Работает без интернета, как приложение'}
+              ? 'Add to Mac Dock'
+              : 'Works offline, like a native app'}
           </p>
         </div>
 
@@ -230,13 +230,13 @@ export default function InstallPrompt() {
           className="shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl bg-primary text-white text-xs font-semibold hover:bg-primary/90 transition-colors"
         >
           <Download className="h-3.5 w-3.5" />
-          {mode === 'pwa' ? 'Установить' : 'Как?'}
+          {mode === 'pwa' ? 'Install' : 'How?'}
         </button>
 
         <button
           onClick={dismiss}
           className="shrink-0 text-muted-foreground hover:text-foreground transition-colors"
-          aria-label="Закрыть"
+          aria-label="Close"
         >
           <X className="h-4 w-4" />
         </button>

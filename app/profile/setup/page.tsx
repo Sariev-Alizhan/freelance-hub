@@ -27,10 +27,10 @@ export default function ProfileSetupPage() {
               fontFeatureSettings: '"cv01", "ss03"',
             }}
           >
-            Настройка профиля
+            Profile setup
           </h1>
           <p style={{ fontSize: '14px', color: '#8a8f98', fontWeight: 400, letterSpacing: '-0.01em' }}>
-            Заполните профиль — это поможет заказчикам найти именно вас
+            Fill in your profile — it helps clients find exactly you
           </p>
         </div>
         <FreelancerSetupForm />

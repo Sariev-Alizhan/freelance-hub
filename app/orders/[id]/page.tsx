@@ -33,7 +33,7 @@ async function getOrder(id: string): Promise<Order | null> {
     if (error || !data) return null
 
     const profile    = data.profiles
-    const clientName = profile?.full_name || profile?.username || 'Заказчик'
+    const clientName = profile?.full_name || profile?.username || 'Client'
     const clientAvatar =
       profile?.avatar_url ||
       `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(clientName)}&backgroundColor=4338CA&textColor=ffffff`
@@ -64,7 +64,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { id } = await params
   const order = await getOrder(id)
-  if (!order) return { title: 'Заказ не найден — FreelanceHub' }
+  if (!order) return { title: 'Order not found — FreelanceHub' }
 
   const category = CATEGORIES.find((c) => c.slug === order.category)
   const desc = order.description.slice(0, 155)
@@ -72,7 +72,7 @@ export async function generateMetadata({
   return {
     title: `${order.title} — FreelanceHub`,
     description: desc,
-    openGraph: { title: order.title, description: desc, type: 'website', locale: 'ru_RU', siteName: 'FreelanceHub' },
+    openGraph: { title: order.title, description: desc, type: 'website', locale: 'en_US', siteName: 'FreelanceHub' },
     twitter: { card: 'summary', title: order.title, description: desc },
     alternates: { canonical: `/orders/${id}` },
     other: {
@@ -110,10 +110,10 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
   const isOwner  = !!user && user.id === order.client.id
 
   const statusStyle = {
-    open:        { bg: 'rgba(39,166,68,0.08)',           color: '#27a644',        border: '1px solid rgba(39,166,68,0.2)',  label: 'Открыт'   },
-    in_progress: { bg: 'rgba(59,130,246,0.08)',          color: '#3b82f6',        border: '1px solid rgba(59,130,246,0.2)', label: 'В работе' },
-    completed:   { bg: 'var(--fh-surface-2)',            color: 'var(--fh-t3)',   border: '1px solid var(--fh-border)',     label: 'Завершён' },
-    cancelled:   { bg: 'rgba(229,72,77,0.08)',           color: '#e5484d',        border: '1px solid rgba(229,72,77,0.2)', label: 'Отменён'  },
+    open:        { bg: 'rgba(39,166,68,0.08)',           color: '#27a644',        border: '1px solid rgba(39,166,68,0.2)',  label: 'Open'        },
+    in_progress: { bg: 'rgba(59,130,246,0.08)',          color: '#3b82f6',        border: '1px solid rgba(59,130,246,0.2)', label: 'In progress' },
+    completed:   { bg: 'var(--fh-surface-2)',            color: 'var(--fh-t3)',   border: '1px solid var(--fh-border)',     label: 'Completed'   },
+    cancelled:   { bg: 'rgba(229,72,77,0.08)',           color: '#e5484d',        border: '1px solid rgba(229,72,77,0.2)', label: 'Cancelled'   },
   }
   const st = statusStyle[order.status] ?? statusStyle.open
 
@@ -125,7 +125,7 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
         style={{ fontSize: '13px', color: 'var(--fh-t4)', fontWeight: 400 }}
         onMouseEnter={undefined}
       >
-        <ArrowLeft className="h-3.5 w-3.5" /> Назад к заказам
+        <ArrowLeft className="h-3.5 w-3.5" /> Back to orders
       </Link>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -156,7 +156,7 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
                   className="flex items-center gap-1 rounded-full"
                   style={{ padding: '3px 12px', fontSize: '12px', fontWeight: 590, background: 'rgba(229,72,77,0.1)', color: '#e5484d' }}
                 >
-                  <Zap className="h-3 w-3" /> Срочно
+                  <Zap className="h-3 w-3" /> Urgent
                 </span>
               )}
               <span
@@ -190,7 +190,7 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
             >
               <div>
                 <div style={{ fontSize: '11px', color: 'var(--fh-t4)', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 510 }}>
-                  Бюджет
+                  Budget
                 </div>
                 <div style={{ fontSize: '15px', fontWeight: 590, color: '#7170ff', letterSpacing: '-0.02em' }}>
                   {order.budget.min > 0 ? (
@@ -199,18 +199,18 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
                       {' — '}
                       <PriceDisplay amountRub={order.budget.max} prefix="" size="md" />
                     </>
-                  ) : 'Договорная'}
+                  ) : 'Negotiable'}
                 </div>
               </div>
               <div>
                 <div style={{ fontSize: '11px', color: 'var(--fh-t4)', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 510 }}>
-                  Срок
+                  Timeline
                 </div>
                 <div style={{ fontSize: '14px', fontWeight: 510, color: 'var(--fh-t1)', letterSpacing: '-0.01em' }}>{order.deadline}</div>
               </div>
               <div>
                 <div style={{ fontSize: '11px', color: 'var(--fh-t4)', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 510 }}>
-                  Откликов
+                  Responses
                 </div>
                 <div style={{ fontSize: '14px', fontWeight: 510, color: 'var(--fh-t1)' }}>{order.responsesCount}</div>
               </div>
@@ -224,7 +224,7 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
               style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border-2)' }}
             >
               <h2 style={{ fontSize: '13px', fontWeight: 590, color: 'var(--fh-t1)', marginBottom: '12px', letterSpacing: '-0.01em' }}>
-                Требуемые навыки
+                Required skills
               </h2>
               <div className="flex flex-wrap gap-2">
                 {order.skills.map((skill) => (
@@ -286,7 +286,7 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
                     fontWeight: 510,
                   }}
                 >
-                  Написать клиенту
+                  Message client
                 </Link>
                 <Link
                   href={`/contracts?description=${encodeURIComponent(order.description.slice(0, 300))}&deadline=${encodeURIComponent(order.deadline)}&budget=${order.budget.max}`}
@@ -302,7 +302,7 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
                   }}
                 >
                   <FileText className="h-4 w-4" />
-                  Создать контракт
+                  Create contract
                 </Link>
 
                 <div
@@ -311,9 +311,9 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
                 >
                   <Shield className="h-4 w-4 flex-shrink-0 mt-0.5" style={{ color: '#27a644' }} />
                   <div>
-                    <p style={{ fontSize: '12px', fontWeight: 590, color: '#27a644', marginBottom: '3px' }}>Безопасная сделка</p>
+                    <p style={{ fontSize: '12px', fontWeight: 590, color: '#27a644', marginBottom: '3px' }}>Safe deal</p>
                     <p style={{ fontSize: '11px', color: 'var(--fh-t4)', lineHeight: 1.5, fontWeight: 400 }}>
-                      Договаривайтесь об оплате частями. Аванс 30–50%, остаток — после сдачи работы.
+                      Agree on milestone payments. 30–50% upfront, the rest after delivery.
                     </p>
                   </div>
                 </div>
@@ -330,7 +330,7 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
               </div>
               <div className="flex items-center gap-2" style={{ color: 'var(--fh-t4)' }}>
                 <Users className="h-3.5 w-3.5 flex-shrink-0" />
-                <span style={{ fontSize: '12px', fontWeight: 400 }}>{order.responsesCount} откликов</span>
+                <span style={{ fontSize: '12px', fontWeight: 400 }}>{order.responsesCount} responses</span>
               </div>
             </div>
           </div>
@@ -341,13 +341,13 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
             style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border-2)' }}
           >
             <h3 style={{ fontSize: '12px', fontWeight: 590, color: 'var(--fh-t4)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '12px' }}>
-              О заказчике
+              About client
             </h3>
             <div className="flex items-center gap-3 mb-3">
               <Image src={order.client.avatar} alt={order.client.name} width={38} height={38} className="rounded-lg" unoptimized />
               <div>
                 <div style={{ fontSize: '13px', fontWeight: 590, color: 'var(--fh-t1)' }}>{order.client.name}</div>
-                <div style={{ fontSize: '11px', color: 'var(--fh-t4)', fontWeight: 400 }}>{order.client.ordersPosted} заказов на платформе</div>
+                <div style={{ fontSize: '11px', color: 'var(--fh-t4)', fontWeight: 400 }}>{order.client.ordersPosted} orders on platform</div>
               </div>
             </div>
             {order.client.rating > 0 && <RatingStars rating={order.client.rating} />}

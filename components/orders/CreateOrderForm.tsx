@@ -28,38 +28,38 @@ interface FormData {
 
 // ── Categories ─────────────────────────────────────────────
 const CATEGORIES = [
-  { slug: 'dev',         label: 'Разработка',     icon: Code2,     color: '#6366F1', desc: 'Сайты, приложения, боты' },
-  { slug: 'ux-ui',       label: 'UX/UI Дизайн',   icon: PenSquare, color: '#F24E1E', desc: 'Интерфейсы, прототипы' },
-  { slug: 'smm',         label: 'SMM',             icon: BarChart2, color: '#E1306C', desc: 'Соцсети, контент' },
-  { slug: 'targeting',   label: 'Таргетинг',       icon: Target,    color: '#1877F2', desc: 'Реклама, лиды' },
-  { slug: 'copywriting', label: 'Копирайтинг',     icon: PenLine,   color: '#10B981', desc: 'Тексты, SEO, email' },
-  { slug: 'video',       label: 'Видеомонтаж',     icon: Video,     color: '#EF4444', desc: 'Ролики, Reels, монтаж' },
-  { slug: 'tg-bots',     label: 'Telegram-боты',   icon: Bot,       color: '#229ED9', desc: 'Боты, мини-приложения' },
-  { slug: 'ai-ml',       label: 'AI / ML',         icon: Brain,     color: '#8B5CF6', desc: 'Нейросети, автоматизация' },
+  { slug: 'dev',         label: 'Development',    icon: Code2,     color: '#6366F1', desc: 'Websites, apps, bots' },
+  { slug: 'ux-ui',       label: 'UX/UI Design',   icon: PenSquare, color: '#F24E1E', desc: 'Interfaces, prototypes' },
+  { slug: 'smm',         label: 'SMM',             icon: BarChart2, color: '#E1306C', desc: 'Social media, content' },
+  { slug: 'targeting',   label: 'Targeting',       icon: Target,    color: '#1877F2', desc: 'Ads, leads' },
+  { slug: 'copywriting', label: 'Copywriting',     icon: PenLine,   color: '#10B981', desc: 'Text, SEO, email' },
+  { slug: 'video',       label: 'Video editing',   icon: Video,     color: '#EF4444', desc: 'Videos, Reels, editing' },
+  { slug: 'tg-bots',     label: 'Telegram bots',   icon: Bot,       color: '#229ED9', desc: 'Bots, mini-apps' },
+  { slug: 'ai-ml',       label: 'AI / ML',         icon: Brain,     color: '#8B5CF6', desc: 'Neural nets, automation' },
   { slug: 'nocode',      label: 'No-code',         icon: Blocks,    color: '#F59E0B', desc: 'Bubble, Webflow, Make' },
-  { slug: '3d-art',      label: '3D / AI-арт',     icon: Sparkles,  color: '#EC4899', desc: 'Иллюстрации, 3D' },
+  { slug: '3d-art',      label: '3D / AI art',     icon: Sparkles,  color: '#EC4899', desc: 'Illustrations, 3D' },
 ] as const
 
 const DEADLINES = [
-  { value: 'Срочно (1-2 дня)',   label: 'Срочно',   sub: '1–2 дня',   icon: '⚡' },
-  { value: 'До 1 недели',        label: 'Неделя',   sub: 'до 7 дней', icon: '📅' },
-  { value: 'До 2 недель',        label: '2 недели', sub: '7–14 дней', icon: '🗓️' },
-  { value: 'До 1 месяца',        label: 'Месяц',    sub: '14–30 дней',icon: '📆' },
-  { value: 'Больше месяца',      label: 'Долгий',   sub: '30+ дней',  icon: '🔭' },
-  { value: 'Обсудим отдельно',   label: 'Обсудим',  sub: 'гибко',     icon: '💬' },
+  { value: 'Urgent (1-2 days)',  label: 'Urgent',   sub: '1–2 days',  icon: '⚡' },
+  { value: 'Up to 1 week',       label: '1 week',   sub: 'up to 7d',  icon: '📅' },
+  { value: 'Up to 2 weeks',      label: '2 weeks',  sub: '7–14 days', icon: '🗓️' },
+  { value: 'Up to 1 month',      label: '1 month',  sub: '14–30 days',icon: '📆' },
+  { value: 'Over a month',       label: 'Long-term',sub: '30+ days',  icon: '🔭' },
+  { value: 'To be discussed',    label: 'Discuss',  sub: 'flexible',  icon: '💬' },
 ]
 
 const BUDGET_RANGES = [
-  { label: 'до 10 000 ₽',    min: '0',     max: '10000'  },
-  { label: '10–30 000 ₽',    min: '10000', max: '30000'  },
-  { label: '30–60 000 ₽',    min: '30000', max: '60000'  },
-  { label: '60–100 000 ₽',   min: '60000', max: '100000' },
-  { label: '100 000+ ₽',     min: '100000',max: '500000' },
-  { label: 'Договорной',     min: '0',     max: '0'      },
+  { label: 'up to $100',  min: '0',     max: '10000'  },
+  { label: '$100–$300',   min: '10000', max: '30000'  },
+  { label: '$300–$600',   min: '30000', max: '60000'  },
+  { label: '$600–$1000',  min: '60000', max: '100000' },
+  { label: '$1000+',      min: '100000',max: '500000' },
+  { label: 'Negotiable',  min: '0',     max: '0'      },
 ]
 
 // ── Step progress ──────────────────────────────────────────
-const STEPS = ['Категория', 'Описание', 'Детали', 'Готово']
+const STEPS = ['Category', 'Description', 'Details', 'Done']
 
 // ── Main component ─────────────────────────────────────────
 export default function CreateOrderForm() {
@@ -150,10 +150,10 @@ export default function CreateOrderForm() {
       if (error) throw error
       setCreatedOrderId(data.id)
       setStep(4)
-      success('Заказ опубликован!', 'Специалисты уже видят ваш заказ')
+      success('Order published!', 'Specialists can already see your order')
     } catch (e) {
       console.error(e)
-      toastError('Не удалось создать заказ', 'Попробуйте ещё раз')
+      toastError('Failed to create order', 'Please try again')
     } finally {
       setSubmitting(false)
     }
@@ -205,8 +205,8 @@ export default function CreateOrderForm() {
           {/* ── STEP 0: Category ── */}
           {step === 0 && (
             <motion.div key="step0" {...slide}>
-              <h2 className="text-lg font-bold mb-1">Выберите категорию</h2>
-              <p className="text-sm text-muted-foreground mb-5">В какой области нужна помощь?</p>
+              <h2 className="text-lg font-bold mb-1">Choose a category</h2>
+              <p className="text-sm text-muted-foreground mb-5">What area do you need help with?</p>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 {CATEGORIES.map(cat => {
                   const Icon = cat.icon
@@ -245,22 +245,22 @@ export default function CreateOrderForm() {
           {step === 1 && (
             <motion.div key="step1" {...slide} className="space-y-5">
               <div>
-                <h2 className="text-lg font-bold mb-1">Опишите задачу</h2>
-                <p className="text-sm text-muted-foreground">Чем подробнее — тем точнее найдём специалиста</p>
+                <h2 className="text-lg font-bold mb-1">Describe the task</h2>
+                <p className="text-sm text-muted-foreground">The more detail, the better we match you with a specialist</p>
               </div>
 
               {/* Title */}
               <div>
-                <label className="text-sm font-medium mb-2 block">Название заказа</label>
+                <label className="text-sm font-medium mb-2 block">Job title</label>
                 <input
                   value={form.title}
                   onChange={e => set('title', e.target.value)}
-                  placeholder="Например: Разработка интернет-магазина на Next.js"
+                  placeholder="E.g.: Build an e-commerce store with Next.js"
                   maxLength={120}
                   className="w-full px-4 py-3 rounded-xl bg-background border border-subtle text-sm placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 transition-colors"
                 />
                 <div className="flex justify-between mt-1">
-                  <span className="text-xs text-muted-foreground">Минимум 10 символов</span>
+                  <span className="text-xs text-muted-foreground">Minimum 10 characters</span>
                   <span className={`text-xs ${form.title.length >= 10 ? 'text-green-400' : 'text-muted-foreground'}`}>
                     {form.title.length}/120
                   </span>
@@ -270,7 +270,7 @@ export default function CreateOrderForm() {
               {/* Description */}
               <div>
                 <div className="flex items-center justify-between mb-2">
-                  <label className="text-sm font-medium">Описание</label>
+                  <label className="text-sm font-medium">Description</label>
                   <button
                     onClick={generateDescription}
                     disabled={aiLoading || form.title.trim().length < 10}
@@ -280,20 +280,20 @@ export default function CreateOrderForm() {
                       ? <Loader2 className="h-3 w-3 animate-spin" />
                       : <Wand2 className="h-3 w-3" />
                     }
-                    AI-заполнение
+                    AI fill
                   </button>
                 </div>
                 <textarea
                   value={form.description}
                   onChange={e => set('description', e.target.value)}
-                  placeholder="Подробно опишите что нужно сделать, какой результат ожидаете, есть ли особые требования..."
+                  placeholder="Describe in detail what needs to be done, what result you expect, any special requirements..."
                   rows={6}
                   className="w-full px-4 py-3 rounded-xl bg-background border border-subtle text-sm placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 transition-colors resize-none"
                 />
                 <div className="flex justify-between mt-1">
-                  <span className="text-xs text-muted-foreground">Минимум 30 символов</span>
+                  <span className="text-xs text-muted-foreground">Minimum 30 characters</span>
                   <span className={`text-xs ${form.description.length >= 30 ? 'text-green-400' : 'text-muted-foreground'}`}>
-                    {form.description.length} символов
+                    {form.description.length} chars
                   </span>
                 </div>
               </div>
@@ -304,16 +304,16 @@ export default function CreateOrderForm() {
           {step === 2 && (
             <motion.div key="step2" {...slide} className="space-y-6">
               <div>
-                <h2 className="text-lg font-bold mb-1">Детали заказа</h2>
-                <p className="text-sm text-muted-foreground">Навыки, бюджет и сроки</p>
+                <h2 className="text-lg font-bold mb-1">Order details</h2>
+                <p className="text-sm text-muted-foreground">Skills, budget and timeline</p>
               </div>
 
               {/* Skills */}
               <div>
                 <label className="text-sm font-medium mb-2 flex items-center gap-1.5 block">
                   <Tag className="h-3.5 w-3.5 text-muted-foreground" />
-                  Требуемые навыки
-                  <span className="text-muted-foreground font-normal">(необязательно)</span>
+                  Required skills
+                  <span className="text-muted-foreground font-normal">(optional)</span>
                 </label>
                 <div className="flex flex-wrap gap-2 min-h-[36px] mb-2">
                   {form.skills.map(skill => (
@@ -332,7 +332,7 @@ export default function CreateOrderForm() {
                     onKeyDown={e => {
                       if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); addSkill(skillInput) }
                     }}
-                    placeholder="React, Figma, Python... (Enter для добавления)"
+                    placeholder="React, Figma, Python... (Enter to add)"
                     className="flex-1 px-4 py-2.5 rounded-xl bg-background border border-subtle text-sm placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 transition-colors"
                   />
                   <button
@@ -349,7 +349,7 @@ export default function CreateOrderForm() {
               <div>
                 <label className="text-sm font-medium mb-3 flex items-center gap-1.5 block">
                   <DollarSign className="h-3.5 w-3.5 text-muted-foreground" />
-                  Тип оплаты
+                  Payment type
                 </label>
                 <div className="grid grid-cols-2 gap-3 mb-4">
                   {(['fixed', 'hourly'] as const).map(type => (
@@ -362,7 +362,7 @@ export default function CreateOrderForm() {
                           : 'border-subtle text-muted-foreground hover:border-white/20'
                       }`}
                     >
-                      {type === 'fixed' ? '💰 Фиксированная' : '⏱️ Почасовая'}
+                      {type === 'fixed' ? '💰 Fixed price' : '⏱️ Hourly rate'}
                     </button>
                   ))}
                 </div>
@@ -387,22 +387,22 @@ export default function CreateOrderForm() {
                 {/* Custom budget */}
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="text-xs text-muted-foreground mb-1 block">От (₽)</label>
+                    <label className="text-xs text-muted-foreground mb-1 block">From ($)</label>
                     <input
                       type="number"
                       value={form.budgetMin}
                       onChange={e => set('budgetMin', e.target.value)}
-                      placeholder="5 000"
+                      placeholder="500"
                       className="w-full px-3 py-2.5 rounded-xl bg-background border border-subtle text-sm focus:outline-none focus:border-primary/50 transition-colors"
                     />
                   </div>
                   <div>
-                    <label className="text-xs text-muted-foreground mb-1 block">До (₽)</label>
+                    <label className="text-xs text-muted-foreground mb-1 block">To ($)</label>
                     <input
                       type="number"
                       value={form.budgetMax}
                       onChange={e => set('budgetMax', e.target.value)}
-                      placeholder="50 000"
+                      placeholder="5000"
                       className="w-full px-3 py-2.5 rounded-xl bg-background border border-subtle text-sm focus:outline-none focus:border-primary/50 transition-colors"
                     />
                   </div>
@@ -413,7 +413,7 @@ export default function CreateOrderForm() {
               <div>
                 <label className="text-sm font-medium mb-3 flex items-center gap-1.5 block">
                   <Clock className="h-3.5 w-3.5 text-muted-foreground" />
-                  Срок выполнения
+                  Timeline
                 </label>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                   {DEADLINES.map(d => (
@@ -421,7 +421,7 @@ export default function CreateOrderForm() {
                       key={d.value}
                       onClick={() => {
                         set('deadline', d.value)
-                        set('isUrgent', d.value.includes('Срочно'))
+                        set('isUrgent', d.value.includes('Urgent'))
                       }}
                       className={`flex items-center gap-2.5 p-3 rounded-xl border-2 text-left transition-all ${
                         form.deadline === d.value
@@ -440,7 +440,7 @@ export default function CreateOrderForm() {
               </div>
 
               {/* Urgent toggle */}
-              {!form.deadline.includes('Срочно') && (
+              {!form.deadline.includes('Urgent') && (
                 <button
                   onClick={() => set('isUrgent', !form.isUrgent)}
                   className={`w-full flex items-center gap-3 p-4 rounded-xl border-2 transition-all ${
@@ -455,9 +455,9 @@ export default function CreateOrderForm() {
                   <div className="text-left">
                     <div className="flex items-center gap-2 text-sm font-medium">
                       <Zap className={`h-3.5 w-3.5 ${form.isUrgent ? 'text-red-400' : 'text-muted-foreground'}`} />
-                      Срочный заказ
+                      Urgent order
                     </div>
-                    <div className="text-xs text-muted-foreground">Получите отклики быстрее</div>
+                    <div className="text-xs text-muted-foreground">Get responses faster</div>
                   </div>
                 </button>
               )}
@@ -468,8 +468,8 @@ export default function CreateOrderForm() {
           {step === 3 && (
             <motion.div key="step3" {...slide} className="space-y-4">
               <div>
-                <h2 className="text-lg font-bold mb-1">Проверьте заказ</h2>
-                <p className="text-sm text-muted-foreground">Всё верно? Нажмите «Опубликовать»</p>
+                <h2 className="text-lg font-bold mb-1">Review your order</h2>
+                <p className="text-sm text-muted-foreground">Everything correct? Click "Publish"</p>
               </div>
 
               {/* Summary card */}
@@ -486,7 +486,7 @@ export default function CreateOrderForm() {
                         <span className="text-xs font-medium text-muted-foreground">{cat?.label}</span>
                         {form.isUrgent && (
                           <span className="ml-auto flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-red-500/10 text-red-400">
-                            <Zap className="h-3 w-3" /> Срочно
+                            <Zap className="h-3 w-3" /> Urgent
                           </span>
                         )}
                       </div>
@@ -498,7 +498,7 @@ export default function CreateOrderForm() {
 
                 {form.skills.length > 0 && (
                   <div className="px-4 py-3">
-                    <div className="text-xs text-muted-foreground mb-2">Навыки</div>
+                    <div className="text-xs text-muted-foreground mb-2">Skills</div>
                     <div className="flex flex-wrap gap-1.5">
                       {form.skills.map(s => (
                         <span key={s} className="text-xs px-2.5 py-1 rounded-full bg-primary/10 text-primary border border-primary/20">
@@ -511,18 +511,18 @@ export default function CreateOrderForm() {
 
                 <div className="px-4 py-3 grid grid-cols-2 gap-4">
                   <div>
-                    <div className="text-xs text-muted-foreground mb-1">Бюджет</div>
+                    <div className="text-xs text-muted-foreground mb-1">Budget</div>
                     <div className="font-semibold text-primary">
                       {form.budgetMin && form.budgetMax && parseInt(form.budgetMax) > 0
-                        ? `${parseInt(form.budgetMin).toLocaleString('ru')} – ${parseInt(form.budgetMax).toLocaleString('ru')} ₽`
-                        : form.budgetMin ? `от ${parseInt(form.budgetMin).toLocaleString('ru')} ₽`
-                        : 'Договорной'
+                        ? `${parseInt(form.budgetMin).toLocaleString()} – ${parseInt(form.budgetMax).toLocaleString()} ₽`
+                        : form.budgetMin ? `from ${parseInt(form.budgetMin).toLocaleString()} ₽`
+                        : 'Negotiable'
                       }
                     </div>
-                    <div className="text-xs text-muted-foreground">{form.budgetType === 'fixed' ? 'фиксированная' : 'почасовая'}</div>
+                    <div className="text-xs text-muted-foreground">{form.budgetType === 'fixed' ? 'fixed price' : 'hourly rate'}</div>
                   </div>
                   <div>
-                    <div className="text-xs text-muted-foreground mb-1">Срок</div>
+                    <div className="text-xs text-muted-foreground mb-1">Timeline</div>
                     <div className="font-semibold">{form.deadline}</div>
                   </div>
                 </div>
@@ -530,8 +530,8 @@ export default function CreateOrderForm() {
 
               {!user && (
                 <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-4 text-sm text-amber-400">
-                  Для публикации нужно{' '}
-                  <a href="/auth/login" className="underline font-medium">войти в аккаунт</a>
+                  To publish you need to{' '}
+                  <a href="/auth/login" className="underline font-medium">sign in</a>
                 </div>
               )}
             </motion.div>
@@ -548,9 +548,9 @@ export default function CreateOrderForm() {
               <div className="h-20 w-20 rounded-full bg-green-500/10 border-2 border-green-500/30 flex items-center justify-center mx-auto mb-5">
                 <Check className="h-10 w-10 text-green-400" />
               </div>
-              <h2 className="text-2xl font-bold mb-2">Заказ опубликован!</h2>
+              <h2 className="text-2xl font-bold mb-2">Order published!</h2>
               <p className="text-muted-foreground mb-8">
-                Специалисты уже видят ваш заказ и скоро начнут откликаться
+                Specialists can already see your order and will start responding soon
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 {createdOrderId && (
@@ -558,14 +558,14 @@ export default function CreateOrderForm() {
                     onClick={() => router.push(`/orders/${createdOrderId}`)}
                     className="px-6 py-3 rounded-xl bg-primary text-white font-semibold hover:bg-primary/90 transition-colors"
                   >
-                    Смотреть заказ
+                    View order
                   </button>
                 )}
                 <button
                   onClick={() => router.push('/orders')}
                   className="px-6 py-3 rounded-xl border border-subtle font-semibold hover:bg-subtle transition-colors"
                 >
-                  Все заказы
+                  All orders
                 </button>
               </div>
             </motion.div>
@@ -582,7 +582,7 @@ export default function CreateOrderForm() {
             className="flex items-center gap-2 px-5 py-3 rounded-xl border border-subtle text-sm font-medium hover:bg-subtle transition-colors"
           >
             <ArrowLeft className="h-4 w-4" />
-            {step === 0 ? 'Назад' : 'Пред.'}
+            {step === 0 ? 'Back' : 'Prev'}
           </button>
 
           {step < 3 ? (
@@ -591,7 +591,7 @@ export default function CreateOrderForm() {
               disabled={!canNext[step]}
               className="flex items-center gap-2 px-6 py-3 rounded-xl bg-primary text-white text-sm font-semibold hover:bg-primary/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
             >
-              Далее
+              Next
               <ArrowRight className="h-4 w-4" />
             </button>
           ) : (
@@ -601,7 +601,7 @@ export default function CreateOrderForm() {
               className="flex items-center gap-2 px-8 py-3 rounded-xl bg-primary text-white text-sm font-semibold hover:bg-primary/90 transition-colors disabled:opacity-60"
             >
               {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />}
-              {submitting ? 'Публикую...' : 'Опубликовать'}
+              {submitting ? 'Publishing...' : 'Publish'}
             </button>
           )}
         </div>

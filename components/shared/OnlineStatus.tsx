@@ -13,7 +13,7 @@ export default function OnlineStatus({ isOnline, showLabel = true, size = 'sm' }
       <div className={cn(dotSize, 'rounded-full', isOnline ? 'bg-green-500 pulse-green' : 'bg-muted-foreground')} />
       {showLabel && (
         <span className="text-xs text-muted-foreground">
-          {isOnline ? 'Онлайн' : 'Не в сети'}
+          {isOnline ? 'Online' : 'Offline'}
         </span>
       )}
     </div>

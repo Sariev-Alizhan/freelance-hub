@@ -17,36 +17,36 @@ import { useToastHelpers } from '@/lib/context/ToastContext'
 
 // ── Data ───────────────────────────────────────────────────
 const CATEGORIES = [
-  { slug: 'dev',         label: 'Разработка',   icon: Code2,     color: '#6366F1' },
-  { slug: 'ux-ui',       label: 'UX/UI Дизайн', icon: PenSquare, color: '#F24E1E' },
+  { slug: 'dev',         label: 'Development',  icon: Code2,     color: '#6366F1' },
+  { slug: 'ux-ui',       label: 'UX/UI Design', icon: PenSquare, color: '#F24E1E' },
   { slug: 'smm',         label: 'SMM',           icon: BarChart2, color: '#E1306C' },
-  { slug: 'targeting',   label: 'Таргетинг',     icon: Target,    color: '#1877F2' },
-  { slug: 'copywriting', label: 'Копирайтинг',   icon: PenLine,   color: '#10B981' },
-  { slug: 'video',       label: 'Видеомонтаж',   icon: Video,     color: '#EF4444' },
-  { slug: 'tg-bots',     label: 'Telegram-боты', icon: Bot,       color: '#229ED9' },
+  { slug: 'targeting',   label: 'Targeting',     icon: Target,    color: '#1877F2' },
+  { slug: 'copywriting', label: 'Copywriting',   icon: PenLine,   color: '#10B981' },
+  { slug: 'video',       label: 'Video editing', icon: Video,     color: '#EF4444' },
+  { slug: 'tg-bots',     label: 'Telegram bots', icon: Bot,       color: '#229ED9' },
   { slug: 'ai-ml',       label: 'AI / ML',       icon: Brain,     color: '#8B5CF6' },
   { slug: 'nocode',      label: 'No-code',        icon: Blocks,    color: '#F59E0B' },
-  { slug: '3d-art',      label: '3D / AI-арт',   icon: Sparkles,  color: '#EC4899' },
+  { slug: '3d-art',      label: '3D / AI art',   icon: Sparkles,  color: '#EC4899' },
 ] as const
 
 const LEVELS: { value: FreelancerLevel; label: string; sub: string; icon: string }[] = [
-  { value: 'new',    label: 'Новичок',    sub: 'до 1 года опыта',   icon: '🌱' },
-  { value: 'junior', label: 'Junior',     sub: '1–2 года',          icon: '⚡' },
-  { value: 'middle', label: 'Middle',     sub: '2–4 года',          icon: '🔥' },
-  { value: 'senior', label: 'Senior',     sub: '4+ лет',            icon: '💎' },
-  { value: 'top',    label: 'Топ',        sub: 'эксперт отрасли',   icon: '👑' },
+  { value: 'new',    label: 'Newcomer', sub: 'up to 1 year',    icon: '🌱' },
+  { value: 'junior', label: 'Junior',   sub: '1–2 years',       icon: '⚡' },
+  { value: 'middle', label: 'Middle',   sub: '2–4 years',       icon: '🔥' },
+  { value: 'senior', label: 'Senior',   sub: '4+ years',        icon: '💎' },
+  { value: 'top',    label: 'Top',      sub: 'industry expert', icon: '👑' },
 ]
 
 const RESPONSE_TIMES = [
-  { value: 'в течение часа',    label: '< 1 часа',  icon: '⚡' },
-  { value: 'в течение 4 часов', label: '< 4 часов', icon: '🕐' },
-  { value: 'в течение суток',   label: '< суток',   icon: '📅' },
-  { value: 'в течение 2 дней',  label: '2 дня',     icon: '🗓️' },
+  { value: 'within 1 hour',  label: '< 1 hour',  icon: '⚡' },
+  { value: 'within 4 hours', label: '< 4 hours', icon: '🕐' },
+  { value: 'within a day',   label: '< 1 day',   icon: '📅' },
+  { value: 'within 2 days',  label: '2 days',    icon: '🗓️' },
 ]
 
-const LANGUAGES = ['Русский', 'Украинский', 'Казахский', 'English', 'Deutsch', 'Español', '中文']
+const LANGUAGES = ['Russian', 'Ukrainian', 'Kazakh', 'English', 'Deutsch', 'Español', '中文']
 
-const STEPS = ['Личное', 'Специализация', 'Навыки и цены', 'Портфолио', 'Готово']
+const STEPS = ['Personal', 'Specialization', 'Skills & rates', 'Portfolio', 'Done']
 
 interface PortfolioItem {
   title: string
@@ -100,8 +100,8 @@ export default function FreelancerSetupForm() {
     title: '',
     category: '',
     level: 'middle',
-    responseTime: 'в течение суток',
-    languages: ['Русский'],
+    responseTime: 'within a day',
+    languages: ['Russian'],
     skills: [],
     priceFrom: '',
     priceTo: '',
@@ -227,12 +227,12 @@ export default function FreelancerSetupForm() {
       if (!res.ok) throw new Error(json.error || `HTTP ${res.status}`)
 
       setStep(5)
-      success('Профиль сохранён!', 'Теперь заказчики могут найти вас')
+      success('Profile saved!', 'Now clients can find you')
     } catch (e: unknown) {
-      const msg = e instanceof Error ? e.message : 'Неизвестная ошибка'
+      const msg = e instanceof Error ? e.message : 'Unknown error'
       console.error('Profile save error:', e)
       setSubmitError(msg)
-      toastError('Ошибка сохранения', msg)
+      toastError('Save error', msg)
     } finally {
       setSubmitting(false)
     }
@@ -287,8 +287,8 @@ export default function FreelancerSetupForm() {
           {step === 0 && (
             <motion.div key="s0" {...slide} className="space-y-5">
               <div>
-                <h2 className="text-lg font-bold mb-1">Личная информация</h2>
-                <p className="text-sm text-muted-foreground">Как вас будут видеть заказчики</p>
+                <h2 className="text-lg font-bold mb-1">Personal information</h2>
+                <p className="text-sm text-muted-foreground">How clients will see you</p>
               </div>
 
               {/* Avatar */}
@@ -307,27 +307,27 @@ export default function FreelancerSetupForm() {
                   ) : (
                     <div className="text-center">
                       <User className="h-6 w-6 text-muted-foreground mx-auto mb-1" />
-                      <span className="text-xs text-muted-foreground">Фото</span>
+                      <span className="text-xs text-muted-foreground">Photo</span>
                     </div>
                   )}
                   <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarChange} />
                 </div>
                 <div className="flex-1">
-                  <p className="text-sm font-medium mb-1">Фото профиля</p>
-                  <p className="text-xs text-muted-foreground mb-2">JPG, PNG до 5 МБ. Квадратное фото выглядит лучше</p>
+                  <p className="text-sm font-medium mb-1">Profile photo</p>
+                  <p className="text-xs text-muted-foreground mb-2">JPG, PNG up to 5 MB. A square photo looks best</p>
                   <button onClick={() => fileRef.current?.click()} className="text-xs px-3 py-1.5 rounded-lg bg-subtle border border-subtle hover:bg-surface transition-colors">
-                    Загрузить фото
+                    Upload photo
                   </button>
                 </div>
               </div>
 
               {/* Full name */}
               <div>
-                <label className="text-sm font-medium mb-2 block">Имя и фамилия *</label>
+                <label className="text-sm font-medium mb-2 block">Full name *</label>
                 <input
                   value={form.fullName}
                   onChange={e => set('fullName', e.target.value)}
-                  placeholder="Иван Иванов"
+                  placeholder="John Smith"
                   className="w-full px-4 py-3 rounded-xl bg-background border border-subtle text-sm placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 transition-colors"
                 />
               </div>
@@ -336,13 +336,13 @@ export default function FreelancerSetupForm() {
               <div>
                 <label className="text-sm font-medium mb-2 flex items-center gap-1.5 block">
                   <MapPin className="h-3.5 w-3.5 text-muted-foreground" />
-                  Город
-                  <span className="text-muted-foreground font-normal">(необязательно)</span>
+                  City
+                  <span className="text-muted-foreground font-normal">(optional)</span>
                 </label>
                 <input
                   value={form.location}
                   onChange={e => set('location', e.target.value)}
-                  placeholder="Москва, Киев, Алматы..."
+                  placeholder="New York, London, Berlin..."
                   className="w-full px-4 py-3 rounded-xl bg-background border border-subtle text-sm placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 transition-colors"
                 />
               </div>
@@ -350,13 +350,13 @@ export default function FreelancerSetupForm() {
               {/* Bio */}
               <div>
                 <div className="flex items-center justify-between mb-2">
-                  <label className="text-sm font-medium">О себе</label>
-                  <span className="text-xs text-muted-foreground">необязательно — можно заполнить на шаге 2</span>
+                  <label className="text-sm font-medium">About me</label>
+                  <span className="text-xs text-muted-foreground">optional — you can fill it in step 2</span>
                 </div>
                 <textarea
                   value={form.bio}
                   onChange={e => set('bio', e.target.value)}
-                  placeholder="Кратко расскажите о себе, опыте и подходе к работе..."
+                  placeholder="Briefly describe yourself, your experience and approach..."
                   rows={3}
                   className="w-full px-4 py-3 rounded-xl bg-background border border-subtle text-sm placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 transition-colors resize-none"
                 />
@@ -368,13 +368,13 @@ export default function FreelancerSetupForm() {
           {step === 1 && (
             <motion.div key="s1" {...slide} className="space-y-6">
               <div>
-                <h2 className="text-lg font-bold mb-1">Специализация</h2>
-                <p className="text-sm text-muted-foreground">Выберите основное направление работы</p>
+                <h2 className="text-lg font-bold mb-1">Specialization</h2>
+                <p className="text-sm text-muted-foreground">Choose your main area of work</p>
               </div>
 
               {/* Category */}
               <div>
-                <label className="text-sm font-medium mb-3 block">Категория *</label>
+                <label className="text-sm font-medium mb-3 block">Category *</label>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                   {CATEGORIES.map(cat => {
                     const Icon = cat.icon
@@ -403,12 +403,12 @@ export default function FreelancerSetupForm() {
               <div>
                 <label className="text-sm font-medium mb-2 flex items-center gap-1.5 block">
                   <Briefcase className="h-3.5 w-3.5 text-muted-foreground" />
-                  Должность / специализация *
+                  Job title / specialization *
                 </label>
                 <input
                   value={form.title}
                   onChange={e => set('title', e.target.value)}
-                  placeholder="Full-stack разработчик, SMM-специалист, UI/UX дизайнер..."
+                  placeholder="Full-stack developer, SMM specialist, UI/UX designer..."
                   className="w-full px-4 py-3 rounded-xl bg-background border border-subtle text-sm placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 transition-colors"
                 />
               </div>
@@ -417,7 +417,7 @@ export default function FreelancerSetupForm() {
               <div>
                 <label className="text-sm font-medium mb-3 flex items-center gap-1.5 block">
                   <Star className="h-3.5 w-3.5 text-muted-foreground" />
-                  Уровень опыта
+                  Experience level
                 </label>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                   {LEVELS.map(lv => (
@@ -442,7 +442,7 @@ export default function FreelancerSetupForm() {
               <div>
                 <label className="text-sm font-medium mb-3 flex items-center gap-1.5 block">
                   <Clock className="h-3.5 w-3.5 text-muted-foreground" />
-                  Время ответа
+                  Response time
                 </label>
                 <div className="grid grid-cols-2 gap-2">
                   {RESPONSE_TIMES.map(rt => (
@@ -464,7 +464,7 @@ export default function FreelancerSetupForm() {
               <div>
                 <label className="text-sm font-medium mb-3 flex items-center gap-1.5 block">
                   <Globe className="h-3.5 w-3.5 text-muted-foreground" />
-                  Языки общения
+                  Communication languages
                 </label>
                 <div className="flex flex-wrap gap-2">
                   {LANGUAGES.map(lang => (
@@ -489,7 +489,7 @@ export default function FreelancerSetupForm() {
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2">
                       <Sparkles className="h-4 w-4 text-primary" />
-                      <span className="text-sm font-medium text-primary">AI-описание</span>
+                      <span className="text-sm font-medium text-primary">AI description</span>
                     </div>
                     <button
                       onClick={generateBio}
@@ -497,14 +497,14 @@ export default function FreelancerSetupForm() {
                       className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg bg-primary text-white hover:bg-primary/90 transition-colors disabled:opacity-50"
                     >
                       {aiLoading ? <Loader2 className="h-3 w-3 animate-spin" /> : <Wand2 className="h-3 w-3" />}
-                      Сгенерировать
+                      Generate
                     </button>
                   </div>
                   {form.bio ? (
                     <p className="text-xs text-muted-foreground leading-relaxed">{form.bio}</p>
                   ) : (
                     <p className="text-xs text-muted-foreground">
-                      AI напишет «О себе» на основе вашей специализации и навыков
+                      AI will write your &apos;About me&apos; based on your specialization and skills
                     </p>
                   )}
                   {form.bio && (
@@ -512,7 +512,7 @@ export default function FreelancerSetupForm() {
                       onClick={() => set('bio', '')}
                       className="mt-2 text-xs text-muted-foreground hover:text-foreground transition-colors"
                     >
-                      Очистить
+                      Clear
                     </button>
                   )}
                 </div>
@@ -524,16 +524,16 @@ export default function FreelancerSetupForm() {
           {step === 2 && (
             <motion.div key="s2" {...slide} className="space-y-6">
               <div>
-                <h2 className="text-lg font-bold mb-1">Навыки и цены</h2>
-                <p className="text-sm text-muted-foreground">Покажите что умеете и сколько стоят ваши услуги</p>
+                <h2 className="text-lg font-bold mb-1">Skills & rates</h2>
+                <p className="text-sm text-muted-foreground">Show what you can do and how much your services cost</p>
               </div>
 
               {/* Skills */}
               <div>
                 <label className="text-sm font-medium mb-2 flex items-center gap-1.5 block">
                   <Tag className="h-3.5 w-3.5 text-muted-foreground" />
-                  Навыки *
-                  <span className="text-muted-foreground font-normal text-xs">минимум 2</span>
+                  Skills *
+                  <span className="text-muted-foreground font-normal text-xs">minimum 2</span>
                 </label>
 
                 {form.skills.length > 0 && (
@@ -562,7 +562,7 @@ export default function FreelancerSetupForm() {
                     onKeyDown={e => {
                       if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); addSkill(skillInput) }
                     }}
-                    placeholder="React, Figma, Python... (Enter для добавления)"
+                    placeholder="React, Figma, Python... (press Enter to add)"
                     className="flex-1 px-4 py-2.5 rounded-xl bg-background border border-subtle text-sm placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 transition-colors"
                   />
                   <button
@@ -574,7 +574,7 @@ export default function FreelancerSetupForm() {
                   </button>
                 </div>
                 <p className="text-xs text-muted-foreground mt-1.5">
-                  {form.skills.length}/15 навыков добавлено
+                  {form.skills.length}/15 skills added
                 </p>
               </div>
 
@@ -582,12 +582,12 @@ export default function FreelancerSetupForm() {
               <div>
                 <label className="text-sm font-medium mb-3 flex items-center gap-1.5 block">
                   <DollarSign className="h-3.5 w-3.5 text-muted-foreground" />
-                  Стоимость услуг (₽/проект)
+                  Service rate ($/project)
                 </label>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="text-xs text-muted-foreground mb-1 block">От * (₽)</label>
+                    <label className="text-xs text-muted-foreground mb-1 block">From * ($)</label>
                     <input
                       type="number"
                       value={form.priceFrom}
@@ -597,7 +597,7 @@ export default function FreelancerSetupForm() {
                     />
                   </div>
                   <div>
-                    <label className="text-xs text-muted-foreground mb-1 block">До (₽)</label>
+                    <label className="text-xs text-muted-foreground mb-1 block">To ($)</label>
                     <input
                       type="number"
                       value={form.priceTo}
@@ -610,8 +610,8 @@ export default function FreelancerSetupForm() {
 
                 {form.priceFrom && (
                   <div className="mt-3 p-3 rounded-xl bg-green-500/5 border border-green-500/20 text-sm text-green-400">
-                    Ваши заказчики увидят: от {parseInt(form.priceFrom).toLocaleString('ru')} ₽
-                    {form.priceTo ? ` до ${parseInt(form.priceTo).toLocaleString('ru')} ₽` : ''}
+                    Clients will see: from ${parseInt(form.priceFrom).toLocaleString()}
+                    {form.priceTo ? ` – $${parseInt(form.priceTo).toLocaleString()}` : ''}
                   </div>
                 )}
               </div>
@@ -622,8 +622,8 @@ export default function FreelancerSetupForm() {
           {step === 3 && (
             <motion.div key="s3" {...slide} className="space-y-5">
               <div>
-                <h2 className="text-lg font-bold mb-1">Портфолио</h2>
-                <p className="text-sm text-muted-foreground">Покажите ваши лучшие работы (необязательно)</p>
+                <h2 className="text-lg font-bold mb-1">Portfolio</h2>
+                <p className="text-sm text-muted-foreground">Show your best work (optional)</p>
               </div>
 
               {/* Existing items */}
@@ -676,29 +676,29 @@ export default function FreelancerSetupForm() {
                     className="rounded-xl border border-primary/20 bg-primary/5 overflow-hidden"
                   >
                     <div className="p-4 space-y-3">
-                      <p className="text-sm font-medium text-primary">Новая работа</p>
+                      <p className="text-sm font-medium text-primary">New project</p>
                       <input
                         value={portfolioForm.title}
                         onChange={e => setPortfolioForm(p => ({ ...p, title: e.target.value }))}
-                        placeholder="Название проекта *"
+                        placeholder="Project name *"
                         className="w-full px-4 py-2.5 rounded-xl bg-background border border-subtle text-sm placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 transition-colors"
                       />
                       <input
                         value={portfolioForm.imageUrl}
                         onChange={e => setPortfolioForm(p => ({ ...p, imageUrl: e.target.value }))}
-                        placeholder="Ссылка на изображение (URL)"
+                        placeholder="Image URL"
                         className="w-full px-4 py-2.5 rounded-xl bg-background border border-subtle text-sm placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 transition-colors"
                       />
                       <input
                         value={portfolioForm.category}
                         onChange={e => setPortfolioForm(p => ({ ...p, category: e.target.value }))}
-                        placeholder="Категория (например: Лендинг, Мобильное приложение)"
+                        placeholder="Category (e.g., Landing page, Mobile app)"
                         className="w-full px-4 py-2.5 rounded-xl bg-background border border-subtle text-sm placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 transition-colors"
                       />
                       <input
                         value={portfolioForm.url}
                         onChange={e => setPortfolioForm(p => ({ ...p, url: e.target.value }))}
-                        placeholder="Ссылка на проект (необязательно)"
+                        placeholder="Project link (optional)"
                         className="w-full px-4 py-2.5 rounded-xl bg-background border border-subtle text-sm placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 transition-colors"
                       />
                       <div className="flex gap-2">
@@ -706,14 +706,14 @@ export default function FreelancerSetupForm() {
                           onClick={() => { setShowPortfolioAdd(false); setPortfolioForm({ title: '', imageUrl: '', category: '', url: '' }) }}
                           className="flex-1 py-2.5 rounded-xl border border-subtle text-sm font-medium hover:bg-subtle transition-colors"
                         >
-                          Отмена
+                          Cancel
                         </button>
                         <button
                           onClick={addPortfolioItem}
                           disabled={!portfolioForm.title.trim()}
                           className="flex-1 py-2.5 rounded-xl bg-primary text-white text-sm font-medium hover:bg-primary/90 transition-colors disabled:opacity-40"
                         >
-                          Добавить
+                          Add
                         </button>
                       </div>
                     </div>
@@ -728,7 +728,7 @@ export default function FreelancerSetupForm() {
                   >
                     <Plus className="h-4 w-4" />
                     <span className="text-sm font-medium">
-                      {form.portfolio.length >= 8 ? 'Максимум 8 работ' : 'Добавить работу'}
+                      {form.portfolio.length >= 8 ? 'Maximum 8 projects' : 'Add project'}
                     </span>
                   </motion.button>
                 )}
@@ -736,7 +736,7 @@ export default function FreelancerSetupForm() {
 
               {form.portfolio.length === 0 && !showPortfolioAdd && (
                 <p className="text-center text-xs text-muted-foreground">
-                  Портфолио необязательно, но увеличивает шанс получить заказ в 3 раза
+                  Portfolio is optional, but increases your chance of getting hired 3x
                 </p>
               )}
             </motion.div>
@@ -746,8 +746,8 @@ export default function FreelancerSetupForm() {
           {step === 4 && (
             <motion.div key="s4" {...slide} className="space-y-4">
               <div>
-                <h2 className="text-lg font-bold mb-1">Всё верно?</h2>
-                <p className="text-sm text-muted-foreground">Проверьте данные перед публикацией профиля</p>
+                <h2 className="text-lg font-bold mb-1">Looks good?</h2>
+                <p className="text-sm text-muted-foreground">Review your details before publishing your profile</p>
               </div>
 
               <div className="rounded-xl border border-subtle bg-background divide-y divide-white/6">
@@ -768,7 +768,7 @@ export default function FreelancerSetupForm() {
 
                 {/* Specialization */}
                 <div className="px-4 py-3">
-                  <div className="text-xs text-muted-foreground mb-1.5">Специализация</div>
+                  <div className="text-xs text-muted-foreground mb-1.5">Specialization</div>
                   <div className="font-medium text-sm">{form.title || '—'}</div>
                   <div className="flex items-center gap-2 mt-1 flex-wrap">
                     {form.category && (
@@ -787,7 +787,7 @@ export default function FreelancerSetupForm() {
 
                 {/* Skills & Price */}
                 <div className="px-4 py-3">
-                  <div className="text-xs text-muted-foreground mb-2">Навыки ({form.skills.length})</div>
+                  <div className="text-xs text-muted-foreground mb-2">Skills ({form.skills.length})</div>
                   <div className="flex flex-wrap gap-1.5 mb-3">
                     {form.skills.map(s => (
                       <span key={s} className="text-xs px-2.5 py-1 rounded-full bg-primary/10 text-primary border border-primary/20">{s}</span>
@@ -795,8 +795,8 @@ export default function FreelancerSetupForm() {
                   </div>
                   {form.priceFrom && (
                     <div className="text-sm font-semibold text-green-400">
-                      от {parseInt(form.priceFrom).toLocaleString('ru')} ₽
-                      {form.priceTo ? ` — до ${parseInt(form.priceTo).toLocaleString('ru')} ₽` : ''}
+                      from ${parseInt(form.priceFrom).toLocaleString()}
+                      {form.priceTo ? ` – $${parseInt(form.priceTo).toLocaleString()}` : ''}
                     </div>
                   )}
                 </div>
@@ -804,7 +804,7 @@ export default function FreelancerSetupForm() {
                 {/* Portfolio */}
                 {form.portfolio.length > 0 && (
                   <div className="px-4 py-3">
-                    <div className="text-xs text-muted-foreground mb-1">Портфолио: {form.portfolio.length} работ</div>
+                    <div className="text-xs text-muted-foreground mb-1">Portfolio: {form.portfolio.length} projects</div>
                     <div className="flex gap-2 overflow-x-auto py-1">
                       {form.portfolio.map((p, i) => (
                         <div key={i} className="h-14 w-20 rounded-lg bg-subtle flex-shrink-0 overflow-hidden border border-subtle">
@@ -821,16 +821,16 @@ export default function FreelancerSetupForm() {
 
               {submitError && (
                 <div className="rounded-xl border border-red-500/30 bg-red-500/10 p-4 text-sm text-red-400">
-                  <p className="font-semibold mb-1">Ошибка сохранения</p>
+                  <p className="font-semibold mb-1">Save error</p>
                   <p className="text-xs opacity-80">{submitError}</p>
-                  <p className="text-xs mt-2 opacity-60">Проверьте что вы авторизованы и повторите попытку</p>
+                  <p className="text-xs mt-2 opacity-60">Make sure you are signed in and try again</p>
                 </div>
               )}
 
               {!user && (
                 <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-4 text-sm text-amber-400">
-                  Для сохранения профиля нужно{' '}
-                  <a href="/auth/login" className="underline font-medium">войти в аккаунт</a>
+                  To save your profile you need to{' '}
+                  <a href="/auth/login" className="underline font-medium">sign in</a>
                 </div>
               )}
             </motion.div>
@@ -852,22 +852,22 @@ export default function FreelancerSetupForm() {
               >
                 <Check className="h-12 w-12 text-green-400" />
               </motion.div>
-              <h2 className="text-2xl font-bold mb-2">Профиль готов! 🎉</h2>
+              <h2 className="text-2xl font-bold mb-2">Profile ready! 🎉</h2>
               <p className="text-muted-foreground mb-8 max-w-sm mx-auto">
-                Ваш профиль опубликован. Теперь заказчики могут найти вас и предложить проект
+                Your profile is published. Clients can now find you and offer projects
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <button
                   onClick={() => router.push('/orders')}
                   className="px-6 py-3 rounded-xl bg-primary text-white font-semibold hover:bg-primary/90 transition-colors"
                 >
-                  Найти заказы
+                  Find orders
                 </button>
                 <button
                   onClick={() => router.push('/dashboard')}
                   className="px-6 py-3 rounded-xl border border-subtle font-semibold hover:bg-subtle transition-colors"
                 >
-                  Мой кабинет
+                  My dashboard
                 </button>
               </div>
             </motion.div>
@@ -884,7 +884,7 @@ export default function FreelancerSetupForm() {
             className="flex items-center gap-2 px-5 py-3 rounded-xl border border-subtle text-sm font-medium hover:bg-subtle transition-colors"
           >
             <ArrowLeft className="h-4 w-4" />
-            {step === 0 ? 'Назад' : 'Пред.'}
+            {step === 0 ? 'Back' : 'Prev'}
           </button>
 
           {step < 4 ? (
@@ -893,7 +893,7 @@ export default function FreelancerSetupForm() {
               disabled={!canNext[step]}
               className="flex items-center gap-2 px-6 py-3 rounded-xl bg-primary text-white text-sm font-semibold hover:bg-primary/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
             >
-              Далее
+              Next
               <ArrowRight className="h-4 w-4" />
             </button>
           ) : (
@@ -903,7 +903,7 @@ export default function FreelancerSetupForm() {
               className="flex items-center gap-2 px-8 py-3 rounded-xl bg-primary text-white text-sm font-semibold hover:bg-primary/90 transition-colors disabled:opacity-60"
             >
               {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />}
-              {submitting ? 'Сохраняю...' : 'Опубликовать профиль'}
+              {submitting ? 'Saving...' : 'Publish profile'}
             </button>
           )}
         </div>

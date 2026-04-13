@@ -3,12 +3,12 @@ import { createClient } from '@/lib/supabase/server'
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
-const SYSTEM = `Ты — эксперт по рынку фриланса в СНГ (Россия, Украина, Казахстан, Беларусь).
-Анализируй описание задачи и давай рекомендацию по бюджету.
-Учитывай: сложность, сроки, тип работы, рыночные ставки 2025 года.
-Цены всегда в рублях.
-Отвечай СТРОГО в формате JSON:
-{"min": число, "max": число, "explanation": "короткое объяснение 2-3 предложения"}`
+const SYSTEM = `You are a global freelance market expert.
+Analyze the task description and provide a budget recommendation in USD.
+Consider: complexity, deadline, type of work, and current 2025 market rates.
+Always return prices in USD.
+Respond STRICTLY in JSON format:
+{"min": number, "max": number, "explanation": "short explanation in 2-3 sentences"}`
 
 export async function POST(request: Request) {
   try {
@@ -29,7 +29,7 @@ export async function POST(request: Request) {
       messages: [
         {
           role: 'user',
-          content: `Категория: ${category}\nСроки: ${deadline}\nОписание: ${description}`,
+          content: `Category: ${category}\nDeadline: ${deadline}\nDescription: ${description}`,
         },
       ],
     })
@@ -47,16 +47,16 @@ export async function POST(request: Request) {
 
 function getMockAdvice(category: string) {
   const ranges: Record<string, { min: number; max: number; explanation: string }> = {
-    dev: { min: 30000, max: 80000, explanation: 'Разработка сайта — стандартный диапазон для СНГ рынка. Зависит от сложности и технологий. Junior возьмёт минимум, Senior — максимум.' },
-    'ux-ui': { min: 20000, max: 60000, explanation: 'Дизайн интерфейса в Figma. Цена зависит от количества экранов и наличия дизайн-системы.' },
-    smm: { min: 15000, max: 40000, explanation: 'Ведение соцсетей в месяц. Включает контент-план, посты и Stories. Reels и таргет — доп. оплата.' },
-    targeting: { min: 15000, max: 35000, explanation: 'Настройка таргетированной рекламы. Не включает рекламный бюджет. Зависит от количества площадок.' },
-    'tg-bots': { min: 10000, max: 50000, explanation: 'Telegram-бот — цена зависит от функционала. Простой бот — от 10К, с оплатой и CRM интеграцией — до 50К.' },
-    'ai-ml': { min: 50000, max: 200000, explanation: 'AI/ML разработка — дорогостоящая специализация. RAG-системы, чат-боты на LLM — высокий спрос и ставки.' },
-    copywriting: { min: 5000, max: 20000, explanation: 'Тексты: SEO-статьи, лендинги, email. Цена за пакет. Финтех и юридическая тематика — дороже.' },
-    video: { min: 5000, max: 15000, explanation: 'Монтаж видео за единицу контента. YouTube-ролики, рекламные ролики, Reels — разные ценовые диапазоны.' },
-    nocode: { min: 20000, max: 70000, explanation: 'No-code разработка. Bubble/Webflow/Make — быстро и дешевле классической разработки при схожем функционале.' },
-    '3d-art': { min: 10000, max: 50000, explanation: 'AI-арт и 3D — зависит от количества и сложности иллюстраций. Midjourney + доработка — дешевле чистого 3D.' },
+    dev: { min: 300, max: 2000, explanation: 'Website development — typical range on the global market. Depends on complexity and tech stack. Junior takes the minimum, Senior takes the maximum.' },
+    'ux-ui': { min: 200, max: 1500, explanation: 'UI/UX design in Figma. Price depends on the number of screens and whether a design system is required.' },
+    smm: { min: 150, max: 800, explanation: 'Social media management per month. Includes content plan, posts and Stories. Reels and ads are priced separately.' },
+    targeting: { min: 150, max: 700, explanation: 'Paid ads setup. Does not include ad budget. Price varies by number of platforms.' },
+    'tg-bots': { min: 100, max: 1200, explanation: 'Telegram bot — price depends on features. Simple bot starts at $100, bots with payments and CRM integration up to $1200.' },
+    'ai-ml': { min: 500, max: 5000, explanation: 'AI/ML development is a high-demand specialization. RAG systems and LLM chatbots command premium rates.' },
+    copywriting: { min: 50, max: 500, explanation: 'Copy: SEO articles, landing pages, email. Priced per package. Fintech and legal niches cost more.' },
+    video: { min: 50, max: 400, explanation: 'Video editing per piece of content. YouTube videos, ads, Reels — different price ranges.' },
+    nocode: { min: 200, max: 1800, explanation: 'No-code development. Bubble/Webflow/Make — faster and cheaper than traditional dev for similar functionality.' },
+    '3d-art': { min: 100, max: 1200, explanation: 'AI art and 3D — depends on quantity and complexity. Midjourney + post-processing is cheaper than pure 3D.' },
   }
   return ranges[category] || ranges['dev']
 }

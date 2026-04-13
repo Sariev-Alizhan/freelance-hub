@@ -11,7 +11,7 @@ interface Props {
   size?: 'sm' | 'md' | 'lg'
 }
 
-export default function PriceDisplay({ amountRub, prefix = 'от ', suffix, className, size = 'md' }: Props) {
+export default function PriceDisplay({ amountRub, prefix = 'from ', suffix, className, size = 'md' }: Props) {
   const { currency } = useCurrency()
   const sizeClass = size === 'sm' ? 'text-sm' : size === 'lg' ? 'text-xl font-bold' : 'text-base font-semibold'
   return (

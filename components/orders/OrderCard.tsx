@@ -31,7 +31,7 @@ export default function OrderCard({ order: o }: Props) {
             style={{ padding: '2px 8px', background: 'rgba(251,191,36,0.12)', border: '1px solid rgba(251,191,36,0.3)' }}
           >
             <TrendingUp className="h-2.5 w-2.5" style={{ color: '#fbbf24' }} />
-            <span style={{ fontSize: '10px', fontWeight: 590, color: '#fbbf24', letterSpacing: '0.04em' }}>ТОП</span>
+            <span style={{ fontSize: '10px', fontWeight: 590, color: '#fbbf24', letterSpacing: '0.04em' }}>TOP</span>
           </div>
         )}
 
@@ -63,7 +63,7 @@ export default function OrderCard({ order: o }: Props) {
                     className="flex items-center gap-1 text-[11px] px-2 py-0.5 rounded"
                     style={{ fontWeight: 590, background: 'rgba(229,72,77,0.1)', color: '#e5484d' }}
                   >
-                    <Zap className="h-3 w-3" /> Срочно
+                    <Zap className="h-3 w-3" /> Urgent
                   </span>
                 )}
               </div>
@@ -117,7 +117,7 @@ export default function OrderCard({ order: o }: Props) {
                       <PriceDisplay amountRub={o.budget.max} prefix="" size="sm" className="text-[#7170ff]" />
                     </>
                   ) : (
-                    <span style={{ color: 'var(--fh-t3)', fontWeight: 400, fontSize: '12px' }}>Договорная</span>
+                    <span style={{ color: 'var(--fh-t3)', fontWeight: 400, fontSize: '12px' }}>Negotiable</span>
                   )}
                 </div>
                 <div className="flex items-center gap-1" style={{ color: 'var(--fh-t4)' }}>
@@ -159,10 +159,10 @@ export default function OrderCard({ order: o }: Props) {
             fontSize: '11px',
             fontWeight: 590,
           }}
-          title="Продвинуть в ленте"
+          title="Promote in feed"
         >
           <TrendingUp className="h-3 w-3" />
-          Продвинуть
+          Promote
         </button>
       </div>
 

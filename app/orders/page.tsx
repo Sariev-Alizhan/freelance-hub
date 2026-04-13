@@ -58,7 +58,7 @@ async function fetchRealOrders(): Promise<Order[]> {
 
     return data.map((o: any): Order => {
       const profile = o.profiles
-      const clientName = profile?.full_name || profile?.username || 'Заказчик'
+      const clientName = profile?.full_name || profile?.username || 'Client'
       const clientAvatar =
         profile?.avatar_url ||
         `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(clientName)}&backgroundColor=4338CA&textColor=ffffff`
@@ -95,7 +95,7 @@ async function fetchRealOrders(): Promise<Order[]> {
 export default async function OrdersPage() {
   const realOrders = await fetchRealOrders()
   return (
-    <Suspense fallback={<div className="mx-auto max-w-7xl px-4 py-20 text-center" style={{ color: '#62666d', fontSize: '14px' }}>Загрузка…</div>}>
+    <Suspense fallback={<div className="mx-auto max-w-7xl px-4 py-20 text-center" style={{ color: '#62666d', fontSize: '14px' }}>Loading…</div>}>
       <OrdersClient realOrders={realOrders} />
     </Suspense>
   )

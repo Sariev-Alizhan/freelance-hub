@@ -27,10 +27,10 @@ const TYPE_CONFIG = {
 
 function timeAgo(iso: string) {
   const diff = (Date.now() - new Date(iso).getTime()) / 1000
-  if (diff < 60) return 'только что'
-  if (diff < 3600) return `${Math.floor(diff / 60)} мин назад`
-  if (diff < 86400) return `${Math.floor(diff / 3600)} ч назад`
-  return `${Math.floor(diff / 86400)} дн назад`
+  if (diff < 60) return 'just now'
+  if (diff < 3600) return `${Math.floor(diff / 60)} min ago`
+  if (diff < 86400) return `${Math.floor(diff / 3600)} hr ago`
+  return `${Math.floor(diff / 86400)} d ago`
 }
 
 export default function NotificationBell() {
@@ -149,14 +149,14 @@ export default function NotificationBell() {
           >
             {/* Header */}
             <div className="flex items-center justify-between px-4 py-3 border-b border-subtle">
-              <span className="text-sm font-semibold">Уведомления</span>
+              <span className="text-sm font-semibold">Notifications</span>
               {unreadCount > 0 && (
                 <button
                   onClick={markAllRead}
                   className="text-xs text-primary hover:text-primary/80 transition-colors flex items-center gap-1"
                 >
                   <CheckCheck className="h-3 w-3" />
-                  Прочитать все
+                  Mark all read
                 </button>
               )}
             </div>
@@ -170,7 +170,7 @@ export default function NotificationBell() {
               ) : notifications.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-12 gap-3 text-center">
                   <Bell className="h-8 w-8 text-muted-foreground/30" />
-                  <p className="text-sm text-muted-foreground">Нет уведомлений</p>
+                  <p className="text-sm text-muted-foreground">No notifications</p>
                 </div>
               ) : (
                 notifications.map(notif => {
@@ -228,7 +228,7 @@ export default function NotificationBell() {
                   onClick={() => setNotifications([])}
                   className="text-xs text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  Очистить все
+                  Clear all
                 </button>
               </div>
             )}
