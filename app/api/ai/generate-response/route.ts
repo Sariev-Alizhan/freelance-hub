@@ -1,4 +1,5 @@
 import Anthropic from '@anthropic-ai/sdk'
+import { createClient } from '@/lib/supabase/server'
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
@@ -10,6 +11,10 @@ const SYSTEM = `Ты помогаешь фрилансерам писать уб
 
 export async function POST(request: Request) {
   try {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 })
+
     const { orderTitle, orderDescription, category, proposedPrice } = await request.json()
 
     if (!process.env.ANTHROPIC_API_KEY) {
@@ -43,6 +48,10 @@ const ADVICE_SYSTEM = `Ты эксперт по фрилансу и помога
 
 export async function PUT(request: Request) {
   try {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 })
+
     const { message, orderTitle, proposedPrice } = await request.json()
 
     if (!process.env.ANTHROPIC_API_KEY || !message?.trim()) {

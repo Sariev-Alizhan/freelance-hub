@@ -76,7 +76,7 @@ export interface Order {
   }
   postedAt: string
   responsesCount: number
-  status: 'open' | 'in_progress' | 'completed'
+  status: 'open' | 'in_progress' | 'completed' | 'cancelled'
   isUrgent: boolean
   isPromoted?: boolean
 }

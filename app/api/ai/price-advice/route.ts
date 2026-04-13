@@ -1,4 +1,5 @@
 import Anthropic from '@anthropic-ai/sdk'
+import { createClient } from '@/lib/supabase/server'
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
@@ -11,6 +12,10 @@ const SYSTEM = `Ты — эксперт по рынку фриланса в СН
 
 export async function POST(request: Request) {
   try {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 })
+
     const { description, category, deadline } = await request.json()
 
     if (!process.env.ANTHROPIC_API_KEY) {

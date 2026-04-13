@@ -12,6 +12,8 @@ import { CATEGORIES } from '@/lib/mock/categories'
 import { createClient } from '@/lib/supabase/server'
 import { Freelancer } from '@/lib/types'
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.freelance-hub.kz'
+
 const LEVEL_LABELS = {
   new: 'Новичок', junior: 'Junior', middle: 'Middle', senior: 'Senior', top: 'TOP',
 }
@@ -110,7 +112,7 @@ export async function generateMetadata({
         jobTitle: f.title,
         description: f.description,
         image: f.avatar,
-        url: `https://freelance-hub-gamma.vercel.app/freelancers/${id}`,
+        url: `${SITE_URL}/freelancers/${id}`,
         knowsAbout: f.skills,
         aggregateRating: f.reviewsCount > 0 ? {
           '@type': 'AggregateRating',
@@ -267,12 +269,12 @@ export default async function FreelancerPage({ params }: { params: Promise<{ id:
               )}
             </div>
 
-            <button className="w-full py-3 rounded-xl bg-primary text-white font-semibold hover:bg-primary/90 transition-colors mb-3">
-              Написать фрилансеру
-            </button>
-            <button className="w-full py-3 rounded-xl border border-subtle bg-subtle font-semibold hover:bg-surface transition-colors text-sm">
+            <Link href="/messages" className="w-full py-3 rounded-xl bg-primary text-white font-semibold hover:bg-primary/90 transition-colors mb-3 flex items-center justify-center gap-2">
+              <MessageCircle className="h-4 w-4" /> Написать фрилансеру
+            </Link>
+            <Link href="/orders/new" className="w-full py-3 rounded-xl border border-subtle bg-subtle font-semibold hover:bg-surface transition-colors text-sm flex items-center justify-center">
               Предложить заказ
-            </button>
+            </Link>
           </div>
         </div>
       </div>

@@ -1,4 +1,5 @@
 import Anthropic from '@anthropic-ai/sdk'
+import { createClient } from '@/lib/supabase/server'
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
@@ -10,6 +11,10 @@ const SYSTEM = `Ты помогаешь фрилансерам составит�
 
 export async function POST(request: Request) {
   try {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 })
+
     const { title, category, skills, level } = await request.json()
 
     const levelMap: Record<string, string> = {

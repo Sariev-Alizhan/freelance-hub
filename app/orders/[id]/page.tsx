@@ -11,6 +11,8 @@ import OrderStatusActions from '@/components/orders/OrderStatusActions'
 import { createClient } from '@/lib/supabase/server'
 import { Order } from '@/lib/types'
 
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.freelance-hub.kz'
+
 async function getOrder(id: string): Promise<Order | null> {
   try {
     const supabase = await createClient()
@@ -84,11 +86,12 @@ export async function generateMetadata({
         jobLocationType: 'TELECOMMUTE',
         baseSalary: {
           '@type': 'MonetaryAmount',
-          currency: 'RUB',
+          currency: 'KZT',
           value: { '@type': 'QuantitativeValue', minValue: order.budget.min, maxValue: order.budget.max, unitText: 'FIXED' },
         },
         occupationalCategory: category?.label ?? '',
         skills: order.skills.join(', '),
+        url: `${SITE_URL}/orders/${id}`,
       }),
     },
   }
@@ -106,12 +109,21 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
   const category = CATEGORIES.find((c) => c.slug === order.category)
   const isOwner  = !!user && user.id === order.client.id
 
+  const statusStyle = {
+    open:        { bg: 'rgba(39,166,68,0.08)',           color: '#27a644',        border: '1px solid rgba(39,166,68,0.2)',  label: 'Открыт'   },
+    in_progress: { bg: 'rgba(59,130,246,0.08)',          color: '#3b82f6',        border: '1px solid rgba(59,130,246,0.2)', label: 'В работе' },
+    completed:   { bg: 'var(--fh-surface-2)',            color: 'var(--fh-t3)',   border: '1px solid var(--fh-border)',     label: 'Завершён' },
+    cancelled:   { bg: 'rgba(229,72,77,0.08)',           color: '#e5484d',        border: '1px solid rgba(229,72,77,0.2)', label: 'Отменён'  },
+  }
+  const st = statusStyle[order.status] ?? statusStyle.open
+
   return (
     <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-10" style={{ minHeight: 'calc(100vh - 52px)' }}>
       <Link
         href="/orders"
         className="inline-flex items-center gap-2 mb-8 transition-colors"
-        style={{ fontSize: '13px', color: '#62666d', fontWeight: 400 }}
+        style={{ fontSize: '13px', color: 'var(--fh-t4)', fontWeight: 400 }}
+        onMouseEnter={undefined}
       >
         <ArrowLeft className="h-3.5 w-3.5" /> Назад к заказам
       </Link>
@@ -122,7 +134,7 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
           {/* Order card */}
           <div
             className="rounded-xl p-6"
-            style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.08)' }}
+            style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border-2)' }}
           >
             <div className="flex items-center gap-2 mb-4 flex-wrap">
               {category && (
@@ -149,16 +161,9 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
               )}
               <span
                 className="ml-auto rounded-full"
-                style={{
-                  padding: '3px 10px',
-                  fontSize: '11px',
-                  fontWeight: 510,
-                  background: order.status === 'open' ? 'rgba(39,166,68,0.08)' : 'rgba(255,255,255,0.04)',
-                  color: order.status === 'open' ? '#27a644' : '#8a8f98',
-                  border: order.status === 'open' ? '1px solid rgba(39,166,68,0.2)' : '1px solid rgba(255,255,255,0.06)',
-                }}
+                style={{ padding: '3px 10px', fontSize: '11px', fontWeight: 510, background: st.bg, color: st.color, border: st.border }}
               >
-                {order.status === 'open' ? 'Открыт' : order.status === 'in_progress' ? 'В работе' : order.status === 'completed' ? 'Завершён' : 'Отменён'}
+                {st.label}
               </span>
             </div>
 
@@ -167,7 +172,7 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
                 fontSize: 'clamp(18px, 3vw, 24px)',
                 fontWeight: 510,
                 letterSpacing: '-0.04em',
-                color: '#f7f8f8',
+                color: 'var(--fh-t1)',
                 marginBottom: '14px',
                 fontFeatureSettings: '"cv01", "ss03"',
                 lineHeight: 1.2,
@@ -175,16 +180,16 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
             >
               {order.title}
             </h1>
-            <p style={{ fontSize: '14px', color: '#8a8f98', lineHeight: 1.75, whiteSpace: 'pre-line', fontWeight: 400, letterSpacing: '-0.005em' }}>
+            <p style={{ fontSize: '14px', color: 'var(--fh-t3)', lineHeight: 1.75, whiteSpace: 'pre-line', fontWeight: 400, letterSpacing: '-0.005em' }}>
               {order.description}
             </p>
 
             <div
               className="mt-6 grid grid-cols-2 sm:grid-cols-3 gap-4 pt-5"
-              style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}
+              style={{ borderTop: '1px solid var(--fh-sep)' }}
             >
               <div>
-                <div style={{ fontSize: '11px', color: '#62666d', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 510 }}>
+                <div style={{ fontSize: '11px', color: 'var(--fh-t4)', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 510 }}>
                   Бюджет
                 </div>
                 <div style={{ fontSize: '15px', fontWeight: 590, color: '#7170ff', letterSpacing: '-0.02em' }}>
@@ -198,16 +203,16 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
                 </div>
               </div>
               <div>
-                <div style={{ fontSize: '11px', color: '#62666d', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 510 }}>
+                <div style={{ fontSize: '11px', color: 'var(--fh-t4)', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 510 }}>
                   Срок
                 </div>
-                <div style={{ fontSize: '14px', fontWeight: 510, color: '#f7f8f8', letterSpacing: '-0.01em' }}>{order.deadline}</div>
+                <div style={{ fontSize: '14px', fontWeight: 510, color: 'var(--fh-t1)', letterSpacing: '-0.01em' }}>{order.deadline}</div>
               </div>
               <div>
-                <div style={{ fontSize: '11px', color: '#62666d', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 510 }}>
+                <div style={{ fontSize: '11px', color: 'var(--fh-t4)', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 510 }}>
                   Откликов
                 </div>
-                <div style={{ fontSize: '14px', fontWeight: 510, color: '#f7f8f8' }}>{order.responsesCount}</div>
+                <div style={{ fontSize: '14px', fontWeight: 510, color: 'var(--fh-t1)' }}>{order.responsesCount}</div>
               </div>
             </div>
           </div>
@@ -216,9 +221,9 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
           {order.skills.length > 0 && (
             <div
               className="rounded-xl p-5"
-              style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.08)' }}
+              style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border-2)' }}
             >
-              <h2 style={{ fontSize: '13px', fontWeight: 590, color: '#f7f8f8', marginBottom: '12px', letterSpacing: '-0.01em' }}>
+              <h2 style={{ fontSize: '13px', fontWeight: 590, color: 'var(--fh-t1)', marginBottom: '12px', letterSpacing: '-0.01em' }}>
                 Требуемые навыки
               </h2>
               <div className="flex flex-wrap gap-2">
@@ -256,7 +261,7 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
         <div className="space-y-4">
           <div
             className="sticky top-20 rounded-xl p-5"
-            style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.08)' }}
+            style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border-2)' }}
           >
             {!isOwner && (
               <>
@@ -274,9 +279,9 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
                   style={{
                     padding: '10px 16px',
                     borderRadius: '6px',
-                    background: 'rgba(255,255,255,0.03)',
-                    border: '1px solid rgba(255,255,255,0.08)',
-                    color: '#d0d6e0',
+                    background: 'var(--fh-surface-2)',
+                    border: '1px solid var(--fh-border-2)',
+                    color: 'var(--fh-t2)',
                     fontSize: '13px',
                     fontWeight: 510,
                   }}
@@ -300,7 +305,6 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
                   Создать контракт
                 </Link>
 
-                {/* Escrow info for freelancers */}
                 <div
                   className="mt-4 rounded-lg px-3.5 py-3 flex items-start gap-2.5"
                   style={{ background: 'rgba(39,166,68,0.04)', border: '1px solid rgba(39,166,68,0.12)' }}
@@ -308,7 +312,7 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
                   <Shield className="h-4 w-4 flex-shrink-0 mt-0.5" style={{ color: '#27a644' }} />
                   <div>
                     <p style={{ fontSize: '12px', fontWeight: 590, color: '#27a644', marginBottom: '3px' }}>Безопасная сделка</p>
-                    <p style={{ fontSize: '11px', color: '#62666d', lineHeight: 1.5, fontWeight: 400 }}>
+                    <p style={{ fontSize: '11px', color: 'var(--fh-t4)', lineHeight: 1.5, fontWeight: 400 }}>
                       Договаривайтесь об оплате частями. Аванс 30–50%, остаток — после сдачи работы.
                     </p>
                   </div>
@@ -318,13 +322,13 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
 
             <div
               className="mt-4 pt-4 space-y-2.5"
-              style={{ borderTop: '1px solid rgba(255,255,255,0.05)' }}
+              style={{ borderTop: '1px solid var(--fh-sep)' }}
             >
-              <div className="flex items-center gap-2" style={{ color: '#62666d' }}>
+              <div className="flex items-center gap-2" style={{ color: 'var(--fh-t4)' }}>
                 <Clock className="h-3.5 w-3.5 flex-shrink-0" />
                 <span style={{ fontSize: '12px', fontWeight: 400 }}>{order.deadline}</span>
               </div>
-              <div className="flex items-center gap-2" style={{ color: '#62666d' }}>
+              <div className="flex items-center gap-2" style={{ color: 'var(--fh-t4)' }}>
                 <Users className="h-3.5 w-3.5 flex-shrink-0" />
                 <span style={{ fontSize: '12px', fontWeight: 400 }}>{order.responsesCount} откликов</span>
               </div>
@@ -334,16 +338,16 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
           {/* Client card */}
           <div
             className="rounded-xl p-5"
-            style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.08)' }}
+            style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border-2)' }}
           >
-            <h3 style={{ fontSize: '12px', fontWeight: 590, color: '#62666d', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '12px' }}>
+            <h3 style={{ fontSize: '12px', fontWeight: 590, color: 'var(--fh-t4)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '12px' }}>
               О заказчике
             </h3>
             <div className="flex items-center gap-3 mb-3">
               <Image src={order.client.avatar} alt={order.client.name} width={38} height={38} className="rounded-lg" unoptimized />
               <div>
-                <div style={{ fontSize: '13px', fontWeight: 590, color: '#f7f8f8' }}>{order.client.name}</div>
-                <div style={{ fontSize: '11px', color: '#62666d', fontWeight: 400 }}>{order.client.ordersPosted} заказов на платформе</div>
+                <div style={{ fontSize: '13px', fontWeight: 590, color: 'var(--fh-t1)' }}>{order.client.name}</div>
+                <div style={{ fontSize: '11px', color: 'var(--fh-t4)', fontWeight: 400 }}>{order.client.ordersPosted} заказов на платформе</div>
               </div>
             </div>
             {order.client.rating > 0 && <RatingStars rating={order.client.rating} />}

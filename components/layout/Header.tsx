@@ -172,7 +172,7 @@ export default function Header() {
                       onMouseEnter={e => { if (l !== lang) e.currentTarget.style.background = 'var(--fh-surface-2)' }}
                       onMouseLeave={e => { if (l !== lang) e.currentTarget.style.background = 'transparent' }}
                     >
-                      {l === 'ru' ? '🇷🇺' : l === 'kz' ? '🇰🇿' : '🇬🇧'}
+                      {l === 'kz' ? '🇰🇿' : null}
                       {LANG_LABELS[l]}
                     </button>
                   ))}
