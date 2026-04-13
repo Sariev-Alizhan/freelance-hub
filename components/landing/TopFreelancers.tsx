@@ -29,7 +29,7 @@ const PERKS = [
 
 export default function TopFreelancers() {
   return (
-    <section className="py-20 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: '#0f1011' }}>
+    <section className="py-20 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: 'var(--fh-canvas)' }}>
       <div className="mx-auto max-w-7xl">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
@@ -42,7 +42,7 @@ export default function TopFreelancers() {
               fontSize: 'clamp(24px, 4vw, 36px)',
               fontWeight: 510,
               letterSpacing: '-0.04em',
-              color: '#f7f8f8',
+              color: 'var(--fh-t1)',
               lineHeight: 1.1,
               marginBottom: '12px',
               fontFeatureSettings: '"cv01", "ss03"',
@@ -67,8 +67,8 @@ export default function TopFreelancers() {
                 transition={{ delay: i * 0.08 }}
                 className="rounded-xl p-6"
                 style={{
-                  background: 'rgba(255,255,255,0.02)',
-                  border: '1px solid rgba(255,255,255,0.06)',
+                  background: 'var(--fh-surface)',
+                  border: '1px solid var(--fh-border)',
                 }}
               >
                 <div
@@ -77,7 +77,7 @@ export default function TopFreelancers() {
                 >
                   <Icon className="h-5 w-5" style={{ color: perk.color }} />
                 </div>
-                <h3 style={{ fontSize: '15px', fontWeight: 590, color: '#f7f8f8', marginBottom: '8px', letterSpacing: '-0.02em' }}>
+                <h3 style={{ fontSize: '15px', fontWeight: 590, color: 'var(--fh-t1)', marginBottom: '8px', letterSpacing: '-0.02em' }}>
                   {perk.title}
                 </h3>
                 <p style={{ fontSize: '13px', color: '#8a8f98', lineHeight: 1.6, fontWeight: 400, letterSpacing: '-0.01em' }}>
@@ -103,7 +103,7 @@ export default function TopFreelancers() {
             <p style={{ fontSize: '11px', fontWeight: 590, color: '#7170ff', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '6px' }}>
               Только запустились
             </p>
-            <h3 style={{ fontSize: '18px', fontWeight: 510, color: '#f7f8f8', letterSpacing: '-0.03em', marginBottom: '6px' }}>
+            <h3 style={{ fontSize: '18px', fontWeight: 510, color: 'var(--fh-t1)', letterSpacing: '-0.03em', marginBottom: '6px' }}>
               Станьте одним из первых
             </h3>
             <p style={{ fontSize: '13px', color: '#8a8f98', fontWeight: 400, letterSpacing: '-0.01em', lineHeight: 1.6 }}>
@@ -135,13 +135,13 @@ export default function TopFreelancers() {
                 padding: '9px 16px',
                 borderRadius: '6px',
                 background: 'rgba(255,255,255,0.04)',
-                border: '1px solid rgba(255,255,255,0.08)',
-                color: '#8a8f98',
+                border: '1px solid var(--fh-border-2)',
+                color: 'var(--fh-t3)',
                 fontSize: '13px',
                 fontWeight: 510,
               }}
-              onMouseEnter={e => { e.currentTarget.style.color = '#f7f8f8'; e.currentTarget.style.background = 'rgba(255,255,255,0.06)' }}
-              onMouseLeave={e => { e.currentTarget.style.color = '#8a8f98'; e.currentTarget.style.background = 'rgba(255,255,255,0.04)' }}
+              onMouseEnter={e => { e.currentTarget.style.color = 'var(--fh-t1)'; e.currentTarget.style.background = 'var(--fh-surface-3)' }}
+              onMouseLeave={e => { e.currentTarget.style.color = 'var(--fh-t3)'; e.currentTarget.style.background = 'var(--fh-surface-2)' }}
             >
               Фрилансеры <ArrowRight className="h-3.5 w-3.5" />
             </Link>

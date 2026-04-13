@@ -29,7 +29,7 @@ export default function RegisterPage() {
   return (
     <div
       className="min-h-[calc(100vh-52px)] flex items-center justify-center px-4 py-16"
-      style={{ background: '#08090a' }}
+      style={{ background: 'var(--fh-canvas)' }}
     >
       <div className="w-full max-w-sm">
         {/* Logo + heading */}
@@ -42,14 +42,14 @@ export default function RegisterPage() {
               fontSize: '22px',
               fontWeight: 510,
               letterSpacing: '-0.03em',
-              color: '#f7f8f8',
+              color: 'var(--fh-t1)',
               marginBottom: '8px',
               fontFeatureSettings: '"cv01", "ss03"',
             }}
           >
             Создать аккаунт
           </h1>
-          <p style={{ fontSize: '13px', color: '#62666d', fontWeight: 400 }}>
+          <p style={{ fontSize: '13px', color: 'var(--fh-t4)', fontWeight: 400 }}>
             Уже есть аккаунт?{' '}
             <Link
               href="/auth/login"
@@ -65,13 +65,13 @@ export default function RegisterPage() {
         <div
           className="rounded-xl p-6 space-y-5"
           style={{
-            background: 'rgba(255,255,255,0.02)',
-            border: '1px solid rgba(255,255,255,0.08)',
+            background: 'var(--fh-surface)',
+            border: '1px solid var(--fh-border-2)',
           }}
         >
           {/* Role selector */}
           <div>
-            <p style={{ fontSize: '12px', fontWeight: 590, color: '#8a8f98', marginBottom: '10px', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+            <p style={{ fontSize: '12px', fontWeight: 590, color: 'var(--fh-t3)', marginBottom: '10px', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
               Вы регистрируетесь как
             </p>
             <div className="grid grid-cols-2 gap-2.5">
@@ -86,15 +86,15 @@ export default function RegisterPage() {
                     onClick={() => setRole(value)}
                     className="flex flex-col items-center gap-2 p-4 rounded-lg transition-all"
                     style={{
-                      border: active ? '1px solid rgba(113,112,255,0.4)' : '1px solid rgba(255,255,255,0.06)',
-                      background: active ? 'rgba(113,112,255,0.08)' : 'rgba(255,255,255,0.02)',
+                      border: active ? '1px solid rgba(113,112,255,0.4)' : '1px solid var(--fh-border)',
+                      background: active ? 'rgba(113,112,255,0.08)' : 'var(--fh-surface-2)',
                     }}
                   >
-                    <Icon className="h-5 w-5" style={{ color: active ? '#7170ff' : '#62666d' }} />
-                    <span style={{ fontSize: '13px', fontWeight: 590, color: active ? '#f7f8f8' : '#8a8f98', letterSpacing: '-0.01em' }}>
+                    <Icon className="h-5 w-5" style={{ color: active ? '#7170ff' : 'var(--fh-t4)' }} />
+                    <span style={{ fontSize: '13px', fontWeight: 590, color: active ? 'var(--fh-t1)' : 'var(--fh-t3)', letterSpacing: '-0.01em' }}>
                       {label}
                     </span>
-                    <span style={{ fontSize: '11px', color: '#62666d', fontWeight: 400 }}>{sub}</span>
+                    <span style={{ fontSize: '11px', color: 'var(--fh-t4)', fontWeight: 400 }}>{sub}</span>
                   </button>
                 )
               })}
@@ -140,15 +140,15 @@ export default function RegisterPage() {
               style={{
                 padding: '10px 16px',
                 borderRadius: '6px',
-                background: 'rgba(255,255,255,0.03)',
-                border: '1px solid rgba(255,255,255,0.08)',
-                color: '#d0d6e0',
+                background: 'var(--fh-surface-2)',
+                border: '1px solid var(--fh-border-2)',
+                color: 'var(--fh-t2)',
                 fontSize: '14px',
                 fontWeight: 510,
                 letterSpacing: '-0.01em',
               }}
-              onMouseEnter={e => { if (loading === null) e.currentTarget.style.background = 'rgba(255,255,255,0.06)' }}
-              onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.03)' }}
+              onMouseEnter={e => { if (loading === null) e.currentTarget.style.background = 'var(--fh-surface-3)' }}
+              onMouseLeave={e => { e.currentTarget.style.background = 'var(--fh-surface-2)' }}
             >
               {loading === 'github' ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
@@ -161,16 +161,16 @@ export default function RegisterPage() {
             </button>
           </div>
 
-          <p className="text-center" style={{ fontSize: '12px', color: '#4a4f57', fontWeight: 400 }}>
+          <p className="text-center" style={{ fontSize: '12px', color: 'var(--fh-t2)', fontWeight: 400 }}>
             Комиссия платформы:{' '}
             <span style={{ color: '#27a644', fontWeight: 590 }}>0%</span>{' '}
             — навсегда
           </p>
         </div>
 
-        <p className="text-center mt-5" style={{ fontSize: '12px', color: '#4a4f57', fontWeight: 400 }}>
+        <p className="text-center mt-5" style={{ fontSize: '12px', color: 'var(--fh-t2)', fontWeight: 400 }}>
           Регистрируясь, вы принимаете{' '}
-          <Link href="#" style={{ color: '#62666d' }} onMouseEnter={e => { e.currentTarget.style.color = '#8a8f98' }} onMouseLeave={e => { e.currentTarget.style.color = '#62666d' }}>
+          <Link href="#" style={{ color: 'var(--fh-t3)' }} onMouseEnter={e => { e.currentTarget.style.color = 'var(--fh-t2)' }} onMouseLeave={e => { e.currentTarget.style.color = 'var(--fh-t3)' }}>
             условия использования
           </Link>
         </p>
