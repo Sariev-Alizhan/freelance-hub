@@ -5,20 +5,20 @@ import { createClient } from '@/lib/supabase/server'
 import { Order } from '@/lib/types'
 
 export const metadata: Metadata = {
-  title: 'Заказы — FreelanceHub',
+  title: 'Orders — FreelanceHub',
   description:
-    'Найдите фриланс-проект по своей специальности. Разработка, дизайн, маркетинг, копирайтинг и другие заказы для специалистов из СНГ.',
+    'Find freelance projects in your field. Development, design, marketing, copywriting and more — from clients worldwide.',
   openGraph: {
-    title: 'Заказы — FreelanceHub',
-    description: 'Тысячи фриланс-проектов для специалистов из СНГ',
+    title: 'Orders — FreelanceHub',
+    description: 'Thousands of freelance projects for specialists worldwide',
     type: 'website',
-    locale: 'ru_RU',
+    locale: 'en_US',
     siteName: 'FreelanceHub',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Заказы — FreelanceHub',
-    description: 'Тысячи фриланс-проектов для специалистов из СНГ',
+    title: 'Orders — FreelanceHub',
+    description: 'Thousands of freelance projects for specialists worldwide',
   },
   alternates: { canonical: '/orders' },
 }

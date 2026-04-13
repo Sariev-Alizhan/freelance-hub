@@ -24,28 +24,28 @@ const inter = Inter({
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.freelance-hub.kz'),
   title: {
-    default: 'FreelanceHub — децентрализованное фриланс-пространство',
+    default: 'FreelanceHub — Decentralized Freelance Platform',
     template: '%s | FreelanceHub',
   },
   description:
-    'Работайте напрямую. Без комиссий, без посредников. Оплата любым способом. Создано в Казахстане для всего мира.',
-  keywords: ['фриланс', 'фрилансеры', 'заказы', 'удалённая работа', 'Казахстан', 'СНГ', 'freelance', 'SITS', 'Sariyev IT Solutions'],
-  authors: [{ name: 'Сариев Алижан · SITS Sariyev IT Solutions' }],
+    'Work directly. No fees, no middlemen. Pay any way you want. Built in Kazakhstan, open to the world.',
+  keywords: ['freelance', 'freelancers', 'remote work', 'Kazakhstan', 'jobs', 'hire', 'SITS', 'Sariyev IT Solutions', 'фриланс'],
+  authors: [{ name: 'Alizhan Sariyev · SITS Sariyev IT Solutions' }],
   creator: 'SITS Sariyev IT Solutions',
   robots: { index: true, follow: true, googleBot: { index: true, follow: true } },
   manifest: '/manifest.json',
   appleWebApp: { capable: true, statusBarStyle: 'black-translucent', title: 'FreelanceHub' },
   icons: { icon: [{ url: '/icon.svg' }, { url: '/icon-192.png', sizes: '192x192', type: 'image/png' }], apple: '/apple-touch-icon.png' },
   openGraph: {
-    title: 'FreelanceHub — децентрализованное фриланс-пространство',
-    description: 'Работайте напрямую. 0% комиссии. Создано в Казахстане для всего мира.',
-    type: 'website', locale: 'ru_RU', siteName: 'FreelanceHub',
+    title: 'FreelanceHub — Decentralized Freelance Platform',
+    description: 'Work directly. 0% commission. Built in Kazakhstan, open to the world.',
+    type: 'website', locale: 'en_US', siteName: 'FreelanceHub',
     url: 'https://www.freelance-hub.kz',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'FreelanceHub — децентрализованное фриланс-пространство',
-    description: '0% комиссии навсегда. Работайте напрямую из любой страны.',
+    title: 'FreelanceHub — Decentralized Freelance Platform',
+    description: '0% commission forever. Work directly from any country.',
   },
 }
 
@@ -67,7 +67,7 @@ const swScript = `if('serviceWorker' in navigator){window.addEventListener('load
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ru" className="dark" suppressHydrationWarning>
+    <html lang="en" className="dark" suppressHydrationWarning>
       <head>
         {/* Anti-FOUC — must run synchronously before any render */}
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />

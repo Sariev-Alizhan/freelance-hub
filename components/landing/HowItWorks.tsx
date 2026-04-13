@@ -1,39 +1,20 @@
 'use client'
 import { motion } from 'framer-motion'
 import { MessageSquare, Search, CreditCard, Star } from 'lucide-react'
+import { useLang } from '@/lib/context/LanguageContext'
 
-const STEPS = [
-  {
-    icon: MessageSquare,
-    color: '#5e6ad2',
-    bg: 'rgba(94,106,210,0.08)',
-    title: 'Опишите задачу',
-    text: 'Расскажите AI-ассистенту что нужно сделать. Не надо сложных форм — просто напишите как другу.',
-  },
-  {
-    icon: Search,
-    color: '#7170ff',
-    bg: 'rgba(113,112,255,0.08)',
-    title: 'AI подберёт лучших',
-    text: 'Наш алгоритм анализирует навыки, рейтинг и портфолио — и предлагает топ-3 специалиста.',
-  },
-  {
-    icon: CreditCard,
-    color: '#27a644',
-    bg: 'rgba(39,166,68,0.08)',
-    title: 'Прямая оплата',
-    text: 'Заказчик и фрилансер договариваются напрямую — без посредников и скрытых комиссий.',
-  },
-  {
-    icon: Star,
-    color: '#fbbf24',
-    bg: 'rgba(251,191,36,0.08)',
-    title: 'Оставьте отзыв',
-    text: 'Ваш отзыв помогает другим заказчикам и повышает рейтинг фрилансера в поиске.',
-  },
+const ICONS = [MessageSquare, Search, CreditCard, Star]
+const COLORS = [
+  { color: '#5e6ad2', bg: 'rgba(94,106,210,0.08)'  },
+  { color: '#7170ff', bg: 'rgba(113,112,255,0.08)' },
+  { color: '#27a644', bg: 'rgba(39,166,68,0.08)'   },
+  { color: '#fbbf24', bg: 'rgba(251,191,36,0.08)'  },
 ]
 
 export default function HowItWorks() {
+  const { t } = useLang()
+  const hw = t.howItWorks
+
   return (
     <section className="py-20 px-4 sm:px-6 lg:px-8" style={{ background: 'var(--fh-canvas)' }}>
       <div className="mx-auto max-w-7xl">
@@ -54,16 +35,17 @@ export default function HowItWorks() {
               fontFeatureSettings: '"cv01", "ss03"',
             }}
           >
-            Как это работает
+            {hw.heading}
           </h2>
           <p style={{ fontSize: '15px', color: '#8a8f98', fontWeight: 400, letterSpacing: '-0.01em', lineHeight: 1.6 }}>
-            Четыре простых шага до готового проекта
+            {hw.sub}
           </p>
         </motion.div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-          {STEPS.map((step, i) => {
-            const Icon = step.icon
+          {hw.steps.map((step: { title: string; text: string }, i: number) => {
+            const Icon = ICONS[i]
+            const { color, bg } = COLORS[i]
             return (
               <motion.div
                 key={i}
@@ -73,8 +55,7 @@ export default function HowItWorks() {
                 transition={{ delay: i * 0.08 }}
                 className="relative"
               >
-                {/* Connector line */}
-                {i < STEPS.length - 1 && (
+                {i < hw.steps.length - 1 && (
                   <div
                     className="hidden lg:block absolute top-9 left-full w-full h-px z-0"
                     style={{ background: 'linear-gradient(to right, var(--fh-border), transparent)' }}
@@ -82,22 +63,19 @@ export default function HowItWorks() {
                 )}
                 <div
                   className="relative z-10 rounded-xl p-6 h-full flex flex-col"
-                  style={{
-                    background: 'var(--fh-surface)',
-                    border: '1px solid var(--fh-border)',
-                  }}
+                  style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border)' }}
                 >
                   <div
                     className="h-11 w-11 rounded-lg flex items-center justify-center mb-5"
-                    style={{ background: step.bg }}
+                    style={{ background: bg }}
                   >
-                    <Icon className="h-5 w-5" style={{ color: step.color }} />
+                    <Icon className="h-5 w-5" style={{ color }} />
                   </div>
                   <div
                     className="text-[11px] mb-2"
-                    style={{ fontWeight: 590, color: step.color, letterSpacing: '0.04em', textTransform: 'uppercase' }}
+                    style={{ fontWeight: 590, color, letterSpacing: '0.04em', textTransform: 'uppercase' }}
                   >
-                    Шаг {i + 1}
+                    {hw.step} {i + 1}
                   </div>
                   <h3 style={{ fontSize: '14px', fontWeight: 590, color: 'var(--fh-t1)', marginBottom: '8px', letterSpacing: '-0.02em' }}>
                     {step.title}

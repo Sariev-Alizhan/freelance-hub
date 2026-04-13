@@ -5,20 +5,20 @@ import { createClient } from '@/lib/supabase/server'
 import { Freelancer } from '@/lib/types'
 
 export const metadata: Metadata = {
-  title: 'Фрилансеры — FreelanceHub',
+  title: 'Freelancers — FreelanceHub',
   description:
-    'Найдите лучшего специалиста для вашего проекта. Разработчики, дизайнеры, маркетологи и другие фрилансеры из России, Украины и Казахстана.',
+    'Find the best specialist for your project. Developers, designers, marketers and other freelancers from Kazakhstan, Russia, Ukraine and worldwide.',
   openGraph: {
-    title: 'Фрилансеры — FreelanceHub',
-    description: 'Лучшие фрилансеры СНГ: разработчики, дизайнеры, маркетологи',
+    title: 'Freelancers — FreelanceHub',
+    description: 'Top freelancers worldwide: developers, designers, marketers',
     type: 'website',
-    locale: 'ru_RU',
+    locale: 'en_US',
     siteName: 'FreelanceHub',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Фрилансеры — FreelanceHub',
-    description: 'Лучшие фрилансеры СНГ: разработчики, дизайнеры, маркетологи',
+    title: 'Freelancers — FreelanceHub',
+    description: 'Top freelancers worldwide: developers, designers, marketers',
   },
   alternates: { canonical: '/freelancers' },
 }
