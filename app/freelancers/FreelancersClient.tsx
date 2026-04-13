@@ -1,10 +1,17 @@
 'use client'
 import { useState, useMemo, useEffect, useCallback, useRef } from 'react'
 import { useSearchParams, useRouter, usePathname } from 'next/navigation'
-import { Search, Sparkles, X, Loader2, ChevronDown } from 'lucide-react'
+import { Search, Sparkles, X, Loader2, ChevronDown, SlidersHorizontal } from 'lucide-react'
 import FreelancerCard from '@/components/freelancers/FreelancerCard'
 import { CATEGORIES } from '@/lib/mock'
-import { Freelancer, CategorySlug } from '@/lib/types'
+import { Freelancer, CategorySlug, AvailabilityStatus } from '@/lib/types'
+
+interface Filters {
+  priceMin: string
+  priceMax: string
+  minRating: number
+  availability: AvailabilityStatus | 'all'
+}
 
 const PAGE_SIZE = 12
 
@@ -24,6 +31,10 @@ export default function FreelancersClient({ realFreelancers = [] }: Props) {
   const [category,  setCategory]  = useState<CategorySlug | 'all'>((sp.get('cat') as CategorySlug) ?? 'all')
   const [sortBy,    setSortBy]    = useState<'rating' | 'price' | 'orders'>((sp.get('sort') as 'rating' | 'price' | 'orders') ?? 'rating')
   const [page,      setPage]      = useState(1)
+  const [showFilters, setShowFilters] = useState(false)
+  const [filters,   setFilters]   = useState<Filters>({
+    priceMin: '', priceMax: '', minRating: 0, availability: 'all',
+  })
 
   // AI mode
   const [aiMode,      setAiMode]      = useState(false)
@@ -55,6 +66,13 @@ export default function FreelancersClient({ realFreelancers = [] }: Props) {
 
   const allFreelancers = useMemo(() => realFreelancers, [realFreelancers])
 
+  const activeFiltersCount = [
+    filters.priceMin !== '',
+    filters.priceMax !== '',
+    filters.minRating > 0,
+    filters.availability !== 'all',
+  ].filter(Boolean).length
+
   const filtered = useMemo(() => {
     let list = allFreelancers
     if (category !== 'all') list = list.filter((f) => f.category === category)
@@ -67,11 +85,20 @@ export default function FreelancersClient({ realFreelancers = [] }: Props) {
           f.skills.some((s) => s.toLowerCase().includes(q))
       )
     }
+    // Price filters
+    if (filters.priceMin) list = list.filter(f => f.priceFrom >= parseInt(filters.priceMin))
+    if (filters.priceMax) list = list.filter(f => f.priceFrom <= parseInt(filters.priceMax))
+    // Rating filter
+    if (filters.minRating > 0) list = list.filter(f => f.rating >= filters.minRating)
+    // Availability filter
+    if (filters.availability !== 'all') {
+      list = list.filter(f => (f.availability ?? 'open') === filters.availability)
+    }
     if (sortBy === 'rating') list = [...list].sort((a, b) => b.rating - a.rating)
     if (sortBy === 'price')  list = [...list].sort((a, b) => a.priceFrom - b.priceFrom)
     if (sortBy === 'orders') list = [...list].sort((a, b) => b.completedOrders - a.completedOrders)
     return list
-  }, [search, category, sortBy, allFreelancers])
+  }, [search, category, sortBy, allFreelancers, filters])
 
   const aiRanked = useMemo<Array<{ freelancer: Freelancer; score: number; reason: string }>>(() => {
     if (!aiResults) return []
@@ -231,6 +258,30 @@ export default function FreelancersClient({ realFreelancers = [] }: Props) {
               <option value="orders">По заказам</option>
             </select>
             <button
+              onClick={() => setShowFilters(p => !p)}
+              className="relative flex items-center gap-1.5 transition-all"
+              style={{
+                padding: '10px 14px',
+                borderRadius: '6px',
+                background: showFilters || activeFiltersCount > 0 ? 'rgba(113,112,255,0.1)' : 'var(--fh-surface-2)',
+                border: showFilters || activeFiltersCount > 0 ? '1px solid rgba(113,112,255,0.3)' : '1px solid var(--fh-border-2)',
+                color: showFilters || activeFiltersCount > 0 ? '#7170ff' : 'var(--fh-t3)',
+                fontSize: '13px',
+                fontWeight: 510,
+              }}
+            >
+              <SlidersHorizontal className="h-4 w-4" />
+              {activeFiltersCount > 0 && (
+                <span style={{
+                  position: 'absolute', top: '-6px', right: '-6px',
+                  width: '16px', height: '16px', borderRadius: '50%',
+                  background: '#7170ff', color: '#fff',
+                  fontSize: '10px', fontWeight: 590,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}>{activeFiltersCount}</span>
+              )}
+            </button>
+            <button
               onClick={enableAiMode}
               className="flex items-center gap-2 whitespace-nowrap transition-all"
               style={{
@@ -251,6 +302,104 @@ export default function FreelancersClient({ realFreelancers = [] }: Props) {
           </div>
         )}
       </div>
+
+      {/* Filter panel */}
+      {showFilters && !aiMode && (
+        <div
+          className="mb-4 p-4 rounded-xl"
+          style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border-2)' }}
+        >
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {/* Price min */}
+            <div>
+              <label style={{ fontSize: '11px', color: 'var(--fh-t4)', fontWeight: 510, textTransform: 'uppercase', letterSpacing: '0.04em', display: 'block', marginBottom: '6px' }}>
+                Цена от (₽)
+              </label>
+              <input
+                type="number"
+                value={filters.priceMin}
+                onChange={e => { setFilters(f => ({ ...f, priceMin: e.target.value })); setPage(1) }}
+                placeholder="0"
+                className="w-full outline-none"
+                style={{
+                  padding: '8px 12px', borderRadius: '6px', fontSize: '13px',
+                  background: 'var(--fh-surface-2)', border: '1px solid var(--fh-border-2)',
+                  color: 'var(--fh-t1)',
+                }}
+              />
+            </div>
+            {/* Price max */}
+            <div>
+              <label style={{ fontSize: '11px', color: 'var(--fh-t4)', fontWeight: 510, textTransform: 'uppercase', letterSpacing: '0.04em', display: 'block', marginBottom: '6px' }}>
+                Цена до (₽)
+              </label>
+              <input
+                type="number"
+                value={filters.priceMax}
+                onChange={e => { setFilters(f => ({ ...f, priceMax: e.target.value })); setPage(1) }}
+                placeholder="∞"
+                className="w-full outline-none"
+                style={{
+                  padding: '8px 12px', borderRadius: '6px', fontSize: '13px',
+                  background: 'var(--fh-surface-2)', border: '1px solid var(--fh-border-2)',
+                  color: 'var(--fh-t1)',
+                }}
+              />
+            </div>
+            {/* Min rating */}
+            <div>
+              <label style={{ fontSize: '11px', color: 'var(--fh-t4)', fontWeight: 510, textTransform: 'uppercase', letterSpacing: '0.04em', display: 'block', marginBottom: '6px' }}>
+                Рейтинг от
+              </label>
+              <select
+                value={filters.minRating}
+                onChange={e => { setFilters(f => ({ ...f, minRating: Number(e.target.value) })); setPage(1) }}
+                className="w-full outline-none"
+                style={{
+                  padding: '8px 12px', borderRadius: '6px', fontSize: '13px',
+                  background: 'var(--fh-surface-2)', border: '1px solid var(--fh-border-2)',
+                  color: 'var(--fh-t1)',
+                }}
+              >
+                <option value={0}>Любой</option>
+                <option value={3}>3+</option>
+                <option value={4}>4+</option>
+                <option value={4.5}>4.5+</option>
+                <option value={4.8}>4.8+</option>
+              </select>
+            </div>
+            {/* Availability */}
+            <div>
+              <label style={{ fontSize: '11px', color: 'var(--fh-t4)', fontWeight: 510, textTransform: 'uppercase', letterSpacing: '0.04em', display: 'block', marginBottom: '6px' }}>
+                Доступность
+              </label>
+              <select
+                value={filters.availability}
+                onChange={e => { setFilters(f => ({ ...f, availability: e.target.value as AvailabilityStatus | 'all' })); setPage(1) }}
+                className="w-full outline-none"
+                style={{
+                  padding: '8px 12px', borderRadius: '6px', fontSize: '13px',
+                  background: 'var(--fh-surface-2)', border: '1px solid var(--fh-border-2)',
+                  color: 'var(--fh-t1)',
+                }}
+              >
+                <option value="all">Все</option>
+                <option value="open">Открыт</option>
+                <option value="busy">Занят</option>
+                <option value="vacation">В отпуске</option>
+              </select>
+            </div>
+          </div>
+          {activeFiltersCount > 0 && (
+            <button
+              onClick={() => { setFilters({ priceMin: '', priceMax: '', minRating: 0, availability: 'all' }); setPage(1) }}
+              style={{ marginTop: '10px', fontSize: '12px', color: '#7170ff', fontWeight: 510, cursor: 'pointer', background: 'none', border: 'none', padding: 0 }}
+            >
+              Сбросить фильтры
+            </button>
+          )}
+        </div>
+      )}
 
       {/* Category tabs */}
       {!(aiMode && aiResults) && (

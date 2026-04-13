@@ -75,11 +75,12 @@ export async function POST(request: NextRequest) {
     // 3. Portfolio items
     if (portfolio?.length > 0 && fp?.id) {
       const { error: portErr } = await admin.from('portfolio_items').insert(
-        portfolio.map((p: { title: string; imageUrl: string; category: string }) => ({
+        portfolio.map((p: { title: string; imageUrl: string; category: string; url?: string }) => ({
           freelancer_id: fp.id,
           title: p.title,
           image_url: p.imageUrl || null,
           category: p.category || category,
+          project_url: p.url || null,
         }))
       )
       if (portErr) console.warn('portfolio insert error:', portErr.message)

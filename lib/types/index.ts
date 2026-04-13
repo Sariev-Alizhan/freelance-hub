@@ -13,11 +13,14 @@ export type CategorySlug =
 export type FreelancerLevel = 'new' | 'junior' | 'middle' | 'senior' | 'top'
 export type Currency = 'KZT' | 'RUB' | 'USD' | 'EUR' | 'GBP' | 'USDT' | 'UAH' | 'CNY' | 'AED' | 'TRY'
 
+export type AvailabilityStatus = 'open' | 'busy' | 'vacation'
+
 export interface PortfolioItem {
   id: string
   title: string
   image: string
   category: string
+  url?: string
 }
 
 export interface Review {
@@ -53,6 +56,7 @@ export interface Freelancer {
   registeredAt: string
   reviews?: Review[]
   isPromoted?: boolean
+  availability?: AvailabilityStatus
 }
 
 export interface Order {

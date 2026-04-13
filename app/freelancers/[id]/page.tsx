@@ -2,15 +2,22 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
-import { MapPin, CheckCircle, Clock, Star, Package, ArrowLeft, MessageCircle } from 'lucide-react'
+import { MapPin, CheckCircle, Clock, Star, Package, ArrowLeft, MessageCircle, Circle } from 'lucide-react'
 import { getFreelancerById, MOCK_FREELANCERS } from '@/lib/mock'
 import RatingStars from '@/components/shared/RatingStars'
 import PriceDisplay from '@/components/shared/PriceDisplay'
 import OnlineStatus from '@/components/shared/OnlineStatus'
 import ReviewsSection from '@/components/shared/ReviewsSection'
+import PortfolioSection from '@/components/freelancers/PortfolioSection'
 import { CATEGORIES } from '@/lib/mock/categories'
 import { createClient } from '@/lib/supabase/server'
-import { Freelancer } from '@/lib/types'
+import { Freelancer, PortfolioItem } from '@/lib/types'
+
+const AVAILABILITY_LABELS = {
+  open:     { label: 'Открыт к заказам', dot: '#27a644' },
+  busy:     { label: 'Занят',            dot: '#f59e0b' },
+  vacation: { label: 'В отпуске',        dot: '#8a8f98' },
+}
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.freelance-hub.kz'
 
@@ -28,13 +35,30 @@ async function getFreelancerFromSupabase(userId: string): Promise<Freelancer | n
       .select(`
         id, user_id, title, category, skills, price_from, price_to,
         level, response_time, languages, is_verified, rating,
-        reviews_count, completed_orders, created_at,
+        reviews_count, completed_orders, created_at, availability_status,
         profiles!inner (full_name, username, avatar_url, location, bio)
       `)
       .eq('user_id', userId)
       .single()
 
     if (error || !data) return null
+
+    // Load portfolio items
+    const { data: portfolioData } = await db
+      .from('portfolio_items')
+      .select('id, title, image_url, category, project_url')
+      .eq('freelancer_id', data.id)
+      .order('created_at', { ascending: false })
+
+    const portfolio: PortfolioItem[] = (portfolioData ?? []).map((p: {
+      id: string; title: string; image_url: string | null; category: string | null; project_url: string | null
+    }) => ({
+      id: p.id,
+      title: p.title,
+      image: p.image_url ?? '',
+      category: p.category ?? '',
+      url: p.project_url ?? undefined,
+    }))
 
     const profile = data.profiles
     const name = profile?.full_name || profile?.username || 'Пользователь'
@@ -58,11 +82,12 @@ async function getFreelancerFromSupabase(userId: string): Promise<Freelancer | n
       location: profile?.location || 'СНГ',
       isOnline: false,
       isVerified: data.is_verified ?? false,
-      portfolio: [],
+      portfolio,
       description: profile?.bio || '',
       level: data.level ?? 'new',
       languages: data.languages ?? ['ru'],
       registeredAt: data.created_at,
+      availability: data.availability_status ?? 'open',
     }
   } catch {
     return null
@@ -175,6 +200,15 @@ export default async function FreelancerPage({ params }: { params: Promise<{ id:
                     <MapPin className="h-4 w-4" /> {f.location}
                   </div>
                   <OnlineStatus isOnline={f.isOnline} />
+                  {f.availability && (() => {
+                    const av = AVAILABILITY_LABELS[f.availability as keyof typeof AVAILABILITY_LABELS] ?? AVAILABILITY_LABELS.open
+                    return (
+                      <div className="flex items-center gap-1.5 text-sm">
+                        <Circle className="h-2.5 w-2.5" style={{ fill: av.dot, color: av.dot }} />
+                        <span className="text-muted-foreground">{av.label}</span>
+                      </div>
+                    )
+                  })()}
                 </div>
               </div>
             </div>
@@ -209,22 +243,8 @@ export default async function FreelancerPage({ params }: { params: Promise<{ id:
             </div>
           </div>
 
-          {/* Portfolio */}
-          {f.portfolio.length > 0 && (
-            <div className="rounded-2xl border border-subtle bg-card p-6">
-              <h2 className="font-semibold mb-4">Портфолио</h2>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                {f.portfolio.map((item) => (
-                  <div key={item.id} className="group rounded-xl overflow-hidden border border-subtle">
-                    <div className="relative h-32">
-                      <Image src={item.image} alt={item.title} fill className="object-cover group-hover:scale-105 transition-transform duration-300" unoptimized />
-                    </div>
-                    <div className="p-2.5 text-xs font-medium truncate">{item.title}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
+          {/* Portfolio with lightbox */}
+          <PortfolioSection portfolio={f.portfolio} />
 
           {/* Reviews — real Supabase + mock combined */}
           <ReviewsSection

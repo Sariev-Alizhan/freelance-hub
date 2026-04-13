@@ -14,6 +14,12 @@ const LEVEL_LABELS = {
   top:    { label: 'TOP',     color: 'rgba(251,191,36,0.12)',       text: '#fbbf24'       },
 }
 
+const AVAILABILITY_LABELS = {
+  open:     { label: 'Открыт',    dot: '#27a644' },
+  busy:     { label: 'Занят',     dot: '#f59e0b' },
+  vacation: { label: 'Отпуск',    dot: '#8a8f98' },
+}
+
 interface Props { freelancer: Freelancer }
 
 export default function FreelancerCard({ freelancer: f }: Props) {
@@ -107,6 +113,17 @@ export default function FreelancerCard({ freelancer: f }: Props) {
               <span style={{ fontSize: '12px', fontWeight: 400 }}>{f.location}</span>
             </div>
           </div>
+
+          {/* Availability badge */}
+          {f.availability && f.availability !== 'open' && (() => {
+            const av = AVAILABILITY_LABELS[f.availability]
+            return (
+              <div className="flex items-center gap-1.5" style={{ marginTop: '-4px' }}>
+                <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: av.dot, flexShrink: 0 }} />
+                <span style={{ fontSize: '11px', color: 'var(--fh-t4)', fontWeight: 400 }}>{av.label}</span>
+              </div>
+            )
+          })()}
 
           {/* Skills */}
           <div className="flex flex-wrap gap-1.5">

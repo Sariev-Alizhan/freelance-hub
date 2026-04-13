@@ -5,7 +5,8 @@ import { useEffect, useState } from 'react'
 import {
   Briefcase, Star, DollarSign, Clock, CheckCircle,
   ArrowRight, Sparkles, User, LogIn, MapPin,
-  Tag, Edit3, Zap, MessageSquare, Heart, ChevronRight
+  Tag, Edit3, Zap, MessageSquare, Heart, ChevronRight,
+  Circle
 } from 'lucide-react'
 import { useUser } from '@/lib/hooks/useUser'
 import { useFavorites } from '@/lib/hooks/useFavorites'
@@ -24,10 +25,19 @@ interface Profile {
   role: string
 }
 
+type AvailabilityStatus = 'open' | 'busy' | 'vacation'
+
+const AVAILABILITY_CONFIG: Record<AvailabilityStatus, { label: string; dot: string; border: string; bg: string }> = {
+  open:     { label: 'Открыт к заказам', dot: '#27a644', border: 'rgba(39,166,68,0.25)',    bg: 'rgba(39,166,68,0.06)'    },
+  busy:     { label: 'Занят',            dot: '#f59e0b', border: 'rgba(245,158,11,0.25)',   bg: 'rgba(245,158,11,0.06)'   },
+  vacation: { label: 'В отпуске',        dot: '#8a8f98', border: 'rgba(138,143,152,0.25)',  bg: 'rgba(138,143,152,0.06)'  },
+}
+
 interface FreelancerProfile {
   title: string; category: string; skills: string[]
   price_from: number; price_to: number | null
   level: string; rating: number; reviews_count: number; completed_orders: number
+  availability_status?: AvailabilityStatus
 }
 
 interface MyOrder {
@@ -59,6 +69,8 @@ export default function DashboardPage() {
   const { favorites } = useFavorites()
   const [profile, setProfile] = useState<Profile | null>(null)
   const [fp, setFp] = useState<FreelancerProfile | null>(null)
+  const [availability, setAvailability] = useState<AvailabilityStatus>('open')
+  const [availSaving, setAvailSaving] = useState(false)
   const [myOrders, setMyOrders] = useState<MyOrder[]>([])
   const [myResponses, setMyResponses] = useState<MyResponse[]>([])
   const [profileLoading, setProfileLoading] = useState(true)
@@ -73,10 +85,13 @@ export default function DashboardPage() {
       setProfileLoading(true)
       const [profRes, fpRes] = await Promise.all([
         db.from('profiles').select('full_name,avatar_url,bio,location,role').eq('id', user!.id).single(),
-        db.from('freelancer_profiles').select('title,category,skills,price_from,price_to,level,rating,reviews_count,completed_orders').eq('user_id', user!.id).single(),
+        db.from('freelancer_profiles').select('title,category,skills,price_from,price_to,level,rating,reviews_count,completed_orders,availability_status').eq('user_id', user!.id).single(),
       ])
       if (profRes.data) setProfile(profRes.data)
-      if (fpRes.data) setFp(fpRes.data)
+      if (fpRes.data) {
+        setFp(fpRes.data)
+        if (fpRes.data.availability_status) setAvailability(fpRes.data.availability_status)
+      }
       setProfileLoading(false)
     }
     load()
@@ -142,6 +157,20 @@ export default function DashboardPage() {
         </div>
       </div>
     )
+  }
+
+  async function saveAvailability(status: AvailabilityStatus) {
+    setAvailSaving(true)
+    setAvailability(status)
+    try {
+      await fetch('/api/profile/availability', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status }),
+      })
+    } finally {
+      setAvailSaving(false)
+    }
   }
 
   const displayName = profile?.full_name || user.user_metadata?.full_name || user.email?.split('@')[0] || 'Пользователь'
@@ -215,6 +244,35 @@ export default function DashboardPage() {
               от {fp.price_from.toLocaleString('ru')} ₽{fp.price_to ? ` — ${fp.price_to.toLocaleString('ru')} ₽` : ''}
             </span>
           ) : null}
+        </div>
+      )}
+
+      {/* ── Availability toggle (freelancers only) ── */}
+      {!profileLoading && fp && (
+        <div className="mb-6 flex items-center gap-3 flex-wrap">
+          <Circle className="h-3 w-3 flex-shrink-0" style={{ color: AVAILABILITY_CONFIG[availability].dot, fill: AVAILABILITY_CONFIG[availability].dot }} />
+          <span className="text-sm text-muted-foreground">Статус:</span>
+          <div className="flex gap-1.5 flex-wrap">
+            {(Object.entries(AVAILABILITY_CONFIG) as [AvailabilityStatus, typeof AVAILABILITY_CONFIG['open']][]).map(([key, cfg]) => (
+              <button
+                key={key}
+                onClick={() => saveAvailability(key)}
+                disabled={availSaving}
+                className="transition-all disabled:opacity-50"
+                style={{
+                  padding: '4px 12px',
+                  borderRadius: '6px',
+                  fontSize: '12px',
+                  fontWeight: 510,
+                  background: availability === key ? cfg.bg : 'transparent',
+                  border: availability === key ? `1px solid ${cfg.border}` : '1px solid var(--fh-border-2)',
+                  color: availability === key ? cfg.dot : 'var(--fh-t4)',
+                }}
+              >
+                {cfg.label}
+              </button>
+            ))}
+          </div>
         </div>
       )}
 

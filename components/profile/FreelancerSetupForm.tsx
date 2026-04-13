@@ -52,6 +52,7 @@ interface PortfolioItem {
   title: string
   imageUrl: string
   category: string
+  url: string
 }
 
 interface FormData {
@@ -87,7 +88,7 @@ export default function FreelancerSetupForm() {
   const [submitError, setSubmitError] = useState<string | null>(null)
   const [aiLoading, setAiLoading] = useState(false)
   const [skillInput, setSkillInput] = useState('')
-  const [portfolioForm, setPortfolioForm] = useState<PortfolioItem>({ title: '', imageUrl: '', category: '' })
+  const [portfolioForm, setPortfolioForm] = useState<PortfolioItem>({ title: '', imageUrl: '', category: '', url: '' })
   const [showPortfolioAdd, setShowPortfolioAdd] = useState(false)
 
   const [form, setForm] = useState<FormData>({
@@ -166,7 +167,7 @@ export default function FreelancerSetupForm() {
   function addPortfolioItem() {
     if (!portfolioForm.title.trim()) return
     set('portfolio', [...form.portfolio, { ...portfolioForm }])
-    setPortfolioForm({ title: '', imageUrl: '', category: '' })
+    setPortfolioForm({ title: '', imageUrl: '', category: '', url: '' })
     setShowPortfolioAdd(false)
   }
 
@@ -639,7 +640,20 @@ export default function FreelancerSetupForm() {
                       )}
                       <div className="p-3">
                         <p className="text-sm font-medium line-clamp-1">{item.title}</p>
-                        {item.category && <p className="text-xs text-muted-foreground">{item.category}</p>}
+                        <div className="flex items-center gap-2 mt-0.5">
+                          {item.category && <p className="text-xs text-muted-foreground">{item.category}</p>}
+                          {item.url && (
+                            <a
+                              href={item.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={e => e.stopPropagation()}
+                              className="text-xs text-primary hover:underline truncate"
+                            >
+                              Открыть ↗
+                            </a>
+                          )}
+                        </div>
                       </div>
                       <button
                         onClick={() => set('portfolio', form.portfolio.filter((_, idx) => idx !== i))}
@@ -681,9 +695,15 @@ export default function FreelancerSetupForm() {
                         placeholder="Категория (например: Лендинг, Мобильное приложение)"
                         className="w-full px-4 py-2.5 rounded-xl bg-background border border-subtle text-sm placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 transition-colors"
                       />
+                      <input
+                        value={portfolioForm.url}
+                        onChange={e => setPortfolioForm(p => ({ ...p, url: e.target.value }))}
+                        placeholder="Ссылка на проект (необязательно)"
+                        className="w-full px-4 py-2.5 rounded-xl bg-background border border-subtle text-sm placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 transition-colors"
+                      />
                       <div className="flex gap-2">
                         <button
-                          onClick={() => { setShowPortfolioAdd(false); setPortfolioForm({ title: '', imageUrl: '', category: '' }) }}
+                          onClick={() => { setShowPortfolioAdd(false); setPortfolioForm({ title: '', imageUrl: '', category: '', url: '' }) }}
                           className="flex-1 py-2.5 rounded-xl border border-subtle text-sm font-medium hover:bg-subtle transition-colors"
                         >
                           Отмена
