@@ -1,5 +1,10 @@
+import { Suspense } from 'react'
 import MessengerPage from '@/components/messages/MessengerPage'
 
 export default function Page() {
-  return <MessengerPage />
+  return (
+    <Suspense>
+      <MessengerPage />
+    </Suspense>
+  )
 }

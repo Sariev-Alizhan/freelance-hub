@@ -298,7 +298,7 @@ export default async function FreelancerPage({ params }: { params: Promise<{ id:
               )}
             </div>
 
-            <Link href="/messages" className="w-full py-3 rounded-xl bg-primary text-white font-semibold hover:bg-primary/90 transition-colors mb-3 flex items-center justify-center gap-2">
+            <Link href={`/messages?open=${f.id}`} className="w-full py-3 rounded-xl bg-primary text-white font-semibold hover:bg-primary/90 transition-colors mb-3 flex items-center justify-center gap-2">
               <MessageCircle className="h-4 w-4" /> Написать фрилансеру
             </Link>
             <Link href="/orders/new" className="w-full py-3 rounded-xl border border-subtle bg-subtle font-semibold hover:bg-surface transition-colors text-sm flex items-center justify-center">

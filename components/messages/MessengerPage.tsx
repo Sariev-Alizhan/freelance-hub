@@ -3,6 +3,7 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useSearchParams } from 'next/navigation'
 import {
   Send, Search, ArrowLeft, User, MessageSquare,
   LogIn, CheckCheck, Check, MoreVertical, Loader2,
@@ -142,6 +143,8 @@ export default function MessengerPage() {
   const supabase = createClient()
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const db = supabase as any
+  const searchParams = useSearchParams()
+  const openUserId = searchParams.get('open')
 
   const [conversations, setConversations]   = useState<Conversation[]>([])
   const [activeId,      setActiveId]         = useState<string | null>(null)
@@ -218,6 +221,52 @@ export default function MessengerPage() {
   }, [user])
 
   useEffect(() => { loadConversations() }, [loadConversations])
+
+  // ── Auto-open conversation from ?open=userId ────────────
+  useEffect(() => {
+    if (!openUserId || !user || conversations.length === 0) return
+
+    // Find existing conversation with this user
+    const existing = conversations.find(
+      c => c.other_user.id === openUserId
+    )
+    if (existing) {
+      setActiveId(existing.id)
+      setShowList(false)
+      return
+    }
+
+    // Create new conversation
+    async function createAndOpen() {
+      const [p1, p2] = [user!.id, openUserId!].sort()
+      const { data: existing } = await db
+        .from('conversations')
+        .select('id')
+        .eq('participant_1', p1)
+        .eq('participant_2', p2)
+        .maybeSingle()
+
+      if (existing) {
+        setActiveId(existing.id)
+        setShowList(false)
+        return
+      }
+
+      const { data: created } = await db
+        .from('conversations')
+        .insert({ participant_1: p1, participant_2: p2 })
+        .select('id')
+        .single()
+
+      if (created) {
+        await loadConversations()
+        setActiveId(created.id)
+        setShowList(false)
+      }
+    }
+    createAndOpen()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [openUserId, user, conversations.length])
 
   // ── Load messages for active conversation ───────────────
   useEffect(() => {

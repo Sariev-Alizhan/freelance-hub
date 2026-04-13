@@ -54,6 +54,9 @@ export async function POST(request: Request) {
     return Response.json({ error: insertError.message }, { status: 400 })
   }
 
+  // Increment responses_count on the order
+  await db.rpc('increment_responses_count', { order_id: orderId })
+
   // Fetch order + client_id for email notification
   const { data: order } = await db
     .from('orders')
