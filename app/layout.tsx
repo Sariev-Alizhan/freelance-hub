@@ -12,6 +12,7 @@ import Footer from '@/components/layout/Footer'
 import BottomNav from '@/components/layout/BottomNav'
 import Toaster from '@/components/ui/Toaster'
 import InstallPrompt from '@/components/shared/InstallPrompt'
+import UpdateNotification from '@/components/shared/UpdateNotification'
 
 const inter = Inter({
   subsets: ['latin', 'cyrillic'],
@@ -34,7 +35,7 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true, googleBot: { index: true, follow: true } },
   manifest: '/manifest.json',
   appleWebApp: { capable: true, statusBarStyle: 'black-translucent', title: 'FreelanceHub' },
-  icons: { icon: '/icon.svg', apple: '/icon.svg' },
+  icons: { icon: [{ url: '/icon.svg' }, { url: '/icon-192.png', sizes: '192x192', type: 'image/png' }], apple: '/apple-touch-icon.png' },
   openGraph: {
     title: 'FreelanceHub — децентрализованное фриланс-пространство',
     description: 'Работайте напрямую. 0% комиссии. Создано в Казахстане для всего мира.',
@@ -61,6 +62,8 @@ export const viewport: Viewport = {
 // Anti-FOUC: apply saved theme BEFORE first paint.
 // Default = dark. Only remove 'dark' if user explicitly chose 'light'.
 const themeScript = `(function(){try{var t=localStorage.getItem('fh-theme');if(t==='light'){document.documentElement.classList.remove('dark')}else{document.documentElement.classList.add('dark')}}catch(e){}})();`
+// Register Service Worker for PWA
+const swScript = `if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){})})}`
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -68,11 +71,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         {/* Anti-FOUC — must run synchronously before any render */}
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+        {/* Service Worker for PWA */}
+        <script dangerouslySetInnerHTML={{ __html: swScript }} />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="apple-mobile-web-app-title" content="FreelanceHub" />
-        <link rel="apple-touch-icon" href="/icon.svg" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
         <link rel="manifest" href="/manifest.json" />
       </head>
       <body className={`${inter.variable} font-sans antialiased min-h-screen flex flex-col`}>
@@ -86,6 +91,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <BottomNav />
               <Toaster />
               <InstallPrompt />
+              <UpdateNotification />
             </CurrencyProvider>
           </ToastProvider>
           </LanguageProvider>

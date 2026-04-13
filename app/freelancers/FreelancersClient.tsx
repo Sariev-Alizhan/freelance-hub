@@ -1,7 +1,7 @@
 'use client'
 import { useState, useMemo, useEffect, useCallback, useRef } from 'react'
 import { useSearchParams, useRouter, usePathname } from 'next/navigation'
-import { Search, SlidersHorizontal, Sparkles, X, Loader2, ChevronDown } from 'lucide-react'
+import { Search, Sparkles, X, Loader2, ChevronDown } from 'lucide-react'
 import FreelancerCard from '@/components/freelancers/FreelancerCard'
 import { CATEGORIES } from '@/lib/mock'
 import { Freelancer, CategorySlug } from '@/lib/types'
@@ -118,14 +118,14 @@ export default function FreelancersClient({ realFreelancers = [] }: Props) {
             fontSize: 'clamp(22px, 3.5vw, 30px)',
             fontWeight: 510,
             letterSpacing: '-0.04em',
-            color: '#f7f8f8',
+            color: 'var(--fh-t1)',
             marginBottom: '6px',
             fontFeatureSettings: '"cv01", "ss03"',
           }}
         >
           Фрилансеры
         </h1>
-        <p style={{ fontSize: '14px', color: '#8a8f98', fontWeight: 400 }}>
+        <p style={{ fontSize: '14px', color: 'var(--fh-t3)', fontWeight: 400 }}>
           Найдите идеального специалиста для вашего проекта
         </p>
       </div>
@@ -147,14 +147,14 @@ export default function FreelancersClient({ realFreelancers = [] }: Props) {
                 borderRadius: '6px',
                 background: 'rgba(113,112,255,0.06)',
                 border: '1px solid rgba(113,112,255,0.3)',
-                color: '#f7f8f8',
+                color: 'var(--fh-t1)',
                 fontSize: '14px',
               }}
             />
           </div>
         ) : (
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4" style={{ color: '#62666d' }} />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4" style={{ color: 'var(--fh-t4)' }} />
             <input
               value={inputVal}
               onChange={(e) => setInputVal(e.target.value)}
@@ -163,13 +163,13 @@ export default function FreelancersClient({ realFreelancers = [] }: Props) {
               style={{
                 padding: '10px 14px 10px 36px',
                 borderRadius: '6px',
-                background: 'rgba(255,255,255,0.03)',
-                border: '1px solid rgba(255,255,255,0.08)',
-                color: '#f7f8f8',
+                background: 'var(--fh-surface-2)',
+                border: '1px solid var(--fh-border-2)',
+                color: 'var(--fh-t1)',
                 fontSize: '14px',
               }}
               onFocus={e => { e.currentTarget.style.border = '1px solid rgba(113,112,255,0.35)' }}
-              onBlur={e => { e.currentTarget.style.border = '1px solid rgba(255,255,255,0.08)' }}
+              onBlur={e => { e.currentTarget.style.border = '1px solid var(--fh-border-2)' }}
             />
           </div>
         )}
@@ -200,9 +200,9 @@ export default function FreelancersClient({ realFreelancers = [] }: Props) {
               style={{
                 padding: '10px 14px',
                 borderRadius: '6px',
-                background: 'rgba(255,255,255,0.03)',
-                border: '1px solid rgba(255,255,255,0.08)',
-                color: '#8a8f98',
+                background: 'var(--fh-surface-2)',
+                border: '1px solid var(--fh-border-2)',
+                color: 'var(--fh-t3)',
                 fontSize: '13px',
                 fontWeight: 510,
               }}
@@ -219,9 +219,9 @@ export default function FreelancersClient({ realFreelancers = [] }: Props) {
               style={{
                 padding: '10px 14px',
                 borderRadius: '6px',
-                background: 'rgba(255,255,255,0.03)',
-                border: '1px solid rgba(255,255,255,0.08)',
-                color: '#d0d6e0',
+                background: 'var(--fh-surface-2)',
+                border: '1px solid var(--fh-border-2)',
+                color: 'var(--fh-t2)',
                 fontSize: '13px',
                 fontWeight: 510,
               }}
@@ -267,9 +267,9 @@ export default function FreelancersClient({ realFreelancers = [] }: Props) {
                   borderRadius: '6px',
                   fontSize: '13px',
                   fontWeight: 510,
-                  background: active ? '#5e6ad2' : 'rgba(255,255,255,0.03)',
-                  border: active ? '1px solid rgba(113,112,255,0.3)' : '1px solid rgba(255,255,255,0.06)',
-                  color: active ? '#ffffff' : '#8a8f98',
+                  background: active ? '#5e6ad2' : 'var(--fh-surface-2)',
+                  border: active ? '1px solid rgba(113,112,255,0.3)' : '1px solid var(--fh-border)',
+                  color: active ? '#ffffff' : 'var(--fh-t3)',
                 }}
               >
                 {cat.label}
@@ -289,21 +289,21 @@ export default function FreelancersClient({ realFreelancers = [] }: Props) {
             >
               <Sparkles className="h-4 w-4 flex-shrink-0 mt-0.5" style={{ color: '#7170ff' }} />
               <div style={{ fontSize: '13px' }}>
-                <span style={{ color: '#8a8f98' }}>AI понял запрос как: </span>
-                <span style={{ color: '#f7f8f8', fontWeight: 510 }}>{aiInterpret}</span>
+                <span style={{ color: 'var(--fh-t3)' }}>AI понял запрос как: </span>
+                <span style={{ color: 'var(--fh-t1)', fontWeight: 510 }}>{aiInterpret}</span>
               </div>
             </div>
           )}
 
-          <div className="mb-4" style={{ fontSize: '13px', color: '#62666d' }}>
-            AI нашёл: <span style={{ color: '#f7f8f8', fontWeight: 590 }}>{aiRanked.length}</span> подходящих фрилансеров
+          <div className="mb-4" style={{ fontSize: '13px', color: 'var(--fh-t4)' }}>
+            AI нашёл: <span style={{ color: 'var(--fh-t1)', fontWeight: 590 }}>{aiRanked.length}</span> подходящих фрилансеров
           </div>
 
           {aiRanked.length === 0 ? (
             <div className="text-center py-20">
-              <Sparkles className="h-10 w-10 mx-auto mb-3" style={{ color: '#62666d', opacity: 0.4 }} />
-              <p style={{ fontSize: '16px', fontWeight: 510, color: '#f7f8f8', marginBottom: '8px' }}>Ничего не найдено</p>
-              <p style={{ fontSize: '13px', color: '#8a8f98' }}>Попробуй другой запрос или используй обычный поиск</p>
+              <Sparkles className="h-10 w-10 mx-auto mb-3" style={{ color: 'var(--fh-t4)', opacity: 0.4 }} />
+              <p style={{ fontSize: '16px', fontWeight: 510, color: 'var(--fh-t1)', marginBottom: '8px' }}>Ничего не найдено</p>
+              <p style={{ fontSize: '13px', color: 'var(--fh-t3)' }}>Попробуй другой запрос или используй обычный поиск</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
@@ -331,17 +331,17 @@ export default function FreelancersClient({ realFreelancers = [] }: Props) {
       ) : (
         <>
           {!aiMode && (
-            <div className="mb-4" style={{ fontSize: '13px', color: '#62666d' }}>
-              Найдено: <span style={{ color: '#f7f8f8', fontWeight: 590 }}>{filtered.length}</span> фрилансеров
+            <div className="mb-4" style={{ fontSize: '13px', color: 'var(--fh-t4)' }}>
+              Найдено: <span style={{ color: 'var(--fh-t1)', fontWeight: 590 }}>{filtered.length}</span> фрилансеров
             </div>
           )}
 
           {filtered.length === 0 ? (
             <div className="text-center py-20">
-              <p style={{ fontSize: '16px', fontWeight: 510, color: '#f7f8f8', marginBottom: '8px' }}>
+              <p style={{ fontSize: '16px', fontWeight: 510, color: 'var(--fh-t1)', marginBottom: '8px' }}>
                 {search || category !== 'all' ? 'Ничего не найдено' : 'Фрилансеров пока нет'}
               </p>
-              <p style={{ fontSize: '13px', color: '#8a8f98', maxWidth: '320px', margin: '0 auto', lineHeight: 1.6 }}>
+              <p style={{ fontSize: '13px', color: 'var(--fh-t3)', maxWidth: '320px', margin: '0 auto', lineHeight: 1.6 }}>
                 {search || category !== 'all'
                   ? 'Попробуйте изменить фильтры или поисковый запрос.'
                   : 'Платформа только запустилась. Зарегистрируйтесь как фрилансер и станьте одним из первых!'}
@@ -379,14 +379,14 @@ export default function FreelancersClient({ realFreelancers = [] }: Props) {
                     style={{
                       padding: '10px 24px',
                       borderRadius: '6px',
-                      background: 'rgba(255,255,255,0.03)',
-                      border: '1px solid rgba(255,255,255,0.08)',
-                      color: '#d0d6e0',
+                      background: 'var(--fh-surface-2)',
+                      border: '1px solid var(--fh-border-2)',
+                      color: 'var(--fh-t2)',
                       fontSize: '14px',
                       fontWeight: 510,
                     }}
-                    onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.06)' }}
-                    onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.03)' }}
+                    onMouseEnter={e => { e.currentTarget.style.background = 'var(--fh-surface-3)' }}
+                    onMouseLeave={e => { e.currentTarget.style.background = 'var(--fh-surface-2)' }}
                   >
                     <ChevronDown className="h-4 w-4" />
                     Показать ещё ({filtered.length - paginated.length})

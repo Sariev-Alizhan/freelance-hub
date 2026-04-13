@@ -42,7 +42,7 @@ export default function LoginPage() {
   return (
     <div
       className="min-h-[calc(100vh-52px)] flex items-center justify-center px-4 py-16"
-      style={{ background: '#08090a' }}
+      style={{ background: 'var(--fh-canvas)' }}
     >
       <div className="w-full max-w-sm">
         {/* Logo + heading */}
@@ -55,14 +55,14 @@ export default function LoginPage() {
               fontSize: '22px',
               fontWeight: 510,
               letterSpacing: '-0.03em',
-              color: '#f7f8f8',
+              color: 'var(--fh-t1)',
               marginBottom: '8px',
               fontFeatureSettings: '"cv01", "ss03"',
             }}
           >
             Войти в аккаунт
           </h1>
-          <p style={{ fontSize: '13px', color: '#62666d', fontWeight: 400 }}>
+          <p style={{ fontSize: '13px', color: 'var(--fh-t4)', fontWeight: 400 }}>
             Нет аккаунта?{' '}
             <Link
               href="/auth/register"
@@ -79,8 +79,8 @@ export default function LoginPage() {
         <div
           className="rounded-xl p-6 space-y-3"
           style={{
-            background: 'rgba(255,255,255,0.02)',
-            border: '1px solid rgba(255,255,255,0.08)',
+            background: 'var(--fh-surface)',
+            border: '1px solid var(--fh-border-2)',
           }}
         >
           {/* Google */}
@@ -91,15 +91,15 @@ export default function LoginPage() {
             style={{
               padding: '10px 16px',
               borderRadius: '6px',
-              background: 'rgba(255,255,255,0.03)',
-              border: '1px solid rgba(255,255,255,0.08)',
-              color: '#d0d6e0',
+              background: 'var(--fh-surface-2)',
+              border: '1px solid var(--fh-border-2)',
+              color: 'var(--fh-t2)',
               fontSize: '14px',
               fontWeight: 510,
               letterSpacing: '-0.01em',
             }}
-            onMouseEnter={e => { if (loading === null) e.currentTarget.style.background = 'rgba(255,255,255,0.06)' }}
-            onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.03)' }}
+            onMouseEnter={e => { if (loading === null) e.currentTarget.style.background = 'var(--fh-surface-3)' }}
+            onMouseLeave={e => { e.currentTarget.style.background = 'var(--fh-surface-2)' }}
           >
             {loading === 'google' ? (
               <Loader2 className="h-4 w-4 animate-spin" />
@@ -122,15 +122,15 @@ export default function LoginPage() {
             style={{
               padding: '10px 16px',
               borderRadius: '6px',
-              background: 'rgba(255,255,255,0.03)',
-              border: '1px solid rgba(255,255,255,0.08)',
-              color: '#d0d6e0',
+              background: 'var(--fh-surface-2)',
+              border: '1px solid var(--fh-border-2)',
+              color: 'var(--fh-t2)',
               fontSize: '14px',
               fontWeight: 510,
               letterSpacing: '-0.01em',
             }}
-            onMouseEnter={e => { if (loading === null) e.currentTarget.style.background = 'rgba(255,255,255,0.06)' }}
-            onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.03)' }}
+            onMouseEnter={e => { if (loading === null) e.currentTarget.style.background = 'var(--fh-surface-3)' }}
+            onMouseLeave={e => { e.currentTarget.style.background = 'var(--fh-surface-2)' }}
           >
             {loading === 'github' ? (
               <Loader2 className="h-4 w-4 animate-spin" />
@@ -144,9 +144,9 @@ export default function LoginPage() {
 
           {/* Divider */}
           <div className="flex items-center gap-3">
-            <div className="flex-1 h-px" style={{ background: 'rgba(255,255,255,0.06)' }} />
-            <span style={{ fontSize: '12px', color: '#62666d', fontWeight: 400 }}>или через email</span>
-            <div className="flex-1 h-px" style={{ background: 'rgba(255,255,255,0.06)' }} />
+            <div className="flex-1 h-px" style={{ background: 'var(--fh-sep)' }} />
+            <span style={{ fontSize: '12px', color: 'var(--fh-t4)', fontWeight: 400 }}>или через email</span>
+            <div className="flex-1 h-px" style={{ background: 'var(--fh-sep)' }} />
           </div>
 
           {/* Magic link */}
@@ -159,7 +159,7 @@ export default function LoginPage() {
               }}
             >
               <p style={{ fontSize: '14px', fontWeight: 510, color: '#27a644', marginBottom: '4px' }}>Письмо отправлено!</p>
-              <p style={{ fontSize: '12px', color: '#62666d', fontWeight: 400 }}>
+              <p style={{ fontSize: '12px', color: 'var(--fh-t4)', fontWeight: 400 }}>
                 Проверьте {email} — мы прислали ссылку для входа
               </p>
             </div>
@@ -175,15 +175,15 @@ export default function LoginPage() {
                 style={{
                   padding: '10px 14px',
                   borderRadius: '6px',
-                  background: 'rgba(255,255,255,0.03)',
-                  border: '1px solid rgba(255,255,255,0.08)',
-                  color: '#f7f8f8',
-                  fontSize: '14px',
+                  background: 'var(--fh-surface-2)',
+                  border: '1px solid var(--fh-border-2)',
+                  color: 'var(--fh-t1)',
+                  fontSize: '16px',
                   fontWeight: 400,
                   letterSpacing: '-0.01em',
                 }}
                 onFocus={e => { e.currentTarget.style.border = '1px solid rgba(113,112,255,0.4)' }}
-                onBlur={e => { e.currentTarget.style.border = '1px solid rgba(255,255,255,0.08)' }}
+                onBlur={e => { e.currentTarget.style.border = '1px solid var(--fh-border-2)' }}
               />
               <button
                 type="submit"
@@ -213,13 +213,13 @@ export default function LoginPage() {
           )}
         </div>
 
-        <p className="text-center mt-5" style={{ fontSize: '12px', color: '#4a4f57', fontWeight: 400 }}>
+        <p className="text-center mt-5" style={{ fontSize: '12px', color: 'var(--fh-t2)', fontWeight: 400 }}>
           Входя, вы принимаете{' '}
-          <Link href="#" style={{ color: '#62666d' }} onMouseEnter={e => { e.currentTarget.style.color = '#8a8f98' }} onMouseLeave={e => { e.currentTarget.style.color = '#62666d' }}>
+          <Link href="#" style={{ color: 'var(--fh-t3)' }} onMouseEnter={e => { e.currentTarget.style.color = 'var(--fh-t2)' }} onMouseLeave={e => { e.currentTarget.style.color = 'var(--fh-t3)' }}>
             условия использования
           </Link>
           {' '}и{' '}
-          <Link href="#" style={{ color: '#62666d' }} onMouseEnter={e => { e.currentTarget.style.color = '#8a8f98' }} onMouseLeave={e => { e.currentTarget.style.color = '#62666d' }}>
+          <Link href="#" style={{ color: 'var(--fh-t3)' }} onMouseEnter={e => { e.currentTarget.style.color = 'var(--fh-t2)' }} onMouseLeave={e => { e.currentTarget.style.color = 'var(--fh-t3)' }}>
             политику конфиденциальности
           </Link>
         </p>

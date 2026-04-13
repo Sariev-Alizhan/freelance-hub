@@ -86,14 +86,14 @@ export default function OrdersClient({ realOrders = [] }: Props) {
               fontSize: 'clamp(22px, 3.5vw, 30px)',
               fontWeight: 510,
               letterSpacing: '-0.04em',
-              color: '#f7f8f8',
+              color: 'var(--fh-t1)',
               marginBottom: '6px',
               fontFeatureSettings: '"cv01", "ss03"',
             }}
           >
             Заказы
           </h1>
-          <p style={{ fontSize: '14px', color: '#8a8f98', fontWeight: 400 }}>
+          <p style={{ fontSize: '14px', color: 'var(--fh-t3)', fontWeight: 400 }}>
             Находите проекты по своей специальности
           </p>
         </div>
@@ -122,7 +122,7 @@ export default function OrdersClient({ realOrders = [] }: Props) {
         <div className="relative flex-1">
           <Search
             className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4"
-            style={{ color: '#62666d' }}
+            style={{ color: 'var(--fh-t4)' }}
           />
           <input
             value={inputVal}
@@ -132,14 +132,14 @@ export default function OrdersClient({ realOrders = [] }: Props) {
             style={{
               padding: '10px 14px 10px 36px',
               borderRadius: '6px',
-              background: 'rgba(255,255,255,0.03)',
-              border: '1px solid rgba(255,255,255,0.08)',
-              color: '#f7f8f8',
+              background: 'var(--fh-surface-2)',
+              border: '1px solid var(--fh-border-2)',
+              color: 'var(--fh-t1)',
               fontSize: '14px',
               fontWeight: 400,
             }}
             onFocus={e => { e.currentTarget.style.border = '1px solid rgba(113,112,255,0.35)' }}
-            onBlur={e => { e.currentTarget.style.border = '1px solid rgba(255,255,255,0.08)' }}
+            onBlur={e => { e.currentTarget.style.border = '1px solid var(--fh-border-2)' }}
           />
         </div>
         <button
@@ -148,9 +148,9 @@ export default function OrdersClient({ realOrders = [] }: Props) {
           style={{
             padding: '10px 16px',
             borderRadius: '6px',
-            border: urgentOnly ? '1px solid rgba(229,72,77,0.3)' : '1px solid rgba(255,255,255,0.08)',
-            background: urgentOnly ? 'rgba(229,72,77,0.08)' : 'rgba(255,255,255,0.03)',
-            color: urgentOnly ? '#e5484d' : '#8a8f98',
+            border: urgentOnly ? '1px solid rgba(229,72,77,0.3)' : '1px solid var(--fh-border-2)',
+            background: urgentOnly ? 'rgba(229,72,77,0.08)' : 'var(--fh-surface-2)',
+            color: urgentOnly ? '#e5484d' : 'var(--fh-t3)',
             fontSize: '13px',
             fontWeight: 510,
           }}
@@ -174,9 +174,9 @@ export default function OrdersClient({ realOrders = [] }: Props) {
                 borderRadius: '6px',
                 fontSize: '13px',
                 fontWeight: 510,
-                background: active ? '#5e6ad2' : 'rgba(255,255,255,0.03)',
-                border: active ? '1px solid rgba(113,112,255,0.3)' : '1px solid rgba(255,255,255,0.06)',
-                color: active ? '#ffffff' : '#8a8f98',
+                background: active ? '#5e6ad2' : 'var(--fh-surface-2)',
+                border: active ? '1px solid rgba(113,112,255,0.3)' : '1px solid var(--fh-border)',
+                color: active ? '#ffffff' : 'var(--fh-t3)',
               }}
             >
               {cat.label}
@@ -186,9 +186,9 @@ export default function OrdersClient({ realOrders = [] }: Props) {
       </div>
 
       {/* Count */}
-      <div className="mb-4" style={{ fontSize: '13px', color: '#62666d', fontWeight: 400 }}>
+      <div className="mb-4" style={{ fontSize: '13px', color: 'var(--fh-t4)', fontWeight: 400 }}>
         Найдено:{' '}
-        <span style={{ color: '#f7f8f8', fontWeight: 590 }}>{filtered.length}</span> заказов
+        <span style={{ color: 'var(--fh-t1)', fontWeight: 590 }}>{filtered.length}</span> заказов
       </div>
 
       {/* Results */}
@@ -201,10 +201,10 @@ export default function OrdersClient({ realOrders = [] }: Props) {
             <Zap className="h-7 w-7" style={{ color: '#7170ff' }} />
           </div>
           <div className="text-center">
-            <p style={{ fontSize: '16px', fontWeight: 510, color: '#f7f8f8', marginBottom: '8px', letterSpacing: '-0.02em' }}>
+            <p style={{ fontSize: '16px', fontWeight: 510, color: 'var(--fh-t1)', marginBottom: '8px', letterSpacing: '-0.02em' }}>
               {search || urgentOnly || category !== 'all' ? 'Ничего не найдено' : 'Заказов пока нет'}
             </p>
-            <p style={{ fontSize: '14px', color: '#8a8f98', maxWidth: '360px', lineHeight: 1.6 }}>
+            <p style={{ fontSize: '14px', color: 'var(--fh-t3)', maxWidth: '360px', lineHeight: 1.6 }}>
               {search || urgentOnly || category !== 'all'
                 ? 'Попробуйте изменить фильтры или сбросить поиск.'
                 : 'Платформа только запустилась — будьте первым! Разместите задачу бесплатно.'}
@@ -243,14 +243,14 @@ export default function OrdersClient({ realOrders = [] }: Props) {
                 style={{
                   padding: '10px 24px',
                   borderRadius: '6px',
-                  background: 'rgba(255,255,255,0.03)',
-                  border: '1px solid rgba(255,255,255,0.08)',
-                  color: '#d0d6e0',
+                  background: 'var(--fh-surface-2)',
+                  border: '1px solid var(--fh-border-2)',
+                  color: 'var(--fh-t2)',
                   fontSize: '14px',
                   fontWeight: 510,
                 }}
-                onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.06)' }}
-                onMouseLeave={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.03)' }}
+                onMouseEnter={e => { e.currentTarget.style.background = 'var(--fh-surface-3)' }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'var(--fh-surface-2)' }}
               >
                 <ChevronDown className="h-4 w-4" />
                 Показать ещё ({filtered.length - paginated.length})

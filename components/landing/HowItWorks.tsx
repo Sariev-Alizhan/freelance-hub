@@ -77,7 +77,7 @@ export default function HowItWorks() {
                 {i < STEPS.length - 1 && (
                   <div
                     className="hidden lg:block absolute top-9 left-full w-full h-px z-0"
-                    style={{ background: 'linear-gradient(to right, rgba(255,255,255,0.06), transparent)' }}
+                    style={{ background: 'linear-gradient(to right, var(--fh-border), transparent)' }}
                   />
                 )}
                 <div
