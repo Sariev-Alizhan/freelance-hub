@@ -224,7 +224,8 @@ export default function MessengerPage() {
 
   // ── Auto-open conversation from ?open=userId ────────────
   useEffect(() => {
-    if (!openUserId || !user || conversations.length === 0) return
+    // Wait until auth is resolved and conversations have finished loading
+    if (!openUserId || !user || convsLoading) return
 
     // Find existing conversation with this user
     const existing = conversations.find(
@@ -236,28 +237,35 @@ export default function MessengerPage() {
       return
     }
 
-    // Create new conversation
+    // No existing conversation found — create one
     async function createAndOpen() {
       const [p1, p2] = [user!.id, openUserId!].sort()
-      const { data: existing } = await db
+
+      // Double-check in DB (in case RLS filtered it from the list query)
+      const { data: found } = await db
         .from('conversations')
         .select('id')
         .eq('participant_1', p1)
         .eq('participant_2', p2)
         .maybeSingle()
 
-      if (existing) {
-        setActiveId(existing.id)
+      if (found) {
+        setActiveId(found.id)
         setShowList(false)
+        await loadConversations()
         return
       }
 
-      const { data: created } = await db
+      const { data: created, error } = await db
         .from('conversations')
         .insert({ participant_1: p1, participant_2: p2 })
         .select('id')
         .single()
 
+      if (error) {
+        console.error('[messenger] createConversation error:', error.message)
+        return
+      }
       if (created) {
         await loadConversations()
         setActiveId(created.id)
@@ -266,7 +274,7 @@ export default function MessengerPage() {
     }
     createAndOpen()
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [openUserId, user, conversations.length])
+  }, [openUserId, user, convsLoading])
 
   // ── Load messages for active conversation ───────────────
   useEffect(() => {
@@ -700,7 +708,10 @@ export default function MessengerPage() {
             )}
 
             {/* Input */}
-            <div className="px-4 py-3 border-t border-subtle bg-card flex-shrink-0">
+            <div
+              className="px-4 py-3 border-t border-subtle bg-card flex-shrink-0"
+              style={{ paddingBottom: 'max(12px, env(safe-area-inset-bottom))' }}
+            >
               <div className="flex items-end gap-2">
                 {/* Attachment button */}
                 <button
@@ -735,7 +746,9 @@ export default function MessengerPage() {
                     e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px'
                   }}
                   onKeyDown={e => {
-                    if (e.key === 'Enter' && !e.shiftKey) {
+                    // On mobile (touch devices), Enter adds a newline — use Send button
+                    const isMobile = window.matchMedia('(hover: none)').matches
+                    if (e.key === 'Enter' && !e.shiftKey && !isMobile) {
                       e.preventDefault()
                       sendMessage()
                     }
@@ -755,7 +768,7 @@ export default function MessengerPage() {
                   }
                 </button>
               </div>
-              <p className="text-xs text-muted-foreground mt-1.5 ml-1">Enter — send · Shift+Enter — new line</p>
+              <p className="hidden sm:block text-xs text-muted-foreground mt-1.5 ml-1">Enter — send · Shift+Enter — new line</p>
             </div>
           </>
         ) : (
