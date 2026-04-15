@@ -36,7 +36,15 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true, googleBot: { index: true, follow: true } },
   manifest: '/manifest.json',
   appleWebApp: { capable: true, statusBarStyle: 'black-translucent', title: 'FreelanceHub' },
-  icons: { icon: [{ url: '/icon-192.png', sizes: '192x192', type: 'image/png' }], apple: '/apple-touch-icon.png' },
+  icons: {
+    icon: [
+      { url: '/favicon.ico',  sizes: 'any' },
+      { url: '/logo-icon.png', type: 'image/png', sizes: '512x512' },
+      { url: '/icon-192.png',  type: 'image/png', sizes: '192x192' },
+    ],
+    apple: '/apple-touch-icon.png',
+    shortcut: '/favicon.ico',
+  },
   openGraph: {
     title: 'FreelanceHub — Decentralized Freelance Platform',
     description: 'Work directly. 0% commission. Built in Kazakhstan, open to the world.',

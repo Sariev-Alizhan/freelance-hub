@@ -12,34 +12,47 @@ function urlBase64ToUint8Array(base64String: string): ArrayBuffer {
   return arr.buffer
 }
 
+function isPushSupported(): boolean {
+  if (typeof window === 'undefined') return false
+  if (!('serviceWorker' in navigator)) return false
+  if (!('PushManager' in window)) return false
+  if (!('Notification' in window)) return false
+  return true
+}
+
 export function usePushNotifications() {
   const [state, setState] = useState<PushState>('loading')
   const [subscription, setSubscription] = useState<PushSubscription | null>(null)
 
-  const vapidKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY
+  const vapidKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY?.trim()
 
   useEffect(() => {
-    if (typeof window === 'undefined' || !('serviceWorker' in navigator) || !('PushManager' in window)) {
+    if (!isPushSupported() || !vapidKey) {
       setState('unsupported')
       return
     }
-    if (!vapidKey) { setState('unsupported'); return }
 
     const perm = Notification.permission
     if (perm === 'denied') { setState('denied'); return }
 
-    navigator.serviceWorker.ready.then(reg => {
-      reg.pushManager.getSubscription().then(sub => {
+    navigator.serviceWorker.ready
+      .then(reg => reg.pushManager.getSubscription())
+      .then(sub => {
         setSubscription(sub)
         setState(sub ? 'granted' : perm === 'granted' ? 'granted' : 'default')
       })
-    })
+      .catch(() => setState('unsupported'))
   }, [vapidKey])
 
   const subscribe = useCallback(async () => {
-    if (!vapidKey) return
+    if (!vapidKey || !isPushSupported()) return
     setState('loading')
     try {
+      // Some browsers need explicit permission request first
+      const permission = await Notification.requestPermission()
+      if (permission === 'denied') { setState('denied'); return }
+      if (permission !== 'granted') { setState('default'); return }
+
       const reg = await navigator.serviceWorker.ready
       const sub = await reg.pushManager.subscribe({
         userVisibleOnly: true,
@@ -52,7 +65,8 @@ export function usePushNotifications() {
         body: JSON.stringify({ subscription: sub.toJSON() }),
       })
       setState('granted')
-    } catch {
+    } catch (err) {
+      console.error('[push] subscribe error:', err)
       setState(Notification.permission === 'denied' ? 'denied' : 'default')
     }
   }, [vapidKey])
@@ -60,12 +74,16 @@ export function usePushNotifications() {
   const unsubscribe = useCallback(async () => {
     if (!subscription) return
     setState('loading')
-    await fetch('/api/push/subscribe', {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ endpoint: subscription.endpoint }),
-    })
-    await subscription.unsubscribe()
+    try {
+      await fetch('/api/push/subscribe', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ endpoint: subscription.endpoint }),
+      })
+      await subscription.unsubscribe()
+    } catch (err) {
+      console.error('[push] unsubscribe error:', err)
+    }
     setSubscription(null)
     setState('default')
   }, [subscription])

@@ -257,7 +257,12 @@ export default function NotificationBell() {
             )}
             {pushState === 'denied' && (
               <div className="px-4 py-2 border-t border-subtle">
-                <p className="text-[11px] text-muted-foreground">Notifications blocked in browser settings</p>
+                <p className="text-[11px] text-muted-foreground">Notifications blocked — enable in browser settings</p>
+              </div>
+            )}
+            {pushState === 'unsupported' && (
+              <div className="px-4 py-2 border-t border-subtle">
+                <p className="text-[11px] text-muted-foreground">Push not supported — use in-app notifications above</p>
               </div>
             )}
           </motion.div>
