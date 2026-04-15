@@ -123,9 +123,8 @@ export default function PrivacyPage() {
       >
         <Link
           href="/terms"
+          className="hover:underline"
           style={{ fontSize: '13px', color: '#7170ff', fontWeight: 510, textDecoration: 'none' }}
-          onMouseOver={(e) => { e.currentTarget.style.textDecoration = 'underline' }}
-          onMouseOut={(e) => { e.currentTarget.style.textDecoration = 'none' }}
         >
           Terms of Service →
         </Link>
