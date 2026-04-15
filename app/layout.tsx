@@ -7,13 +7,14 @@ import { CurrencyProvider } from '@/lib/context/CurrencyContext'
 import { ToastProvider } from '@/lib/context/ToastContext'
 import { ThemeProvider } from '@/lib/context/ThemeContext'
 import { LanguageProvider } from '@/lib/context/LanguageContext'
+import { ProfileProvider } from '@/lib/context/ProfileContext'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import BottomNav from '@/components/layout/BottomNav'
 import Toaster from '@/components/ui/Toaster'
-import InstallPrompt from '@/components/shared/InstallPrompt'
-import UpdateNotification from '@/components/shared/UpdateNotification'
+import PageTransition from '@/components/shared/PageTransition'
 import MotionProvider from '@/components/providers/MotionProvider'
+import DeferredUI from '@/components/providers/DeferredUI'
 
 const inter = Inter({
   subsets: ['latin', 'cyrillic'],
@@ -82,6 +83,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         {/* Service Worker for PWA */}
         <script dangerouslySetInnerHTML={{ __html: swScript }} />
+        {/* Preconnect to external origins for Lighthouse performance */}
+        <link rel="preconnect" href={process.env.NEXT_PUBLIC_SUPABASE_URL ?? 'https://kkvmxtwpgvubwtcalzjm.supabase.co'} />
+        <link rel="preconnect" href="https://api.dicebear.com" />
+        <link rel="dns-prefetch" href="https://open.er-api.com" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -95,13 +100,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <LanguageProvider>
           <ToastProvider>
             <CurrencyProvider>
+              <ProfileProvider>
               <Header />
-              <main className="flex-1 pb-safe-mobile">{children}</main>
+              <main className="flex-1 pb-safe-mobile">
+                <PageTransition>{children}</PageTransition>
+              </main>
+              </ProfileProvider>
               <Footer />
               <BottomNav />
               <Toaster />
-              <InstallPrompt />
-              <UpdateNotification />
+              <DeferredUI />
             </CurrencyProvider>
           </ToastProvider>
           </LanguageProvider>
