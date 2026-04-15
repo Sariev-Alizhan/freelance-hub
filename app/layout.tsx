@@ -13,6 +13,7 @@ import BottomNav from '@/components/layout/BottomNav'
 import Toaster from '@/components/ui/Toaster'
 import InstallPrompt from '@/components/shared/InstallPrompt'
 import UpdateNotification from '@/components/shared/UpdateNotification'
+import MotionProvider from '@/components/providers/MotionProvider'
 
 const inter = Inter({
   subsets: ['latin', 'cyrillic'],
@@ -35,7 +36,7 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true, googleBot: { index: true, follow: true } },
   manifest: '/manifest.json',
   appleWebApp: { capable: true, statusBarStyle: 'black-translucent', title: 'FreelanceHub' },
-  icons: { icon: [{ url: '/icon.svg' }, { url: '/icon-192.png', sizes: '192x192', type: 'image/png' }], apple: '/apple-touch-icon.png' },
+  icons: { icon: [{ url: '/icon-192.png', sizes: '192x192', type: 'image/png' }], apple: '/apple-touch-icon.png' },
   openGraph: {
     title: 'FreelanceHub — Decentralized Freelance Platform',
     description: 'Work directly. 0% commission. Built in Kazakhstan, open to the world.',
@@ -81,6 +82,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="manifest" href="/manifest.json" />
       </head>
       <body className={`${inter.variable} font-sans antialiased min-h-screen flex flex-col`}>
+        <MotionProvider>
         <ThemeProvider>
           <LanguageProvider>
           <ToastProvider>
@@ -96,6 +98,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </ToastProvider>
           </LanguageProvider>
         </ThemeProvider>
+        </MotionProvider>
         <Analytics />
         <SpeedInsights />
       </body>
