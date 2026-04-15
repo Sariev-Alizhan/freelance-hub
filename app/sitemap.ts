@@ -26,7 +26,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   // Category-specific freelancer pages for SEO
   const categoryRoutes: MetadataRoute.Sitemap = CATEGORY_SLUGS.map(slug => ({
-    url: `${SITE}/freelancers/${slug}`,
+    url: `${SITE}/freelancers/category/${slug}`,
     lastModified: now,
     changeFrequency: 'daily' as const,
     priority: 0.85,
