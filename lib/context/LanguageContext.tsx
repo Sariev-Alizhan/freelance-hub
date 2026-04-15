@@ -91,7 +91,7 @@ export const T: Record<Lang, any> = {
       status:     'Platform is live',
       donate:     'Support the project',
       donateDesc: 'All funds go to promoting the platform so people worldwide can work for free',
-      copyright:  '© 2025 FreelanceHub by SITS — 0% commission forever',
+      copyright:  '© 2026 FreelanceHub by SITS — 0% commission forever',
     },
   },
 
@@ -175,7 +175,7 @@ export const T: Record<Lang, any> = {
       status:     'Платформа запущена',
       donate:     'Поддержи проект донатом',
       donateDesc: 'Все средства идут на продвижение платформы, чтобы люди по всему миру могли работать бесплатно',
-      copyright:  '© 2025 FreelanceHub by SITS — 0% комиссия навсегда',
+      copyright:  '© 2026 FreelanceHub by SITS — 0% комиссия навсегда',
     },
   },
 
@@ -259,7 +259,7 @@ export const T: Record<Lang, any> = {
       status:     'Платформа іске қосылды',
       donate:     'Жобаны қолдаңыз',
       donateDesc: 'Барлық қаражат бүкіл әлем бойынша адамдар тегін жұмыс істей алуы үшін жобаны насихаттауға жіберіледі',
-      copyright:  '© 2025 FreelanceHub by SITS — 0% комиссия мәңгіге',
+      copyright:  '© 2026 FreelanceHub by SITS — 0% комиссия мәңгіге',
     },
   },
 }
@@ -282,7 +282,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     try {
       const saved = localStorage.getItem('fh-lang') as Lang | null
-      if (saved && (saved === 'ru' || saved === 'en')) {
+      if (saved && (saved === 'ru' || saved === 'en' || saved === 'kz')) {
         setLangState(saved)
       }
     } catch {}

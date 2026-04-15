@@ -3,7 +3,6 @@ import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
 import { MapPin, CheckCircle, Clock, Star, Package, ArrowLeft, MessageCircle, Circle, Crown } from 'lucide-react'
-import { getFreelancerById, MOCK_FREELANCERS } from '@/lib/mock'
 import RatingStars from '@/components/shared/RatingStars'
 import PriceDisplay from '@/components/shared/PriceDisplay'
 import OnlineStatus from '@/components/shared/OnlineStatus'
@@ -97,7 +96,8 @@ async function getFreelancerFromSupabase(userId: string): Promise<Freelancer | n
 }
 
 export async function generateStaticParams() {
-  return MOCK_FREELANCERS.map((f) => ({ id: f.id }))
+  // All freelancer profile pages are rendered dynamically at request time
+  return []
 }
 
 export async function generateMetadata({
@@ -106,7 +106,7 @@ export async function generateMetadata({
   params: Promise<{ id: string }>
 }): Promise<Metadata> {
   const { id } = await params
-  const f = getFreelancerById(id) ?? await getFreelancerFromSupabase(id)
+  const f = await getFreelancerFromSupabase(id)
   if (!f) return { title: 'Profile not found — FreelanceHub' }
 
   const desc = `${f.name} — ${f.title}. Rating ${f.rating}, ${f.reviewsCount} reviews. Completed ${f.completedOrders} orders on FreelanceHub.`
@@ -156,7 +156,7 @@ export default async function FreelancerPage({ params }: { params: Promise<{ id:
   const { id } = await params
   const supabase = await createClient()
   const [freelancer, { data: { user } }] = await Promise.all([
-    (async () => getFreelancerById(id) ?? await getFreelancerFromSupabase(id))(),
+    getFreelancerFromSupabase(id),
     supabase.auth.getUser(),
   ])
   const f = freelancer
@@ -222,6 +222,33 @@ export default async function FreelancerPage({ params }: { params: Promise<{ id:
               </div>
             </div>
             <p className="mt-5 text-sm text-muted-foreground leading-relaxed">{f.description}</p>
+
+            {/* Achievement badges */}
+            {(() => {
+              const badges: { icon: string; label: string; color: string; bg: string }[] = []
+              if (f.rating >= 4.8 && f.reviewsCount >= 5)
+                badges.push({ icon: '🏆', label: 'Top rated', color: '#f59e0b', bg: 'rgba(245,158,11,0.08)' })
+              if (f.responseTime && (f.responseTime.includes('1 hour') || f.responseTime.includes('4 hours') || f.responseTime.includes('1 час') || f.responseTime.includes('4 часа')))
+                badges.push({ icon: '⚡', label: 'Fast reply', color: '#7170ff', bg: 'rgba(113,112,255,0.08)' })
+              if (f.completedOrders >= 50)
+                badges.push({ icon: '🔥', label: 'Pro', color: '#ef4444', bg: 'rgba(239,68,68,0.08)' })
+              if (f.reviewsCount >= 20)
+                badges.push({ icon: '💬', label: 'Trusted', color: '#27a644', bg: 'rgba(39,166,68,0.08)' })
+              if (!badges.length) return null
+              return (
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {badges.map(b => (
+                    <span key={b.label} className="flex items-center gap-1.5"
+                      style={{
+                        padding: '4px 10px', borderRadius: '6px', fontSize: '12px',
+                        fontWeight: 590, background: b.bg, color: b.color, letterSpacing: '0.01em',
+                      }}>
+                      {b.icon} {b.label}
+                    </span>
+                  ))}
+                </div>
+              )
+            })()}
 
             {/* Stats row */}
             <div className="mt-5 grid grid-cols-3 gap-4 pt-5 border-t border-subtle">

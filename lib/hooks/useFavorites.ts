@@ -11,14 +11,22 @@ interface Favorite {
 
 // Module-level cache so all hook instances share state
 let _cache: Favorite[] | null = null
+let _cachedUserId: string | null = null
 const _listeners = new Set<(favs: Favorite[]) => void>()
 
 function notifyAll(favs: Favorite[]) {
   _listeners.forEach((fn) => fn(favs))
 }
 
+function resetCache() {
+  _cache = null
+  _cachedUserId = null
+  notifyAll([])
+}
+
 export function useFavorites() {
   const { user } = useUser()
+  const userId = user?.id ?? null
   const [favorites, setFavorites] = useState<Favorite[]>(_cache ?? [])
   const loadedRef = useRef(false)
 
@@ -29,18 +37,33 @@ export function useFavorites() {
     return () => { _listeners.delete(handler) }
   }, [])
 
-  // Load once per session
+  // Reset cache when user changes (logout / switch account)
   useEffect(() => {
-    if (!user || loadedRef.current || _cache !== null) {
+    if (userId === null) {
+      loadedRef.current = false
+      resetCache()
+      return
+    }
+    if (_cachedUserId !== null && _cachedUserId !== userId) {
+      // Different user logged in — clear stale cache
+      loadedRef.current = false
+      resetCache()
+    }
+  }, [userId])
+
+  // Load once per session per user
+  useEffect(() => {
+    if (!userId || loadedRef.current || _cache !== null) {
       if (_cache !== null) setFavorites([..._cache])
       return
     }
     loadedRef.current = true
+    _cachedUserId = userId
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const db = createClient() as any
     db.from('favorites')
       .select('id,target_type,target_id')
-      .eq('user_id', user.id)
+      .eq('user_id', userId)
       .then(({ data }: { data: Favorite[] | null }) => {
         if (data) {
           _cache = data
@@ -48,7 +71,7 @@ export function useFavorites() {
           notifyAll(data)
         }
       })
-  }, [user])
+  }, [userId])
 
   const isFavorite = useCallback(
     (type: 'order' | 'freelancer', id: string) =>
@@ -58,7 +81,7 @@ export function useFavorites() {
 
   const toggle = useCallback(
     async (type: 'order' | 'freelancer', targetId: string) => {
-      if (!user) return
+      if (!userId) return
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const db = createClient() as any
       const existing = (_cache ?? []).find(
@@ -83,7 +106,7 @@ export function useFavorites() {
         notifyAll(next)
         const { data } = await db
           .from('favorites')
-          .insert({ user_id: user.id, target_type: type, target_id: targetId })
+          .insert({ user_id: userId, target_type: type, target_id: targetId })
           .select('id,target_type,target_id')
           .single()
         if (data && _cache) {
@@ -92,7 +115,7 @@ export function useFavorites() {
         }
       }
     },
-    [user]
+    [userId]
   )
 
   return { favorites, isFavorite, toggle }

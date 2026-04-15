@@ -164,6 +164,33 @@ export default function FreelancerCard({ freelancer: f }: Props) {
             )}
           </div>
 
+          {/* Achievement badges */}
+          {(() => {
+            const badges: { icon: string; label: string; color: string; bg: string }[] = []
+            if (f.rating >= 4.8 && f.reviewsCount >= 5)
+              badges.push({ icon: '🏆', label: 'Top rated', color: '#f59e0b', bg: 'rgba(245,158,11,0.08)' })
+            if (f.responseTime && (f.responseTime.includes('1 hour') || f.responseTime.includes('4 hours')))
+              badges.push({ icon: '⚡', label: 'Fast reply', color: '#7170ff', bg: 'rgba(113,112,255,0.08)' })
+            if (f.completedOrders >= 50)
+              badges.push({ icon: '🔥', label: 'Pro', color: '#ef4444', bg: 'rgba(239,68,68,0.08)' })
+            if (f.reviewsCount >= 20)
+              badges.push({ icon: '💬', label: 'Trusted', color: '#27a644', bg: 'rgba(39,166,68,0.08)' })
+            if (!badges.length) return null
+            return (
+              <div className="flex flex-wrap gap-1.5" style={{ marginTop: '-4px' }}>
+                {badges.map(b => (
+                  <span key={b.label} className="flex items-center gap-1"
+                    style={{
+                      padding: '2px 7px', borderRadius: '4px', fontSize: '10px',
+                      fontWeight: 590, background: b.bg, color: b.color, letterSpacing: '0.01em',
+                    }}>
+                    {b.icon} {b.label}
+                  </span>
+                ))}
+              </div>
+            )
+          })()}
+
           {/* Footer */}
           <div
             className="mt-auto flex items-center justify-between pt-4"

@@ -1,12 +1,13 @@
 'use client'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import {
   Briefcase, Star, DollarSign, Clock, CheckCircle,
   ArrowRight, Sparkles, User, LogIn, MapPin,
   Tag, Edit3, Zap, MessageSquare, Heart, ChevronRight,
-  Circle, Eye, Crown, ShieldCheck, TrendingUp
+  Circle, Eye, Crown, ShieldCheck, TrendingUp, Share2,
+  Loader2, X, Camera,
 } from 'lucide-react'
 import { useUser } from '@/lib/hooks/useUser'
 import { useFavorites } from '@/lib/hooks/useFavorites'
@@ -14,7 +15,9 @@ import { createClient } from '@/lib/supabase/client'
 import {
   Skeleton, SkeletonStats, SkeletonProfileHeader, SkeletonDashboardOrder
 } from '@/components/ui/Skeleton'
-import { MOCK_ORDERS, MOCK_FREELANCERS } from '@/lib/mock'
+import PortfolioManager from '@/components/dashboard/PortfolioManager'
+import JobMatchWidget from '@/components/dashboard/JobMatchWidget'
+import SavedSearchesWidget from '@/components/dashboard/SavedSearchesWidget'
 
 // ── Types ──────────────────────────────────────────────────
 interface Profile {
@@ -23,6 +26,7 @@ interface Profile {
   bio: string | null
   location: string | null
   role: string
+  username: string | null
 }
 
 type AvailabilityStatus = 'open' | 'busy' | 'vacation'
@@ -48,6 +52,8 @@ interface MyOrder {
 
 interface MyResponse {
   id: string; proposed_price: number | null; created_at: string
+  status: 'pending' | 'accepted' | 'rejected'
+  message: string | null
   order: { id: string; title: string; status: string; budget_min: number; budget_max: number }
 }
 
@@ -65,7 +71,7 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }
 
 export default function DashboardPage() {
   const { user, loading } = useUser()
-  const [tab, setTab] = useState<'freelancer' | 'client' | 'favorites'>('freelancer')
+  const [tab, setTab] = useState<'freelancer' | 'client' | 'favorites' | 'portfolio'>('freelancer')
   const { favorites } = useFavorites()
   const [profile, setProfile] = useState<Profile | null>(null)
   const [fp, setFp] = useState<FreelancerProfile | null>(null)
@@ -73,6 +79,7 @@ export default function DashboardPage() {
   const [availSaving, setAvailSaving] = useState(false)
   const [myOrders, setMyOrders] = useState<MyOrder[]>([])
   const [myResponses, setMyResponses] = useState<MyResponse[]>([])
+  const [withdrawing, setWithdrawing] = useState<string | null>(null)
   const [profileLoading, setProfileLoading] = useState(true)
   const [ordersLoading, setOrdersLoading] = useState(false)
 
@@ -81,8 +88,11 @@ export default function DashboardPage() {
     views7: number; views30: number; responsesThisMonth: number
     responseLimit: number | null; isPremium: boolean; isVerified: boolean
     verificationRequested: boolean
+    viewsByDay: { day: string; count: number }[]
   } | null>(null)
   const [verifyLoading, setVerifyLoading] = useState(false)
+  const [avatarUploading, setAvatarUploading] = useState(false)
+  const avatarInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     if (!user) { setProfileLoading(false); return }
@@ -92,7 +102,7 @@ export default function DashboardPage() {
     async function load() {
       setProfileLoading(true)
       const [profRes, fpRes] = await Promise.all([
-        db.from('profiles').select('full_name,avatar_url,bio,location,role').eq('id', user!.id).single(),
+        db.from('profiles').select('full_name,avatar_url,bio,location,role,username').eq('id', user!.id).single(),
         db.from('freelancer_profiles').select('title,category,skills,price_from,price_to,level,rating,reviews_count,completed_orders,availability_status').eq('user_id', user!.id).single(),
       ])
       if (profRes.data) setProfile(profRes.data)
@@ -132,10 +142,10 @@ export default function DashboardPage() {
       } else {
         const { data } = await db
           .from('order_responses')
-          .select('id,proposed_price,created_at,order:orders(id,title,status,budget_min,budget_max)')
+          .select('id,proposed_price,created_at,status,message,order:orders(id,title,status,budget_min,budget_max)')
           .eq('freelancer_id', user!.id)
           .order('created_at', { ascending: false })
-          .limit(10)
+          .limit(20)
         setMyResponses(data || [])
       }
       setOrdersLoading(false)
@@ -175,6 +185,22 @@ export default function DashboardPage() {
     )
   }
 
+  async function withdrawResponse(responseId: string) {
+    setWithdrawing(responseId)
+    try {
+      const res = await fetch('/api/orders/withdraw', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ responseId }),
+      })
+      if (res.ok) {
+        setMyResponses(prev => prev.filter(r => r.id !== responseId))
+      }
+    } finally {
+      setWithdrawing(null)
+    }
+  }
+
   async function requestVerification() {
     setVerifyLoading(true)
     try {
@@ -182,6 +208,21 @@ export default function DashboardPage() {
       setAnalytics(prev => prev ? { ...prev, verificationRequested: true } : prev)
     } finally {
       setVerifyLoading(false)
+    }
+  }
+
+  async function uploadAvatar(file: File) {
+    setAvatarUploading(true)
+    try {
+      const form = new FormData()
+      form.append('file', file)
+      const res = await fetch('/api/profile/avatar', { method: 'POST', body: form })
+      const data = await res.json()
+      if (res.ok && data.url) {
+        setProfile(prev => prev ? { ...prev, avatar_url: data.url } : prev)
+      }
+    } finally {
+      setAvatarUploading(false)
     }
   }
 
@@ -218,13 +259,36 @@ export default function DashboardPage() {
       {profileLoading ? <SkeletonProfileHeader /> : (
         <div className="flex items-start gap-4 mb-6">
           <div className="flex-shrink-0">
-            {avatarUrl ? (
-              <Image src={avatarUrl} alt={displayName} width={64} height={64} className="rounded-2xl object-cover w-16 h-16" unoptimized />
-            ) : (
-              <div className="h-16 w-16 rounded-2xl bg-primary/20 flex items-center justify-center">
-                <User className="h-8 w-8 text-primary" />
-              </div>
-            )}
+            <input
+              ref={avatarInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={e => { const f = e.target.files?.[0]; if (f) uploadAvatar(f); e.target.value = '' }}
+            />
+            <button
+              onClick={() => avatarInputRef.current?.click()}
+              disabled={avatarUploading}
+              className="relative group h-16 w-16 rounded-2xl overflow-hidden focus:outline-none focus:ring-2 focus:ring-primary/50"
+              title="Change photo"
+            >
+              {avatarUploading ? (
+                <div className="h-16 w-16 rounded-2xl bg-primary/20 flex items-center justify-center">
+                  <Loader2 className="h-6 w-6 text-primary animate-spin" />
+                </div>
+              ) : avatarUrl ? (
+                <Image src={avatarUrl} alt={displayName} width={64} height={64} className="rounded-2xl object-cover w-16 h-16" unoptimized />
+              ) : (
+                <div className="h-16 w-16 rounded-2xl bg-primary/20 flex items-center justify-center">
+                  <User className="h-8 w-8 text-primary" />
+                </div>
+              )}
+              {!avatarUploading && (
+                <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl">
+                  <Camera className="h-5 w-5 text-white" />
+                </div>
+              )}
+            </button>
           </div>
           <div className="flex-1 min-w-0">
             <div className="text-sm text-muted-foreground">Welcome,</div>
@@ -245,9 +309,25 @@ export default function DashboardPage() {
               </div>
             )}
           </div>
-          <Link href="/profile/setup" className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl border border-subtle text-sm hover:bg-subtle transition-colors text-muted-foreground flex-shrink-0">
-            <Edit3 className="h-3.5 w-3.5" /> Edit
-          </Link>
+          <div className="hidden sm:flex items-center gap-2 flex-shrink-0">
+            {profile?.username && (
+              <button
+                onClick={() => navigator.clipboard?.writeText(`${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.freelance-hub.kz'}/u/${profile.username}`).catch(() => {})}
+                title={`/u/${profile.username}`}
+                className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-subtle text-sm hover:bg-subtle transition-colors text-muted-foreground"
+              >
+                <Share2 className="h-3.5 w-3.5" /> Share
+              </button>
+            )}
+            {profile?.username && (
+              <Link href={`/u/${profile.username}`} className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-subtle text-sm hover:bg-subtle transition-colors text-muted-foreground">
+                <Eye className="h-3.5 w-3.5" /> View
+              </Link>
+            )}
+            <Link href="/profile/setup" className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-subtle text-sm hover:bg-subtle transition-colors text-muted-foreground">
+              <Edit3 className="h-3.5 w-3.5" /> Edit
+            </Link>
+          </div>
         </div>
       )}
 
@@ -382,6 +462,55 @@ export default function DashboardPage() {
             </div>
           </div>
 
+          {/* Sparkline chart — views per day (last 14 days) */}
+          {analytics.viewsByDay && analytics.viewsByDay.length > 0 && (() => {
+            const data = analytics.viewsByDay
+            const max = Math.max(...data.map(d => d.count), 1)
+            const W = 300; const H = 40; const gap = W / (data.length - 1)
+            const pts = data.map((d, i) => `${i * gap},${H - (d.count / max) * H}`)
+            const area = `M${pts.join(' L')} L${(data.length - 1) * gap},${H} L0,${H} Z`
+            return (
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs text-muted-foreground">Profile views — last 14 days</span>
+                  <span className="text-xs font-semibold" style={{ color: '#7170ff' }}>
+                    {data.reduce((s, d) => s + d.count, 0)} total
+                  </span>
+                </div>
+                <svg viewBox={`0 0 ${W} ${H}`} className="w-full" style={{ height: '40px', overflow: 'visible' }}>
+                  <defs>
+                    <linearGradient id="sparkGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#7170ff" stopOpacity="0.25" />
+                      <stop offset="100%" stopColor="#7170ff" stopOpacity="0" />
+                    </linearGradient>
+                  </defs>
+                  <path d={area} fill="url(#sparkGrad)" />
+                  <polyline
+                    points={pts.join(' ')}
+                    fill="none"
+                    stroke="#7170ff"
+                    strokeWidth="1.5"
+                    strokeLinejoin="round"
+                    strokeLinecap="round"
+                  />
+                  {data.map((d, i) => d.count > 0 && (
+                    <circle
+                      key={i}
+                      cx={i * gap}
+                      cy={H - (d.count / max) * H}
+                      r="2"
+                      fill="#7170ff"
+                    />
+                  ))}
+                </svg>
+                <div className="flex justify-between mt-1">
+                  <span className="text-xs text-muted-foreground opacity-60">{data[0]?.day?.slice(5)}</span>
+                  <span className="text-xs text-muted-foreground opacity-60">{data[data.length - 1]?.day?.slice(5)}</span>
+                </div>
+              </div>
+            )
+          })()}
+
           {/* Response limit bar */}
           {analytics.responseLimit !== null && (
             <div>
@@ -399,10 +528,18 @@ export default function DashboardPage() {
                 />
               </div>
               {!analytics.isPremium && (
-                <p className="text-xs text-muted-foreground mt-2">
-                  Premium removes the limit and boosts your search ranking.{' '}
-                  <span className="text-primary font-medium">2 000 ₸/mo</span>
-                </p>
+                <div className="mt-2">
+                  <p className="text-xs text-muted-foreground">
+                    Premium removes the limit and boosts your ranking.
+                  </p>
+                  <Link
+                    href="/premium"
+                    className="mt-2 flex items-center justify-center gap-1.5 w-full py-2 rounded-lg text-xs font-semibold transition-colors"
+                    style={{ background: 'rgba(94,106,210,0.08)', border: '1px solid rgba(94,106,210,0.2)', color: '#7170ff' }}
+                  >
+                    <Crown className="h-3 w-3" /> Upgrade — 2 000 ₸/mo
+                  </Link>
+                </div>
               )}
             </div>
           )}
@@ -429,15 +566,15 @@ export default function DashboardPage() {
       )}
 
       {/* ── Role tabs ── */}
-      <div className="flex gap-2 mb-6 border-b border-subtle">
-        {(['freelancer', 'client', 'favorites'] as const).map((t) => (
+      <div className="flex gap-2 mb-6 border-b border-subtle overflow-x-auto">
+        {(['freelancer', 'client', 'portfolio', 'favorites'] as const).map((t) => (
           <button key={t} onClick={() => setTab(t)}
-            className={`pb-3 px-1 text-sm font-medium border-b-2 transition-colors flex items-center gap-1.5 ${
+            className={`pb-3 px-1 text-sm font-medium border-b-2 transition-colors flex items-center gap-1.5 whitespace-nowrap ${
               tab === t ? 'border-primary text-foreground' : 'border-transparent text-muted-foreground hover:text-foreground'
             }`}
           >
             {t === 'favorites' && <Heart className="h-3.5 w-3.5" />}
-            {t === 'freelancer' ? 'As freelancer' : t === 'client' ? 'As client' : 'Saved'}
+            {t === 'freelancer' ? 'As freelancer' : t === 'client' ? 'As client' : t === 'portfolio' ? 'Portfolio' : 'Saved'}
             {t === 'favorites' && favorites.length > 0 && (
               <span className="ml-0.5 text-xs bg-primary/10 text-primary px-1.5 py-0.5 rounded-full font-semibold">
                 {favorites.length}
@@ -449,9 +586,9 @@ export default function DashboardPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-        {/* ── Orders / Responses / Favorites ── */}
+        {/* ── Orders / Responses / Favorites / Portfolio ── */}
         <div className="lg:col-span-2">
-          {tab !== 'favorites' && (
+          {tab !== 'favorites' && tab !== 'portfolio' && (
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-semibold">
               {tab === 'freelancer' ? 'My responses' : 'My orders'}
@@ -463,8 +600,116 @@ export default function DashboardPage() {
           </div>
           )}
 
-          {tab === 'favorites' ? (
+          {tab === 'portfolio' ? (
+            user ? <PortfolioManager freelancerId={user.id} /> : null
+          ) : tab === 'favorites' ? (
             <FavoritesTab favorites={favorites} />
+          ) : tab === 'freelancer' && !ordersLoading ? (
+            <>
+              <JobMatchWidget />
+              {myResponses.length === 0 ? (
+                <EmptyState
+                  emoji="📭" title="No responses yet"
+                  sub="Find a suitable project and apply"
+                  href="/orders" cta="Browse orders"
+                />
+              ) : (
+                <div className="space-y-3">
+                  {myResponses.map(resp => {
+                    const order = Array.isArray(resp.order) ? resp.order[0] : resp.order
+                    if (!order) return null
+
+                    const RESP_STATUS = {
+                      pending:  { label: 'Pending',  color: '#8a8f98', bg: 'rgba(138,143,152,0.08)', border: 'rgba(138,143,152,0.2)' },
+                      accepted: { label: 'Accepted', color: '#27a644', bg: 'rgba(39,166,68,0.08)',   border: 'rgba(39,166,68,0.25)'  },
+                      rejected: { label: 'Declined', color: '#e5484d', bg: 'rgba(229,72,77,0.06)',   border: 'rgba(229,72,77,0.2)'   },
+                    }
+                    const rs = RESP_STATUS[resp.status ?? 'pending']
+
+                    return (
+                      <div
+                        key={resp.id}
+                        style={{
+                          borderRadius: '12px', border: `1px solid ${rs.border}`,
+                          background: rs.bg, overflow: 'hidden',
+                          transition: 'box-shadow 0.15s',
+                        }}
+                      >
+                        <Link href={`/orders/${order.id}`} style={{ textDecoration: 'none', display: 'block', padding: '14px 16px' }}>
+                          <div className="flex items-start justify-between gap-3">
+                            <div style={{ flex: 1, minWidth: 0 }}>
+                              <p style={{ fontSize: '14px', fontWeight: 590, color: 'var(--fh-t1)', marginBottom: '4px',
+                                overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                {order.title}
+                              </p>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                                <span style={{ fontSize: '12px', color: 'var(--fh-t4)' }}>
+                                  {order.budget_min.toLocaleString()}–{order.budget_max.toLocaleString()} ₽
+                                </span>
+                                {resp.proposed_price && (
+                                  <>
+                                    <span style={{ fontSize: '12px', color: 'var(--fh-t4)' }}>·</span>
+                                    <span style={{ fontSize: '12px', color: '#27a644', fontWeight: 510 }}>
+                                      My bid: {resp.proposed_price.toLocaleString()} ₽
+                                    </span>
+                                  </>
+                                )}
+                                <span style={{ fontSize: '12px', color: 'var(--fh-t4)' }}>·</span>
+                                <span style={{ fontSize: '11px', color: 'var(--fh-t4)' }}>
+                                  {new Date(resp.created_at).toLocaleDateString('en-US', { day: 'numeric', month: 'short' })}
+                                </span>
+                              </div>
+                              {resp.message && (
+                                <p style={{ fontSize: '12px', color: 'var(--fh-t3)', marginTop: '6px', lineHeight: 1.5,
+                                  display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                                  {resp.message}
+                                </p>
+                              )}
+                            </div>
+                            <span style={{
+                              flexShrink: 0, fontSize: '11px', fontWeight: 700, padding: '3px 10px',
+                              borderRadius: '6px', letterSpacing: '0.02em',
+                              background: rs.bg, color: rs.color, border: `1px solid ${rs.border}`,
+                            }}>
+                              {rs.label}
+                            </span>
+                          </div>
+                        </Link>
+
+                        {/* Withdraw button — only for pending */}
+                        {(resp.status ?? 'pending') === 'pending' && (
+                          <div style={{
+                            borderTop: '1px solid rgba(255,255,255,0.05)',
+                            padding: '8px 16px',
+                            display: 'flex', justifyContent: 'flex-end',
+                          }}>
+                            <button
+                              onClick={() => withdrawResponse(resp.id)}
+                              disabled={withdrawing === resp.id}
+                              style={{
+                                display: 'flex', alignItems: 'center', gap: '5px',
+                                background: 'none', border: 'none', cursor: 'pointer',
+                                fontSize: '12px', color: 'var(--fh-t4)',
+                                opacity: withdrawing === resp.id ? 0.5 : 1,
+                                transition: 'color 0.15s',
+                              }}
+                              onMouseEnter={e => { e.currentTarget.style.color = '#e5484d' }}
+                              onMouseLeave={e => { e.currentTarget.style.color = 'var(--fh-t4)' }}
+                            >
+                              {withdrawing === resp.id
+                                ? <Loader2 className="h-3 w-3 animate-spin" />
+                                : <X className="h-3 w-3" />
+                              }
+                              Withdraw application
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
+            </>
           ) : ordersLoading ? (
             <div className="space-y-3">
               {[0,1,2].map(i => <SkeletonDashboardOrder key={i} />)}
@@ -505,49 +750,7 @@ export default function DashboardPage() {
                 })}
               </div>
             )
-          ) : (
-            myResponses.length === 0 ? (
-              <EmptyState
-                emoji="📭" title="No responses yet"
-                sub="Find a suitable project and apply"
-                href="/orders" cta="Browse orders"
-              />
-            ) : (
-              <div className="space-y-3">
-                {myResponses.map(resp => {
-                  const order = Array.isArray(resp.order) ? resp.order[0] : resp.order
-                  if (!order) return null
-                  const st = STATUS_CONFIG[order.status] ?? STATUS_CONFIG.open
-                  return (
-                    <Link key={resp.id} href={`/orders/${order.id}`}
-                      className="flex items-center gap-4 p-4 rounded-xl border border-subtle bg-card hover:bg-subtle transition-colors group"
-                    >
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-semibold truncate group-hover:text-primary transition-colors">{order.title}</p>
-                        <div className="flex items-center gap-2 mt-1">
-                          <span className="text-xs text-muted-foreground">
-                            Budget: {order.budget_min.toLocaleString()}–{order.budget_max.toLocaleString()} ₽
-                          </span>
-                          {resp.proposed_price && (
-                            <>
-                              <span className="text-xs text-muted-foreground">·</span>
-                              <span className="text-xs text-green-400">My price: {resp.proposed_price.toLocaleString()} ₽</span>
-                            </>
-                          )}
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2 flex-shrink-0">
-                        <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${st.color} ${st.bg}`}>
-                          {st.label}
-                        </span>
-                        <ChevronRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
-                      </div>
-                    </Link>
-                  )
-                })}
-              </div>
-            )
-          )}
+          ) : null}
         </div>
 
         {/* ── Right panel ── */}
@@ -563,6 +766,13 @@ export default function DashboardPage() {
               <span className="text-xs font-medium">New order</span>
             </Link>
           </div>
+
+          {/* Saved searches */}
+          {tab === 'freelancer' && (
+            <div className="rounded-2xl border border-subtle bg-card p-5">
+              <SavedSearchesWidget />
+            </div>
+          )}
 
           {/* AI hint */}
           <div className="rounded-2xl border border-primary/20 bg-primary/5 p-5">
@@ -609,6 +819,13 @@ export default function DashboardPage() {
                   <CheckCircle className="h-3.5 w-3.5" /> Profile complete
                 </div>
               )}
+              <Link
+                href="/ai-resume"
+                className="mt-2 flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-sm font-medium transition-colors"
+                style={{ background: 'rgba(113,112,255,0.08)', border: '1px solid rgba(113,112,255,0.2)', color: '#7170ff' }}
+              >
+                <Sparkles className="h-3.5 w-3.5" /> AI Resume Builder
+              </Link>
             </div>
           )}
         </div>
@@ -638,16 +855,53 @@ interface FavoriteItem {
   target_id: string
 }
 
-function FavoritesTab({ favorites }: { favorites: FavoriteItem[] }) {
-  const favOrders = favorites
-    .filter((f) => f.target_type === 'order')
-    .map((f) => MOCK_ORDERS.find((o) => o.id === f.target_id))
-    .filter(Boolean)
+interface FavOrder      { id: string; title: string; budget_min: number; budget_max: number }
+interface FavFreelancer { id: string; name: string; avatar: string; title: string; rating: number }
 
-  const favFreelancers = favorites
-    .filter((f) => f.target_type === 'freelancer')
-    .map((f) => MOCK_FREELANCERS.find((fl) => fl.id === f.target_id))
-    .filter(Boolean)
+function FavoritesTab({ favorites }: { favorites: FavoriteItem[] }) {
+  const [favOrders,      setFavOrders]      = useState<FavOrder[]>([])
+  const [favFreelancers, setFavFreelancers] = useState<FavFreelancer[]>([])
+  const [loading,        setLoading]        = useState(false)
+
+  useEffect(() => {
+    const orderIds      = favorites.filter((f) => f.target_type === 'order').map((f) => f.target_id)
+    const freelancerIds = favorites.filter((f) => f.target_type === 'freelancer').map((f) => f.target_id)
+    if (orderIds.length === 0 && freelancerIds.length === 0) return
+
+    setLoading(true)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const db = createClient() as any
+
+    const queries: Promise<void>[] = []
+
+    if (orderIds.length > 0) {
+      queries.push(
+        db.from('orders')
+          .select('id,title,budget_min,budget_max')
+          .in('id', orderIds)
+          .then(({ data }: { data: FavOrder[] | null }) => { if (data) setFavOrders(data) })
+      )
+    }
+
+    if (freelancerIds.length > 0) {
+      queries.push(
+        db.from('freelancer_profiles')
+          .select('user_id,title,rating,profiles!inner(full_name,avatar_url)')
+          .in('user_id', freelancerIds)
+          .then(({ data }: { data: any[] | null }) => {
+            if (!data) return
+            setFavFreelancers(data.map((fp: any) => {
+              const name   = fp.profiles?.full_name || 'User'
+              const avatar = fp.profiles?.avatar_url ||
+                `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(name)}&backgroundColor=4338CA&textColor=ffffff`
+              return { id: fp.user_id, name, avatar, title: fp.title, rating: fp.rating ?? 0 }
+            }))
+          })
+      )
+    }
+
+    Promise.all(queries).finally(() => setLoading(false))
+  }, [favorites])
 
   if (favorites.length === 0) {
     return (
@@ -661,6 +915,10 @@ function FavoritesTab({ favorites }: { favorites: FavoriteItem[] }) {
     )
   }
 
+  if (loading) {
+    return <div className="py-8 text-center text-sm" style={{ color: '#8a8f98' }}>Loading saved items…</div>
+  }
+
   return (
     <div className="space-y-6">
       {/* Saved orders */}
@@ -670,27 +928,24 @@ function FavoritesTab({ favorites }: { favorites: FavoriteItem[] }) {
             <Briefcase className="h-3.5 w-3.5" /> Orders ({favOrders.length})
           </h3>
           <div className="space-y-2">
-            {favOrders.map((order) => {
-              if (!order) return null
-              return (
-                <Link
-                  key={order.id}
-                  href={`/orders/${order.id}`}
-                  className="flex items-center gap-4 p-4 rounded-xl border border-subtle bg-card hover:bg-subtle transition-colors group"
-                >
-                  <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                    <Briefcase className="h-4 w-4 text-primary" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold truncate group-hover:text-primary transition-colors">{order.title}</p>
-                    <p className="text-xs text-muted-foreground mt-0.5">
-                      {order.budget.min.toLocaleString()}–{order.budget.max.toLocaleString()} ₽
-                    </p>
-                  </div>
-                  <ChevronRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
-                </Link>
-              )
-            })}
+            {favOrders.map((order) => (
+              <Link
+                key={order.id}
+                href={`/orders/${order.id}`}
+                className="flex items-center gap-4 p-4 rounded-xl border border-subtle bg-card hover:bg-subtle transition-colors group"
+              >
+                <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                  <Briefcase className="h-4 w-4 text-primary" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold truncate group-hover:text-primary transition-colors">{order.title}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    ${order.budget_min.toLocaleString()}–${order.budget_max.toLocaleString()}
+                  </p>
+                </div>
+                <ChevronRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
+              </Link>
+            ))}
           </div>
         </div>
       )}
@@ -702,27 +957,24 @@ function FavoritesTab({ favorites }: { favorites: FavoriteItem[] }) {
             <User className="h-3.5 w-3.5" /> Freelancers ({favFreelancers.length})
           </h3>
           <div className="space-y-2">
-            {favFreelancers.map((fl) => {
-              if (!fl) return null
-              return (
-                <Link
-                  key={fl.id}
-                  href={`/freelancers/${fl.id}`}
-                  className="flex items-center gap-4 p-4 rounded-xl border border-subtle bg-card hover:bg-subtle transition-colors group"
-                >
-                  <Image src={fl.avatar} alt={fl.name} width={36} height={36} className="rounded-xl object-cover flex-shrink-0" unoptimized />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold truncate group-hover:text-primary transition-colors">{fl.name}</p>
-                    <p className="text-xs text-muted-foreground mt-0.5 truncate">{fl.title}</p>
-                  </div>
-                  <div className="flex items-center gap-1 text-xs text-primary flex-shrink-0">
-                    <Star className="h-3 w-3 fill-current" />
-                    {fl.rating}
-                  </div>
-                  <ChevronRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
-                </Link>
-              )
-            })}
+            {favFreelancers.map((fl) => (
+              <Link
+                key={fl.id}
+                href={`/freelancers/${fl.id}`}
+                className="flex items-center gap-4 p-4 rounded-xl border border-subtle bg-card hover:bg-subtle transition-colors group"
+              >
+                <Image src={fl.avatar} alt={fl.name} width={36} height={36} className="rounded-xl object-cover flex-shrink-0" unoptimized />
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold truncate group-hover:text-primary transition-colors">{fl.name}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5 truncate">{fl.title}</p>
+                </div>
+                <div className="flex items-center gap-1 text-xs text-primary flex-shrink-0">
+                  <Star className="h-3 w-3 fill-current" />
+                  {fl.rating}
+                </div>
+                <ChevronRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
+              </Link>
+            ))}
           </div>
         </div>
       )}

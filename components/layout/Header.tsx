@@ -21,7 +21,7 @@ const CURRENCY_LABELS: Record<Currency, string> = {
 }
 // Show only top 5 in compact pill, rest in dropdown
 const CURRENCY_COMPACT: Currency[] = ['KZT', 'RUB', 'USD', 'EUR', 'USDT']
-const LANGS: Lang[] = ['en', 'ru']
+const LANGS: Lang[] = ['en', 'ru', 'kz']
 
 export default function Header() {
   const { currency, setCurrency } = useCurrency()
@@ -38,6 +38,7 @@ export default function Header() {
     { href: '/orders',       label: t.nav.orders      },
     { href: '/freelancers',  label: t.nav.freelancers  },
     { href: '/agents',       label: t.nav.agents       },
+    { href: '/ai-search',    label: 'AI Search'        },
     { href: '/ai-assistant', label: t.nav.ai           },
     { href: '/contracts',    label: t.nav.contracts    },
   ]

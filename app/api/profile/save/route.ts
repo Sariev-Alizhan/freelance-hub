@@ -35,6 +35,25 @@ export async function POST(request: NextRequest) {
 
     const { fullName, location, bio, avatarUrl, title, category, skills, priceFrom, priceTo, level, responseTime, languages, portfolio } = body
 
+    // ── Input validation ─────────────────────────────────────────────────────
+    if (typeof bio === 'string' && bio.trim().length > 2000) {
+      return NextResponse.json({ error: 'Bio too long (max 2000 chars)' }, { status: 400 })
+    }
+    if (typeof title === 'string' && title.trim().length > 120) {
+      return NextResponse.json({ error: 'Title too long (max 120 chars)' }, { status: 400 })
+    }
+    if (Array.isArray(portfolio) && portfolio.length > 10) {
+      return NextResponse.json({ error: 'Too many portfolio items (max 10)' }, { status: 400 })
+    }
+    const parsedFrom = priceFrom != null ? parseInt(priceFrom) : 0
+    const parsedTo   = priceTo   != null ? parseInt(priceTo)   : null
+    if (isNaN(parsedFrom) || parsedFrom < 0 || parsedFrom > 100_000_000) {
+      return NextResponse.json({ error: 'Invalid priceFrom' }, { status: 400 })
+    }
+    if (parsedTo !== null && (isNaN(parsedTo) || parsedTo < 0 || parsedTo > 100_000_000)) {
+      return NextResponse.json({ error: 'Invalid priceTo' }, { status: 400 })
+    }
+
     // 1. Upsert profile
     const { error: profErr } = await admin.from('profiles').upsert({
       id: user.id,
@@ -58,8 +77,8 @@ export async function POST(request: NextRequest) {
         title,
         category,
         skills: skills || [],
-        price_from: parseInt(priceFrom) || 0,
-        price_to: priceTo ? parseInt(priceTo) : null,
+        price_from: parsedFrom,
+        price_to: parsedTo,
         level: level || 'middle',
         response_time: responseTime || 'в течение суток',
         languages: languages || ['Русский'],

@@ -1,8 +1,6 @@
-import Anthropic from '@anthropic-ai/sdk'
-import { MOCK_FREELANCERS } from '@/lib/mock/freelancers'
-import { MOCK_ORDERS } from '@/lib/mock/orders'
-
-const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+import { generateText } from 'ai'
+import { createClient } from '@/lib/supabase/server'
+import { rateLimit, getClientIp } from '@/lib/rateLimit'
 
 const SYSTEM = `Ты — AI-поисковик фриланс-платформы FreelanceHub.
 Пользователь описал что ему нужно на естественном языке.
@@ -12,7 +10,7 @@ const SYSTEM = `Ты — AI-поисковик фриланс-платформы
 {
   "interpretation": "краткий пересказ запроса (1 предложение)",
   "results": [
-    { "id": "f1", "score": 95, "reason": "Точное совпадение по навыкам и опыту" }
+    { "id": "uuid", "score": 95, "reason": "Точное совпадение по навыкам и опыту" }
   ]
 }
 
@@ -22,36 +20,65 @@ const SYSTEM = `Ты — AI-поисковик фриланс-платформы
 - reason — короткий (до 8 слов), конкретный
 - Если ничего не подходит — results: []`
 
-function buildFreelancerList() {
-  return MOCK_FREELANCERS.map((f) =>
-    `[${f.id}] ${f.name} | ${f.title} | Навыки: ${f.skills.join(', ')} | ${f.priceFrom}${f.priceTo ? `-${f.priceTo}` : ''}₽/ч | ${f.level} | ${f.location} | ${f.description.slice(0, 100)}`
-  ).join('\n')
+async function buildFreelancerList() {
+  const supabase = await createClient()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data } = await (supabase as any)
+    .from('freelancer_profiles')
+    .select('user_id, title, category, skills, price_from, price_to, level, rating, profiles!inner(full_name, location, bio)')
+    .order('rating', { ascending: false })
+    .limit(60)
+
+  if (!data || data.length === 0) return 'No freelancers registered yet.'
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return data.map((fp: any) => {
+    const name = fp.profiles?.full_name || 'User'
+    const loc  = fp.profiles?.location  || 'CIS'
+    const bio  = fp.profiles?.bio?.slice(0, 80) || ''
+    const price = fp.price_to ? `${fp.price_from}-${fp.price_to}$` : `${fp.price_from}$`
+    return `[${fp.user_id}] ${name} | ${fp.title} | ${fp.category} | ${(fp.skills ?? []).join(', ')} | ${price} | ${fp.level} | ${loc} | ${bio}`
+  }).join('\n')
 }
 
-function buildOrderList() {
-  return MOCK_ORDERS.map((o) =>
-    `[${o.id}] ${o.title} | Бюджет: ${o.budget.min}-${o.budget.max}₽ | Срок: ${o.deadline} | Навыки: ${o.skills.join(', ')} | ${o.description.slice(0, 100)}`
+async function buildOrderList() {
+  const supabase = await createClient()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data } = await (supabase as any)
+    .from('orders')
+    .select('id, title, category, budget_min, budget_max, deadline, skills, description')
+    .eq('status', 'open')
+    .order('created_at', { ascending: false })
+    .limit(60)
+
+  if (!data || data.length === 0) return 'No open orders yet.'
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return data.map((o: any) =>
+    `[${o.id}] ${o.title} | ${o.category} | ${o.budget_min}-${o.budget_max}$ | ${o.deadline} | ${(o.skills ?? []).join(', ')} | ${o.description?.slice(0, 80)}`
   ).join('\n')
 }
 
 export async function POST(request: Request) {
+  const ip = getClientIp(request)
+  const rl = rateLimit(`ai:search:${ip}`, 20, 60_000)
+  if (!rl.success) {
+    return Response.json({ error: 'Too many requests' }, { status: 429, headers: { 'Retry-After': String(rl.retryAfter) } })
+  }
+
   const { query, type = 'freelancers' } = await request.json()
 
   if (!query?.trim()) {
     return Response.json({ interpretation: '', results: [] })
   }
 
-  const list = type === 'orders' ? buildOrderList() : buildFreelancerList()
   const noun = type === 'orders' ? 'заказы' : 'фрилансеры'
-
-  if (!process.env.ANTHROPIC_API_KEY) {
-    return Response.json(getMockResults(type))
-  }
+  const list = type === 'orders' ? await buildOrderList() : await buildFreelancerList()
 
   try {
-    const response = await client.messages.create({
-      model: 'claude-haiku-4-5-20251001',
-      max_tokens: 512,
+    const { text } = await generateText({
+      model: 'anthropic/claude-haiku-4.5',
+      maxOutputTokens: 512,
       system: SYSTEM,
       messages: [{
         role: 'user',
@@ -59,20 +86,12 @@ export async function POST(request: Request) {
       }],
     })
 
-    const text = response.content[0].type === 'text' ? response.content[0].text : ''
     const jsonMatch = text.match(/\{[\s\S]*\}/)
     if (!jsonMatch) return Response.json({ interpretation: query, results: [] })
 
     const parsed = JSON.parse(jsonMatch[0])
     return Response.json(parsed)
   } catch {
-    return Response.json(getMockResults(type))
+    return Response.json({ interpretation: query, results: [] })
   }
-}
-
-function getMockResults(type: string) {
-  const ids = type === 'orders'
-    ? MOCK_ORDERS.slice(0, 3).map((o, i) => ({ id: o.id, score: 90 - i * 10, reason: 'Подходит по тематике' }))
-    : MOCK_FREELANCERS.slice(0, 3).map((f, i) => ({ id: f.id, score: 90 - i * 10, reason: 'Релевантные навыки' }))
-  return { interpretation: 'AI-поиск (демо)', results: ids }
 }

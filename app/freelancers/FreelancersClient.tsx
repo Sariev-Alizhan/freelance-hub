@@ -19,16 +19,17 @@ interface SmartResult { id: string; score: number; reason: string }
 
 interface Props {
   realFreelancers?: Freelancer[]
+  defaultCategory?: CategorySlug | 'all'
 }
 
-export default function FreelancersClient({ realFreelancers = [] }: Props) {
+export default function FreelancersClient({ realFreelancers = [], defaultCategory }: Props) {
   const router   = useRouter()
   const pathname = usePathname()
   const sp       = useSearchParams()
 
   const [inputVal,  setInputVal]  = useState(sp.get('q') ?? '')
   const [search,    setSearch]    = useState(sp.get('q') ?? '')
-  const [category,  setCategory]  = useState<CategorySlug | 'all'>((sp.get('cat') as CategorySlug) ?? 'all')
+  const [category,  setCategory]  = useState<CategorySlug | 'all'>((sp.get('cat') as CategorySlug) ?? defaultCategory ?? 'all')
   const [sortBy,    setSortBy]    = useState<'rating' | 'price' | 'orders'>((sp.get('sort') as 'rating' | 'price' | 'orders') ?? 'rating')
   const [page,      setPage]      = useState(1)
   const [showFilters, setShowFilters] = useState(false)

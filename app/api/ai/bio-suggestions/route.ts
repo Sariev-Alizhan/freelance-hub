@@ -1,7 +1,6 @@
-import Anthropic from '@anthropic-ai/sdk'
+import { generateText } from 'ai'
 import { createClient } from '@/lib/supabase/server'
-
-const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+import { rateLimit } from '@/lib/rateLimit'
 
 const SYSTEM = `Ты помогаешь фрилансерам составить краткое профессиональное «О себе» для профиля.
 По специализации, категории и навыкам напиши 2-3 предложения в первом лице.
@@ -15,19 +14,20 @@ export async function POST(request: Request) {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 })
 
+    const rl = rateLimit(`ai:bio:${user.id}`, 10, 60_000)
+    if (!rl.success) {
+      return Response.json({ error: 'Too many requests' }, { status: 429, headers: { 'Retry-After': String(rl.retryAfter) } })
+    }
+
     const { title, category, skills, level } = await request.json()
 
     const levelMap: Record<string, string> = {
       new: 'начинающий', junior: 'junior', middle: 'middle', senior: 'senior', top: 'топ-специалист'
     }
 
-    if (!process.env.ANTHROPIC_API_KEY) {
-      return Response.json({ bio: getMockBio(title, category) })
-    }
-
-    const response = await client.messages.create({
-      model: 'claude-sonnet-4-6',
-      max_tokens: 200,
+    const { text: bio } = await generateText({
+      model: 'anthropic/claude-sonnet-4.6',
+      maxOutputTokens: 200,
       system: SYSTEM,
       messages: [{
         role: 'user',
@@ -35,7 +35,6 @@ export async function POST(request: Request) {
       }],
     })
 
-    const bio = response.content[0].type === 'text' ? response.content[0].text : ''
     return Response.json({ bio })
   } catch (e) {
     console.error(e)

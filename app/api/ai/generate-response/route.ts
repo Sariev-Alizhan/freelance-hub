@@ -1,7 +1,6 @@
-import Anthropic from '@anthropic-ai/sdk'
+import { generateText } from 'ai'
 import { createClient } from '@/lib/supabase/server'
-
-const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+import { rateLimit } from '@/lib/rateLimit'
 
 const SYSTEM = `Ты помогаешь фрилансерам писать убедительные отклики на заказы.
 По заголовку и описанию заказа, категории и предложенной цене составь профессиональное сопроводительное письмо.
@@ -9,23 +8,29 @@ const SYSTEM = `Ты помогаешь фрилансерам писать уб
 Стиль: дружелюбный, профессиональный, конкретный. Без шаблонных фраз вроде «Я подхожу идеально». 4-5 предложений.
 Отвечай только на русском языке. Без вступлений — сразу текст отклика.`
 
+const ADVICE_SYSTEM = `Ты эксперт по фрилансу и помогаешь фрилансерам улучшить отклики на заказы.
+Оцени отклик по шкале 1-10 и дай 2-3 конкретных совета по улучшению.
+Формат ответа — строго JSON: {"score": 8, "tips": ["совет 1", "совет 2", "совет 3"]}
+Только JSON, без пояснений.`
+
 export async function POST(request: Request) {
   try {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 })
 
-    const { orderTitle, orderDescription, category, proposedPrice } = await request.json()
-
-    if (!process.env.ANTHROPIC_API_KEY) {
-      return Response.json({ message: getMockResponse(orderTitle, proposedPrice) })
+    const rl = rateLimit(`ai:respond:${user.id}`, 15, 60_000)
+    if (!rl.success) {
+      return Response.json({ error: 'Too many requests' }, { status: 429, headers: { 'Retry-After': String(rl.retryAfter) } })
     }
+
+    const { orderTitle, orderDescription, category, proposedPrice } = await request.json()
 
     const priceText = proposedPrice ? `Предлагаемая цена: ${Number(proposedPrice).toLocaleString('ru')} ₽` : 'Цена: обсудим'
 
-    const response = await client.messages.create({
-      model: 'claude-sonnet-4-6',
-      max_tokens: 400,
+    const { text: message } = await generateText({
+      model: 'anthropic/claude-sonnet-4.6',
+      maxOutputTokens: 400,
       system: SYSTEM,
       messages: [{
         role: 'user',
@@ -33,18 +38,12 @@ export async function POST(request: Request) {
       }],
     })
 
-    const message = response.content[0].type === 'text' ? response.content[0].text : ''
     return Response.json({ message })
   } catch (e) {
     console.error(e)
     return Response.json({ message: '' })
   }
 }
-
-const ADVICE_SYSTEM = `Ты эксперт по фрилансу и помогаешь фрилансерам улучшить отклики на заказы.
-Оцени отклик по шкале 1-10 и дай 2-3 конкретных совета по улучшению.
-Формат ответа — строго JSON: {"score": 8, "tips": ["совет 1", "совет 2", "совет 3"]}
-Только JSON, без пояснений.`
 
 export async function PUT(request: Request) {
   try {
@@ -54,13 +53,13 @@ export async function PUT(request: Request) {
 
     const { message, orderTitle, proposedPrice } = await request.json()
 
-    if (!process.env.ANTHROPIC_API_KEY || !message?.trim()) {
+    if (!message?.trim()) {
       return Response.json({ score: 7, tips: ['Укажите конкретный опыт в данной области', 'Объясните ваш подход к задаче', 'Добавьте срок выполнения работы'] })
     }
 
-    const response = await client.messages.create({
-      model: 'claude-sonnet-4-6',
-      max_tokens: 256,
+    const { text } = await generateText({
+      model: 'anthropic/claude-sonnet-4.6',
+      maxOutputTokens: 256,
       system: ADVICE_SYSTEM,
       messages: [{
         role: 'user',
@@ -68,19 +67,11 @@ export async function PUT(request: Request) {
       }],
     })
 
-    const text = response.content[0].type === 'text' ? response.content[0].text : '{}'
-    const parsed = JSON.parse(text)
+    const jsonMatch = text.match(/\{[\s\S]*\}/)
+    const parsed = jsonMatch ? JSON.parse(jsonMatch[0]) : { score: 7, tips: ['Укажите конкретный опыт', 'Обоснуйте цену', 'Добавьте сроки'] }
     return Response.json(parsed)
   } catch (e) {
     console.error(e)
     return Response.json({ score: 7, tips: ['Укажите конкретный опыт', 'Обоснуйте цену', 'Добавьте сроки'] })
   }
-}
-
-function getMockResponse(title: string, price: number | null): string {
-  return `Здравствуйте! Ознакомился с вашим заказом «${title}» — задача мне понятна и я уже реализовывал подобные проекты.
-
-Работаю в данной сфере более 3 лет, портфолио включает 20+ завершённых проектов. Работаю чётко по ТЗ, всегда на связи и придерживаюсь сроков.${price ? ` Предложенная цена ${Number(price).toLocaleString('ru')} ₽ включает все этапы работы, финальные правки и сдачу исходников.` : ''}
-
-Готов обсудить детали и приступить в ближайшее время. Напишите — отвечу в течение часа!`
 }

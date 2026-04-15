@@ -10,7 +10,6 @@ import {
   Image as ImageIcon, Plus, Trash2, Globe, Star,
   Briefcase, Clock, ChevronDown
 } from 'lucide-react'
-import { createClient } from '@/lib/supabase/client'
 import { useUser } from '@/lib/hooks/useUser'
 import type { CategorySlug, FreelancerLevel } from '@/lib/supabase/types'
 import { useToastHelpers } from '@/lib/context/ToastContext'
@@ -185,21 +184,15 @@ export default function FreelancerSetupForm() {
     setSubmitting(true)
     setSubmitError(null)
     try {
-      const supabase = createClient()
-
-      // 1. Upload avatar if changed
+      // 1. Upload avatar if changed (use API route — service role bypasses RLS)
       let avatarUrl = form.avatarPreview
       if (form.avatarFile) {
-        const ext = form.avatarFile.name.split('.').pop()
-        const path = `avatars/${user.id}.${ext}`
-        const { error: upErr } = await supabase.storage
-          .from('avatars')
-          .upload(path, form.avatarFile, { upsert: true })
-        if (upErr) console.warn('Avatar upload:', upErr.message)
-        else {
-          const { data: urlData } = supabase.storage.from('avatars').getPublicUrl(path)
-          avatarUrl = urlData.publicUrl
-        }
+        const fd = new FormData()
+        fd.append('file', form.avatarFile)
+        const upRes = await fetch('/api/profile/avatar', { method: 'POST', body: fd })
+        const upJson = await upRes.json()
+        if (upRes.ok && upJson.url) avatarUrl = upJson.url
+        else console.warn('Avatar upload:', upJson.error)
       }
 
       // 2. Сохраняем через server-side API (service_role, обходит RLS)

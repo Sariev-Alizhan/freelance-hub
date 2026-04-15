@@ -21,6 +21,19 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     // Sync with what the inline script already applied
     const isDark = document.documentElement.classList.contains('dark')
     setThemeState(isDark ? 'dark' : 'light')
+
+    // If no explicit preference saved, follow OS theme changes
+    const mq = window.matchMedia('(prefers-color-scheme: dark)')
+    const onChange = (e: MediaQueryListEvent) => {
+      try {
+        if (!localStorage.getItem('fh-theme')) {
+          setTheme(e.matches ? 'dark' : 'light')
+        }
+      } catch {}
+    }
+    mq.addEventListener('change', onChange)
+    return () => mq.removeEventListener('change', onChange)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const setTheme = (t: Theme) => {

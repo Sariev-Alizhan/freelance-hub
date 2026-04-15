@@ -1,52 +1,61 @@
 'use client'
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useUser } from './useUser'
 
 export function useUnreadMessages(): number {
   const { user } = useUser()
   const [count, setCount] = useState(0)
+  const userId = user?.id ?? null
 
-  const load = useCallback(async () => {
-    if (!user) { setCount(0); return }
+  // Keep userId in a ref so the load function doesn't recreate on every render
+  const userIdRef = useRef(userId)
+  useEffect(() => { userIdRef.current = userId }, [userId])
+
+  useEffect(() => {
+    if (!userId) { setCount(0); return }
+
     const supabase = createClient()
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const db = supabase as any
+    let cancelled = false
 
-    // Get all conversation IDs for this user
-    const { data: convs } = await db
-      .from('conversations')
-      .select('id')
-      .or(`participant_1.eq.${user.id},participant_2.eq.${user.id}`)
+    async function load() {
+      const uid = userIdRef.current
+      if (!uid) return
 
-    if (!convs?.length) { setCount(0); return }
-    const ids = convs.map((c: { id: string }) => c.id)
+      const { data: convs } = await db
+        .from('conversations')
+        .select('id')
+        .or(`participant_1.eq.${uid},participant_2.eq.${uid}`)
 
-    // Count messages unread by this user (sent by others)
-    const { count: unread } = await db
-      .from('messages')
-      .select('id', { count: 'exact', head: true })
-      .in('conversation_id', ids)
-      .neq('sender_id', user.id)
-      .eq('is_read', false)
+      if (cancelled) return
+      if (!convs?.length) { setCount(0); return }
 
-    setCount(unread ?? 0)
-  }, [user])
+      const ids = convs.map((c: { id: string }) => c.id)
+      const { count: unread } = await db
+        .from('messages')
+        .select('id', { count: 'exact', head: true })
+        .in('conversation_id', ids)
+        .neq('sender_id', uid)
+        .eq('is_read', false)
 
-  useEffect(() => {
+      if (!cancelled) setCount(unread ?? 0)
+    }
+
     load()
-    if (!user) return
-    const supabase = createClient()
 
-    // Re-count on any message change (INSERT = new message, UPDATE = read receipt)
     const channel = supabase
-      .channel(`unread-count:${user.id}`)
+      .channel(`unread-count:${userId}`)
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, load)
       .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'messages' }, load)
       .subscribe()
 
-    return () => { supabase.removeChannel(channel) }
-  }, [user, load])
+    return () => {
+      cancelled = true
+      supabase.removeChannel(channel)
+    }
+  }, [userId]) // только user.id, не весь объект user
 
   return count
 }

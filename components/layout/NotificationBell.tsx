@@ -1,12 +1,13 @@
 'use client'
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Bell, MessageSquare, UserCheck, Briefcase, CheckCheck, X } from 'lucide-react'
+import { Bell, MessageSquare, UserCheck, Briefcase, CheckCheck, X, BellOff } from 'lucide-react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { useUser } from '@/lib/hooks/useUser'
 import { SkeletonNotification } from '@/components/ui/Skeleton'
 import { RealtimeChannel } from '@supabase/supabase-js'
+import { usePushNotifications } from '@/lib/hooks/usePushNotifications'
 
 interface Notification {
   id: string
@@ -36,6 +37,7 @@ function timeAgo(iso: string) {
 export default function NotificationBell() {
   const { user } = useUser()
   const [open, setOpen] = useState(false)
+  const { state: pushState, subscribe, unsubscribe } = usePushNotifications()
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [loading, setLoading] = useState(false)
   const panelRef = useRef<HTMLDivElement>(null)
@@ -230,6 +232,32 @@ export default function NotificationBell() {
                 >
                   Clear all
                 </button>
+              </div>
+            )}
+
+            {/* Push notifications toggle */}
+            {pushState !== 'unsupported' && pushState !== 'denied' && (
+              <div className="px-4 py-2.5 border-t border-subtle flex items-center justify-between">
+                <span className="text-xs text-muted-foreground">Browser notifications</span>
+                {pushState === 'loading' ? (
+                  <span className="text-xs text-muted-foreground">...</span>
+                ) : pushState === 'granted' ? (
+                  <button onClick={unsubscribe}
+                    className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors">
+                    <BellOff className="h-3 w-3" /> Turn off
+                  </button>
+                ) : (
+                  <button onClick={subscribe}
+                    className="flex items-center gap-1 text-xs font-medium transition-colors"
+                    style={{ color: '#7170ff' }}>
+                    <Bell className="h-3 w-3" /> Enable
+                  </button>
+                )}
+              </div>
+            )}
+            {pushState === 'denied' && (
+              <div className="px-4 py-2 border-t border-subtle">
+                <p className="text-[11px] text-muted-foreground">Notifications blocked in browser settings</p>
               </div>
             )}
           </motion.div>

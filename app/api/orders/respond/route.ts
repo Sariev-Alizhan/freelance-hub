@@ -15,6 +15,13 @@ export async function POST(request: Request) {
   if (!orderId || !message?.trim()) {
     return Response.json({ error: 'Missing fields' }, { status: 400 })
   }
+  if (typeof message !== 'string' || message.trim().length > 3000) {
+    return Response.json({ error: 'Message too long (max 3000 chars)' }, { status: 400 })
+  }
+  const parsedPrice = proposedPrice != null ? parseInt(proposedPrice) : null
+  if (parsedPrice !== null && (isNaN(parsedPrice) || parsedPrice < 0 || parsedPrice > 100_000_000)) {
+    return Response.json({ error: 'Invalid proposed price' }, { status: 400 })
+  }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const db = supabase as any
@@ -77,26 +84,50 @@ export async function POST(request: Request) {
     user.email?.split('@')[0] ||
     'Фрилансер'
 
-  // Send email to client (best-effort, don't fail the request if email fails)
+  // Notify order owner + send email (best-effort)
   if (order?.client_id) {
     try {
       const admin = createAdminClient()
+      const adminDb = admin as any
+
+      // In-app notification
+      await adminDb.from('notifications').insert({
+        user_id:    order.client_id,
+        type:       'new_response',
+        title:      `New application: ${order.title}`,
+        body:       `${freelancerName} applied to your order`,
+        link:       `/orders/${orderId}`,
+      })
+
+      // Email
       const { data: clientAuthUser } = await admin.auth.admin.getUserById(order.client_id)
       const clientEmail = clientAuthUser?.user?.email
-
       if (clientEmail && order.title) {
         await sendEmail(
           clientEmail,
           `Новый отклик на заказ: ${order.title}`,
-          emailNewResponse({
-            orderTitle: order.title,
-            freelancerName,
-            orderId,
-          })
+          emailNewResponse({ orderTitle: order.title, freelancerName, orderId })
         )
       }
+
+      // Web Push
+      const pushSecret = process.env.PUSH_INTERNAL_SECRET
+      const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+      if (pushSecret) {
+        fetch(`${siteUrl}/api/push/send`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            secret: pushSecret,
+            userId: order.client_id,
+            title: `New application: ${order.title}`,
+            body: `${freelancerName} applied to your order`,
+            link: `/orders/${orderId}`,
+          }),
+        }).catch(() => {})
+      }
     } catch (e) {
-      console.error('[respond] email error:', e)
+      console.error('[respond] notify error:', e)
     }
   }
 
