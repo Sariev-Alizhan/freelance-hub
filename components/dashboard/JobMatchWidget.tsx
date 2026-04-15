@@ -199,7 +199,7 @@ export default function JobMatchWidget() {
                 </p>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                   <span style={{ fontSize: '11px', color: 'var(--fh-t4)' }}>
-                    {m.order.budget_min.toLocaleString()}–{m.order.budget_max.toLocaleString()} ₽
+                    {m.order.budget_min.toLocaleString()}–{m.order.budget_max.toLocaleString()} ₸
                   </span>
                   <span style={{ fontSize: '11px', color: 'var(--fh-t4)' }}>·</span>
                   <span style={{ fontSize: '11px', color: 'var(--fh-t4)' }}>{m.order.deadline}</span>

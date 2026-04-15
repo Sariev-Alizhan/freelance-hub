@@ -1,7 +1,12 @@
-import Anthropic from '@anthropic-ai/sdk'
+import { streamText } from 'ai'
 import { createClient } from '@/lib/supabase/server'
+import { rateLimit } from '@/lib/rateLimit'
 
-const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
+function sanitizeInput(val: unknown, maxLen: number): string {
+  if (typeof val !== 'string') return ''
+  // Strip potential prompt injection: newlines used to escape context
+  return val.replace(/[<>]/g, '').trim().slice(0, maxLen)
+}
 
 const SYSTEM = `You are a legal assistant specializing in freelance service agreements for the global market.
 Generate a complete, professional services contract.
@@ -37,118 +42,42 @@ export async function POST(request: Request) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const {
-    clientName,
-    freelancerName,
-    workDescription,
-    deadline,
-    amount,
-    paymentOrder,
-    ipRights,
-    city = 'Almaty',
-  } = await request.json()
+  const rl = rateLimit(`ai:contract:${user.id}`, 5, 60_000)
+  if (!rl.success) {
+    return Response.json({ error: 'Too many requests' }, { status: 429, headers: { 'Retry-After': String(rl.retryAfter) } })
+  }
 
-  if (!process.env.ANTHROPIC_API_KEY) {
-    const mock = getMockContract({ clientName, freelancerName, workDescription, deadline, amount, paymentOrder, ipRights, city })
-    return new Response(mock, { headers: { 'Content-Type': 'text/plain; charset=utf-8' } })
+  const body = await request.json()
+
+  const clientName     = sanitizeInput(body.clientName, 100) || 'Client'
+  const freelancerName = sanitizeInput(body.freelancerName, 100) || 'Freelancer'
+  const workDescription= sanitizeInput(body.workDescription, 1500)
+  const deadline       = sanitizeInput(body.deadline, 100)
+  const paymentOrder   = sanitizeInput(body.paymentOrder, 300)
+  const ipRights       = sanitizeInput(body.ipRights, 300)
+  const city           = sanitizeInput(body.city, 50) || 'Almaty'
+  const amount         = Number(body.amount) || 0
+
+  if (!workDescription || workDescription.length < 10) {
+    return Response.json({ error: 'Work description too short' }, { status: 400 })
   }
 
   const userPrompt = `Generate a contract with the following parameters:
 City: ${city}
-Client: ${clientName || 'John Smith'}
-Freelancer: ${freelancerName || 'Jane Doe'}
+Client: ${clientName}
+Freelancer: ${freelancerName}
 Scope of work: ${workDescription}
 Timeline: ${deadline}
-Amount: $${Number(amount).toLocaleString()}
+Amount: ${amount.toLocaleString()} KZT
 Payment terms: ${paymentOrder}
 IP rights: ${ipRights}`
 
-  const stream = client.messages.stream({
-    model: 'claude-sonnet-4-6',
-    max_tokens: 3000,
+  const result = streamText({
+    model: 'anthropic/claude-sonnet-4.6',
+    maxOutputTokens: 3000,
     system: SYSTEM,
     messages: [{ role: 'user', content: userPrompt }],
   })
 
-  const readable = new ReadableStream({
-    async start(controller) {
-      const encoder = new TextEncoder()
-      try {
-        for await (const event of stream) {
-          if (
-            event.type === 'content_block_delta' &&
-            event.delta.type === 'text_delta'
-          ) {
-            controller.enqueue(encoder.encode(event.delta.text))
-          }
-        }
-      } finally {
-        controller.close()
-      }
-    },
-  })
-
-  return new Response(readable, {
-    headers: { 'Content-Type': 'text/plain; charset=utf-8' },
-  })
-}
-
-function getMockContract(p: {
-  clientName: string; freelancerName: string; workDescription: string
-  deadline: string; amount: string; paymentOrder: string; ipRights: string; city: string
-}) {
-  return `FREELANCE SERVICES AGREEMENT No. ___
-
-${p.city}, __________, 202__
-
-PARTIES
-
-Client: ${p.clientName || 'John Smith'}, hereinafter referred to as the "Client",
-and
-Freelancer: ${p.freelancerName || 'Jane Doe'}, hereinafter referred to as the "Freelancer",
-collectively referred to as the "Parties", have entered into this Agreement as follows:
-
-1. SCOPE OF WORK
-
-1.1. The Freelancer agrees to perform the following services:
-${p.workDescription}
-
-1.2. The deliverables shall be provided to the Client in the agreed format.
-
-2. TIMELINE
-
-2.1. Completion deadline: ${p.deadline}.
-2.2. The deadline may be extended by written agreement of both Parties.
-
-3. PAYMENT
-
-3.1. The Freelancer's fee is $${Number(p.amount).toLocaleString()} (${p.amount} US dollars).
-3.2. Payment terms: ${p.paymentOrder}.
-3.3. Payment shall be made to the Freelancer's details specified in Section 8.
-
-4. INTELLECTUAL PROPERTY
-
-4.1. ${p.ipRights}.
-
-5. CONFIDENTIALITY
-
-5.1. Both Parties agree not to disclose any information obtained in the course of this Agreement to third parties.
-
-6. LIABILITY
-
-6.1. For late payment, the Client shall pay a penalty of 0.1% of the amount for each day of delay.
-6.2. For late delivery, the Freelancer shall pay a penalty of 0.1% of the amount for each day of delay.
-
-7. DISPUTE RESOLUTION
-
-7.1. Disputes shall be resolved through negotiation. If no agreement is reached — through the courts at the Defendant's location.
-
-8. SIGNATURES
-
-Client:                            Freelancer:
-Name: ___________________          Name: ___________________
-Phone: __________________          Phone: __________________
-Email: __________________          Email: __________________
-Signature: ______________          Signature: ______________
-Date: ___________________          Date: ___________________`
+  return result.toTextStreamResponse()
 }

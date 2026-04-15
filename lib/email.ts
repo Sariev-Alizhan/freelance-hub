@@ -42,7 +42,7 @@ function base(content: string) {
 <div class="wrap">
   <div class="head"><div class="head-logo">Freelance<span>Hub</span></div></div>
   <div class="body">${content}</div>
-  <div class="footer">© 2025 FreelanceHub &mdash; Global freelance platform<br>
+  <div class="footer">© 2026 FreelanceHub &mdash; Global freelance platform<br>
   <a href="${BASE_URL}/dashboard">Manage notifications</a></div>
 </div></body></html>`
 }

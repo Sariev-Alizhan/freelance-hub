@@ -161,12 +161,19 @@ export default function MessengerPage() {
   const [attachPreview,     setAttachPreview]     = useState<string | null>(null)
   const [uploadProgress,    setUploadProgress]    = useState<number | null>(null)
 
-  const bottomRef   = useRef<HTMLDivElement>(null)
-  const channelRef  = useRef<RealtimeChannel | null>(null)
-  const inputRef    = useRef<HTMLTextAreaElement>(null)
+  const bottomRef    = useRef<HTMLDivElement>(null)
+  const channelRef   = useRef<RealtimeChannel | null>(null)
+  const inputRef     = useRef<HTMLTextAreaElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  // Ref so the global inbox subscription can read activeId without recreating
+  const activeIdRef  = useRef<string | null>(null)
+
+  const MAX_MSG_LEN = 4000
 
   const activeConv = conversations.find(c => c.id === activeId) ?? null
+
+  // Keep ref in sync so the global inbox subscription always has the current value
+  useEffect(() => { activeIdRef.current = activeId }, [activeId])
 
   // ── Load conversations ──────────────────────────────────
   const loadConversations = useCallback(async () => {
@@ -356,6 +363,55 @@ export default function MessengerPage() {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
+  // ── Global inbox: update conversation list when any new message arrives ──
+  // Relies on Supabase Realtime RLS — only delivers messages the user can see.
+  useEffect(() => {
+    if (!user) return
+
+    const channel = supabase
+      .channel(`inbox:${user.id}`)
+      .on('postgres_changes', {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'messages',
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      }, (payload: any) => {
+        const msg = payload.new as Message
+        // Skip own messages; active conv is already handled by the per-conv channel
+        if (msg.sender_id === user.id) return
+        if (msg.conversation_id === activeIdRef.current) return
+
+        setConversations(prev => {
+          const exists = prev.some(c => c.id === msg.conversation_id)
+          if (!exists) {
+            // Brand-new conversation — reload the full list
+            loadConversations()
+            return prev
+          }
+          const updated = prev.map(c =>
+            c.id === msg.conversation_id
+              ? {
+                  ...c,
+                  unread: c.unread + 1,
+                  last_message: msg.text || (msg.attachment_name ?? '📎'),
+                  last_message_at: msg.created_at,
+                }
+              : c
+          )
+          // Re-sort newest first
+          return [...updated].sort((a, b) => {
+            const ta = a.last_message_at ? new Date(a.last_message_at).getTime() : 0
+            const tb = b.last_message_at ? new Date(b.last_message_at).getTime() : 0
+            return tb - ta
+          })
+        })
+      })
+      .subscribe()
+
+    return () => { supabase.removeChannel(channel) }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user])
+
   // ── File attachment handler ─────────────────────────────
   function handleFileSelect(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
@@ -381,6 +437,7 @@ export default function MessengerPage() {
   // ── Send message ────────────────────────────────────────
   async function sendMessage() {
     if ((!text.trim() && !attachment) || !activeId || !user || sending) return
+    if (text.length > MAX_MSG_LEN) return
     const msgText = text.trim()
     setText('')
     setSending(true)
@@ -579,10 +636,7 @@ export default function MessengerPage() {
                 <div className="font-semibold truncate">
                   {activeConv.other_user.full_name || 'User'}
                 </div>
-                <div className="flex items-center gap-1.5">
-                  <div className="h-2 w-2 rounded-full bg-green-400" />
-                  <span className="text-xs text-muted-foreground">online</span>
-                </div>
+                <div className="text-xs text-muted-foreground">Freelance platform</div>
               </div>
               <button className="p-2 rounded-lg hover:bg-surface text-muted-foreground transition-colors">
                 <MoreVertical className="h-4 w-4" />
@@ -737,26 +791,34 @@ export default function MessengerPage() {
                   onChange={handleFileSelect}
                 />
 
-                <textarea
-                  ref={inputRef}
-                  value={text}
-                  onChange={e => {
-                    setText(e.target.value)
-                    e.target.style.height = 'auto'
-                    e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px'
-                  }}
-                  onKeyDown={e => {
-                    // On mobile (touch devices), Enter adds a newline — use Send button
-                    const isMobile = window.matchMedia('(hover: none)').matches
-                    if (e.key === 'Enter' && !e.shiftKey && !isMobile) {
-                      e.preventDefault()
-                      sendMessage()
-                    }
-                  }}
-                  placeholder="Write a message..."
-                  rows={1}
-                  className="flex-1 px-4 py-2.5 rounded-xl bg-background border border-subtle text-sm placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 transition-colors resize-none max-h-[120px] leading-relaxed"
-                />
+                <div className="flex-1 relative">
+                  <textarea
+                    ref={inputRef}
+                    value={text}
+                    onChange={e => {
+                      if (e.target.value.length > MAX_MSG_LEN) return
+                      setText(e.target.value)
+                      e.target.style.height = 'auto'
+                      e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px'
+                    }}
+                    onKeyDown={e => {
+                      // On mobile (touch devices), Enter adds a newline — use Send button
+                      const isMobile = window.matchMedia('(hover: none)').matches
+                      if (e.key === 'Enter' && !e.shiftKey && !isMobile) {
+                        e.preventDefault()
+                        sendMessage()
+                      }
+                    }}
+                    placeholder="Write a message..."
+                    rows={1}
+                    className="w-full px-4 py-2.5 rounded-xl bg-background border border-subtle text-sm placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 transition-colors resize-none max-h-[120px] leading-relaxed"
+                  />
+                  {text.length > MAX_MSG_LEN * 0.85 && (
+                    <span className={`absolute bottom-1.5 right-2.5 text-[10px] ${text.length >= MAX_MSG_LEN ? 'text-red-400' : 'text-muted-foreground'}`}>
+                      {MAX_MSG_LEN - text.length}
+                    </span>
+                  )}
+                </div>
                 <button
                   onClick={sendMessage}
                   disabled={(!text.trim() && !attachment) || sending}

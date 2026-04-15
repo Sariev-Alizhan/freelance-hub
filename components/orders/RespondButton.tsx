@@ -2,6 +2,8 @@
 import { useState } from 'react'
 import { AnimatePresence } from 'framer-motion'
 import RespondModal from './RespondModal'
+import { CheckCircle, Clock, XCircle } from 'lucide-react'
+import { useLang } from '@/lib/context/LanguageContext'
 
 interface Props {
   orderId: string
@@ -10,10 +12,57 @@ interface Props {
   category: string
   budgetMin: number
   budgetMax: number
+  myResponseStatus?: 'pending' | 'accepted' | 'rejected' | null
 }
 
-export default function RespondButton({ orderId, orderTitle, orderDescription, category, budgetMin, budgetMax }: Props) {
+const STATUS_TEXT = {
+  accepted: { en: 'Application accepted', ru: 'Заявка принята',        kz: 'Өтінім қабылданды'    },
+  rejected: { en: 'Not selected',         ru: 'Не выбраны',            kz: 'Таңдалмады'            },
+  pending:  { en: 'Applied — awaiting review', ru: 'Отклик отправлен — ожидает рассмотрения', kz: 'Өтінім жіберілді — қаралуда' },
+  apply:    { en: 'Apply',                ru: 'Откликнуться',          kz: 'Өтінім беру'           },
+}
+
+export default function RespondButton({
+  orderId, orderTitle, orderDescription, category, budgetMin, budgetMax, myResponseStatus = null
+}: Props) {
   const [open, setOpen] = useState(false)
+  const { lang } = useLang()
+
+  if (myResponseStatus === 'accepted') {
+    return (
+      <div
+        className="w-full py-3 rounded-xl flex items-center justify-center gap-2 text-sm font-semibold"
+        style={{ background: 'rgba(39,166,68,0.1)', border: '1px solid rgba(39,166,68,0.25)', color: '#27a644' }}
+      >
+        <CheckCircle className="h-4 w-4" />
+        {STATUS_TEXT.accepted[lang]}
+      </div>
+    )
+  }
+
+  if (myResponseStatus === 'rejected') {
+    return (
+      <div
+        className="w-full py-3 rounded-xl flex items-center justify-center gap-2 text-sm font-semibold"
+        style={{ background: 'var(--fh-surface-2)', border: '1px solid var(--fh-border)', color: 'var(--fh-t4)' }}
+      >
+        <XCircle className="h-4 w-4" />
+        {STATUS_TEXT.rejected[lang]}
+      </div>
+    )
+  }
+
+  if (myResponseStatus === 'pending') {
+    return (
+      <div
+        className="w-full py-3 rounded-xl flex items-center justify-center gap-2 text-sm font-semibold"
+        style={{ background: 'rgba(113,112,255,0.08)', border: '1px solid rgba(113,112,255,0.25)', color: '#7170ff' }}
+      >
+        <Clock className="h-4 w-4" />
+        {STATUS_TEXT.pending[lang]}
+      </div>
+    )
+  }
 
   return (
     <>
@@ -21,7 +70,7 @@ export default function RespondButton({ orderId, orderTitle, orderDescription, c
         onClick={() => setOpen(true)}
         className="w-full py-3 rounded-xl bg-primary text-white font-semibold hover:bg-primary/90 transition-colors"
       >
-        Apply
+        {STATUS_TEXT.apply[lang]}
       </button>
 
       <AnimatePresence>

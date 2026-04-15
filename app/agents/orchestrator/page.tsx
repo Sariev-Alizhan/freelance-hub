@@ -178,7 +178,7 @@ export default function OrchestratorPage() {
                         <p className="text-xs truncate" style={{ color: 'var(--fh-t4)' }}>{agent.tagline}</p>
                       </div>
                       <span className="text-xs font-semibold flex-shrink-0" style={{ color: '#10b981' }}>
-                        ${agent.price_per_task}
+                        {agent.price_per_task?.toLocaleString() ?? 0} ₸
                       </span>
                     </button>
                   )
@@ -261,12 +261,12 @@ export default function OrchestratorPage() {
                 {selectedAgents.map(a => (
                   <div key={a.id} className="flex justify-between text-xs">
                     <span style={{ color: 'var(--fh-t3)' }} className="truncate mr-2">{a.name}</span>
-                    <span style={{ color: 'var(--fh-t2)' }}>${a.price_per_task}</span>
+                    <span style={{ color: 'var(--fh-t2)' }}>{a.price_per_task?.toLocaleString() ?? 0} ₸</span>
                   </div>
                 ))}
                 <div className="border-t pt-2 flex justify-between text-sm font-bold" style={{ borderColor: 'var(--fh-border)', color: 'var(--fh-t1)' }}>
                   <span>Итого</span>
-                  <span style={{ color: '#7170ff' }}>${totalCost}</span>
+                  <span style={{ color: '#7170ff' }}>{totalCost.toLocaleString()} ₸</span>
                 </div>
               </div>
             )}

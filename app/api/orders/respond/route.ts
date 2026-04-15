@@ -1,8 +1,13 @@
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { sendEmail, emailNewResponse } from '@/lib/email'
+import { notifyClientNewResponse } from '@/lib/telegram'
+import { applyRateLimit, sanitizeText, isValidUUID } from '@/lib/security'
 
 export async function POST(request: Request) {
+  const rl = applyRateLimit(request, 'respond', { limit: 10, windowMs: 60_000 })
+  if (rl) return rl
+
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
@@ -10,12 +15,20 @@ export async function POST(request: Request) {
     return Response.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  const { orderId, message, proposedPrice } = await request.json()
+  const body = await request.json()
+  const orderId       = body?.orderId
+  const rawMessage    = body?.message
+  const proposedPrice = body?.proposedPrice
 
-  if (!orderId || !message?.trim()) {
-    return Response.json({ error: 'Missing fields' }, { status: 400 })
+  if (!orderId || !isValidUUID(orderId)) {
+    return Response.json({ error: 'Invalid order ID' }, { status: 400 })
   }
-  if (typeof message !== 'string' || message.trim().length > 3000) {
+
+  const message = sanitizeText(rawMessage, 3000)
+  if (!message.trim()) {
+    return Response.json({ error: 'Message is required' }, { status: 400 })
+  }
+  if (message.length > 3000) {
     return Response.json({ error: 'Message too long (max 3000 chars)' }, { status: 400 })
   }
   const parsedPrice = proposedPrice != null ? parseInt(proposedPrice) : null
@@ -25,6 +38,40 @@ export async function POST(request: Request) {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const db = supabase as any
+
+  // ── Fetch order to validate ownership + status ─────────────────────────────
+  const { data: order } = await db
+    .from('orders')
+    .select('client_id, status')
+    .eq('id', orderId)
+    .single()
+
+  if (!order) {
+    return Response.json({ error: 'Order not found' }, { status: 404 })
+  }
+  if (order.client_id === user.id) {
+    return Response.json({ error: 'You cannot apply to your own order' }, { status: 403 })
+  }
+  if (order.status !== 'open') {
+    return Response.json({ error: 'This order is no longer accepting applications' }, { status: 409 })
+  }
+
+  // ── Duplicate check ─────────────────────────────────────────────────────────
+  const { data: existing } = await db
+    .from('order_responses')
+    .select('id, status')
+    .eq('order_id', orderId)
+    .eq('freelancer_id', user.id)
+    .maybeSingle()
+
+  if (existing) {
+    const msg = existing.status === 'accepted'
+      ? 'Your application was already accepted'
+      : existing.status === 'rejected'
+      ? 'Your application was not selected for this order'
+      : 'You have already applied to this order'
+    return Response.json({ error: msg }, { status: 409 })
+  }
 
   // ── Response limit check (5/month for free users) ──────────────────────────
   const { data: fp } = await db
@@ -64,8 +111,8 @@ export async function POST(request: Request) {
   // Increment responses_count on the order
   await db.rpc('increment_responses_count', { order_id: orderId })
 
-  // Fetch order + client_id for email notification
-  const { data: order } = await db
+  // Fetch order title + client_id for email notification
+  const { data: orderInfo } = await db
     .from('orders')
     .select('title, client_id')
     .eq('id', orderId)
@@ -85,29 +132,44 @@ export async function POST(request: Request) {
     'Фрилансер'
 
   // Notify order owner + send email (best-effort)
-  if (order?.client_id) {
+  if (orderInfo?.client_id) {
     try {
       const admin = createAdminClient()
       const adminDb = admin as any
 
       // In-app notification
       await adminDb.from('notifications').insert({
-        user_id:    order.client_id,
+        user_id:    orderInfo.client_id,
         type:       'new_response',
-        title:      `New application: ${order.title}`,
+        title:      `New application: ${orderInfo.title}`,
         body:       `${freelancerName} applied to your order`,
         link:       `/orders/${orderId}`,
       })
 
       // Email
-      const { data: clientAuthUser } = await admin.auth.admin.getUserById(order.client_id)
+      const { data: clientAuthUser } = await admin.auth.admin.getUserById(orderInfo.client_id)
       const clientEmail = clientAuthUser?.user?.email
-      if (clientEmail && order.title) {
+      if (clientEmail && orderInfo.title) {
         await sendEmail(
           clientEmail,
-          `Новый отклик на заказ: ${order.title}`,
-          emailNewResponse({ orderTitle: order.title, freelancerName, orderId })
+          `Новый отклик на заказ: ${orderInfo.title}`,
+          emailNewResponse({ orderTitle: orderInfo.title, freelancerName, orderId })
         )
+      }
+
+      // Telegram
+      const { data: clientTg } = await adminDb
+        .from('profiles')
+        .select('telegram_chat_id')
+        .eq('id', orderInfo.client_id)
+        .single()
+      if (clientTg?.telegram_chat_id && orderInfo.title) {
+        notifyClientNewResponse({
+          chatId:        clientTg.telegram_chat_id,
+          orderTitle:    orderInfo.title,
+          orderId,
+          freelancerName,
+        }).catch(() => {})
       }
 
       // Web Push
@@ -119,8 +181,8 @@ export async function POST(request: Request) {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             secret: pushSecret,
-            userId: order.client_id,
-            title: `New application: ${order.title}`,
+            userId: orderInfo.client_id,
+            title: `New application: ${orderInfo.title}`,
             body: `${freelancerName} applied to your order`,
             link: `/orders/${orderId}`,
           }),

@@ -149,9 +149,9 @@ export default function AgentCard({ agent: a }: Props) {
         >
           <div>
             <span style={{ fontSize: '15px', fontWeight: 700, color: 'var(--fh-t1)' }}>
-              ${a.pricePerTask}
+              {a.pricePerTask === 0 ? 'Free' : `${a.pricePerTask.toLocaleString()} ₸`}
             </span>
-            <span style={{ fontSize: '11px', color: 'var(--fh-t4)' }}> / task</span>
+            {a.pricePerTask > 0 && <span style={{ fontSize: '11px', color: 'var(--fh-t4)' }}> / task</span>}
           </div>
           <div className="flex items-center gap-1" style={{ color: 'var(--fh-t4)' }}>
             <Zap className="h-3 w-3" style={{ color: '#7170ff' }} />

@@ -1,4 +1,5 @@
 import { createClient as createServiceClient } from '@supabase/supabase-js'
+import crypto from 'crypto'
 
 function serviceClient() {
   return createServiceClient(
@@ -8,43 +9,90 @@ function serviceClient() {
   )
 }
 
+/** Timing-safe string equality to prevent timing attacks */
+function safeEqual(a: string, b: string): boolean {
+  try {
+    return crypto.timingSafeEqual(Buffer.from(a, 'utf8'), Buffer.from(b, 'utf8'))
+  } catch {
+    return false
+  }
+}
+
+/**
+ * Verify Kaspi HMAC-SHA256 signature.
+ * Kaspi sends: X-Kaspi-Signature: hex(HMAC-SHA256(rawBody, KASPI_WEBHOOK_SECRET))
+ */
+function verifyKaspiSignature(rawBody: string, signature: string): boolean {
+  const secret = process.env.KASPI_WEBHOOK_SECRET
+  if (!secret || !signature) return false
+  const digest = crypto.createHmac('sha256', secret).update(rawBody, 'utf8').digest('hex')
+  return safeEqual(digest, signature)
+}
+
 // POST /api/payments/kaspi-webhook
-// Production: receives Kaspi Pay payment notification.
-// Dev/staging: accepts { simulate: true, userId, type } to manually activate.
+// Production: receives Kaspi Pay payment notification (HMAC-signed).
+// Dev/staging: accepts { simulate: true, userId, type } with ADMIN_WEBHOOK_SECRET.
 export async function POST(request: Request) {
-  const body = await request.json()
+  const rawBody = await request.text()
+  let body: Record<string, unknown>
+  try {
+    body = JSON.parse(rawBody)
+  } catch {
+    return Response.json({ error: 'Bad JSON' }, { status: 400 })
+  }
+
   const db = serviceClient() as any
 
-  // ── Simulation mode (admin only, no real Kaspi signature) ──────────────────
+  // ── Simulation mode (server-side admin only) ───────────────────────────────
   if (body.simulate === true) {
     const adminSecret = process.env.ADMIN_WEBHOOK_SECRET
-    if (!adminSecret || body.secret !== adminSecret) {
+    if (!adminSecret || typeof body.secret !== 'string' || !safeEqual(body.secret, adminSecret)) {
       return Response.json({ error: 'Forbidden' }, { status: 403 })
     }
 
     const { userId, type } = body
-    if (!userId || !['premium', 'verification', 'promotion'].includes(type)) {
+    if (typeof userId !== 'string' || !userId || !['premium', 'verification', 'promotion'].includes(type as string)) {
       return Response.json({ error: 'Invalid params' }, { status: 400 })
     }
 
-    await activateProduct(db, userId, type, 0, 'simulated')
+    await activateProduct(db, userId, type as string, 0, 'simulated')
     return Response.json({ ok: true, mode: 'simulated' })
   }
 
-  // ── Real Kaspi Pay webhook ─────────────────────────────────────────────────
-  // TODO: verify Kaspi HMAC signature from X-Kaspi-Signature header
-  // const sig = request.headers.get('X-Kaspi-Signature')
-  // if (!verifyKaspiSignature(sig, body, process.env.KASPI_SECRET!)) {
-  //   return Response.json({ error: 'Invalid signature' }, { status: 401 })
-  // }
+  // ── Real Kaspi Pay webhook — requires valid HMAC signature ─────────────────
+  const sig = request.headers.get('X-Kaspi-Signature') ?? ''
+  if (!verifyKaspiSignature(rawBody, sig)) {
+    console.error('[kaspi-webhook] invalid or missing HMAC signature — rejecting')
+    return Response.json({ error: 'Unauthorized' }, { status: 401 })
+  }
 
-  const { orderId, userId, type, amount, status: kaspiStatus } = body
+  const { orderId, userId, type, amount, status: kaspiStatus } = body as Record<string, unknown>
+
+  if (typeof userId !== 'string' || !userId) {
+    return Response.json({ error: 'Missing userId' }, { status: 400 })
+  }
+  if (!['premium', 'verification', 'promotion'].includes(type as string)) {
+    return Response.json({ error: 'Invalid type' }, { status: 400 })
+  }
 
   if (kaspiStatus !== 'PAID') {
     return Response.json({ ok: true, action: 'none' })
   }
 
-  await activateProduct(db, userId, type, amount, 'paid', orderId)
+  // ── Idempotency check: reject duplicate webhook for same order ─────────────
+  if (orderId && typeof orderId === 'string') {
+    const { data: existing } = await db
+      .from('payments')
+      .select('id')
+      .eq('kaspi_order_id', orderId)
+      .maybeSingle()
+    if (existing) {
+      console.warn(`[kaspi-webhook] duplicate orderId ${orderId} — ignoring`)
+      return Response.json({ ok: true, action: 'duplicate_ignored' })
+    }
+  }
+
+  await activateProduct(db, userId, type as string, Number(amount) || 0, 'paid', orderId as string | undefined)
   return Response.json({ ok: true, mode: 'kaspi' })
 }
 

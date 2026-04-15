@@ -205,7 +205,8 @@
     /* Linear OpenType features — cv01: single-story 'a', ss03: geometric alternates */
     font-feature-settings: "cv01", "ss03";
     font-variation-settings: normal;
-    scroll-behavior: smooth;
+    /* scroll-behavior: smooth removed — causes visible scroll jitter on Next.js page navigation.
+       Use JS scroll({ behavior: 'smooth' }) on specific elements that need it. */
     transition: background-color 0.25s ease;
   }
 
@@ -270,8 +271,8 @@
   --fh-footer-bg:  #08090a;
   --fh-t1:         #f7f8f8;
   --fh-t2:         #d0d6e0;
-  --fh-t3:         #8a8f98;
-  --fh-t4:         #62666d;
+  --fh-t3:         #9ea4ae;  /* raised from #8a8f98 — better WCAG AA contrast */
+  --fh-t4:         #797e87;  /* raised from #62666d — was 3.6:1, now ~5.0:1 on dark canvas */
   --fh-canvas:     #08090a;
   --fh-sep:        rgba(255,255,255,0.05);
   --fh-skill-bg:   rgba(255,255,255,0.04);
@@ -410,6 +411,42 @@
 .glow-blue {
   box-shadow: 0 0 24px rgba(56, 189, 248, 0.2);
 }
+
+/* ═══════════════════════════════════════════════════════════
+   NAVIGATION PROGRESS BAR
+   ═══════════════════════════════════════════════════════════ */
+@keyframes pg-shimmer {
+  0%   { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
+}
+
+/* Focus ring — increase to 2px for better visibility */
+:focus-visible {
+  outline-width: 2px;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   MOBILE: 44px minimum touch targets (WCAG 2.5.5)
+   Applied on touch devices — expands tap area without
+   changing visual layout.
+   ═══════════════════════════════════════════════════════════ */
+@media (pointer: coarse) {
+  button, [role="button"], a, input[type="submit"], input[type="button"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  /* Inline/small links inside text shouldn't grow */
+  p a, li a, span a { min-height: unset; min-width: unset; }
+}
+
+/* ═══════════════════════════════════════════════════════════
+   FOOTER LINK HOVER — avoids inline JS handlers (touch-safe)
+   ═══════════════════════════════════════════════════════════ */
+.footer-link {
+  color: var(--fh-t4);
+  transition: color 0.15s;
+}
+.footer-link:hover { color: var(--fh-t2); }
 
 /* ═══════════════════════════════════════════════════════════
    ONLINE PULSE

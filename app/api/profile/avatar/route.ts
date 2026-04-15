@@ -35,7 +35,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'File too large (max 5 MB)' }, { status: 400 })
   }
 
-  const ext = file.name.split('.').pop()?.toLowerCase() || 'jpg'
+  const rawExt = file.name.split('.').pop()?.toLowerCase() || ''
+  const ALLOWED_EXT = ['jpg', 'jpeg', 'png', 'webp', 'gif']
+  const ext = ALLOWED_EXT.includes(rawExt) ? rawExt : 'jpg'
   const path = `${user.id}/avatar.${ext}`
   const bytes = await file.arrayBuffer()
 
@@ -62,7 +64,7 @@ export async function POST(req: NextRequest) {
   // Bust cache — append timestamp so browsers reload immediately
   const avatarUrl = `${publicUrl}?t=${Date.now()}`
 
-  // Save to profiles
+  // Save to profiles table
   const { error: updateError } = await admin
     .from('profiles')
     .update({ avatar_url: avatarUrl })
@@ -71,6 +73,11 @@ export async function POST(req: NextRequest) {
   if (updateError) {
     return NextResponse.json({ error: updateError.message }, { status: 500 })
   }
+
+  // Also sync to auth user_metadata so SSR/session reads are consistent
+  await admin.auth.admin.updateUserById(user.id, {
+    user_metadata: { avatar_url: avatarUrl },
+  })
 
   return NextResponse.json({ url: avatarUrl })
 }

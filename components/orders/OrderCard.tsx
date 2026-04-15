@@ -9,11 +9,12 @@ import PromoteModal from '@/components/shared/PromoteModal'
 import { Order } from '@/lib/types'
 import { CATEGORIES } from '@/lib/mock/categories'
 
-interface Props { order: Order }
+interface Props { order: Order; currentUserId?: string }
 
-export default function OrderCard({ order: o }: Props) {
+export default function OrderCard({ order: o, currentUserId }: Props) {
   const category = CATEGORIES.find((c) => c.slug === o.category)
   const [showPromote, setShowPromote] = useState(false)
+  const isOwner = !!currentUserId && currentUserId === o.client.id
 
   return (
     <>
@@ -24,7 +25,7 @@ export default function OrderCard({ order: o }: Props) {
           className="absolute top-3 right-3 z-10 opacity-0 group-hover/card:opacity-100 transition-opacity"
         />
 
-        {/* Promoted badge */}
+        {/* Promoted badge — always visible when promoted */}
         {o.isPromoted && (
           <div
             className="absolute top-3 left-3 z-10 flex items-center gap-1 rounded-full"
@@ -33,6 +34,26 @@ export default function OrderCard({ order: o }: Props) {
             <TrendingUp className="h-2.5 w-2.5" style={{ color: '#fbbf24' }} />
             <span style={{ fontSize: '10px', fontWeight: 590, color: '#fbbf24', letterSpacing: '0.04em' }}>TOP</span>
           </div>
+        )}
+
+        {/* Promote button — owner only, shows on hover, only when not already promoted */}
+        {isOwner && !o.isPromoted && (
+          <button
+            onClick={() => setShowPromote(true)}
+            className="absolute top-3 left-3 z-10 flex items-center gap-1 rounded-lg opacity-0 group-hover/card:opacity-100 transition-all"
+            style={{
+              padding: '4px 8px',
+              background: 'rgba(251,191,36,0.1)',
+              border: '1px solid rgba(251,191,36,0.25)',
+              color: '#fbbf24',
+              fontSize: '11px',
+              fontWeight: 590,
+            }}
+            aria-label="Promote order in feed"
+          >
+            <TrendingUp className="h-3 w-3" />
+            Promote
+          </button>
         )}
 
         <Link href={`/orders/${o.id}`}>
@@ -69,7 +90,7 @@ export default function OrderCard({ order: o }: Props) {
               </div>
               <h3
                 className="line-clamp-2 leading-snug"
-                style={{ fontSize: '14px', fontWeight: 510, color: 'var(--fh-t1)', letterSpacing: '-0.02em' }}
+                style={{ fontSize: '14px', fontWeight: 510, color: 'var(--fh-t1)', letterSpacing: '-0.02em', overflowWrap: 'break-word', wordBreak: 'break-word' }}
               >
                 {o.title}
               </h3>
@@ -78,7 +99,7 @@ export default function OrderCard({ order: o }: Props) {
             {/* Description */}
             <p
               className="line-clamp-2 leading-relaxed"
-              style={{ fontSize: '12px', color: 'var(--fh-t3)', fontWeight: 400, letterSpacing: '-0.005em' }}
+              style={{ fontSize: '12px', color: 'var(--fh-t3)', fontWeight: 400, letterSpacing: '-0.005em', overflowWrap: 'break-word', wordBreak: 'break-word' }}
             >
               {o.description}
             </p>
@@ -147,23 +168,6 @@ export default function OrderCard({ order: o }: Props) {
           </div>
         </Link>
 
-        {/* Promote button (hover) */}
-        <button
-          onClick={() => setShowPromote(true)}
-          className="absolute bottom-3 right-3 z-10 flex items-center gap-1 rounded-lg opacity-0 group-hover/card:opacity-100 transition-all"
-          style={{
-            padding: '4px 8px',
-            background: 'rgba(251,191,36,0.1)',
-            border: '1px solid rgba(251,191,36,0.25)',
-            color: '#fbbf24',
-            fontSize: '11px',
-            fontWeight: 590,
-          }}
-          title="Promote in feed"
-        >
-          <TrendingUp className="h-3 w-3" />
-          Promote
-        </button>
       </div>
 
       {showPromote && (

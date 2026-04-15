@@ -1,0 +1,25 @@
+<svg width="260" height="48" viewBox="0 0 260 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Icon background -->
+  <rect width="48" height="48" rx="10.3" fill="#4338CA"/>
+
+  <!-- F — vertical stroke -->
+  <rect x="11.1" y="9" width="6.75" height="30" rx="0.75" fill="white"/>
+
+  <!-- F — top horizontal bar -->
+  <rect x="11.1" y="9" width="25.9" height="6.75" rx="0.75" fill="white"/>
+
+  <!-- F — middle horizontal bar -->
+  <rect x="11.1" y="21.75" width="18.4" height="6.75" rx="0.75" fill="white"/>
+
+  <!-- Hub node — outer ring -->
+  <circle cx="32.8" cy="25.1" r="3.94" fill="white"/>
+
+  <!-- Hub node — inner dot -->
+  <circle cx="32.8" cy="25.1" r="1.78" fill="#4338CA"/>
+
+  <!-- Wordmark "Freelance" -->
+  <text x="62" y="32" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="22" font-weight="700" letter-spacing="-0.04em" fill="#F7F8F8">Freelance</text>
+
+  <!-- Wordmark "Hub" in brand colour -->
+  <text x="181" y="32" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="22" font-weight="700" letter-spacing="-0.04em" fill="#5E6AD2">Hub</text>
+</svg>

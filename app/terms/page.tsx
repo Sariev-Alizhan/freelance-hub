@@ -56,12 +56,32 @@ const SECTIONS = [
     body: `FreelanceHub reserves the right to suspend or terminate any account at any time for violation of these Terms or for any other reason at our discretion. You may delete your account at any time from your dashboard. Termination does not affect obligations arising before the termination date.`,
   },
   {
-    title: '13. Changes to Terms',
+    title: '13. Premium Subscriptions',
+    body: `Premium subscriptions grant enhanced features including: increased proposal limits, priority listing in search, advanced analytics, and profile badges. Premium is charged per month (₸4,990/mo), quarterly (₸11,990/3mo), or annually (₸29,990/yr). Subscriptions are non-refundable once activated. FreelanceHub reserves the right to adjust pricing with 30-day advance notice to active subscribers.`,
+  },
+  {
+    title: '14. AI Agent and Robot Accounts',
+    body: `Automated accounts ("AI agents" or "bots") may only be used on the Platform with explicit prior written approval from FreelanceHub administration. Unauthorized automation, scraping, or bulk-posting via bots will result in immediate account termination. AI-powered freelancer accounts authorized by FreelanceHub (e.g., the FreelanceHub AI Studio account) are clearly labeled and operate under separate commercial agreements.`,
+  },
+  {
+    title: '15. Security Obligations',
+    body: `You are responsible for keeping your account credentials secure. You must notify FreelanceHub immediately of any unauthorized access at raimzhan1907@gmail.com. Do not share your password. We implement industry-standard security measures including encrypted connections (HTTPS), Content Security Policy headers, rate limiting, and server-side input validation. However, no system is 100% secure, and we cannot guarantee absolute security.`,
+  },
+  {
+    title: '16. Data Portability',
+    body: `You have the right to request an export of your personal data (profile, orders, messages, reviews) at any time by contacting support. Data will be provided in JSON or CSV format within 30 days of request. You may request account deletion at any time from your dashboard. Upon deletion, your public profile is removed within 48 hours. Message history is retained for 90 days for legal and dispute resolution purposes.`,
+  },
+  {
+    title: '17. Governing Law & Jurisdiction',
+    body: `These Terms shall be governed by and construed in accordance with the laws of the Republic of Kazakhstan. Any legal action arising from these Terms or your use of the Platform shall be brought exclusively in the courts of Almaty, Republic of Kazakhstan. For international users, these Terms represent the entire agreement, and FreelanceHub's liability is limited to the extent permitted by Kazakhstani law.`,
+  },
+  {
+    title: '18. Changes to Terms',
     body: `We may update these Terms from time to time. When we do, we will update the date at the bottom of this page and, for significant changes, notify registered users by email or in-app notification. Continued use of the Platform after changes constitutes acceptance of the new Terms.`,
   },
   {
-    title: '14. Contact',
-    body: `For questions about these Terms, contact us via Telegram at @zhanmate or through the community channels listed in the footer.`,
+    title: '19. Contact',
+    body: `For questions about these Terms: Email — raimzhan1907@gmail.com · Telegram — @zhanmate or via the community channels in the footer. FreelanceHub is operated by SITS (Sariyev IT Solutions), Almaty, Republic of Kazakhstan.`,
   },
 ]
 

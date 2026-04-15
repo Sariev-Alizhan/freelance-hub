@@ -13,7 +13,7 @@ interface Response {
   proposed_price: number | null
   status: 'pending' | 'accepted' | 'rejected'
   created_at: string
-  profiles: { full_name: string | null; username: string | null; avatar_url: string | null }
+  profiles: { id: string; full_name: string | null; username: string | null; avatar_url: string | null }
   freelancer_profiles: { title: string | null; level: string | null; rating: number | null; completed_orders: number | null } | null
 }
 
@@ -222,7 +222,11 @@ export default function OrderStatusActions({ orderId, orderStatus, isOwner }: Pr
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1 flex-wrap">
                         <Link
-                          href={`/freelancers/${resp.id}`}
+                          href={
+                            resp.profiles?.username
+                              ? `/u/${resp.profiles.username}`
+                              : `/freelancers/${resp.profiles?.id ?? resp.id}`
+                          }
                           style={{ fontSize: '13px', fontWeight: 590, color: '#f7f8f8', letterSpacing: '-0.01em' }}
                           onMouseEnter={e => { e.currentTarget.style.color = '#7170ff' }}
                           onMouseLeave={e => { e.currentTarget.style.color = '#f7f8f8' }}
@@ -317,7 +321,7 @@ export default function OrderStatusActions({ orderId, orderStatus, isOwner }: Pr
                             <XCircle className="h-3.5 w-3.5" /> Decline
                           </button>
                           <Link
-                            href={`/messages`}
+                            href={`/messages?open=${resp.profiles.id}`}
                             className="flex items-center gap-1.5 transition-all"
                             style={{
                               padding: '6px 12px',

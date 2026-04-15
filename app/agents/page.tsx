@@ -1,8 +1,7 @@
 'use client'
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { Bot, Search, Zap, Star, Filter } from 'lucide-react'
 import AgentCard from '@/components/agents/AgentCard'
-import { MOCK_AGENTS } from '@/lib/mock/agents'
 import Link from 'next/link'
 
 const CATEGORIES = [
@@ -12,27 +11,58 @@ const CATEGORIES = [
   { slug: 'copywriting', label: 'Copywriting' },
   { slug: 'ux-ui',       label: 'UX/UI Design' },
   { slug: 'ai-ml',       label: 'AI / ML' },
+  { slug: 'custom',      label: 'Custom' },
 ]
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function customAgentToCard(a: any) {
+  return {
+    id: `custom_${a.id}`,
+    name: a.name,
+    tagline: a.tagline,
+    description: a.description ?? '',
+    category: a.category ?? 'custom',
+    skills: a.skills ?? [],
+    rating: 5.0,
+    tasksCompleted: a.tasks_completed ?? 0,
+    responseTime: '< 2 min',
+    model: a.model ?? 'claude-sonnet-4.6',
+    pricePerTask: a.price_per_task ?? 10,
+    isAvailable: true,
+    badges: [] as string[],
+  }
+}
 
 export default function AgentsPage() {
   const [search, setSearch]     = useState('')
   const [category, setCategory] = useState('all')
   const [onlyAvailable, setOnlyAvailable] = useState(false)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [customAgents, setCustomAgents] = useState<any[]>([])
+
+  useEffect(() => {
+    fetch('/api/agents/marketplace')
+      .then(r => r.ok ? r.json() : { agents: [] })
+      .then(d => setCustomAgents((d.agents ?? []).map(customAgentToCard)))
+      .catch(() => {})
+  }, [])
+
+  const allAgents = useMemo(() => customAgents, [customAgents])
 
   const filtered = useMemo(() => {
-    let list = MOCK_AGENTS
+    let list = allAgents
     if (category !== 'all') list = list.filter(a => a.category === category)
     if (search) {
       const q = search.toLowerCase()
       list = list.filter(a =>
         a.name.toLowerCase().includes(q) ||
         a.tagline.toLowerCase().includes(q) ||
-        a.skills.some(s => s.toLowerCase().includes(q))
+        a.skills.some((s: string) => s.toLowerCase().includes(q))
       )
     }
     if (onlyAvailable) list = list.filter(a => a.isAvailable)
     return list
-  }, [search, category, onlyAvailable])
+  }, [allAgents, search, category, onlyAvailable])
 
   return (
     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10">
@@ -77,7 +107,7 @@ export default function AgentsPage() {
       {/* Stats strip */}
       <div className="flex flex-wrap gap-4 mb-8">
         {[
-          { icon: Bot,  value: `${MOCK_AGENTS.length}`,  label: 'Agents available' },
+          { icon: Bot,  value: `${allAgents.length}`,  label: 'Agents available' },
           { icon: Zap,  value: '< 5 min',                 label: 'Avg. response' },
           { icon: Star, value: '4.7',                     label: 'Avg. rating' },
         ].map(({ icon: Icon, value, label }) => (
@@ -192,12 +222,12 @@ export default function AgentsPage() {
               </p>
             </div>
             <p style={{ fontSize: '13px', color: 'var(--fh-t3)', lineHeight: 1.6 }}>
-              Build an agent once, earn money while you sleep. Agent creators keep 60% of every task payment.
-              Phase 2 will open the creator SDK — join the waitlist.
+              Build an agent once, earn money while you sleep. Agent creators keep 85% of every task payment.
+              Define a system prompt, set your price, and publish in minutes.
             </p>
           </div>
           <Link
-            href="/auth/register"
+            href="/agents/builder"
             className="shrink-0 transition-all"
             style={{
               padding: '10px 20px',
@@ -212,7 +242,7 @@ export default function AgentsPage() {
             onMouseEnter={(e: React.MouseEvent<HTMLAnchorElement>) => { e.currentTarget.style.background = '#828fff' }}
             onMouseLeave={(e: React.MouseEvent<HTMLAnchorElement>) => { e.currentTarget.style.background = '#5e6ad2' }}
           >
-            Join Waitlist →
+            Create Agent →
           </Link>
         </div>
       </div>

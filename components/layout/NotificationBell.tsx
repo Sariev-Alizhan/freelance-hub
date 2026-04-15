@@ -121,6 +121,7 @@ export default function NotificationBell() {
       {/* Bell button */}
       <button
         onClick={() => setOpen(o => !o)}
+        aria-label="Notifications"
         className="relative flex items-center justify-center h-9 w-9 rounded-xl border border-subtle text-muted-foreground hover:text-foreground hover:bg-subtle transition-colors"
       >
         <Bell className="h-4 w-4" />

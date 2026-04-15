@@ -9,6 +9,8 @@ import {
   ArrowUpRight, ArrowDownRight, Clock, ShieldCheck, Crown
 } from 'lucide-react'
 import AdminManageButtons from '@/components/admin/AdminManageButtons'
+import PaymentApproveButton from '@/components/admin/PaymentApproveButton'
+import CompanyReport from '@/components/admin/CompanyReport'
 import Link from 'next/link'
 
 export const metadata: Metadata = {
@@ -52,13 +54,22 @@ interface UserRow {
 interface VerifyRow {
   user_id: string
   verification_requested_at: string
-  profiles: { full_name: string | null; email: string | null } | null
+  profiles: { full_name: string | null } | null
 }
 
 interface PremiumRow {
   user_id: string
   is_premium: boolean
   premium_until: string | null
+  profiles: { full_name: string | null } | null
+}
+
+interface PendingPaymentRow {
+  id: string
+  user_id: string
+  amount_kzt: number
+  kaspi_order_id: string | null
+  created_at: string
   profiles: { full_name: string | null } | null
 }
 
@@ -117,7 +128,7 @@ async function fetchStats() {
   // Verification requests
   const { data: verifyRequests } = await db
     .from('freelancer_profiles')
-    .select('user_id, verification_requested_at, profiles!inner(full_name, email)')
+    .select('user_id, verification_requested_at, profiles!inner(full_name)')
     .eq('verification_requested', true)
     .eq('is_verified', false)
     .order('verification_requested_at', { ascending: true })
@@ -130,6 +141,14 @@ async function fetchStats() {
     .eq('is_premium', true)
     .order('premium_until', { ascending: true })
     .limit(20)
+
+  // Pending card payments
+  const { data: pendingPayments } = await db
+    .from('payments')
+    .select('id, user_id, amount_kzt, kaspi_order_id, created_at, profiles!inner(full_name)')
+    .eq('status', 'pending_card')
+    .order('created_at', { ascending: true })
+    .limit(30)
 
   // Count orders by category manually
   const catMap: Record<string, number> = {}
@@ -152,8 +171,9 @@ async function fetchStats() {
     ordersByDay:  (ordersByDay.data  ?? []) as DayRow[],
     usersByDay:   (usersByDay.data   ?? []) as DayRow[],
     topCategories,
-    verifyRequests: (verifyRequests ?? []) as VerifyRow[],
-    premiumFreelancers: (premiumFreelancers ?? []) as PremiumRow[],
+    verifyRequests:    (verifyRequests    ?? []) as VerifyRow[],
+    premiumFreelancers:(premiumFreelancers ?? []) as PremiumRow[],
+    pendingPayments:   (pendingPayments    ?? []) as PendingPaymentRow[],
   }
 }
 
@@ -247,16 +267,62 @@ export default async function AdminPage() {
           <h1 className="text-2xl font-bold">Platform Analytics</h1>
           <p className="text-sm text-muted-foreground mt-0.5">Live data from Supabase</p>
         </div>
-        <Link
-          href={vercelUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center gap-2 px-4 py-2 rounded-xl border border-subtle bg-subtle text-sm font-medium hover:bg-surface transition-colors"
-        >
-          <Activity className="h-4 w-4 text-primary" />
-          Vercel Analytics
-          <ExternalLink className="h-3.5 w-3.5 text-muted-foreground" />
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link
+            href="/admin/pitch"
+            className="flex items-center gap-2 px-4 py-2 rounded-xl border border-subtle bg-subtle text-sm font-medium hover:bg-surface transition-colors"
+          >
+            <Crown className="h-4 w-4 text-primary" />
+            Investor Pitch
+          </Link>
+          <Link
+            href="/admin/ai-meeting"
+            className="flex items-center gap-2 px-4 py-2 rounded-xl border border-subtle bg-subtle text-sm font-medium hover:bg-surface transition-colors"
+          >
+            <ShieldCheck className="h-4 w-4 text-primary" />
+            AI Strategy
+          </Link>
+          <Link
+            href="/admin/war-room"
+            className="flex items-center gap-2 px-4 py-2 rounded-xl border border-subtle bg-subtle text-sm font-medium hover:bg-surface transition-colors"
+          >
+            <TrendingUp className="h-4 w-4 text-primary" />
+            War Room
+          </Link>
+          <Link
+            href="/admin/board-room"
+            className="flex items-center gap-2 px-4 py-2 rounded-xl border border-subtle bg-subtle text-sm font-medium hover:bg-surface transition-colors"
+          >
+            <BarChart3 className="h-4 w-4 text-primary" />
+            Board Room
+          </Link>
+          <Link
+            href="/admin/nexus"
+            className="flex items-center gap-2 px-4 py-2 rounded-xl border text-sm font-medium hover:bg-surface transition-colors"
+            style={{ borderColor: 'rgba(113,112,255,0.4)', background: 'rgba(113,112,255,0.08)', color: '#7170ff' }}
+          >
+            🌐 NEXUS
+          </Link>
+          <Link
+            href={vercelUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 px-4 py-2 rounded-xl border border-subtle bg-subtle text-sm font-medium hover:bg-surface transition-colors"
+          >
+            <Activity className="h-4 w-4 text-primary" />
+            Vercel Analytics
+            <ExternalLink className="h-3.5 w-3.5 text-muted-foreground" />
+          </Link>
+        </div>
+      </div>
+
+      {/* Company reports */}
+      <div>
+        <div className="flex items-center gap-2 mb-4">
+          <span className="text-lg">🏢</span>
+          <h2 className="text-sm font-bold uppercase tracking-widest text-muted-foreground">Company Report</h2>
+        </div>
+        <CompanyReport />
       </div>
 
       {/* Main stats */}
@@ -439,10 +505,10 @@ export default async function AdminPage() {
             {stats.verifyRequests.map((row) => (
               <div key={row.user_id} className="flex items-center gap-3 flex-wrap">
                 <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 text-xs font-bold text-primary">
-                  {(row.profiles?.full_name ?? row.profiles?.email ?? '?')[0].toUpperCase()}
+                  {(row.profiles?.full_name ?? '?')[0].toUpperCase()}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs font-medium truncate">{row.profiles?.full_name ?? row.profiles?.email ?? row.user_id}</p>
+                  <p className="text-xs font-medium truncate">{row.profiles?.full_name ?? row.user_id}</p>
                   <p className="text-[10px] text-muted-foreground">
                     {new Date(row.verification_requested_at).toLocaleDateString('en-US', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
                   </p>
@@ -485,6 +551,50 @@ export default async function AdminPage() {
                 <AdminManageButtons userId={row.user_id} mode="premium" isActive />
               </div>
             ))}
+          </div>
+        )}
+      </div>
+
+      {/* ── Pending card payments ── */}
+      <div className="rounded-2xl border border-amber-500/20 bg-card p-5">
+        <div className="flex items-center gap-2 mb-4">
+          <Crown className="h-4 w-4 text-amber-400" />
+          <h2 className="text-sm font-semibold">Pending card payments</h2>
+          {stats.pendingPayments.length > 0 && (
+            <span className="ml-auto text-xs px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-400 font-semibold">
+              {stats.pendingPayments.length}
+            </span>
+          )}
+        </div>
+        {stats.pendingPayments.length === 0 ? (
+          <p className="text-xs text-muted-foreground">No pending payments</p>
+        ) : (
+          <div className="space-y-3">
+            {stats.pendingPayments.map((row) => {
+              const planId = String(row.kaspi_order_id ?? '').replace('card_', '')
+              const planLabel = planId === 'quarterly' ? '3 months' : planId === 'annual' ? 'Annual' : 'Monthly'
+              return (
+                <div key={row.id} className="flex items-center gap-3 flex-wrap">
+                  <div className="h-8 w-8 rounded-full bg-amber-500/20 flex items-center justify-center flex-shrink-0 text-xs font-bold text-amber-400">
+                    {(row.profiles?.full_name ?? '?')[0].toUpperCase()}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-medium truncate">
+                      {row.profiles?.full_name ?? row.user_id}
+                    </p>
+                    <p className="text-[10px] text-muted-foreground flex items-center gap-1.5">
+                      <span className="text-amber-400 font-semibold">₸{row.amount_kzt.toLocaleString('ru')}</span>
+                      <span>·</span>
+                      <span>{planLabel}</span>
+                      <span>·</span>
+                      <Clock className="h-2.5 w-2.5" />
+                      {new Date(row.created_at).toLocaleDateString('ru', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                    </p>
+                  </div>
+                  <PaymentApproveButton paymentId={row.id} userId={row.user_id} />
+                </div>
+              )
+            })}
           </div>
         )}
       </div>

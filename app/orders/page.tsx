@@ -42,8 +42,11 @@ async function fetchRealOrders(): Promise<Order[]> {
         skills,
         status,
         is_urgent,
+        is_promoted,
+        promoted_until,
         responses_count,
         created_at,
+        user_id,
         profiles!inner (
           full_name,
           username,
@@ -76,6 +79,7 @@ async function fetchRealOrders(): Promise<Order[]> {
         deadline: o.deadline,
         skills: o.skills ?? [],
         client: {
+          id: o.user_id,
           name: clientName,
           avatar: clientAvatar,
           ordersPosted: 1,
@@ -85,6 +89,7 @@ async function fetchRealOrders(): Promise<Order[]> {
         responsesCount: o.responses_count ?? 0,
         status: o.status ?? 'open',
         isUrgent: o.is_urgent ?? false,
+        isPromoted: !!(o.is_promoted && (!o.promoted_until || new Date(o.promoted_until) > new Date())),
       }
     })
   } catch {
@@ -93,10 +98,14 @@ async function fetchRealOrders(): Promise<Order[]> {
 }
 
 export default async function OrdersPage() {
-  const realOrders = await fetchRealOrders()
+  const supabase = await createClient()
+  const [realOrders, { data: { user } }] = await Promise.all([
+    fetchRealOrders(),
+    supabase.auth.getUser(),
+  ])
   return (
     <Suspense fallback={<div className="mx-auto max-w-7xl px-4 py-20 text-center" style={{ color: '#62666d', fontSize: '14px' }}>Loading…</div>}>
-      <OrdersClient realOrders={realOrders} />
+      <OrdersClient realOrders={realOrders} currentUserId={user?.id} />
     </Suspense>
   )
 }

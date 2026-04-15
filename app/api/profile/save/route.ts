@@ -2,9 +2,13 @@ import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
 import { Database } from '@/lib/supabase/types'
+import { applyRateLimit, sanitize, sanitizeText } from '@/lib/security'
 
 export async function POST(request: NextRequest) {
   try {
+    const rl = applyRateLimit(request, 'profile:save', { limit: 15, windowMs: 60_000 })
+    if (rl) return rl
+
     const body = await request.json()
 
     // Читаем сессию пользователя из cookies
@@ -33,13 +37,38 @@ export async function POST(request: NextRequest) {
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     )
 
-    const { fullName, location, bio, avatarUrl, title, category, skills, priceFrom, priceTo, level, responseTime, languages, portfolio } = body
+    const fullName          = sanitize(body?.fullName, 100)
+    const location          = sanitize(body?.location, 100)
+    const bio               = sanitizeText(body?.bio, 2000)
+    const avatarUrl         = sanitize(body?.avatarUrl, 500)
+    const title             = sanitize(body?.title, 120)
+    const category          = sanitize(body?.category, 50)
+    const skills            = Array.isArray(body?.skills) ? body.skills.map((s: unknown) => sanitize(s, 60)).slice(0, 30) : []
+    const priceFrom         = body?.priceFrom
+    const priceTo           = body?.priceTo
+    const level             = sanitize(body?.level, 20)
+    const responseTime      = sanitize(body?.responseTime, 100)
+    const languages         = Array.isArray(body?.languages) ? body.languages.map((l: unknown) => sanitize(l, 40)).slice(0, 10) : []
+    const portfolio         = body?.portfolio
+    // Pro profile fields
+    const portfolioWebsite  = sanitize(body?.portfolioWebsite, 300)
+    const githubUrl         = sanitize(body?.githubUrl, 200)
+    const linkedinUrl       = sanitize(body?.linkedinUrl, 200)
+    const headline          = sanitize(body?.headline, 120)
+    const resumeUrl         = sanitize(body?.resumeUrl, 500)
+    const resumeFilename    = sanitize(body?.resumeFilename, 200)
+    // Social links
+    const telegramUrl       = sanitize(body?.telegramUrl, 200)
+    const instagramUrl      = sanitize(body?.instagramUrl, 200)
+    const twitterUrl        = sanitize(body?.twitterUrl, 200)
+    const youtubeUrl        = sanitize(body?.youtubeUrl, 200)
+    const tiktokUrl         = sanitize(body?.tiktokUrl, 200)
 
     // ── Input validation ─────────────────────────────────────────────────────
-    if (typeof bio === 'string' && bio.trim().length > 2000) {
+    if (bio.length > 2000) {
       return NextResponse.json({ error: 'Bio too long (max 2000 chars)' }, { status: 400 })
     }
-    if (typeof title === 'string' && title.trim().length > 120) {
+    if (title.length > 120) {
       return NextResponse.json({ error: 'Title too long (max 120 chars)' }, { status: 400 })
     }
     if (Array.isArray(portfolio) && portfolio.length > 10) {
@@ -77,6 +106,17 @@ export async function POST(request: NextRequest) {
         title,
         category,
         skills: skills || [],
+        ...(portfolioWebsite && { portfolio_website: portfolioWebsite }),
+        ...(githubUrl        && { github_url: githubUrl }),
+        ...(linkedinUrl      && { linkedin_url: linkedinUrl }),
+        ...(headline         && { headline }),
+        ...(resumeUrl        && { resume_url: resumeUrl }),
+        ...(resumeFilename   && { resume_filename: resumeFilename }),
+        ...(telegramUrl      && { telegram_url: telegramUrl }),
+        ...(instagramUrl     && { instagram_url: instagramUrl }),
+        ...(twitterUrl       && { twitter_url: twitterUrl }),
+        ...(youtubeUrl       && { youtube_url: youtubeUrl }),
+        ...(tiktokUrl        && { tiktok_url: tiktokUrl }),
         price_from: parsedFrom,
         price_to: parsedTo,
         level: level || 'middle',
@@ -108,6 +148,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ ok: true, freelancerProfileId: fp?.id })
   } catch (e) {
     console.error('Unexpected error in /api/profile/save:', e)
-    return NextResponse.json({ error: String(e) }, { status: 500 })
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

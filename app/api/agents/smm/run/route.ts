@@ -1,6 +1,7 @@
 import { generateText } from 'ai'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { rateLimit } from '@/lib/rateLimit'
 
 function sse(data: object) {
   return `data: ${JSON.stringify(data)}\n\n`
@@ -11,11 +12,23 @@ export async function POST(req: Request) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return new Response('Unauthorized', { status: 401 })
 
+  const rl = rateLimit(`agent:smm:${user.id}`, 5, 60_000)
+  if (!rl.success) return new Response('Too many requests', { status: 429, headers: { 'Retry-After': String(rl.retryAfter) } })
+
   const input = await req.json()
-  const { brand, audience, platform, tone, post_count = 3 } = input
+  const { brand, audience, platform, tone } = input
+  // Cap post_count to prevent runaway AI generation
+  const post_count = Math.min(Math.max(1, parseInt(input.post_count) || 3), 10)
 
   if (!brand || !audience || !platform) {
     return new Response('Missing required fields', { status: 400 })
+  }
+  if (
+    (typeof brand === 'string' && brand.length > 200) ||
+    (typeof audience === 'string' && audience.length > 500) ||
+    (typeof tone === 'string' && tone.length > 200)
+  ) {
+    return new Response('Input too long', { status: 400 })
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

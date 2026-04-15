@@ -8,6 +8,8 @@ import PriceDisplay from '@/components/shared/PriceDisplay'
 import RatingStars from '@/components/shared/RatingStars'
 import RespondButton from '@/components/orders/RespondButton'
 import OrderStatusActions from '@/components/orders/OrderStatusActions'
+import MilestoneTracker from '@/components/orders/MilestoneTracker'
+import OrderReviewPrompt from '@/components/orders/OrderReviewPrompt'
 import { createClient } from '@/lib/supabase/server'
 import { Order } from '@/lib/types'
 
@@ -25,6 +27,7 @@ async function getOrder(id: string): Promise<Order | null> {
         budget_min, budget_max, budget_type,
         deadline, skills, status, is_urgent,
         responses_count, created_at, client_id,
+        progress_status,
         profiles!inner (full_name, username, avatar_url)
       `)
       .eq('id', id)
@@ -47,10 +50,11 @@ async function getOrder(id: string): Promise<Order | null> {
       deadline:       data.deadline,
       skills:         data.skills ?? [],
       client:         { name: clientName, avatar: clientAvatar, ordersPosted: 1, rating: 0, id: data.client_id },
-      postedAt:       data.created_at,
-      responsesCount: data.responses_count ?? 0,
-      status:         data.status ?? 'open',
-      isUrgent:       data.is_urgent ?? false,
+      postedAt:        data.created_at,
+      responsesCount:  data.responses_count ?? 0,
+      status:          data.status ?? 'open',
+      isUrgent:        data.is_urgent ?? false,
+      progressStatus:  data.progress_status ?? 'not_started',
     }
   } catch {
     return null
@@ -108,6 +112,23 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
 
   const category = CATEGORIES.find((c) => c.slug === order.category)
   const isOwner  = !!user && user.id === order.client.id
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const db = supabase as any
+
+  // Check if the current user already applied to this order
+  let myResponseStatus: 'pending' | 'accepted' | 'rejected' | null = null
+  let isAcceptedFreelancer = false
+  if (user && !isOwner) {
+    const { data: myResp } = await db
+      .from('order_responses')
+      .select('status')
+      .eq('order_id', id)
+      .eq('freelancer_id', user.id)
+      .maybeSingle()
+    myResponseStatus = myResp?.status ?? null
+    isAcceptedFreelancer = myResp?.status === 'accepted'
+  }
 
   const statusStyle = {
     open:        { bg: 'rgba(39,166,68,0.08)',           color: '#27a644',        border: '1px solid rgba(39,166,68,0.2)',  label: 'Open'        },
@@ -247,6 +268,24 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
             </div>
           )}
 
+          {/* Review prompt — shown to both parties when completed */}
+          {order.status === 'completed' && user && (
+            <OrderReviewPrompt
+              orderId={order.id}
+              orderTitle={order.title}
+              isClient={isOwner}
+            />
+          )}
+
+          {/* Milestone tracker — visible to both parties when in progress */}
+          {order.status === 'in_progress' && (
+            <MilestoneTracker
+              orderId={order.id}
+              initialStatus={order.progressStatus ?? 'not_started'}
+              canEdit={isOwner || isAcceptedFreelancer}
+            />
+          )}
+
           {/* Owner: responses + status workflow */}
           {isOwner && (
             <OrderStatusActions
@@ -272,9 +311,10 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
                   category={order.category}
                   budgetMin={order.budget.min}
                   budgetMax={order.budget.max}
+                  myResponseStatus={myResponseStatus}
                 />
                 <Link
-                  href="/messages"
+                  href={user ? `/messages?open=${order.client.id}` : `/auth/login?next=/orders/${order.id}`}
                   className="w-full mt-2.5 flex items-center justify-center gap-2 transition-all"
                   style={{
                     padding: '10px 16px',

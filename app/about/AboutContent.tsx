@@ -74,9 +74,28 @@ const CONTENT = {
     copyTitle: 'Copy number',
     rolesTitle: 'Built by',
     roles: [
-      { title: 'Founder & Developer', org: 'FreelanceHub', desc: 'Full-stack: Next.js, Supabase, AI integrations. Built from the ground up.' },
-      { title: 'CEO & Co-Founder',    org: 'SITS',          desc: 'Sariyev IT Solutions — IT company from Kazakhstan. Development, automation, AI.' },
-      { title: 'Co-Founder',          org: 'Tengri Yurt',   desc: 'A platform connecting culture and business across Central Asia.' },
+      { title: 'Founder & Full-Stack Developer', org: 'FreelanceHub', desc: 'Built every line from scratch: Next.js 16, Supabase, Claude AI integrations, PWA, real-time messaging. Solo.' },
+      { title: 'CEO & Co-Founder', org: 'SITS', desc: 'Sariyev IT Solutions — Almaty-based IT company. Development, automation, AI, Telegram bots, web platforms.' },
+      { title: 'Co-Founder', org: 'Tengri Yurt', desc: 'Platform connecting Central Asian culture and business. tengri-yurt.kz' },
+    ],
+
+    founderTitle: 'About the Founder',
+    founderName: 'Alizhan Sariyev',
+    founderBio: 'Developer, entrepreneur, and AI enthusiast from Almaty, Kazakhstan. Building tools that give everyone equal access to digital opportunity — regardless of geography, language, or currency.',
+    founderTimeline: [
+      { year: '2026', icon: '🌐', label: 'FreelanceHub', desc: 'Launched a global decentralized freelance platform built entirely solo. 0% commission, AI-powered, designed for the world.' },
+      { year: '2025', icon: '🎮', label: 'GrandGames', desc: 'Deputy Director at GrandGames (Almaty). Game development and company growth strategy.' },
+      { year: '2024', icon: '🕹', label: 'RedPadGames — Dustland', desc: 'Frontend Game Developer at RedPadGames (Almaty). Built gameplay UI for Dustland using Unreal Engine 5.' },
+      { year: '2023', icon: '🤖', label: 'SITS & AI Journey', desc: 'Founded Sariyev IT Solutions. Began deep dive into AI: Claude, GPT, prompt engineering, Telegram bots, automation.' },
+    ],
+    founderSkills: ['Next.js', 'TypeScript', 'React', 'Supabase', 'Claude AI', 'Python', 'Telegram Bots', 'C++', 'Unreal Engine 5', 'PostgreSQL'],
+    founderLangs: ['🇰🇿 Kazakh', '🇷🇺 Russian', '🇬🇧 English', '🇹🇷 Turkish', '🇰🇷 Korean (learning)', '🤖 AI / Prompting'],
+    founderEdu: 'Kazakh-Turkish High School · Issyk, Kazakhstan',
+    founderProjects: [
+      { name: 'FreelanceHub', url: 'https://www.freelance-hub.kz', desc: 'Global freelance platform' },
+      { name: 'Tengri Yurt', url: 'https://tengri-yurt.kz', desc: 'Central Asian culture & business hub' },
+      { name: 'SITS', url: 'https://www.instagram.com/sariyev.it.solutions/', desc: 'IT company portfolio' },
+      { name: 'Telegram Bot', url: 'https://t.me/FreelanceHubKZBot', desc: 'FreelanceHub notifications bot' },
     ],
   },
 
@@ -145,9 +164,28 @@ const CONTENT = {
     copyTitle: 'Скопировать номер',
     rolesTitle: 'Кто создаёт',
     roles: [
-      { title: 'Founder & Developer', org: 'FreelanceHub', desc: 'Полный стек: Next.js, Supabase, AI-интеграции. Написал платформу с нуля.' },
-      { title: 'CEO & Co-Founder',    org: 'SITS',          desc: 'Sariyev IT Solutions — IT-компания из Казахстана. Разработка, автоматизация, AI.' },
-      { title: 'Co-Founder',          org: 'Tengri Yurt',   desc: 'Платформа, объединяющая культуру и бизнес Центральной Азии.' },
+      { title: 'Founder & Full-Stack Developer', org: 'FreelanceHub', desc: 'Написал каждую строку с нуля: Next.js 16, Supabase, Claude AI, PWA, чат в реальном времени. В одиночку.' },
+      { title: 'CEO & Co-Founder', org: 'SITS', desc: 'Sariyev IT Solutions — IT-компания из Алматы. Разработка, автоматизация, AI, Telegram-боты, веб-платформы.' },
+      { title: 'Co-Founder', org: 'Tengri Yurt', desc: 'Платформа для культуры и бизнеса Центральной Азии. tengri-yurt.kz' },
+    ],
+
+    founderTitle: 'Об основателе',
+    founderName: 'Алижан Сариев',
+    founderBio: 'Разработчик, предприниматель и AI-энтузиаст из Алматы, Казахстан. Создаёт инструменты, дающие каждому равный доступ к цифровым возможностям — вне зависимости от географии, языка или валюты.',
+    founderTimeline: [
+      { year: '2026', icon: '🌐', label: 'FreelanceHub', desc: 'Запустил глобальную децентрализованную фриланс-платформу полностью самостоятельно. 0% комиссии, AI-функции, рассчитана на весь мир.' },
+      { year: '2025', icon: '🎮', label: 'GrandGames', desc: 'Заместитель директора в GrandGames (Алматы). Разработка игр и стратегия развития компании.' },
+      { year: '2024', icon: '🕹', label: 'RedPadGames — Dustland', desc: 'Frontend Game Developer в RedPadGames (Алматы). Разработка игрового UI для Dustland на Unreal Engine 5.' },
+      { year: '2023', icon: '🤖', label: 'SITS & путь в AI', desc: 'Основал Sariyev IT Solutions. Начал глубокое погружение в AI: Claude, GPT, промпт-инжиниринг, Telegram-боты, автоматизация.' },
+    ],
+    founderSkills: ['Next.js', 'TypeScript', 'React', 'Supabase', 'Claude AI', 'Python', 'Telegram Боты', 'C++', 'Unreal Engine 5', 'PostgreSQL'],
+    founderLangs: ['🇰🇿 Казахский', '🇷🇺 Русский', '🇬🇧 Английский', '🇹🇷 Турецкий', '🇰🇷 Корейский (изучаю)', '🤖 AI / Промптинг'],
+    founderEdu: 'Казахско-Турецкий лицей-Интернат · г. Иссык, Казахстан',
+    founderProjects: [
+      { name: 'FreelanceHub', url: 'https://www.freelance-hub.kz', desc: 'Глобальная фриланс-платформа' },
+      { name: 'Tengri Yurt', url: 'https://tengri-yurt.kz', desc: 'Культура и бизнес Центральной Азии' },
+      { name: 'SITS', url: 'https://www.instagram.com/sariyev.it.solutions/', desc: 'IT-компания' },
+      { name: 'Telegram Bot', url: 'https://t.me/FreelanceHubKZBot', desc: 'Бот уведомлений FreelanceHub' },
     ],
   },
 }
@@ -362,6 +400,98 @@ export default function AboutContent() {
             </div>
           )
         })}
+      </div>
+
+      {/* ── Founder Section ───────────────────────────────────────────── */}
+      <div className="rounded-2xl p-6 mb-6" style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border-2)' }}>
+        <p className="mb-4 px-1" style={{ fontSize: '11px', fontWeight: 590, color: 'var(--fh-t4)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+          {c.founderTitle}
+        </p>
+
+        {/* Founder header */}
+        <div className="flex items-start gap-4 mb-5">
+          <div style={{
+            width: 60, height: 60, borderRadius: 16, flexShrink: 0,
+            background: 'linear-gradient(135deg, rgba(113,112,255,0.2), rgba(39,166,68,0.15))',
+            border: '2px solid rgba(113,112,255,0.25)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: 26,
+          }}>🧑‍💻</div>
+          <div style={{ flex: 1 }}>
+            <h3 style={{ fontSize: 18, fontWeight: 800, letterSpacing: '-0.03em', color: 'var(--fh-t1)', marginBottom: 4 }}>{c.founderName}</h3>
+            <p style={{ fontSize: 13, color: 'var(--fh-t3)', lineHeight: 1.6 }}>{c.founderBio}</p>
+            <p style={{ fontSize: 11, color: 'var(--fh-t4)', marginTop: 4 }}>🎓 {c.founderEdu}</p>
+          </div>
+        </div>
+
+        {/* Career timeline */}
+        <div className="mb-5" style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          {c.founderTimeline.map(t => (
+            <div key={t.year} style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
+              <div style={{ minWidth: 36, paddingTop: 2 }}>
+                <div style={{ fontSize: 11, fontWeight: 700, color: '#7170ff', letterSpacing: '-0.01em' }}>{t.year}</div>
+              </div>
+              <div style={{ fontSize: 18, flexShrink: 0, paddingTop: 0 }}>{t.icon}</div>
+              <div style={{ flex: 1 }}>
+                <p style={{ fontSize: 13, fontWeight: 700, color: 'var(--fh-t1)', marginBottom: 2 }}>{t.label}</p>
+                <p style={{ fontSize: 12, color: 'var(--fh-t4)', lineHeight: 1.5 }}>{t.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Languages */}
+        <div className="mb-4">
+          <p style={{ fontSize: 11, fontWeight: 700, color: 'var(--fh-t4)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 8 }}>
+            {lang === 'ru' ? 'Языки' : 'Languages'}
+          </p>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+            {c.founderLangs.map(l => (
+              <span key={l} style={{ padding: '4px 10px', borderRadius: 6, background: 'rgba(39,166,68,0.08)', border: '1px solid rgba(39,166,68,0.18)', fontSize: 12, fontWeight: 600, color: '#27a644' }}>
+                {l}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        {/* Skills */}
+        <div className="mb-4">
+          <p style={{ fontSize: 11, fontWeight: 700, color: 'var(--fh-t4)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 8 }}>
+            {lang === 'ru' ? 'Технологии' : 'Tech Stack'}
+          </p>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+            {c.founderSkills.map(s => (
+              <span key={s} style={{ padding: '4px 10px', borderRadius: 6, background: 'rgba(113,112,255,0.08)', border: '1px solid rgba(113,112,255,0.18)', fontSize: 12, fontWeight: 600, color: '#7170ff' }}>
+                {s}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        {/* Projects */}
+        <div>
+          <p style={{ fontSize: 11, fontWeight: 700, color: 'var(--fh-t4)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 8 }}>
+            {lang === 'ru' ? 'Проекты' : 'Projects'}
+          </p>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+            {c.founderProjects.map(p => (
+              <a
+                key={p.name}
+                href={p.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: 'flex', flexDirection: 'column', padding: '8px 12px', borderRadius: 10,
+                  background: 'var(--fh-surface-2)', border: '1px solid var(--fh-border)',
+                  textDecoration: 'none', minWidth: 100,
+                }}
+              >
+                <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--fh-t1)' }}>{p.name}</span>
+                <span style={{ fontSize: 11, color: 'var(--fh-t4)', marginTop: 1 }}>{p.desc}</span>
+              </a>
+            ))}
+          </div>
+        </div>
       </div>
 
       {/* Tech stack */}

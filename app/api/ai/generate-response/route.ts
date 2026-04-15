@@ -26,7 +26,7 @@ export async function POST(request: Request) {
 
     const { orderTitle, orderDescription, category, proposedPrice } = await request.json()
 
-    const priceText = proposedPrice ? `Предлагаемая цена: ${Number(proposedPrice).toLocaleString('ru')} ₽` : 'Цена: обсудим'
+    const priceText = proposedPrice ? `Предлагаемая цена: ${Number(proposedPrice).toLocaleString('ru')} ₸` : 'Цена: обсудим'
 
     const { text: message } = await generateText({
       model: 'anthropic/claude-sonnet-4.6',
@@ -40,8 +40,8 @@ export async function POST(request: Request) {
 
     return Response.json({ message })
   } catch (e) {
-    console.error(e)
-    return Response.json({ message: '' })
+    console.error('[generate-response POST]', e)
+    return Response.json({ error: 'AI generation failed' }, { status: 500 })
   }
 }
 

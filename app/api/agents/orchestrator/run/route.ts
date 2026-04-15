@@ -1,6 +1,7 @@
 import { generateText } from 'ai'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { rateLimit } from '@/lib/rateLimit'
 
 function sse(data: object) {
   return `data: ${JSON.stringify(data)}\n\n`
@@ -18,11 +19,16 @@ export async function POST(req: Request) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return new Response('Unauthorized', { status: 401 })
 
+  const rl = rateLimit(`agent:orch:${user.id}`, 3, 60_000)
+  if (!rl.success) return new Response('Too many requests', { status: 429, headers: { 'Retry-After': String(rl.retryAfter) } })
+
   const { task, agentIds } = await req.json()
   if (!task?.trim()) return new Response('Missing task', { status: 400 })
+  if (typeof task === 'string' && task.length > 4000) return new Response('Task too long (max 4000 chars)', { status: 400 })
   if (!Array.isArray(agentIds) || agentIds.length === 0) {
     return new Response('Select at least one agent', { status: 400 })
   }
+  if (agentIds.length > 5) return new Response('Too many agents (max 5)', { status: 400 })
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const db = supabase as any
@@ -144,6 +150,7 @@ Rules:
 
           const { text: subResult } = await generateText({
             model: 'anthropic/claude-sonnet-4.6',
+            maxOutputTokens: 1500,
             system: agent.system_prompt,
             prompt: sub.description + priorContext,
           })
@@ -169,6 +176,7 @@ Rules:
 
         const { text: aggregate } = await generateText({
           model: 'anthropic/claude-sonnet-4.6',
+          maxOutputTokens: 2000,
           prompt: `You are a senior analyst. Synthesize the following sub-task results into a cohesive final report.
 
 ORIGINAL TASK: ${task}

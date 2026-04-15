@@ -58,6 +58,19 @@ export interface Freelancer {
   reviews?: Review[]
   isPromoted?: boolean
   availability?: AvailabilityStatus
+  // Pro profile fields
+  portfolioWebsite?: string | null
+  githubUrl?:        string | null
+  linkedinUrl?:      string | null
+  resumeUrl?:        string | null
+  resumeFilename?:   string | null
+  headline?:         string | null
+  // Social links
+  telegramUrl?:      string | null
+  instagramUrl?:     string | null
+  twitterUrl?:       string | null
+  youtubeUrl?:       string | null
+  tiktokUrl?:        string | null
 }
 
 export interface Order {
@@ -84,6 +97,7 @@ export interface Order {
   status: 'open' | 'in_progress' | 'completed' | 'cancelled'
   isUrgent: boolean
   isPromoted?: boolean
+  progressStatus?: string
 }
 
 export interface Category {

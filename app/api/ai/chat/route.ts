@@ -1,25 +1,9 @@
-import Anthropic from '@anthropic-ai/sdk'
-import { MOCK_FREELANCERS } from '@/lib/mock'
+import { streamText } from 'ai'
+import { createClient } from '@/lib/supabase/server'
+import { rateLimit } from '@/lib/rateLimit'
 
-const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
-
-const FREELANCERS_CONTEXT = MOCK_FREELANCERS.map((f) => ({
-  id: f.id,
-  name: f.name,
-  title: f.title,
-  category: f.category,
-  skills: f.skills,
-  rating: f.rating,
-  priceFrom: f.priceFrom,
-  location: f.location,
-  level: f.level,
-}))
-
-const SYSTEM_PROMPT = `You are a smart AI assistant for FreelanceHub — a global freelance platform.
+const SYSTEM_BASE = `You are a smart AI assistant for FreelanceHub — a global freelance platform.
 Your goal is to help clients find the perfect freelancer for their project.
-
-Available freelancers (JSON):
-${JSON.stringify(FREELANCERS_CONTEXT, null, 2)}
 
 How to work:
 1. Greet the user and ask what they need done
@@ -32,65 +16,72 @@ Rules:
 - Be friendly and professional
 - Prices in USD unless the client specifies otherwise
 - When suggesting freelancers — ALWAYS include at the end a JSON block in this format:
-<matches>{"ids": ["f1", "f3"]}</matches>
+<matches>{"ids": ["uuid1", "uuid2"]}</matches>
 - Keep explanations clear and concise`
 
-export async function POST(request: Request) {
+async function getFreelancersContext() {
   try {
-    const { messages } = await request.json()
+    const supabase = await createClient()
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data } = await (supabase as any)
+      .from('freelancer_profiles')
+      .select('user_id, title, category, skills, rating, price_from, level, profiles!inner(full_name, location)')
+      .order('rating', { ascending: false })
+      .limit(40)
 
-    if (!process.env.ANTHROPIC_API_KEY) {
-      return getMockResponse(messages)
-    }
+    if (!data || data.length === 0) return []
 
-    const stream = await client.messages.stream({
-      model: 'claude-sonnet-4-6',
-      max_tokens: 1024,
-      system: SYSTEM_PROMPT,
-      messages,
-    })
-
-    const readable = new ReadableStream({
-      async start(controller) {
-        for await (const chunk of stream) {
-          if (
-            chunk.type === 'content_block_delta' &&
-            chunk.delta.type === 'text_delta'
-          ) {
-            controller.enqueue(new TextEncoder().encode(chunk.delta.text))
-          }
-        }
-        controller.close()
-      },
-    })
-
-    return new Response(readable, {
-      headers: { 'Content-Type': 'text/plain; charset=utf-8' },
-    })
-  } catch (error) {
-    console.error('AI Chat error:', error)
-    return getMockResponse([])
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return data.map((fp: any) => ({
+      id:       fp.user_id,
+      name:     fp.profiles?.full_name || 'User',
+      title:    fp.title,
+      category: fp.category,
+      skills:   fp.skills ?? [],
+      rating:   fp.rating ?? 0,
+      priceFrom: fp.price_from ?? 0,
+      location: fp.profiles?.location || 'CIS',
+      level:    fp.level ?? 'new',
+    }))
+  } catch {
+    return []
   }
 }
 
-function getMockResponse(messages: unknown[]) {
-  const responses = [
-    'Привет! Я AI-ассистент FreelanceHub. Расскажите, какую задачу вам нужно решить? Например: разработка сайта, дизайн, SMM, реклама — я подберу лучших специалистов.',
-    'Отлично! Уточните, пожалуйста:\n1. Какой у вас бюджет (примерно)?\n2. В какие сроки нужно выполнить?\n3. Есть ли особые требования к фрилансеру?',
-    'Понял вас! Анализирую подходящих специалистов...\n\nДля вашей задачи я рекомендую следующих фрилансеров:\n\n**Александр Петров** — Senior React разработчик, рейтинг 4.9, опыт 7 лет\n**Никита Соколов** — Full-stack Python+React, рейтинг 4.7\n\n<matches>{"ids": ["f1", "f2"]}</matches>',
-  ]
-  const lastMessages = Array.isArray(messages) ? messages : []
-  const idx = Math.min(lastMessages.length, responses.length - 1)
-  const text = responses[idx]
+export async function POST(request: Request) {
+  try {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const readable = new ReadableStream({
-    start(controller) {
-      controller.enqueue(new TextEncoder().encode(text))
-      controller.close()
-    },
-  })
+    const rl = rateLimit(`ai:chat:${user.id}`, 20, 60_000)
+    if (!rl.success) {
+      return Response.json({ error: 'Too many requests' }, { status: 429, headers: { 'Retry-After': String(rl.retryAfter) } })
+    }
 
-  return new Response(readable, {
-    headers: { 'Content-Type': 'text/plain; charset=utf-8' },
-  })
+    const { messages } = await request.json()
+
+    // Validate messages array
+    if (!Array.isArray(messages) || messages.length > 40) {
+      return Response.json({ error: 'Invalid messages' }, { status: 400 })
+    }
+
+    const freelancers = await getFreelancersContext()
+    const systemPrompt = freelancers.length > 0
+      ? `${SYSTEM_BASE}\n\nAvailable freelancers (JSON):\n${JSON.stringify(freelancers, null, 2)}`
+      : `${SYSTEM_BASE}\n\nNo freelancers are registered yet. Let the user know the platform is growing and invite them to check back soon.`
+
+    const result = streamText({
+      model: 'anthropic/claude-sonnet-4.6',
+      maxOutputTokens: 1024,
+      system: systemPrompt,
+      messages,
+    })
+
+    return result.toTextStreamResponse()
+  } catch (error) {
+    console.error('AI Chat error:', error)
+    const fallback = 'Привет! Я AI-ассистент FreelanceHub. Расскажите, какую задачу вам нужно решить?'
+    return new Response(fallback, { headers: { 'Content-Type': 'text/plain; charset=utf-8' } })
+  }
 }

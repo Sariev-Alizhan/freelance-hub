@@ -42,6 +42,7 @@ export default function RespondModal({
   const [advice, setAdvice] = useState<AIAdvice | null>(null)
   const [showAdvice, setShowAdvice] = useState(false)
   const [submitting, setSubmitting] = useState(false)
+  const [sessionExpired, setSessionExpired] = useState(false)
 
   // Auto-resize textarea
   useEffect(() => {
@@ -66,11 +67,18 @@ export default function RespondModal({
           proposedPrice: price ? parseInt(price) : null,
         }),
       })
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}))
+        throw new Error(err.error || `AI error ${res.status}`)
+      }
       const { message: generated } = await res.json()
       if (generated) {
         setMessage(generated)
         setAdvice(null)
       }
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : 'AI unavailable'
+      toastError('Could not generate', msg)
     } finally {
       setAiLoading(false)
     }
@@ -87,8 +95,11 @@ export default function RespondModal({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message, orderTitle, proposedPrice: price || null }),
       })
+      if (!res.ok) throw new Error(`Advice error ${res.status}`)
       const data = await res.json()
       setAdvice(data)
+    } catch {
+      setShowAdvice(false)
     } finally {
       setAdviceLoading(false)
     }
@@ -111,13 +122,17 @@ export default function RespondModal({
       })
       if (!res.ok) {
         const json = await res.json()
+        if (res.status === 401) {
+          setSessionExpired(true)
+          throw new Error('Session expired')
+        }
         throw new Error(json.error || 'Error')
       }
       setStep('success')
       success('Application sent!', 'The client will be notified')
     } catch (e) {
-      console.error(e)
-      toastError('Failed to send', 'Please try again')
+      const msg = e instanceof Error ? e.message : 'Please try again'
+      toastError('Failed to send', msg)
     } finally {
       setSubmitting(false)
     }
@@ -185,6 +200,7 @@ export default function RespondModal({
               </div>
               <button
                 onClick={onClose}
+                aria-label="Close"
                 className="h-8 w-8 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-surface transition-colors flex-shrink-0"
               >
                 <X className="h-4 w-4" />
@@ -209,16 +225,16 @@ export default function RespondModal({
                       onChange={e => setPrice(e.target.value)}
                       placeholder={
                         budgetMin && budgetMax
-                          ? `${budgetMin.toLocaleString()} – ${budgetMax.toLocaleString()} ₽`
+                          ? `${budgetMin.toLocaleString()} – ${budgetMax.toLocaleString()} ₸`
                           : 'Propose a price'
                       }
                       className="w-full pl-4 pr-12 py-3 rounded-xl bg-background border border-subtle text-sm placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 transition-colors"
                     />
-                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">₽</span>
+                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">₸</span>
                   </div>
                   {budgetMin > 0 && budgetMax > 0 && (
                     <div className="text-xs text-muted-foreground whitespace-nowrap">
-                      Budget: {budgetMin.toLocaleString()}–{budgetMax.toLocaleString()} ₽
+                      Budget: {budgetMin.toLocaleString()}–{budgetMax.toLocaleString()} ₸
                     </div>
                   )}
                 </div>
@@ -324,8 +340,20 @@ export default function RespondModal({
                 )}
               </AnimatePresence>
 
+              {/* Session expired error */}
+              {sessionExpired && (
+                <div className="rounded-xl border border-red-500/20 bg-red-500/5 p-4 text-sm text-red-400 flex items-start gap-2">
+                  <AlertCircle className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                  <span>
+                    Session expired — please{' '}
+                    <a href="/auth/login" className="underline font-medium">sign in again</a>{' '}
+                    and resubmit.
+                  </span>
+                </div>
+              )}
+
               {/* Auth warning */}
-              {!user && (
+              {!user && !sessionExpired && (
                 <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-4 text-sm text-amber-400">
                   To submit an application you need to{' '}
                   <a href="/auth/login" className="underline font-medium">sign in</a>

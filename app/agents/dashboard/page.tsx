@@ -225,7 +225,7 @@ export default function CreatorDashboard() {
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-semibold truncate" style={{ color: 'var(--fh-t1)' }}>{agent.name}</p>
                     <p className="text-xs" style={{ color: 'var(--fh-t4)' }}>
-                      {agent.tasks_completed} задач · ${agent.price_per_task}/задача
+                      {agent.tasks_completed} задач · {agent.price_per_task?.toLocaleString() ?? 0} ₸/задача
                     </p>
                   </div>
                   <div className="flex items-center gap-1.5">

@@ -55,14 +55,40 @@ export async function POST(req: NextRequest) {
   return Response.json({ agent: data }, { status: 201 })
 }
 
+// Fields a creator is allowed to update on their agent
+const ALLOWED_AGENT_FIELDS = new Set([
+  'name', 'tagline', 'description', 'category', 'skills',
+  'system_prompt', 'price_per_task', 'is_published',
+])
+
+const ALLOWED_MODELS = new Set(['claude-sonnet-4.6', 'claude-haiku-4-5-20251001'])
+
 // PATCH — обновить агента
 export async function PATCH(req: NextRequest) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const { id, ...updates } = await req.json()
+  const body = await req.json()
+  const { id } = body
   if (!id) return Response.json({ error: 'id required' }, { status: 400 })
+
+  // Whitelist — only allow safe fields to prevent mass-assignment
+  const updates: Record<string, unknown> = {}
+  for (const key of ALLOWED_AGENT_FIELDS) {
+    if (key in body) updates[key] = body[key]
+  }
+  // Model is allowed but restricted to known values
+  if ('model' in body) {
+    if (!ALLOWED_MODELS.has(body.model)) {
+      return Response.json({ error: 'Invalid model' }, { status: 400 })
+    }
+    updates.model = body.model
+  }
+
+  if (Object.keys(updates).length === 0) {
+    return Response.json({ error: 'No valid fields to update' }, { status: 400 })
+  }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const db = supabase as any
@@ -72,7 +98,7 @@ export async function PATCH(req: NextRequest) {
     .eq('id', id)
     .eq('creator_id', user.id)
 
-  if (error) return Response.json({ error: error.message }, { status: 500 })
+  if (error) return Response.json({ error: 'Update failed' }, { status: 500 })
   return Response.json({ ok: true })
 }
 

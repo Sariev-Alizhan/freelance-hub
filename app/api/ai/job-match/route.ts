@@ -60,7 +60,7 @@ export async function POST(request: Request) {
     `Category: ${fp.category}`,
     `Skills: ${(fp.skills ?? []).join(', ')}`,
     `Level: ${fp.level}`,
-    `Rate: ${fp.price_from}–${fp.price_to ?? '?'} ₽/hr`,
+    `Rate: ${fp.price_from}–${fp.price_to ?? '?'} ₸/hr`,
     fp.profiles?.bio ? `Bio: ${String(fp.profiles.bio).slice(0, 200)}` : '',
   ].filter(Boolean).join('\n')
 
@@ -68,7 +68,7 @@ export async function POST(request: Request) {
     id: string; title: string; description: string; category: string
     skills: string[]; budget_min: number; budget_max: number; deadline: string; is_urgent: boolean
   }) =>
-    `[${o.id}] ${o.title} | ${o.category} | Skills: ${(o.skills ?? []).join(', ')} | Budget: ${o.budget_min}–${o.budget_max} ₽ | Deadline: ${o.deadline}${o.is_urgent ? ' | URGENT' : ''}`
+    `[${o.id}] ${o.title} | ${o.category} | Skills: ${(o.skills ?? []).join(', ')} | Budget: ${o.budget_min}–${o.budget_max} ₸ | Deadline: ${o.deadline}${o.is_urgent ? ' | URGENT' : ''}`
   ).join('\n')
 
   const prompt = `Freelancer profile:\n${profileSummary}\n\nOpen orders:\n${orderList}`

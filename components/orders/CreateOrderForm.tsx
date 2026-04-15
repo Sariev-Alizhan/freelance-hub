@@ -1,12 +1,12 @@
 'use client'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useRouter } from 'next/navigation'
 import {
   Code2, PenSquare, BarChart2, Target, PenLine,
   Video, Bot, Brain, Blocks, Sparkles,
   ArrowRight, ArrowLeft, Check, Loader2,
-  Zap, Clock, DollarSign, Tag, X, Wand2
+  Zap, Clock, DollarSign, Tag, X, Wand2, Mic, MicOff
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { useUser } from '@/lib/hooks/useUser'
@@ -50,12 +50,12 @@ const DEADLINES = [
 ]
 
 const BUDGET_RANGES = [
-  { label: 'up to $100',  min: '0',     max: '10000'  },
-  { label: '$100–$300',   min: '10000', max: '30000'  },
-  { label: '$300–$600',   min: '30000', max: '60000'  },
-  { label: '$600–$1000',  min: '60000', max: '100000' },
-  { label: '$1000+',      min: '100000',max: '500000' },
-  { label: 'Negotiable',  min: '0',     max: '0'      },
+  { label: 'up to ₸10 000', min: '0',     max: '10000'  },
+  { label: '₸10–30 000',    min: '10000', max: '30000'  },
+  { label: '₸30–60 000',    min: '30000', max: '60000'  },
+  { label: '₸60–100 000',   min: '60000', max: '100000' },
+  { label: '₸100 000+',     min: '100000',max: '500000' },
+  { label: 'Negotiable',     min: '0',     max: '0'      },
 ]
 
 // ── Step progress ──────────────────────────────────────────
@@ -69,8 +69,14 @@ export default function CreateOrderForm() {
   const [step, setStep] = useState(0)
   const [submitting, setSubmitting] = useState(false)
   const [aiLoading, setAiLoading] = useState(false)
+  const [priceAdviceLoading, setPriceAdviceLoading] = useState(false)
+  const [priceAdvice, setPriceAdvice] = useState<{ min: number; max: number; explanation: string } | null>(null)
   const [skillInput, setSkillInput] = useState('')
   const [createdOrderId, setCreatedOrderId] = useState<string | null>(null)
+  const [voiceRecording, setVoiceRecording] = useState(false)
+  const [voiceParsing, setVoiceParsing] = useState(false)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const recognitionRef = useRef<any>(null)
 
   const [form, setForm] = useState<FormData>({
     category: '',
@@ -120,6 +126,90 @@ export default function CreateOrderForm() {
     }
   }
 
+  // ── Voice order creation ─────────────────────────────────
+  function toggleVoice() {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition
+    if (!SR) {
+      toastError('Voice input is not supported in this browser')
+      return
+    }
+
+    if (voiceRecording) {
+      recognitionRef.current?.stop()
+      setVoiceRecording(false)
+      return
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const recognition: any = new SR()
+    recognition.continuous = true
+    recognition.interimResults = false
+    recognition.lang = 'ru-RU'
+    recognitionRef.current = recognition
+
+    let transcript = ''
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    recognition.onresult = (e: any) => {
+      for (let i = e.resultIndex; i < e.results.length; i++) {
+        if (e.results[i].isFinal) transcript += e.results[i][0].transcript + ' '
+      }
+    }
+    recognition.onerror = () => { setVoiceRecording(false) }
+    recognition.onend = async () => {
+      setVoiceRecording(false)
+      if (!transcript.trim()) return
+      setVoiceParsing(true)
+      try {
+        const res = await fetch('/api/ai/parse-voice-order', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ transcript: transcript.trim() }),
+        })
+        if (!res.ok) throw new Error('parse failed')
+        const parsed = await res.json()
+        if (parsed.title)       set('title', parsed.title)
+        if (parsed.description) set('description', parsed.description)
+        if (parsed.category)    set('category', parsed.category as typeof form.category)
+        if (parsed.budgetMin)   set('budgetMin', parsed.budgetMin)
+        if (parsed.budgetMax)   set('budgetMax', parsed.budgetMax)
+        if (parsed.skills?.length) set('skills', parsed.skills)
+        success('Voice order filled in!')
+      } catch {
+        toastError('Could not parse voice input')
+      } finally {
+        setVoiceParsing(false)
+      }
+    }
+
+    recognition.start()
+    setVoiceRecording(true)
+  }
+
+  // ── AI price advisor ─────────────────────────────────────
+  async function getPriceAdvice() {
+    if (!form.category || !form.description) return
+    setPriceAdviceLoading(true)
+    setPriceAdvice(null)
+    try {
+      const res = await fetch('/api/ai/price-advice', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          category: form.category,
+          description: form.description,
+          deadline: form.deadline || 'flexible',
+        }),
+      })
+      const data = await res.json()
+      if (data.min && data.max) setPriceAdvice(data)
+    } catch (e) {
+      console.error(e)
+    } finally {
+      setPriceAdviceLoading(false)
+    }
+  }
+
   // ── Validation ───────────────────────────────────────────
   const canNext = [
     form.category !== '',
@@ -132,25 +222,35 @@ export default function CreateOrderForm() {
     if (!user) { router.push('/auth/login'); return }
     setSubmitting(true)
     try {
-      const supabase = createClient()
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const { data, error } = await (supabase.from('orders') as any).insert({
-        client_id: user.id,
-        title: form.title.trim(),
-        description: form.description.trim(),
-        category: form.category as CategorySlug,
-        budget_min: parseInt(form.budgetMin) || 0,
-        budget_max: parseInt(form.budgetMax) || 0,
-        budget_type: form.budgetType,
-        deadline: form.deadline,
-        skills: form.skills,
-        is_urgent: form.isUrgent,
-      }).select('id').single()
+      const res = await fetch('/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title:      form.title.trim(),
+          description: form.description.trim(),
+          category:   form.category,
+          budgetMin:  parseInt(form.budgetMin) || 0,
+          budgetMax:  parseInt(form.budgetMax) || 0,
+          budgetType: form.budgetType,
+          deadline:   form.deadline,
+          skills:     form.skills,
+          isUrgent:   form.isUrgent,
+        }),
+      })
 
-      if (error) throw error
-      setCreatedOrderId(data.id)
+      const json = await res.json()
+      if (!res.ok) throw new Error(json.error || 'Failed to create order')
+
+      setCreatedOrderId(json.id)
       setStep(4)
       success('Order published!', 'Specialists can already see your order')
+
+      // Notify matching freelancers via Telegram (best-effort)
+      fetch('/api/orders/notify', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ orderId: json.id }),
+      }).catch(() => {})
     } catch (e) {
       console.error(e)
       toastError('Failed to create order', 'Please try again')
@@ -244,9 +344,32 @@ export default function CreateOrderForm() {
           {/* ── STEP 1: Title + Description ── */}
           {step === 1 && (
             <motion.div key="step1" {...slide} className="space-y-5">
-              <div>
-                <h2 className="text-lg font-bold mb-1">Describe the task</h2>
-                <p className="text-sm text-muted-foreground">The more detail, the better we match you with a specialist</p>
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <h2 className="text-lg font-bold mb-1">Describe the task</h2>
+                  <p className="text-sm text-muted-foreground">The more detail, the better we match you with a specialist</p>
+                </div>
+                {/* Voice input button */}
+                <button
+                  type="button"
+                  onClick={toggleVoice}
+                  disabled={voiceParsing}
+                  title={voiceRecording ? 'Stop recording' : 'Describe by voice'}
+                  className="flex-shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium transition-all disabled:opacity-50"
+                  style={{
+                    background: voiceRecording ? 'rgba(239,68,68,0.1)' : 'rgba(94,106,210,0.08)',
+                    border: `1px solid ${voiceRecording ? 'rgba(239,68,68,0.3)' : 'rgba(94,106,210,0.2)'}`,
+                    color: voiceRecording ? '#ef4444' : '#7170ff',
+                  }}
+                >
+                  {voiceParsing
+                    ? <Loader2 className="h-4 w-4 animate-spin" />
+                    : voiceRecording
+                      ? <MicOff className="h-4 w-4" />
+                      : <Mic className="h-4 w-4" />
+                  }
+                  {voiceParsing ? 'Parsing…' : voiceRecording ? 'Stop' : 'Voice'}
+                </button>
               </div>
 
               {/* Title */}
@@ -367,6 +490,44 @@ export default function CreateOrderForm() {
                   ))}
                 </div>
 
+                {/* AI Price Advisor */}
+                <div className="mb-3">
+                  <button
+                    type="button"
+                    onClick={getPriceAdvice}
+                    disabled={priceAdviceLoading || !form.description}
+                    className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                  >
+                    {priceAdviceLoading
+                      ? <Loader2 className="h-3 w-3 animate-spin" />
+                      : <Wand2 className="h-3 w-3" />
+                    }
+                    AI price suggestion
+                  </button>
+
+                  {priceAdvice && (
+                    <div className="mt-2 p-3 rounded-xl border border-primary/20 bg-primary/5">
+                      <div className="flex items-center justify-between mb-1.5">
+                        <span className="text-xs font-semibold text-primary">
+                          AI suggests: {priceAdvice.min.toLocaleString()} – {priceAdvice.max.toLocaleString()} ₸
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            set('budgetMin', String(priceAdvice.min))
+                            set('budgetMax', String(priceAdvice.max))
+                            setPriceAdvice(null)
+                          }}
+                          className="text-xs px-2 py-0.5 rounded-md bg-primary text-white font-medium hover:bg-primary/90 transition-colors"
+                        >
+                          Use
+                        </button>
+                      </div>
+                      <p className="text-xs text-muted-foreground leading-relaxed">{priceAdvice.explanation}</p>
+                    </div>
+                  )}
+                </div>
+
                 {/* Budget presets */}
                 <div className="grid grid-cols-3 gap-2 mb-3">
                   {BUDGET_RANGES.map(range => (
@@ -387,22 +548,22 @@ export default function CreateOrderForm() {
                 {/* Custom budget */}
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="text-xs text-muted-foreground mb-1 block">From ($)</label>
+                    <label className="text-xs text-muted-foreground mb-1 block">From (₸)</label>
                     <input
                       type="number"
                       value={form.budgetMin}
                       onChange={e => set('budgetMin', e.target.value)}
-                      placeholder="500"
+                      placeholder="10000"
                       className="w-full px-3 py-2.5 rounded-xl bg-background border border-subtle text-sm focus:outline-none focus:border-primary/50 transition-colors"
                     />
                   </div>
                   <div>
-                    <label className="text-xs text-muted-foreground mb-1 block">To ($)</label>
+                    <label className="text-xs text-muted-foreground mb-1 block">To (₸)</label>
                     <input
                       type="number"
                       value={form.budgetMax}
                       onChange={e => set('budgetMax', e.target.value)}
-                      placeholder="5000"
+                      placeholder="50000"
                       className="w-full px-3 py-2.5 rounded-xl bg-background border border-subtle text-sm focus:outline-none focus:border-primary/50 transition-colors"
                     />
                   </div>
@@ -514,8 +675,8 @@ export default function CreateOrderForm() {
                     <div className="text-xs text-muted-foreground mb-1">Budget</div>
                     <div className="font-semibold text-primary">
                       {form.budgetMin && form.budgetMax && parseInt(form.budgetMax) > 0
-                        ? `${parseInt(form.budgetMin).toLocaleString()} – ${parseInt(form.budgetMax).toLocaleString()} ₽`
-                        : form.budgetMin ? `from ${parseInt(form.budgetMin).toLocaleString()} ₽`
+                        ? `${parseInt(form.budgetMin).toLocaleString()} – ${parseInt(form.budgetMax).toLocaleString()} ₸`
+                        : form.budgetMin ? `from ${parseInt(form.budgetMin).toLocaleString()} ₸`
                         : 'Negotiable'
                       }
                     </div>

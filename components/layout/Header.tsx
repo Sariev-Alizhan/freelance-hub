@@ -9,6 +9,7 @@ import ThemeToggle from '@/components/ui/ThemeToggle'
 import { useCurrency } from '@/lib/context/CurrencyContext'
 import { useLang, LANG_LABELS, Lang } from '@/lib/context/LanguageContext'
 import { useUser } from '@/lib/hooks/useUser'
+import { useProfile } from '@/lib/context/ProfileContext'
 import { useUnreadMessages } from '@/lib/hooks/useUnreadMessages'
 import { createClient } from '@/lib/supabase/client'
 import { Currency } from '@/lib/types'
@@ -31,6 +32,7 @@ export default function Header() {
   const [langOpen,      setLangOpen]      = useState(false)
   const [currencyOpen,  setCurrencyOpen]  = useState(false)
   const { user, loading } = useUser()
+  const { profile } = useProfile()
   const unreadMsgs = useUnreadMessages()
   const router = useRouter()
 
@@ -50,8 +52,9 @@ export default function Header() {
     router.refresh()
   }
 
-  const avatarUrl   = user?.user_metadata?.avatar_url
-  const displayName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || t.auth.dashboard
+  // Always read avatar from DB (profiles table) — user_metadata is stale after upload
+  const avatarUrl   = profile?.avatar_url || user?.user_metadata?.avatar_url
+  const displayName = profile?.full_name || user?.user_metadata?.full_name || user?.email?.split('@')[0] || t.auth.dashboard
   const adminEmail  = process.env.NEXT_PUBLIC_ADMIN_EMAIL
   const isAdmin     = adminEmail && user?.email === adminEmail
 
@@ -191,6 +194,7 @@ export default function Header() {
               <div className="hidden md:flex items-center gap-1">
                 <Link
                   href="/messages"
+                  aria-label="Messages"
                   className="relative flex items-center justify-center h-8 w-8 rounded-md transition-colors"
                   style={{ color: 'var(--fh-t3)' }}
                   onMouseEnter={e => { e.currentTarget.style.color = 'var(--fh-t1)'; e.currentTarget.style.background = 'var(--fh-surface-2)' }}

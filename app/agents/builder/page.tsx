@@ -113,7 +113,7 @@ export default function AgentBuilderPage() {
                     <p className="text-sm text-gray-400 mt-0.5">{form.tagline || 'Short description of what this agent does'}</p>
                   </div>
                   <span className="text-sm font-semibold text-green-400 flex-shrink-0">
-                    ${form.price_per_task}/task
+                    {form.price_per_task.toLocaleString()} ₸/task
                   </span>
                 </div>
                 {form.skills.length > 0 && (
@@ -185,11 +185,11 @@ export default function AgentBuilderPage() {
                 </select>
               </div>
               <div>
-                <label className="block text-sm text-gray-400 mb-1.5">Price per Task (USD)</label>
+                <label className="block text-sm text-gray-400 mb-1.5">Price per Task (₸)</label>
                 <input
                   type="number"
-                  min={1}
-                  max={1000}
+                  min={1000}
+                  max={500000}
                   value={form.price_per_task}
                   onChange={e => set('price_per_task', parseInt(e.target.value) || 1)}
                   className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-purple-500 transition-colors"

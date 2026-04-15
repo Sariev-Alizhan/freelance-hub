@@ -11,7 +11,26 @@
       "Bash(curl:*)",
       "Read(//c/Users/Элит/**)",
       "Bash(node:*)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(grep -v \"LanguageContext\\\\|AgentsSection\\\\|//\")",
+      "Bash(grep -v \"^\\\\s*//\")",
+      "Bash(grep -n \"2025\\\\|copyright\\\\|©\" \"C:/Users/Элит/Desktop/frilance/components\"/**/*.tsx \"C:/Users/Элит/Desktop/frilance/app\"/**/*.tsx)",
+      "Bash(vercel projects:*)",
+      "Bash(vercel link:*)",
+      "Bash(vercel --prod)",
+      "Bash(vercel logs:*)",
+      "Bash(grep -h \"CREATE TABLE\" \"C:\\\\Users\\\\Элит\\\\Desktop\\\\frilance\\\\supabase\"/*.sql)",
+      "Bash(grep -l \"TODO\\\\|FIXME\\\\|unimplemented\" \"C:\\\\Users\\\\Элит\\\\Desktop\\\\frilance\\\\app\"/**/*.tsx)",
+      "Bash(taskkill /f /im node.exe)",
+      "Bash(netstat -ano)",
+      "Bash(taskkill:*)",
+      "Bash(grep:*)",
+      "Bash(python3 -c \"import sys; html=sys.stdin.read\\(\\); import re; styles=re.findall\\(r'style=\\\\\"\\([^\\\\\"]*opacity[^\\\\\"]*\\)\\\\\"|style=\\\\{[^\\\\}]*opacity[^\\\\}]*\\\\}', html\\); print\\('\\\\n'.join\\(styles[:5]\\)\\)\")",
+      "WebFetch(domain:www.freelance-hub.kz)",
+      "Bash(find /c/Users/Элит/Desktop/frilance/app -name \"*page.tsx\" -exec sh -c 'echo \"=== {} ===\"; head -5 \"$1\"' _ {} \\\\;)",
+      "Bash(npm uninstall:*)",
+      "Bash(echo \"EXIT:$?\")",
+      "WebFetch(domain:docs.lemonsqueezy.com)"
     ]
   }
 }

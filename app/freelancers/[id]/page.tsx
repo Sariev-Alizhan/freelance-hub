@@ -8,7 +8,11 @@ import PriceDisplay from '@/components/shared/PriceDisplay'
 import OnlineStatus from '@/components/shared/OnlineStatus'
 import ReviewsSection from '@/components/shared/ReviewsSection'
 import PortfolioSection from '@/components/freelancers/PortfolioSection'
+import ProfileProSection from '@/components/freelancers/ProfileProSection'
+import InlineTranslator from '@/components/shared/InlineTranslator'
 import ProfileViewLogger from '@/components/shared/ProfileViewLogger'
+import ShareProfileButton from '@/components/shared/ShareProfileButton'
+import FounderCard from '@/components/freelancers/FounderCard'
 import { CATEGORIES } from '@/lib/mock/categories'
 import { createClient } from '@/lib/supabase/server'
 import { Freelancer, PortfolioItem } from '@/lib/types'
@@ -36,6 +40,8 @@ async function getFreelancerFromSupabase(userId: string): Promise<Freelancer | n
         id, user_id, title, category, skills, price_from, price_to,
         level, response_time, languages, is_verified, is_premium, premium_until, rating,
         reviews_count, completed_orders, created_at, availability_status,
+        portfolio_website, github_url, linkedin_url, resume_url, resume_filename, headline,
+        telegram_url, instagram_url, twitter_url, youtube_url, tiktok_url,
         profiles!inner (full_name, username, avatar_url, location, bio)
       `)
       .eq('user_id', userId)
@@ -89,16 +95,26 @@ async function getFreelancerFromSupabase(userId: string): Promise<Freelancer | n
       languages: data.languages ?? ['ru'],
       registeredAt: data.created_at,
       availability: data.availability_status ?? 'open',
+      // Pro profile fields
+      portfolioWebsite: data.portfolio_website ?? null,
+      githubUrl:        data.github_url ?? null,
+      linkedinUrl:      data.linkedin_url ?? null,
+      resumeUrl:        data.resume_url ?? null,
+      resumeFilename:   data.resume_filename ?? null,
+      headline:         data.headline ?? null,
+      // Social links
+      telegramUrl:      data.telegram_url ?? null,
+      instagramUrl:     data.instagram_url ?? null,
+      twitterUrl:       data.twitter_url ?? null,
+      youtubeUrl:       data.youtube_url ?? null,
+      tiktokUrl:        data.tiktok_url ?? null,
     }
   } catch {
     return null
   }
 }
 
-export async function generateStaticParams() {
-  // All freelancer profile pages are rendered dynamically at request time
-  return []
-}
+export const dynamic = 'force-dynamic'
 
 export async function generateMetadata({
   params,
@@ -222,6 +238,7 @@ export default async function FreelancerPage({ params }: { params: Promise<{ id:
               </div>
             </div>
             <p className="mt-5 text-sm text-muted-foreground leading-relaxed">{f.description}</p>
+            {f.description && <InlineTranslator text={f.description} />}
 
             {/* Achievement badges */}
             {(() => {
@@ -279,6 +296,29 @@ export default async function FreelancerPage({ params }: { params: Promise<{ id:
             </div>
           </div>
 
+          {/* Pro profile: links, resume, headline, work experience, documents */}
+          <div className="rounded-2xl border border-subtle bg-card p-6">
+            <ProfileProSection
+              userId={f.id}
+              portfolioWebsite={f.portfolioWebsite}
+              githubUrl={f.githubUrl}
+              linkedinUrl={f.linkedinUrl}
+              resumeUrl={f.resumeUrl}
+              resumeFilename={f.resumeFilename}
+              headline={f.headline}
+              telegramUrl={f.telegramUrl}
+              instagramUrl={f.instagramUrl}
+              twitterUrl={f.twitterUrl}
+              youtubeUrl={f.youtubeUrl}
+              tiktokUrl={f.tiktokUrl}
+            />
+          </div>
+
+          {/* Founder extended profile — only visible if userId matches FOUNDER_USER_ID env var */}
+          {process.env.FOUNDER_USER_ID && f.id === process.env.FOUNDER_USER_ID && (
+            <FounderCard />
+          )}
+
           {/* Portfolio with lightbox */}
           <PortfolioSection portfolio={f.portfolio} />
 
@@ -331,6 +371,12 @@ export default async function FreelancerPage({ params }: { params: Promise<{ id:
             <Link href="/orders/new" className="w-full py-3 rounded-xl border border-subtle bg-subtle font-semibold hover:bg-surface transition-colors text-sm flex items-center justify-center">
               Post a job
             </Link>
+            <div className="mt-2">
+              <ShareProfileButton
+                url={`${SITE_URL}/freelancers/${f.id}`}
+                username={f.name}
+              />
+            </div>
           </div>
         </div>
       </div>

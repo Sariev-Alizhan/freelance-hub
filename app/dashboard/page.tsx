@@ -10,6 +10,7 @@ import {
   Loader2, X, Camera,
 } from 'lucide-react'
 import { useUser } from '@/lib/hooks/useUser'
+import { useProfile } from '@/lib/context/ProfileContext'
 import { useFavorites } from '@/lib/hooks/useFavorites'
 import { createClient } from '@/lib/supabase/client'
 import {
@@ -18,6 +19,8 @@ import {
 import PortfolioManager from '@/components/dashboard/PortfolioManager'
 import JobMatchWidget from '@/components/dashboard/JobMatchWidget'
 import SavedSearchesWidget from '@/components/dashboard/SavedSearchesWidget'
+import ReferralWidget from '@/components/dashboard/ReferralWidget'
+import TelegramWidget from '@/components/dashboard/TelegramWidget'
 
 // ── Types ──────────────────────────────────────────────────
 interface Profile {
@@ -69,9 +72,108 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }
   cancelled:   { label: 'Cancelled',   color: 'text-red-400',    bg: 'bg-red-500/10'    },
 }
 
+// ── Analytics tab content ─────────────────────────────────
+function AnalyticsTab({ analytics }: {
+  analytics: {
+    views7: number; views30: number; responsesThisMonth: number
+    responseLimit: number | null; isPremium: boolean; isVerified: boolean
+    verificationRequested: boolean
+    viewsByDay: { day: string; count: number }[]
+  } | null
+}) {
+  if (!analytics) return <div className="py-16 text-center text-muted-foreground text-sm">Loading analytics…</div>
+
+  const data = analytics.viewsByDay ?? []
+  const max = Math.max(...data.map(d => d.count), 1)
+  const W = 300; const H = 60; const gap = data.length > 1 ? W / (data.length - 1) : W
+  const pts = data.map((d, i) => `${i * gap},${H - (d.count / max) * H}`)
+  const area = data.length > 1
+    ? `M${pts.join(' L')} L${(data.length - 1) * gap},${H} L0,${H} Z`
+    : ''
+
+  return (
+    <div className="space-y-5">
+      {/* Stat tiles */}
+      <div className="grid grid-cols-3 gap-3">
+        {[
+          { label: 'Views (7d)',  value: analytics.views7,              icon: Eye },
+          { label: 'Views (30d)', value: analytics.views30,             icon: Eye },
+          { label: 'Responses',   value: analytics.responsesThisMonth,  icon: Zap },
+        ].map(({ label, value, icon: Icon }) => (
+          <div key={label} className="rounded-xl p-4" style={{ background: 'var(--fh-skill-bg)', border: '1px solid var(--fh-border-2)' }}>
+            <div className="flex items-center gap-1.5 mb-2">
+              <Icon className="h-3.5 w-3.5 text-muted-foreground" />
+              <span className="text-xs text-muted-foreground">{label}</span>
+            </div>
+            <div className="text-2xl font-bold">{value}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Sparkline */}
+      {data.length > 1 && (
+        <div className="rounded-xl p-4" style={{ background: 'var(--fh-skill-bg)', border: '1px solid var(--fh-border-2)' }}>
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-xs text-muted-foreground">Profile views — last {data.length} days</span>
+            <span className="text-xs font-semibold" style={{ color: '#7170ff' }}>
+              {data.reduce((s, d) => s + d.count, 0)} total
+            </span>
+          </div>
+          <svg viewBox={`0 0 ${W} ${H}`} className="w-full" style={{ height: '60px', overflow: 'visible' }}>
+            <defs>
+              <linearGradient id="sparkGrad2" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#7170ff" stopOpacity="0.3" />
+                <stop offset="100%" stopColor="#7170ff" stopOpacity="0" />
+              </linearGradient>
+            </defs>
+            {area && <path d={area} fill="url(#sparkGrad2)" />}
+            <polyline points={pts.join(' ')} fill="none" stroke="#7170ff" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
+            {data.map((d, i) => d.count > 0 && (
+              <circle key={i} cx={i * gap} cy={H - (d.count / max) * H} r="3" fill="#7170ff" />
+            ))}
+          </svg>
+          <div className="flex justify-between mt-1">
+            <span className="text-xs text-muted-foreground opacity-50">{data[0]?.day?.slice(5)}</span>
+            <span className="text-xs text-muted-foreground opacity-50">{data[data.length - 1]?.day?.slice(5)}</span>
+          </div>
+        </div>
+      )}
+
+      {/* Response limit */}
+      {analytics.responseLimit !== null && (
+        <div className="rounded-xl p-4" style={{ background: 'var(--fh-skill-bg)', border: '1px solid var(--fh-border-2)' }}>
+          <div className="flex justify-between text-xs text-muted-foreground mb-2">
+            <span>Monthly response limit</span>
+            <span className="font-semibold">{analytics.responsesThisMonth} / {analytics.responseLimit}</span>
+          </div>
+          <div className="h-2 rounded-full overflow-hidden" style={{ background: 'var(--fh-border-2)' }}>
+            <div
+              className="h-full rounded-full transition-all"
+              style={{
+                width: `${Math.min(100, (analytics.responsesThisMonth / analytics.responseLimit) * 100)}%`,
+                background: analytics.responsesThisMonth >= analytics.responseLimit ? '#ef4444' : '#5e6ad2',
+              }}
+            />
+          </div>
+          {!analytics.isPremium && (
+            <div className="mt-3 flex items-center justify-between">
+              <p className="text-xs text-muted-foreground">Premium removes the limit.</p>
+              <Link href="/premium" className="text-xs font-semibold px-3 py-1.5 rounded-lg"
+                style={{ background: 'rgba(94,106,210,0.1)', color: '#7170ff', border: '1px solid rgba(94,106,210,0.2)' }}>
+                <Crown className="h-3 w-3 inline mr-1" />Upgrade
+              </Link>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
+
 export default function DashboardPage() {
   const { user, loading } = useUser()
-  const [tab, setTab] = useState<'freelancer' | 'client' | 'favorites' | 'portfolio'>('freelancer')
+  const { refreshProfile } = useProfile()
+  const [tab, setTab] = useState<'freelancer' | 'client' | 'favorites' | 'portfolio' | 'analytics'>('freelancer')
   const { favorites } = useFavorites()
   const [profile, setProfile] = useState<Profile | null>(null)
   const [fp, setFp] = useState<FreelancerProfile | null>(null)
@@ -220,6 +322,8 @@ export default function DashboardPage() {
       const data = await res.json()
       if (res.ok && data.url) {
         setProfile(prev => prev ? { ...prev, avatar_url: data.url } : prev)
+        // Refresh global ProfileContext so Header updates immediately
+        refreshProfile()
       }
     } finally {
       setAvatarUploading(false)
@@ -347,7 +451,7 @@ export default function DashboardPage() {
           ))}
           {fp?.price_from ? (
             <span className="ml-auto text-sm font-semibold text-green-400">
-              from {fp.price_from.toLocaleString()} ₽{fp.price_to ? ` — ${fp.price_to.toLocaleString()} ₽` : ''}
+              from {fp.price_from.toLocaleString()} ₸{fp.price_to ? ` — ${fp.price_to.toLocaleString()} ₸` : ''}
             </span>
           ) : null}
         </div>
@@ -386,7 +490,7 @@ export default function DashboardPage() {
       {profileLoading ? <SkeletonStats /> : (
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           {[
-            { label: 'Earned',      value: '0 ₽',                                  icon: DollarSign, color: 'text-green-400'  },
+            { label: 'Earned',      value: '0 ₸',                                  icon: DollarSign, color: 'text-green-400'  },
             { label: 'Orders',      value: String(fp?.completed_orders ?? 0),       icon: Briefcase,  color: 'text-blue-400'   },
             { label: 'Rating',      value: fp?.rating ? String(fp.rating) : '—',   icon: Star,       color: 'text-amber-400'  },
             { label: 'In progress', value: '0',                                     icon: Clock,      color: 'text-purple-400' },
@@ -405,176 +509,19 @@ export default function DashboardPage() {
         </div>
       )}
 
-      {/* ── Analytics (freelancers only) ── */}
-      {analytics && fp && (
-        <div className="mb-6 rounded-2xl border border-subtle bg-card p-5 space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <TrendingUp className="h-4 w-4 text-primary" />
-              <span className="text-sm font-semibold">Profile analytics</span>
-            </div>
-            {/* Premium / Verified badges */}
-            <div className="flex items-center gap-2">
-              {analytics.isPremium && (
-                <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full font-semibold"
-                  style={{ background: 'rgba(94,106,210,0.1)', color: '#5e6ad2', border: '1px solid rgba(94,106,210,0.2)' }}>
-                  <Crown className="h-3 w-3" /> Premium
-                </span>
-              )}
-              {analytics.isVerified && (
-                <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full font-semibold"
-                  style={{ background: 'rgba(39,166,68,0.08)', color: '#27a644', border: '1px solid rgba(39,166,68,0.2)' }}>
-                  <ShieldCheck className="h-3 w-3" /> Verified
-                </span>
-              )}
-            </div>
-          </div>
 
-          <div className="grid grid-cols-3 gap-3">
-            <div className="rounded-xl p-3" style={{ background: 'var(--fh-skill-bg)', border: '1px solid var(--fh-border-2)' }}>
-              <div className="flex items-center gap-1.5 mb-1">
-                <Eye className="h-3.5 w-3.5 text-muted-foreground" />
-                <span className="text-xs text-muted-foreground">Last 7 days</span>
-              </div>
-              <div className="text-xl font-bold">{analytics.views7}</div>
-              <div className="text-xs text-muted-foreground">views</div>
-            </div>
-            <div className="rounded-xl p-3" style={{ background: 'var(--fh-skill-bg)', border: '1px solid var(--fh-border-2)' }}>
-              <div className="flex items-center gap-1.5 mb-1">
-                <Eye className="h-3.5 w-3.5 text-muted-foreground" />
-                <span className="text-xs text-muted-foreground">Last 30 days</span>
-              </div>
-              <div className="text-xl font-bold">{analytics.views30}</div>
-              <div className="text-xs text-muted-foreground">views</div>
-            </div>
-            <div className="rounded-xl p-3" style={{ background: 'var(--fh-skill-bg)', border: '1px solid var(--fh-border-2)' }}>
-              <div className="flex items-center gap-1.5 mb-1">
-                <Zap className="h-3.5 w-3.5 text-muted-foreground" />
-                <span className="text-xs text-muted-foreground">Responses</span>
-              </div>
-              <div className="text-xl font-bold">
-                {analytics.responsesThisMonth}
-                {analytics.responseLimit !== null && (
-                  <span className="text-sm font-normal text-muted-foreground"> / {analytics.responseLimit}</span>
-                )}
-              </div>
-              <div className="text-xs text-muted-foreground">this month</div>
-            </div>
-          </div>
-
-          {/* Sparkline chart — views per day (last 14 days) */}
-          {analytics.viewsByDay && analytics.viewsByDay.length > 0 && (() => {
-            const data = analytics.viewsByDay
-            const max = Math.max(...data.map(d => d.count), 1)
-            const W = 300; const H = 40; const gap = W / (data.length - 1)
-            const pts = data.map((d, i) => `${i * gap},${H - (d.count / max) * H}`)
-            const area = `M${pts.join(' L')} L${(data.length - 1) * gap},${H} L0,${H} Z`
-            return (
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs text-muted-foreground">Profile views — last 14 days</span>
-                  <span className="text-xs font-semibold" style={{ color: '#7170ff' }}>
-                    {data.reduce((s, d) => s + d.count, 0)} total
-                  </span>
-                </div>
-                <svg viewBox={`0 0 ${W} ${H}`} className="w-full" style={{ height: '40px', overflow: 'visible' }}>
-                  <defs>
-                    <linearGradient id="sparkGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#7170ff" stopOpacity="0.25" />
-                      <stop offset="100%" stopColor="#7170ff" stopOpacity="0" />
-                    </linearGradient>
-                  </defs>
-                  <path d={area} fill="url(#sparkGrad)" />
-                  <polyline
-                    points={pts.join(' ')}
-                    fill="none"
-                    stroke="#7170ff"
-                    strokeWidth="1.5"
-                    strokeLinejoin="round"
-                    strokeLinecap="round"
-                  />
-                  {data.map((d, i) => d.count > 0 && (
-                    <circle
-                      key={i}
-                      cx={i * gap}
-                      cy={H - (d.count / max) * H}
-                      r="2"
-                      fill="#7170ff"
-                    />
-                  ))}
-                </svg>
-                <div className="flex justify-between mt-1">
-                  <span className="text-xs text-muted-foreground opacity-60">{data[0]?.day?.slice(5)}</span>
-                  <span className="text-xs text-muted-foreground opacity-60">{data[data.length - 1]?.day?.slice(5)}</span>
-                </div>
-              </div>
-            )
-          })()}
-
-          {/* Response limit bar */}
-          {analytics.responseLimit !== null && (
-            <div>
-              <div className="flex justify-between text-xs text-muted-foreground mb-1">
-                <span>Response limit</span>
-                <span>{analytics.responsesThisMonth} / {analytics.responseLimit}</span>
-              </div>
-              <div className="h-1.5 rounded-full overflow-hidden" style={{ background: 'var(--fh-border-2)' }}>
-                <div
-                  className="h-full rounded-full transition-all"
-                  style={{
-                    width: `${Math.min(100, (analytics.responsesThisMonth / analytics.responseLimit) * 100)}%`,
-                    background: analytics.responsesThisMonth >= analytics.responseLimit ? '#ef4444' : '#5e6ad2',
-                  }}
-                />
-              </div>
-              {!analytics.isPremium && (
-                <div className="mt-2">
-                  <p className="text-xs text-muted-foreground">
-                    Premium removes the limit and boosts your ranking.
-                  </p>
-                  <Link
-                    href="/premium"
-                    className="mt-2 flex items-center justify-center gap-1.5 w-full py-2 rounded-lg text-xs font-semibold transition-colors"
-                    style={{ background: 'rgba(94,106,210,0.08)', border: '1px solid rgba(94,106,210,0.2)', color: '#7170ff' }}
-                  >
-                    <Crown className="h-3 w-3" /> Upgrade — 2 000 ₸/mo
-                  </Link>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* Verification CTA */}
-          {!analytics.isVerified && !analytics.verificationRequested && (
-            <button
-              onClick={requestVerification}
-              disabled={verifyLoading}
-              className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-medium transition-all disabled:opacity-50"
-              style={{ background: 'rgba(94,106,210,0.08)', border: '1px solid rgba(94,106,210,0.2)', color: '#5e6ad2' }}
-            >
-              <ShieldCheck className="h-4 w-4" />
-              {verifyLoading ? 'Sending…' : 'Apply for verification — 5 000 ₸'}
-            </button>
-          )}
-          {!analytics.isVerified && analytics.verificationRequested && (
-            <div className="flex items-center gap-2 text-xs text-muted-foreground py-2">
-              <ShieldCheck className="h-3.5 w-3.5" />
-              Verification request sent — please wait for review
-            </div>
-          )}
-        </div>
-      )}
 
       {/* ── Role tabs ── */}
       <div className="flex gap-2 mb-6 border-b border-subtle overflow-x-auto">
-        {(['freelancer', 'client', 'portfolio', 'favorites'] as const).map((t) => (
-          <button key={t} onClick={() => setTab(t)}
+        {(['freelancer', 'client', 'portfolio', 'favorites', ...(fp && analytics ? ['analytics'] : [])] as const).map((t) => (
+          <button key={t} onClick={() => setTab(t as typeof tab)}
             className={`pb-3 px-1 text-sm font-medium border-b-2 transition-colors flex items-center gap-1.5 whitespace-nowrap ${
               tab === t ? 'border-primary text-foreground' : 'border-transparent text-muted-foreground hover:text-foreground'
             }`}
           >
             {t === 'favorites' && <Heart className="h-3.5 w-3.5" />}
-            {t === 'freelancer' ? 'As freelancer' : t === 'client' ? 'As client' : t === 'portfolio' ? 'Portfolio' : 'Saved'}
+            {t === 'analytics' && <TrendingUp className="h-3.5 w-3.5" />}
+            {t === 'freelancer' ? 'As freelancer' : t === 'client' ? 'As client' : t === 'portfolio' ? 'Portfolio' : t === 'favorites' ? 'Saved' : 'Analytics'}
             {t === 'favorites' && favorites.length > 0 && (
               <span className="ml-0.5 text-xs bg-primary/10 text-primary px-1.5 py-0.5 rounded-full font-semibold">
                 {favorites.length}
@@ -588,7 +535,7 @@ export default function DashboardPage() {
 
         {/* ── Orders / Responses / Favorites / Portfolio ── */}
         <div className="lg:col-span-2">
-          {tab !== 'favorites' && tab !== 'portfolio' && (
+          {tab !== 'favorites' && tab !== 'portfolio' && tab !== 'analytics' && (
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-semibold">
               {tab === 'freelancer' ? 'My responses' : 'My orders'}
@@ -600,7 +547,9 @@ export default function DashboardPage() {
           </div>
           )}
 
-          {tab === 'portfolio' ? (
+          {tab === 'analytics' ? (
+            <AnalyticsTab analytics={analytics} />
+          ) : tab === 'portfolio' ? (
             user ? <PortfolioManager freelancerId={user.id} /> : null
           ) : tab === 'favorites' ? (
             <FavoritesTab favorites={favorites} />
@@ -644,13 +593,13 @@ export default function DashboardPage() {
                               </p>
                               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                                 <span style={{ fontSize: '12px', color: 'var(--fh-t4)' }}>
-                                  {order.budget_min.toLocaleString()}–{order.budget_max.toLocaleString()} ₽
+                                  {order.budget_min.toLocaleString()}–{order.budget_max.toLocaleString()} ₸
                                 </span>
                                 {resp.proposed_price && (
                                   <>
                                     <span style={{ fontSize: '12px', color: 'var(--fh-t4)' }}>·</span>
                                     <span style={{ fontSize: '12px', color: '#27a644', fontWeight: 510 }}>
-                                      My bid: {resp.proposed_price.toLocaleString()} ₽
+                                      My bid: {resp.proposed_price.toLocaleString()} ₸
                                     </span>
                                   </>
                                 )}
@@ -733,7 +682,7 @@ export default function DashboardPage() {
                         <p className="text-sm font-semibold truncate group-hover:text-primary transition-colors">{order.title}</p>
                         <div className="flex items-center gap-2 mt-1">
                           <span className="text-xs text-muted-foreground">
-                            {order.budget_min.toLocaleString()}–{order.budget_max.toLocaleString()} ₽
+                            {order.budget_min.toLocaleString()}–{order.budget_max.toLocaleString()} ₸
                           </span>
                           <span className="text-xs text-muted-foreground">·</span>
                           <span className="text-xs text-muted-foreground">{order.responses_count} responses</span>
@@ -787,6 +736,14 @@ export default function DashboardPage() {
               Open AI assistant
             </Link>
           </div>
+
+          {/* Referral widget */}
+          {profile?.username && (
+            <ReferralWidget username={profile.username} />
+          )}
+
+          {/* Telegram notifications */}
+          {fp && <TelegramWidget />}
 
           {/* Profile completion */}
           {profileLoading ? (

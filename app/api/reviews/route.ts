@@ -15,8 +15,14 @@ export async function POST(request: Request) {
   if (!freelancerId || !rating || !text?.trim()) {
     return Response.json({ error: 'Missing fields' }, { status: 400 })
   }
-  if (rating < 1 || rating > 5) {
+  if (rating < 1 || rating > 5 || !Number.isInteger(rating)) {
     return Response.json({ error: 'Invalid rating' }, { status: 400 })
+  }
+  if (text.trim().length > 2000) {
+    return Response.json({ error: 'Review text too long (max 2000 chars)' }, { status: 400 })
+  }
+  if (typeof freelancerId !== 'string' || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(freelancerId)) {
+    return Response.json({ error: 'Invalid freelancerId' }, { status: 400 })
   }
 
   const reviewer_name =
@@ -41,9 +47,44 @@ export async function POST(request: Request) {
     return Response.json({ error: error.message }, { status: 400 })
   }
 
-  // Send email to freelancer (best-effort)
+  // Recalculate rating and reviews_count on freelancer_profiles
+  try {
+    const adminForRating = createAdminClient()
+    const adminRatingDb = adminForRating as any
+    const { data: allReviews } = await adminRatingDb
+      .from('freelancer_reviews')
+      .select('rating')
+      .eq('freelancer_id', freelancerId)
+
+    if (allReviews && allReviews.length > 0) {
+      const avg = allReviews.reduce((sum: number, r: { rating: number }) => sum + r.rating, 0) / allReviews.length
+      await adminRatingDb
+        .from('freelancer_profiles')
+        .update({
+          rating: Math.round(avg * 10) / 10,
+          reviews_count: allReviews.length,
+        })
+        .eq('user_id', freelancerId)
+    }
+  } catch (e) {
+    console.error('[reviews] rating recalc error:', e)
+  }
+
+  // Notify freelancer + send email (best-effort)
   try {
     const admin = createAdminClient()
+    const adminDb = admin as any
+
+    // In-app notification
+    await adminDb.from('notifications').insert({
+      user_id: freelancerId,
+      type:    'order_completed',
+      title:   `New review from ${reviewer_name}`,
+      body:    `${'★'.repeat(rating)} "${text.trim().slice(0, 60)}${text.trim().length > 60 ? '…' : ''}"`,
+      link:    `/u/${freelancerId}`,
+    })
+
+    // Email
     const { data: freelancerAuth } = await admin.auth.admin.getUserById(freelancerId)
     const freelancerEmail = freelancerAuth?.user?.email
     if (freelancerEmail) {
@@ -54,7 +95,7 @@ export async function POST(request: Request) {
       )
     }
   } catch (e) {
-    console.error('[reviews] email error:', e)
+    console.error('[reviews] notify error:', e)
   }
 
   return Response.json({ review: data })

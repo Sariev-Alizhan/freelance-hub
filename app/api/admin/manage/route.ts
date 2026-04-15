@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { createClient as createServiceClient } from '@supabase/supabase-js'
+import { applyRateLimit, isValidUUID, logSecurityEvent } from '@/lib/security'
 
 function serviceClient() {
   return createServiceClient(
@@ -12,17 +13,23 @@ function serviceClient() {
 // POST /api/admin/manage
 // Body: { action: 'verify' | 'unverify' | 'grant_premium' | 'revoke_premium', userId: string }
 export async function POST(request: Request) {
+  const rl = applyRateLimit(request, 'admin:manage', { limit: 60, windowMs: 60_000 })
+  if (rl) return rl
+
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
   const adminEmail = process.env.ADMIN_EMAIL
   if (!adminEmail || !user || user.email !== adminEmail) {
-    console.warn(`[admin] unauthorized attempt by ${user?.email ?? 'unauthenticated'}`)
+    logSecurityEvent('unauthorized', { route: '/api/admin/manage', email: user?.email ?? 'anon' }, request)
     return Response.json({ error: 'Forbidden' }, { status: 403 })
   }
 
-  const { action, userId } = await request.json()
+  const body = await request.json()
+  const { action, paymentId } = body
+  const userId = body?.userId
   if (!userId || !action) return Response.json({ error: 'Missing params' }, { status: 400 })
+  if (!isValidUUID(userId)) return Response.json({ error: 'Invalid userId' }, { status: 400 })
 
   const db = serviceClient() as any
 
@@ -58,6 +65,51 @@ export async function POST(request: Request) {
     await db.from('freelancer_profiles')
       .update({ verification_requested: false, verification_requested_at: null })
       .eq('user_id', userId)
+  }
+
+  if (action === 'approve_payment') {
+    if (!paymentId) return Response.json({ error: 'Missing paymentId' }, { status: 400 })
+
+    // Get plan from the payment record
+    const { data: payment } = await db
+      .from('payments')
+      .select('kaspi_order_id')
+      .eq('id', paymentId)
+      .single()
+
+    const plan = String(payment?.kaspi_order_id ?? '').replace('card_', '')
+    const days = plan === 'quarterly' ? 90 : plan === 'annual' ? 365 : 30
+    const until = new Date(Date.now() + days * 86400_000).toISOString()
+
+    await db.from('freelancer_profiles')
+      .update({ is_premium: true, premium_until: until })
+      .eq('user_id', userId)
+
+    await db.from('payments')
+      .update({ status: 'paid' })
+      .eq('id', paymentId)
+
+    await db.from('notifications').insert({
+      user_id: userId,
+      type:    'order_accepted',
+      title:   'Premium активирован!',
+      body:    `Ваш платёж подтверждён. FreelanceHub Premium активен до ${new Date(until).toLocaleDateString('ru')}.`,
+      link:    '/dashboard',
+    }).catch((e: Error) => console.error('[admin/approve_payment] notify:', e.message))
+  }
+
+  if (action === 'reject_payment') {
+    if (!paymentId) return Response.json({ error: 'Missing paymentId' }, { status: 400 })
+    await db.from('payments')
+      .update({ status: 'rejected' })
+      .eq('id', paymentId)
+    await db.from('notifications').insert({
+      user_id: userId,
+      type:    'new_response',
+      title:   'Платёж не подтверждён',
+      body:    'Ваш чек не прошёл проверку. Напишите в поддержку или отправьте новый чек.',
+      link:    '/premium',
+    }).catch((e: Error) => console.error('[admin/reject_payment] notify:', e.message))
   }
 
   return Response.json({ ok: true })

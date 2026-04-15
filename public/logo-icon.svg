@@ -1,0 +1,19 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background — indigo rounded square -->
+  <rect width="512" height="512" rx="110" fill="#4338CA"/>
+
+  <!-- F — vertical stroke -->
+  <rect x="118" y="96" width="72" height="320" rx="8" fill="white"/>
+
+  <!-- F — top horizontal bar -->
+  <rect x="118" y="96" width="276" height="72" rx="8" fill="white"/>
+
+  <!-- F — middle horizontal bar -->
+  <rect x="118" y="232" width="196" height="72" rx="8" fill="white"/>
+
+  <!-- Hub node — outer ring -->
+  <circle cx="350" cy="268" r="42" fill="white"/>
+
+  <!-- Hub node — inner dot -->
+  <circle cx="350" cy="268" r="19" fill="#4338CA"/>
+</svg>

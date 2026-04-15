@@ -1,6 +1,7 @@
 import { generateText } from 'ai'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { rateLimit } from '@/lib/rateLimit'
 
 function sse(data: object) {
   return `data: ${JSON.stringify(data)}\n\n`
@@ -11,11 +12,21 @@ export async function POST(req: Request) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return new Response('Unauthorized', { status: 401 })
 
+  const rl = rateLimit(`agent:landing:${user.id}`, 5, 60_000)
+  if (!rl.success) return new Response('Too many requests', { status: 429, headers: { 'Retry-After': String(rl.retryAfter) } })
+
   const input = await req.json()
   const { product, description, audience, cta } = input
 
   if (!product || !description || !audience) {
     return new Response('Missing required fields', { status: 400 })
+  }
+  if (
+    (typeof product === 'string' && product.length > 200) ||
+    (typeof description === 'string' && description.length > 2000) ||
+    (typeof audience === 'string' && audience.length > 500)
+  ) {
+    return new Response('Input too long', { status: 400 })
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

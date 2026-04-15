@@ -12,11 +12,11 @@ interface Props {
 }
 
 export default function PriceDisplay({ amountRub, prefix = 'from ', suffix, className, size = 'md' }: Props) {
-  const { currency } = useCurrency()
+  const { currency, rates } = useCurrency()
   const sizeClass = size === 'sm' ? 'text-sm' : size === 'lg' ? 'text-xl font-bold' : 'text-base font-semibold'
   return (
     <span className={cn(sizeClass, className)}>
-      {prefix}{formatPrice(amountRub, currency)}{suffix}
+      {prefix}{formatPrice(amountRub, currency, rates)}{suffix}
     </span>
   )
 }

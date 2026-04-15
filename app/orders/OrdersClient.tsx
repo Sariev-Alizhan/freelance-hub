@@ -12,9 +12,10 @@ const PAGE_SIZE = 12
 
 interface Props {
   realOrders?: Order[]
+  currentUserId?: string
 }
 
-export default function OrdersClient({ realOrders = [] }: Props) {
+export default function OrdersClient({ realOrders = [], currentUserId }: Props) {
   const router    = useRouter()
   const pathname  = usePathname()
   const sp        = useSearchParams()
@@ -82,6 +83,8 @@ export default function OrdersClient({ realOrders = [] }: Props) {
     if (sortBy === 'budget_asc')  list = [...list].sort((a, b) => a.budget.min - b.budget.min)
     if (sortBy === 'budget_desc') list = [...list].sort((a, b) => b.budget.max - a.budget.max)
     if (sortBy === 'responses')   list = [...list].sort((a, b) => a.responsesCount - b.responsesCount)
+    // Promoted orders always float to the top
+    list = [...list].sort((a, b) => (b.isPromoted ? 1 : 0) - (a.isPromoted ? 1 : 0))
     return list
   }, [search, category, urgentOnly, budgetMin, budgetMax, sortBy, allOrders])
 
@@ -186,7 +189,7 @@ export default function OrdersClient({ realOrders = [] }: Props) {
           style={{ background: 'var(--fh-surface-2)', border: '1px solid var(--fh-border-2)' }}>
           {/* Budget range */}
           <div className="flex flex-col gap-1.5">
-            <label style={{ fontSize: '12px', color: 'var(--fh-t4)', fontWeight: 510 }}>Budget, ₽</label>
+            <label style={{ fontSize: '12px', color: 'var(--fh-t4)', fontWeight: 510 }}>Budget, ₸</label>
             <div className="flex items-center gap-2">
               <input
                 type="number" placeholder="from" value={budgetMin}
@@ -309,7 +312,7 @@ export default function OrdersClient({ realOrders = [] }: Props) {
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {paginated.map((order) => (
-              <OrderCard key={order.id} order={order} />
+              <OrderCard key={order.id} order={order} currentUserId={currentUserId} />
             ))}
           </div>
 
