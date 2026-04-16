@@ -8,6 +8,17 @@ import {
   CreditCard, Upload, X, CheckCircle2, Copy, Clock,
 } from 'lucide-react'
 import { useUser } from '@/lib/hooks/useUser'
+import { useCurrency } from '@/lib/context/CurrencyContext'
+import { convertFromUSD, CURRENCY_SYMBOLS } from '@/lib/utils/currency'
+import type { Currency } from '@/lib/types'
+
+function fmt(usd: number, currency: Currency, rates: Record<string, number>): string {
+  const sym = CURRENCY_SYMBOLS[currency]
+  const n   = Math.round(convertFromUSD(usd, currency, rates))
+  const isPrefix = ['USD', 'EUR', 'GBP', 'USDT'].includes(currency)
+  const num = isPrefix ? n.toLocaleString('en-US') : n.toLocaleString('ru-RU')
+  return isPrefix ? `${sym}${num}` : `${num} ${sym}`
+}
 
 const FREE_FEATURES = [
   'Post orders — free forever',
@@ -28,13 +39,13 @@ const PREMIUM_FEATURES = [
   { icon: Sparkles,     label: 'All future AI features included',     highlight: false },
 ]
 
+// Prices in USD — displayed in the user's selected currency
 const PLANS = [
   {
     id: 'monthly',
     label: 'Monthly',
-    price: 2000,
-    total: 2000,
-    currency: '₸',
+    priceUsd: 5,
+    totalUsd: 5,
     period: '/month',
     savings: null,
     popular: false,
@@ -42,9 +53,8 @@ const PLANS = [
   {
     id: 'quarterly',
     label: '3 months',
-    price: 1600,
-    total: 4800,
-    currency: '₸',
+    priceUsd: 4,
+    totalUsd: 12,
     period: '/month',
     savings: 'Save 20%',
     popular: true,
@@ -52,9 +62,8 @@ const PLANS = [
   {
     id: 'annual',
     label: 'Annual',
-    price: 1200,
-    total: 14400,
-    currency: '₸',
+    priceUsd: 3,
+    totalUsd: 36,
     period: '/month',
     savings: 'Save 40%',
     popular: false,
@@ -90,6 +99,7 @@ const CARD_HOLDER = process.env.NEXT_PUBLIC_PAYMENT_CARD_HOLDER ?? 'Ализhan 
 
 export default function PremiumClient() {
   const { user } = useUser()
+  const { currency, rates } = useCurrency()
   const [selectedPlan, setSelectedPlan] = useState('quarterly')
   const [openFaq,      setOpenFaq]      = useState<number | null>(null)
 
@@ -231,7 +241,7 @@ export default function PremiumClient() {
               )}
               <span style={{ fontSize: '13px', color: 'var(--fh-t3)', marginBottom: '4px' }}>{p.label}</span>
               <span style={{ fontSize: '22px', fontWeight: 590, color: 'var(--fh-t1)', letterSpacing: '-0.03em' }}>
-                {p.currency}{p.price}
+                {fmt(p.priceUsd, currency, rates)}
               </span>
               <span style={{ fontSize: '12px', color: 'var(--fh-t4)' }}>{p.period}</span>
               {p.savings && (
@@ -255,7 +265,7 @@ export default function PremiumClient() {
               Free
             </p>
             <p style={{ fontSize: '28px', fontWeight: 590, color: 'var(--fh-t1)', marginBottom: '20px', letterSpacing: '-0.03em' }}>
-              ₸0
+              {fmt(0, currency, rates)}
               <span style={{ fontSize: '13px', fontWeight: 400, color: 'var(--fh-t4)', marginLeft: '4px' }}>/month</span>
             </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
@@ -292,12 +302,12 @@ export default function PremiumClient() {
               <Crown className="h-3.5 w-3.5" style={{ color: '#7170ff' }} />
             </div>
             <p style={{ fontSize: '28px', fontWeight: 590, color: 'var(--fh-t1)', marginBottom: '4px', letterSpacing: '-0.03em' }}>
-              ₸{plan.price}
+              {fmt(plan.priceUsd, currency, rates)}
               <span style={{ fontSize: '13px', fontWeight: 400, color: 'var(--fh-t4)', marginLeft: '4px' }}>/month</span>
             </p>
             {plan.id !== 'monthly' && (
               <p style={{ fontSize: '12px', color: 'var(--fh-t4)', marginBottom: '16px' }}>
-                ₸{plan.total} total {plan.id === 'quarterly' ? 'every 3 months' : 'annually'}
+                {fmt(plan.totalUsd, currency, rates)} total {plan.id === 'quarterly' ? 'every 3 months' : 'annually'}
               </p>
             )}
 
@@ -545,7 +555,7 @@ export default function PremiumClient() {
                     </div>
                     <div style={{ textAlign: 'right' }}>
                       <div style={{ fontSize: '22px', fontWeight: 700, color: '#7170ff', letterSpacing: '-0.04em' }}>
-                        ₸{plan.total.toLocaleString('ru')}
+                        {fmt(plan.totalUsd, currency, rates)}
                       </div>
                       <span style={{ fontSize: '11px', color: 'var(--fh-t4)' }}>to transfer</span>
                     </div>
