@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useId } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useUser } from './useUser'
 
@@ -7,6 +7,8 @@ export function useUnreadMessages(): number {
   const { user } = useUser()
   const [count, setCount] = useState(0)
   const userId = user?.id ?? null
+  // Per-instance id so multiple mounts don't collide on the same channel topic.
+  const instanceId = useId()
 
   // Keep userId in a ref so the load function doesn't recreate on every render
   const userIdRef = useRef(userId)
@@ -46,7 +48,7 @@ export function useUnreadMessages(): number {
     load()
 
     const channel = supabase
-      .channel(`unread-count:${userId}`)
+      .channel(`unread-count:${userId}:${instanceId}`)
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, load)
       .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'messages' }, load)
       .subscribe()
@@ -55,7 +57,7 @@ export function useUnreadMessages(): number {
       cancelled = true
       supabase.removeChannel(channel)
     }
-  }, [userId]) // только user.id, не весь объект user
+  }, [userId, instanceId])
 
   return count
 }

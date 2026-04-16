@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useId } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useUser } from './useUser'
 
@@ -7,6 +7,10 @@ export function useUnreadNotifications(): number {
   const { user } = useUser()
   const [count, setCount] = useState(0)
   const userId = user?.id ?? null
+  // Per-instance id so multiple mounts (e.g. Header + BottomNav) don't collide
+  // on the same channel name — Supabase rejects `.on()` after `.subscribe()`
+  // when a channel topic is reused.
+  const instanceId = useId()
 
   useEffect(() => {
     if (!userId) { setCount(0); return }
@@ -28,7 +32,7 @@ export function useUnreadNotifications(): number {
     load()
 
     const channel = supabase
-      .channel(`unread-notifs:${userId}`)
+      .channel(`unread-notifs:${userId}:${instanceId}`)
       .on('postgres_changes', {
         event: 'INSERT', schema: 'public', table: 'notifications',
         filter: `user_id=eq.${userId}`,
@@ -43,7 +47,7 @@ export function useUnreadNotifications(): number {
       cancelled = true
       supabase.removeChannel(channel)
     }
-  }, [userId])
+  }, [userId, instanceId])
 
   return count
 }
