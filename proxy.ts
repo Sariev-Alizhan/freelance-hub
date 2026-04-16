@@ -9,7 +9,10 @@ function buildCsp(nonce: string): string {
   const isDev = process.env.NODE_ENV === 'development'
   return [
     `default-src 'self'`,
-    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'${isDev ? " 'unsafe-eval'" : ''} https://va.vercel-scripts.com`,
+    // 'unsafe-inline' is required for Next.js RSC payload inline scripts.
+    // Nonce is kept as an additional signal but 'strict-dynamic' is intentionally
+    // omitted — it blocks all non-nonce inline scripts including Next.js hydration.
+    `script-src 'self' 'nonce-${nonce}' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ''} https://va.vercel-scripts.com`,
     `style-src 'self' 'unsafe-inline'`,
     `font-src 'self' data:`,
     `img-src 'self' data: blob: https://api.dicebear.com https://picsum.photos https://images.unsplash.com ${SUPABASE_URL} https://lh3.googleusercontent.com https://avatars.githubusercontent.com https://pbs.twimg.com https://cdn.discordapp.com`,
@@ -112,9 +115,14 @@ export async function proxy(request: NextRequest) {
   }
 
   // ── 6. Auth session refresh (required for Server Components) ─────────────
-  // Inject x-nonce into request headers so Server Components can read it
+  // Inject nonce + CSP into request headers so Next.js can extract the nonce
+  // and auto-apply it to all framework scripts during SSR (per Next.js docs).
   const requestHeaders = new Headers(request.headers)
-  if (nonce) requestHeaders.set('x-nonce', nonce)
+  if (nonce) {
+    const cspValue = buildCsp(nonce)
+    requestHeaders.set('x-nonce', nonce)
+    requestHeaders.set('Content-Security-Policy', cspValue)
+  }
   const response = NextResponse.next({ request: { headers: requestHeaders } })
 
   const supabase = createServerClient(
