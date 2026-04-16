@@ -1,4 +1,0 @@
-[     312ms] [INFO] Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner. @ https://www.freelance-hub.kz/freelancers:0
-[    1327ms] [INFO] Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner. @ https://www.freelance-hub.kz/freelancers:0
-[    1460ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://www.freelance-hub.kz/freelancers/2714e408-756f-412e-a212-79e8e78ce76c?_rsc=5755q:0
-[    1558ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://www.freelance-hub.kz/freelancers/17d11166-f8b7-41e7-b0de-09b84874c1e0?_rsc=5755q:0

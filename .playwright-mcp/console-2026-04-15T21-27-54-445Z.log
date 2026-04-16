@@ -1,1 +1,0 @@
-[     324ms] [ERROR] Failed to load resource: the server responded with a status of 400 () @ https://kkvmxtwpgvubwtcalzjm.supabase.co/auth/v1/authorize?provider=azure&redirect_to=http://localhost:3000/auth/callback:0

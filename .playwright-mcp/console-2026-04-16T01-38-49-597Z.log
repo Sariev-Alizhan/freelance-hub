@@ -1,1 +1,0 @@
-[    1204ms] [ERROR] Failed to find a valid digest in the 'integrity' attribute for resource 'https://www.freelance-hub.kz/_next/static/chunks/turbopack-0_0osy77mz38d.js' with computed SHA-256 integrity 'y8zXpjOIRGaa06w8QnCpnWber/N7wzTkvYksI+tO6wY='. The resource has been blocked. @ https://www.freelance-hub.kz/auth/login:1
