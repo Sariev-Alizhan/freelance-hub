@@ -70,9 +70,10 @@ export const viewport: Viewport = {
   viewportFit: 'cover',
 }
 
-// Anti-FOUC: apply saved theme BEFORE first paint.
-// Default = dark. Only remove 'dark' if user explicitly chose 'light'.
-const themeScript = `(function(){try{var t=localStorage.getItem('fh-theme');if(t==='light'){document.documentElement.classList.remove('dark')}else{document.documentElement.classList.add('dark')}}catch(e){}})();`
+// Anti-FOUC: apply theme BEFORE first paint.
+// Reads fh-theme-mode: 'auto' | 'dark' | 'light' (falls back to old fh-theme key).
+// Auto default: 6am–8pm = light, otherwise dark.
+const themeScript = `(function(){try{var m=localStorage.getItem('fh-theme-mode')||localStorage.getItem('fh-theme');var r;if(m==='dark'){r='dark'}else if(m==='light'){r='light'}else{var h=new Date().getHours();r=(h>=6&&h<20)?'light':'dark'}if(r==='light'){document.documentElement.classList.remove('dark')}else{document.documentElement.classList.add('dark')}}catch(e){}})();`
 // Register Service Worker for PWA
 const swScript = `if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){})})}`
 

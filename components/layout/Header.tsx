@@ -6,7 +6,6 @@ import { Menu, X, LogOut, User, MessageSquare, BarChart3, ChevronDown, Languages
 import RoleSwitcher from '@/components/layout/RoleSwitcher'
 import Logo from '@/components/ui/Logo'
 import NotificationBell from '@/components/layout/NotificationBell'
-import ThemeToggle from '@/components/ui/ThemeToggle'
 import { useCurrency } from '@/lib/context/CurrencyContext'
 import { useLang, LANG_LABELS, Lang } from '@/lib/context/LanguageContext'
 import { useUser } from '@/lib/hooks/useUser'
@@ -191,9 +190,6 @@ export default function Header() {
 
             {/* Role switcher — only shown when logged in */}
             {user && <RoleSwitcher />}
-
-            {/* Theme toggle */}
-            <ThemeToggle />
 
             {/* Messages + Bell (logged in) */}
             {user && (
@@ -389,9 +385,8 @@ export default function Header() {
               )}
             </div>
 
-            {/* Mobile: currency + theme + lang */}
+            {/* Mobile: currency + lang */}
             <div className="pt-3 mt-1 flex flex-wrap items-center gap-2" style={{ borderTop: '1px solid var(--fh-sep)' }}>
-              <ThemeToggle />
               {/* Language */}
               <div className="flex items-center gap-0.5 p-0.5 rounded-md" style={{ background: 'var(--fh-surface-2)', border: '1px solid var(--fh-border)' }}>
                 {LANGS.map(l => (

@@ -1,55 +1,84 @@
 'use client'
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useContext, useEffect, useRef, useState } from 'react'
 
-type Theme = 'dark' | 'light'
+export type ThemeMode = 'auto' | 'dark' | 'light'
+export type Theme     = 'dark' | 'light'
 
 interface ThemeContextValue {
-  theme: Theme
-  setTheme: (t: Theme) => void
+  theme:        Theme      // resolved: what's actually applied
+  themeMode:    ThemeMode  // user preference: auto | dark | light
+  setThemeMode: (m: ThemeMode) => void
+  // legacy compat
+  setTheme:     (t: Theme) => void
 }
 
 const ThemeContext = createContext<ThemeContextValue>({
-  theme: 'dark',
-  setTheme: () => {},
+  theme:        'dark',
+  themeMode:    'auto',
+  setThemeMode: () => {},
+  setTheme:     () => {},
 })
 
+function getAutoTheme(): Theme {
+  const h = new Date().getHours()
+  return h >= 6 && h < 20 ? 'light' : 'dark'
+}
+
+function applyToDOM(resolved: Theme) {
+  if (resolved === 'dark') {
+    document.documentElement.classList.add('dark')
+  } else {
+    document.documentElement.classList.remove('dark')
+  }
+}
+
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  // Initialize from DOM class set by the anti-FOUC script (default: dark)
-  const [theme, setThemeState] = useState<Theme>('dark')
+  const [themeMode, setThemeModeState] = useState<ThemeMode>('auto')
+  const [theme,     setThemeState]     = useState<Theme>('dark')
+  const modeRef = useRef<ThemeMode>('auto')
 
+  // Initialize from localStorage + sync with DOM (anti-FOUC already applied class)
   useEffect(() => {
-    // Sync with what the inline script already applied
-    const isDark = document.documentElement.classList.contains('dark')
-    setThemeState(isDark ? 'dark' : 'light')
-
-    // If no explicit preference saved, follow OS theme changes
-    const mq = window.matchMedia('(prefers-color-scheme: dark)')
-    const onChange = (e: MediaQueryListEvent) => {
-      try {
-        if (!localStorage.getItem('fh-theme')) {
-          setTheme(e.matches ? 'dark' : 'light')
-        }
-      } catch {}
+    let saved = localStorage.getItem('fh-theme-mode') as ThemeMode | null
+    // Migrate old key
+    if (!saved) {
+      const old = localStorage.getItem('fh-theme')
+      if (old === 'light' || old === 'dark') saved = old
     }
-    mq.addEventListener('change', onChange)
-    return () => mq.removeEventListener('change', onChange)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    const mode: ThemeMode = (saved === 'auto' || saved === 'dark' || saved === 'light') ? saved : 'auto'
+    modeRef.current = mode
+    setThemeModeState(mode)
+    const resolved = mode === 'auto' ? getAutoTheme() : mode
+    setThemeState(resolved)
+    applyToDOM(resolved)
+
+    // Re-check every minute for auto mode
+    const iv = setInterval(() => {
+      if (modeRef.current === 'auto') {
+        const r = getAutoTheme()
+        setThemeState(r)
+        applyToDOM(r)
+      }
+    }, 60_000)
+    return () => clearInterval(iv)
   }, [])
 
-  const setTheme = (t: Theme) => {
-    try {
-      localStorage.setItem('fh-theme', t)
-    } catch {}
-    setThemeState(t)
-    if (t === 'dark') {
-      document.documentElement.classList.add('dark')
-    } else {
-      document.documentElement.classList.remove('dark')
-    }
+  function setThemeMode(mode: ThemeMode) {
+    modeRef.current = mode
+    setThemeModeState(mode)
+    try { localStorage.setItem('fh-theme-mode', mode) } catch {}
+    const resolved = mode === 'auto' ? getAutoTheme() : mode
+    setThemeState(resolved)
+    applyToDOM(resolved)
+  }
+
+  // Legacy: components still calling setTheme(dark|light) directly
+  function setTheme(t: Theme) {
+    setThemeMode(t)
   }
 
   return (
-    <ThemeContext.Provider value={{ theme, setTheme }}>
+    <ThemeContext.Provider value={{ theme, themeMode, setThemeMode, setTheme }}>
       {children}
     </ThemeContext.Provider>
   )

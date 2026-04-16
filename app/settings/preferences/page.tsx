@@ -1,8 +1,9 @@
 'use client'
-import { Check } from 'lucide-react'
+import { Check, SunMoon, Sun, Moon } from 'lucide-react'
 import { useLang } from '@/lib/context/LanguageContext'
 import { useCurrency } from '@/lib/context/CurrencyContext'
 import { useTheme } from '@/lib/context/ThemeContext'
+import type { ThemeMode } from '@/lib/context/ThemeContext'
 import type { Currency } from '@/lib/types'
 
 const LANGS = [
@@ -27,7 +28,7 @@ const CURRENCIES: { code: Currency; label: string; name: string }[] = [
 export default function PreferencesPage() {
   const { lang, setLang } = useLang()
   const { currency, setCurrency } = useCurrency()
-  const { theme, setTheme } = useTheme()
+  const { themeMode, theme, setThemeMode } = useTheme()
 
   return (
     <div>
@@ -117,84 +118,70 @@ export default function PreferencesPage() {
       </Card>
 
       {/* Theme */}
-      <Card label="Theme" description="Choose between dark mode and light mode.">
-        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+      <Card label="Theme" description="Controls the color scheme. Auto adjusts based on your local time (6am–8pm light, 8pm–6am dark).">
+        <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
           {([
             {
-              id: 'dark'  as const,
-              label: 'Dark',
-              bg: '#0d0d12',
-              headerBg: 'rgba(255,255,255,0.04)',
-              headerBorder: 'rgba(255,255,255,0.07)',
-              line1: 'rgba(255,255,255,0.15)',
-              line2: 'rgba(255,255,255,0.07)',
+              id: 'auto'  as ThemeMode,
+              Icon: SunMoon,
+              label: 'Auto',
+              sub: 'Day / Night by time',
+              previewLeft: '#0d0d12',
+              previewRight: '#f5f5f7',
             },
             {
-              id: 'light' as const,
+              id: 'light' as ThemeMode,
+              Icon: Sun,
               label: 'Light',
-              bg: '#f5f5f7',
-              headerBg: 'rgba(0,0,0,0.03)',
-              headerBorder: 'rgba(0,0,0,0.07)',
-              line1: 'rgba(0,0,0,0.12)',
-              line2: 'rgba(0,0,0,0.06)',
+              sub: 'Always light',
+              previewLeft: '#f5f5f7',
+              previewRight: '#f5f5f7',
+            },
+            {
+              id: 'dark'  as ThemeMode,
+              Icon: Moon,
+              label: 'Dark',
+              sub: 'Always dark',
+              previewLeft: '#0d0d12',
+              previewRight: '#0d0d12',
             },
           ]).map(t => {
-            const active = theme === t.id
+            const active = themeMode === t.id
             return (
               <button
                 key={t.id}
-                onClick={() => setTheme(t.id)}
+                onClick={() => setThemeMode(t.id)}
                 style={{
                   display: 'flex', flexDirection: 'column', gap: '10px',
                   padding: '12px', borderRadius: '12px', cursor: 'pointer',
                   background: active ? 'rgba(94,106,210,0.08)' : 'var(--fh-surface-2)',
                   border: `2px solid ${active ? 'rgba(94,106,210,0.45)' : 'transparent'}`,
-                  outline: 'none', transition: 'all 0.15s', minWidth: '130px',
+                  outline: 'none', transition: 'all 0.15s', minWidth: '120px', flex: 1,
                 }}
               >
-                {/* Mini UI preview */}
+                {/* Preview swatch */}
                 <div style={{
-                  width: '100%', height: '72px', borderRadius: '8px',
-                  background: t.bg, overflow: 'hidden',
-                  border: '1px solid rgba(128,128,128,0.15)',
+                  width: '100%', height: '60px', borderRadius: '8px',
+                  overflow: 'hidden', border: '1px solid rgba(128,128,128,0.15)',
+                  display: 'flex',
                 }}>
-                  <div style={{
-                    height: '14px',
-                    background: t.headerBg,
-                    borderBottom: `1px solid ${t.headerBorder}`,
-                    display: 'flex', alignItems: 'center', gap: '3px', padding: '0 7px',
-                  }}>
-                    {[1,2,3].map(i => (
-                      <div key={i} style={{
-                        width: i === 1 ? '8px' : '18px', height: '4px',
-                        borderRadius: '2px', background: t.headerBorder,
-                      }} />
-                    ))}
-                  </div>
-                  <div style={{ padding: '8px 7px', display: 'flex', flexDirection: 'column', gap: '5px' }}>
-                    <div style={{ height: '5px', width: '60%', borderRadius: '3px', background: t.line1 }} />
-                    <div style={{ height: '4px', width: '80%', borderRadius: '3px', background: t.line2 }} />
-                    <div style={{ height: '4px', width: '45%', borderRadius: '3px', background: t.line2 }} />
-                    <div style={{
-                      marginTop: '2px', height: '14px', width: '60px', borderRadius: '4px',
-                      background: 'rgba(94,106,210,0.5)',
-                    }} />
-                  </div>
+                  <div style={{ flex: 1, background: t.previewLeft }} />
+                  {t.id === 'auto' && (
+                    <div style={{ flex: 1, background: t.previewRight, borderLeft: '1px solid rgba(128,128,128,0.2)' }} />
+                  )}
                 </div>
 
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '6px' }}>
-                  <span style={{
-                    fontSize: '13px', fontWeight: active ? 590 : 400,
-                    color: active ? 'var(--fh-t1)' : 'var(--fh-t3)',
-                  }}>
-                    {t.label}
-                  </span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
+                  <t.Icon style={{ width: 13, height: 13, color: active ? '#7170ff' : 'var(--fh-t4)', flexShrink: 0 }} />
+                  <div style={{ flex: 1, textAlign: 'left' }}>
+                    <p style={{ fontSize: '13px', fontWeight: active ? 590 : 400, color: active ? 'var(--fh-t1)' : 'var(--fh-t3)' }}>
+                      {t.label}
+                    </p>
+                    <p style={{ fontSize: '11px', color: 'var(--fh-t4)' }}>{t.sub}</p>
+                  </div>
                   {active && (
-                    <div style={{
-                      width: 16, height: 16, borderRadius: '50%', background: '#5e6ad2', flexShrink: 0,
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    }}>
-                      <Check style={{ width: 9, height: 9, color: '#fff' }} />
+                    <div style={{ width: 15, height: 15, borderRadius: '50%', background: '#5e6ad2', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <Check style={{ width: 8, height: 8, color: '#fff' }} />
                     </div>
                   )}
                 </div>
@@ -202,6 +189,12 @@ export default function PreferencesPage() {
             )
           })}
         </div>
+        {themeMode === 'auto' && (
+          <p style={{ fontSize: '11px', color: 'var(--fh-t4)', marginTop: '12px', display: 'flex', alignItems: 'center', gap: '5px' }}>
+            <SunMoon style={{ width: 11, height: 11 }} />
+            Currently showing <strong style={{ color: 'var(--fh-t3)' }}>{theme}</strong> mode based on your local time.
+          </p>
+        )}
       </Card>
     </div>
   )
