@@ -147,7 +147,7 @@ export default function NotificationBell({ sidebarMode }: { sidebarMode?: boolea
       >
         {sidebarMode ? (
           <>
-            <span style={{ position: 'relative', flexShrink: 0 }}>
+            <span style={{ position: 'relative', flexShrink: 0, width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <Bell style={{ width: 18, height: 18 }} strokeWidth={1.8} />
               {unreadCount > 0 && (
                 <span style={{
