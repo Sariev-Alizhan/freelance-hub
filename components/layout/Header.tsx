@@ -2,12 +2,12 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useState, useEffect, useCallback } from 'react'
-import { MessageSquare, Sun, Moon, Search } from 'lucide-react'
+import { Bell, Sun, Moon, Search } from 'lucide-react'
 import Logo from '@/components/ui/Logo'
 import { useUser } from '@/lib/hooks/useUser'
 import { useProfile } from '@/lib/context/ProfileContext'
 import { usePathname } from 'next/navigation'
-import { useUnreadMessages } from '@/lib/hooks/useUnreadMessages'
+import { useUnreadNotifications } from '@/lib/hooks/useUnreadNotifications'
 import { useTheme } from '@/lib/context/ThemeContext'
 
 export default function Header() {
@@ -25,7 +25,7 @@ export default function Header() {
   }, [isLanding, onScroll])
 
   const isApp = !!user && !isLanding
-  const unreadMsgs = useUnreadMessages()
+  const unreadNotifs = useUnreadNotifications()
   const { theme, setTheme } = useTheme()
 
   const avatarUrl = profile?.avatar_url || user?.user_metadata?.avatar_url
@@ -114,10 +114,10 @@ export default function Header() {
             </div>
           </Link>
 
-          {/* Right: messages icon with badge */}
+          {/* Right: notifications bell with badge */}
           <Link
-            href="/messages"
-            aria-label="Messages"
+            href="/notifications"
+            aria-label="Notifications"
             style={{
               position: 'relative', flexShrink: 0,
               width: 40, height: 40,
@@ -126,8 +126,8 @@ export default function Header() {
               borderRadius: 12,
             }}
           >
-            <MessageSquare style={{ width: 22, height: 22 }} />
-            {unreadMsgs > 0 && (
+            <Bell style={{ width: 22, height: 22 }} />
+            {unreadNotifs > 0 && (
               <span style={{
                 position: 'absolute', top: 6, right: 6,
                 minWidth: 14, height: 14, borderRadius: 7,
@@ -137,7 +137,7 @@ export default function Header() {
                 padding: '0 3px',
                 boxShadow: '0 0 0 2px var(--fh-header-bg)',
               }}>
-                {unreadMsgs > 9 ? '9+' : unreadMsgs}
+                {unreadNotifs > 9 ? '9+' : unreadNotifs}
               </span>
             )}
           </Link>

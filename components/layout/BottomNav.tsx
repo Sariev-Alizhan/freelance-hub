@@ -7,12 +7,13 @@ import {
   Home, Briefcase, Plus, User,
   X, Settings, BarChart3, Target, Calculator,
   Search, Zap, Bot, FileText, LogOut,
-  LayoutDashboard, Brain, Star, Users, Bell,
+  LayoutDashboard, Brain, Star, Users, MessageSquare,
 } from 'lucide-react'
 import { useState, useCallback } from 'react'
 import { useUser } from '@/lib/hooks/useUser'
 import { useProfile } from '@/lib/context/ProfileContext'
 import { useUnreadNotifications } from '@/lib/hooks/useUnreadNotifications'
+import { useUnreadMessages } from '@/lib/hooks/useUnreadMessages'
 import { useLang, LANG_LABELS, Lang } from '@/lib/context/LanguageContext'
 import { useCurrency } from '@/lib/context/CurrencyContext'
 import { Currency } from '@/lib/types'
@@ -40,11 +41,11 @@ const QUICK_LINKS = [
 
 // ── Tab definition ────────────────────────────────────────────────────────────
 const TABS = [
-  { id: 'feed',          href: '/feed',          icon: Home,     matchPrefix: '/feed'          },
-  { id: 'orders',        href: '/orders',         icon: Briefcase,matchPrefix: '/orders'        },
-  { id: 'create',        href: '/orders/new',     icon: Plus,     isCenter: true                },
-  { id: 'notifications', href: '/notifications',  icon: Bell,     matchPrefix: '/notifications' },
-  { id: 'profile',       href: null,              icon: User,     isProfile: true               },
+  { id: 'feed',          href: '/feed',          icon: Home,         matchPrefix: '/feed'          },
+  { id: 'orders',        href: '/orders',        icon: Briefcase,    matchPrefix: '/orders'        },
+  { id: 'create',        href: '/orders/new',    icon: Plus,         isCenter: true                },
+  { id: 'messages',      href: '/messages',      icon: MessageSquare,matchPrefix: '/messages'      },
+  { id: 'profile',       href: null,             icon: User,         isProfile: true               },
 ]
 
 export default function BottomNav() {
@@ -56,6 +57,7 @@ export default function BottomNav() {
   const { currency, setCurrency } = useCurrency()
   const [sheetOpen, setSheetOpen] = useState(false)
   const unreadNotifs = useUnreadNotifications()
+  const unreadMsgs = useUnreadMessages()
 
   const hidden = pathname.startsWith('/auth') || pathname.startsWith('/messages')
   if (hidden) return null
@@ -164,8 +166,8 @@ export default function BottomNav() {
             }
 
             // ── Normal tab ─────────────────────────────────────────
-            const href = (tab.id === 'notifications' && !user) ? '/auth/login' : tab.href!
-            const badge = tab.id === 'notifications' ? unreadNotifs : 0
+            const href = (tab.id === 'messages' && !user) ? '/auth/login' : tab.href!
+            const badge = tab.id === 'messages' ? unreadMsgs : 0
 
             return (
               <Link
@@ -293,11 +295,9 @@ export default function BottomNav() {
 
                 {/* ── Role switcher ─────────────────────────────── */}
                 {user && (
-                  <div style={{ padding: '0 16px 12px' }}>
-                    <SheetSection label="Mode">
-                      <RoleSwitcher />
-                    </SheetSection>
-                  </div>
+                  <SheetSection label="Mode">
+                    <RoleSwitcher variant="mobile" />
+                  </SheetSection>
                 )}
 
                 {/* ── Quick links — 3-column icon grid ─────────── */}

@@ -2,11 +2,13 @@
 
 import { useState, useEffect } from 'react'
 import { Briefcase, User2, Loader2 } from 'lucide-react'
+import { motion } from 'framer-motion'
 import { useProfile } from '@/lib/context/ProfileContext'
 import { useLang } from '@/lib/context/LanguageContext'
 import { useRouter } from 'next/navigation'
 
 type Mode = 'client' | 'freelancer'
+type Variant = 'default' | 'mobile'
 
 function getMode(role: string | undefined, cookieMode: string | null): Mode {
   if (cookieMode === 'client' || cookieMode === 'freelancer') return cookieMode
@@ -19,20 +21,18 @@ function readCookie(name: string): string | null {
   return match ? decodeURIComponent(match[1]) : null
 }
 
-export default function RoleSwitcher() {
+export default function RoleSwitcher({ variant = 'default' }: { variant?: Variant } = {}) {
   const { profile, refreshProfile } = useProfile()
   const { t } = useLang()
   const router   = useRouter()
   const [mode, setMode]       = useState<Mode>(() => getMode(profile?.role, null))
   const [loading, setLoading] = useState(false)
 
-  // Read cookie on mount for instant correct state
   useEffect(() => {
     const cookie = readCookie('fh-mode')
     setMode(getMode(profile?.role, cookie))
   }, [profile?.role])
 
-  // Only show if logged in
   if (!profile) return null
 
   async function switchTo(next: Mode) {
@@ -54,6 +54,110 @@ export default function RoleSwitcher() {
 
   const isFreelancer = mode === 'freelancer'
 
+  // ── Mobile sheet variant: full-width segmented control with animated thumb ──
+  if (variant === 'mobile') {
+    return (
+      <div
+        role="tablist"
+        aria-label={t.roles?.client ? 'Mode' : 'Mode'}
+        style={{
+          position: 'relative',
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          padding: 4,
+          borderRadius: 12,
+          background: 'var(--fh-surface-2)',
+          border: '0.5px solid var(--fh-border)',
+          margin: '4px 0',
+        }}
+      >
+        {/* Animated thumb */}
+        <motion.div
+          aria-hidden
+          initial={false}
+          animate={{ x: isFreelancer ? '100%' : '0%' }}
+          transition={{ type: 'spring', stiffness: 500, damping: 40 }}
+          style={{
+            position: 'absolute',
+            top: 4,
+            bottom: 4,
+            left: 4,
+            width: 'calc(50% - 4px)',
+            borderRadius: 9,
+            background: 'var(--fh-primary)',
+            boxShadow: '0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.08)',
+            zIndex: 0,
+          }}
+        />
+
+        {/* Client segment */}
+        <button
+          role="tab"
+          aria-selected={!isFreelancer}
+          onClick={() => switchTo('client')}
+          disabled={loading}
+          style={{
+            position: 'relative',
+            zIndex: 1,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 8,
+            height: 40,
+            border: 'none',
+            background: 'transparent',
+            cursor: loading ? 'default' : 'pointer',
+            fontSize: 14,
+            fontWeight: 600,
+            letterSpacing: '-0.01em',
+            color: !isFreelancer ? '#fff' : 'var(--fh-t3)',
+            transition: 'color 0.2s',
+          }}
+        >
+          {loading && !isFreelancer ? (
+            <Loader2 style={{ width: 16, height: 16 }} className="animate-spin" />
+          ) : (
+            <Briefcase style={{ width: 16, height: 16, strokeWidth: 2 }} />
+          )}
+          <span>{t.roles.client}</span>
+        </button>
+
+        {/* Freelancer segment */}
+        <button
+          role="tab"
+          aria-selected={isFreelancer}
+          onClick={() => switchTo('freelancer')}
+          disabled={loading}
+          style={{
+            position: 'relative',
+            zIndex: 1,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: 8,
+            height: 40,
+            border: 'none',
+            background: 'transparent',
+            cursor: loading ? 'default' : 'pointer',
+            fontSize: 14,
+            fontWeight: 600,
+            letterSpacing: '-0.01em',
+            color: isFreelancer ? '#fff' : 'var(--fh-t3)',
+            transition: 'color 0.2s',
+          }}
+        >
+          {loading && isFreelancer ? (
+            <Loader2 style={{ width: 16, height: 16 }} className="animate-spin" />
+          ) : (
+            <User2 style={{ width: 16, height: 16, strokeWidth: 2 }} />
+          )}
+          <span>{t.roles.freelancer}</span>
+        </button>
+      </div>
+    )
+  }
+
+  // ── Default (sidebar) variant: compact pill ──────────────────────────────────
   return (
     <div
       className="flex items-center p-0.5 rounded-lg border gap-0.5"
@@ -67,7 +171,6 @@ export default function RoleSwitcher() {
           <Loader2 className="h-3 w-3 animate-spin text-primary" />
         </div>
       )}
-      {/* Client pill */}
       <button
         onClick={() => switchTo('client')}
         disabled={loading}
@@ -81,7 +184,6 @@ export default function RoleSwitcher() {
         <Briefcase className="h-3 w-3" />
         <span>{t.roles.client}</span>
       </button>
-      {/* Freelancer pill */}
       <button
         onClick={() => switchTo('freelancer')}
         disabled={loading}
