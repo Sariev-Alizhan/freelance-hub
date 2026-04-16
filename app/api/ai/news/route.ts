@@ -19,7 +19,7 @@ export interface NewsItem {
 }
 
 // ── HackerNews Algolia ────────────────────────────────────────────────────────
-const HN_URL = 'https://hn.algolia.com/api/v1/search?query=artificial+intelligence+LLM+GPT+Claude+AI+agent&tags=story&numericFilters=points>=10&hitsPerPage=20'
+const HN_URL = 'https://hn.algolia.com/api/v1/search?query=artificial+intelligence+LLM+GPT+Claude+AI+agent&tags=story&numericFilters=points>=10&hitsPerPage=40'
 
 async function fetchHN(): Promise<NewsItem[]> {
   const res = await fetch(HN_URL, {
@@ -31,7 +31,7 @@ async function fetchHN(): Promise<NewsItem[]> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return ((data.hits || []) as any[])
     .filter((h: { title?: string; points?: number }) => h.title && (h.points ?? 0) >= 10)
-    .slice(0, 15)
+    .slice(0, 30)
     .map((h: {
       objectID: string; title: string; url?: string; author?: string;
       points?: number; num_comments?: number; created_at?: string;
@@ -52,9 +52,9 @@ async function fetchHN(): Promise<NewsItem[]> {
 // ── Reddit AI subreddits ──────────────────────────────────────────────────────
 type RedditSource = 'reddit_ai' | 'reddit_ml' | 'reddit_llama'
 const REDDIT_SOURCES: Array<{ id: RedditSource; sub: string; label: string; limit: number }> = [
-  { id: 'reddit_ai',    sub: 'artificial',      label: 'r/artificial',    limit: 10 },
-  { id: 'reddit_ml',    sub: 'MachineLearning', label: 'r/ML',            limit: 8  },
-  { id: 'reddit_llama', sub: 'LocalLLaMA',      label: 'r/LocalLLaMA',   limit: 8  },
+  { id: 'reddit_ai',    sub: 'artificial',      label: 'r/artificial',    limit: 20 },
+  { id: 'reddit_ml',    sub: 'MachineLearning', label: 'r/ML',            limit: 15 },
+  { id: 'reddit_llama', sub: 'LocalLLaMA',      label: 'r/LocalLLaMA',   limit: 15 },
 ]
 
 async function fetchReddit(source: typeof REDDIT_SOURCES[number]): Promise<NewsItem[]> {
@@ -155,7 +155,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ items: FALLBACK, cached_at: new Date().toISOString(), fallback: true })
     }
 
-    const items = mergeAndSort(groups).slice(0, 40)
+    const items = mergeAndSort(groups).slice(0, 80)
     return NextResponse.json({ items, cached_at: new Date().toISOString(), sources: groups.length })
   } catch {
     return NextResponse.json({ items: FALLBACK, cached_at: new Date().toISOString(), fallback: true })
