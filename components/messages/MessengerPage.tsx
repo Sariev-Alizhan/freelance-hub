@@ -191,11 +191,11 @@ export default function MessengerPage() {
 
   const activeConv = conversations.find(c => c.id === activeId) ?? null
 
-  // Lock page scroll
-  useEffect(() => {
-    const prev = document.documentElement.style.overflow
-    document.documentElement.style.overflow = 'hidden'
-    return () => { document.documentElement.style.overflow = prev }
+  // Scroll textarea into view when keyboard opens on mobile
+  const handleInputFocus = useCallback(() => {
+    setTimeout(() => {
+      inputRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+    }, 300)
   }, [])
 
   useEffect(() => { activeIdRef.current = activeId }, [activeId])
@@ -574,14 +574,14 @@ export default function MessengerPage() {
 
   if (!user) return (
     <div className="messenger-height flex flex-col items-center justify-center gap-5 px-4">
-      <div className="h-16 w-16 rounded-2xl flex items-center justify-center" style={{ background: 'rgba(113,112,255,0.1)' }}>
-        <LogIn className="h-8 w-8" style={{ color: '#7170ff' }} />
+      <div className="h-16 w-16 rounded-2xl flex items-center justify-center" style={{ background: 'var(--fh-primary-muted)' }}>
+        <LogIn className="h-8 w-8" style={{ color: 'var(--fh-primary)' }} />
       </div>
       <div className="text-center">
         <h2 style={{ fontSize: 18, fontWeight: 590, color: 'var(--fh-t1)', marginBottom: 6 }}>Sign in to view messages</h2>
         <p style={{ fontSize: 13, color: 'var(--fh-t4)' }}>You need an account to use messaging</p>
       </div>
-      <Link href="/auth/login" className="px-5 py-2.5 rounded-xl text-white text-sm font-semibold" style={{ background: '#7170ff' }}>
+      <Link href="/auth/login" className="px-5 py-2.5 rounded-xl text-white text-sm font-semibold" style={{ background: 'var(--fh-primary)' }}>
         Sign in
       </Link>
     </div>
@@ -771,13 +771,13 @@ export default function MessengerPage() {
                     </p>
                   )}
                   {activeConv.other_user.is_verified && (
-                    <BadgeCheck className="h-4 w-4 flex-shrink-0" style={{ color: '#5e6ad2' }} />
+                    <BadgeCheck className="h-4 w-4 flex-shrink-0" style={{ color: 'var(--fh-primary)' }} />
                   )}
                 </div>
                 {/* Online / Typing status line */}
                 <div style={{ height: 16, display: 'flex', alignItems: 'center' }}>
                   {isOtherTyping ? (
-                    <span style={{ fontSize: 11, color: '#7170ff', display: 'flex', alignItems: 'center', gap: 4 }}>
+                    <span style={{ fontSize: 11, color: 'var(--fh-primary)', display: 'flex', alignItems: 'center', gap: 4 }}>
                       <span className="typing-dots">
                         <span /><span /><span />
                       </span>
@@ -877,7 +877,7 @@ export default function MessengerPage() {
                                   key={emoji}
                                   onClick={() => toggleReaction(msg.id, emoji)}
                                   style={{
-                                    background: msgReactions[emoji]?.mine ? 'rgba(113,112,255,0.12)' : 'transparent',
+                                    background: msgReactions[emoji]?.mine ? 'var(--fh-primary-muted)' : 'transparent',
                                     border: 'none', cursor: 'pointer', borderRadius: 6,
                                     padding: '2px 3px', fontSize: 16, lineHeight: 1,
                                     transition: 'transform 0.1s, background 0.15s',
@@ -906,7 +906,7 @@ export default function MessengerPage() {
                                   display: 'flex', alignItems: 'center',
                                   transition: 'color 0.15s',
                                 }}
-                                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = '#7170ff' }}
+                                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = 'var(--fh-primary)' }}
                                 onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'var(--fh-t3)' }}
                               >
                                 <CornerUpLeft className="h-3.5 w-3.5" />
@@ -944,7 +944,7 @@ export default function MessengerPage() {
                                   </span>
                                   <span style={{
                                     fontSize: 11, fontWeight: 700,
-                                    color: isMine ? '#7170ff' : 'var(--fh-t2)',
+                                    color: isMine ? 'var(--fh-primary)' : 'var(--fh-t2)',
                                     letterSpacing: '-0.01em',
                                   }}>
                                     {msg.text.slice(msg.text.indexOf(' ') + 1)}
@@ -961,7 +961,7 @@ export default function MessengerPage() {
                                   fontSize: 14,
                                   lineHeight: 1.45,
                                   wordBreak: 'break-word',
-                                  background: isMine ? '#5e6ad2' : 'var(--fh-surface-2)',
+                                  background: isMine ? 'var(--fh-primary)' : 'var(--fh-surface-2)',
                                   color: isMine ? '#ffffff' : 'var(--fh-t1)',
                                 }}>
                                   {/* Quoted reply */}
@@ -970,10 +970,10 @@ export default function MessengerPage() {
                                       marginBottom: 7,
                                       padding: '5px 10px',
                                       borderRadius: 8,
-                                      borderLeft: `3px solid ${isMine ? 'rgba(255,255,255,0.5)' : '#7170ff'}`,
-                                      background: isMine ? 'rgba(255,255,255,0.12)' : 'rgba(113,112,255,0.08)',
+                                      borderLeft: `3px solid ${isMine ? 'rgba(255,255,255,0.5)' : 'var(--fh-primary)'}`,
+                                      background: isMine ? 'rgba(255,255,255,0.12)' : 'var(--fh-primary-muted)',
                                     }}>
-                                      <p style={{ fontSize: 11, fontWeight: 700, marginBottom: 2, color: isMine ? 'rgba(255,255,255,0.8)' : '#7170ff' }}>
+                                      <p style={{ fontSize: 11, fontWeight: 700, marginBottom: 2, color: isMine ? 'rgba(255,255,255,0.8)' : 'var(--fh-primary)' }}>
                                         {msg.reply_to_name}
                                       </p>
                                       <p className="line-clamp-2" style={{ fontSize: 12, color: isMine ? 'rgba(255,255,255,0.65)' : 'var(--fh-t3)', lineHeight: 1.35 }}>
@@ -999,7 +999,7 @@ export default function MessengerPage() {
                                 </span>
                                 {isMine && (
                                   msg.is_read
-                                    ? <CheckCheck className="h-3 w-3" style={{ color: '#7170ff' }} />
+                                    ? <CheckCheck className="h-3 w-3" style={{ color: 'var(--fh-primary)' }} />
                                     : <Check className="h-3 w-3" style={{ color: 'var(--fh-t4)' }} />
                                 )}
                               </div>
@@ -1015,10 +1015,10 @@ export default function MessengerPage() {
                                     style={{
                                       display: 'flex', alignItems: 'center', gap: 3,
                                       padding: '2px 7px', borderRadius: 10, fontSize: 12,
-                                      border: `1px solid ${mine ? 'rgba(113,112,255,0.4)' : 'var(--fh-border)'}`,
-                                      background: mine ? 'rgba(113,112,255,0.1)' : 'var(--fh-surface)',
+                                      border: `1px solid ${mine ? 'var(--fh-primary)' : 'var(--fh-border)'}`,
+                                      background: mine ? 'var(--fh-primary-muted)' : 'var(--fh-surface)',
                                       cursor: 'pointer', fontWeight: mine ? 700 : 400,
-                                      color: mine ? '#7170ff' : 'var(--fh-t2)',
+                                      color: mine ? 'var(--fh-primary)' : 'var(--fh-t2)',
                                     }}
                                   >
                                     <span style={{ fontSize: 13 }}>{emoji}</span>
@@ -1041,11 +1041,11 @@ export default function MessengerPage() {
             {replyTo && (
               <div
                 className="mx-3 mb-1 flex items-center gap-2 px-3 py-2 rounded-xl"
-                style={{ background: 'rgba(113,112,255,0.06)', border: '1px solid rgba(113,112,255,0.2)', borderLeft: '3px solid #7170ff' }}
+                style={{ background: 'var(--fh-primary-muted)', border: '1px solid color-mix(in srgb, var(--fh-primary) 25%, transparent)', borderLeft: '3px solid var(--fh-primary)' }}
               >
-                <CornerUpLeft className="h-3.5 w-3.5 flex-shrink-0" style={{ color: '#7170ff' }} />
+                <CornerUpLeft className="h-3.5 w-3.5 flex-shrink-0" style={{ color: 'var(--fh-primary)' }} />
                 <div className="flex-1 min-w-0">
-                  <p style={{ fontSize: 11, fontWeight: 700, color: '#7170ff', marginBottom: 1 }}>{replyTo.name}</p>
+                  <p style={{ fontSize: 11, fontWeight: 700, color: 'var(--fh-primary)', marginBottom: 1 }}>{replyTo.name}</p>
                   <p className="truncate" style={{ fontSize: 12, color: 'var(--fh-t3)' }}>{replyTo.text}</p>
                 </div>
                 <button onClick={() => setReplyTo(null)}
@@ -1064,8 +1064,8 @@ export default function MessengerPage() {
                 {attachPreview ? (
                   <img src={attachPreview} alt="preview" className="rounded-lg object-cover flex-shrink-0" style={{ height: 36, width: 36 }} />
                 ) : (
-                  <div className="rounded-lg flex items-center justify-center flex-shrink-0" style={{ height: 36, width: 36, background: 'rgba(113,112,255,0.1)' }}>
-                    <FileText className="h-4 w-4" style={{ color: '#7170ff' }} />
+                  <div className="rounded-lg flex items-center justify-center flex-shrink-0" style={{ height: 36, width: 36, background: 'var(--fh-primary-muted)' }}>
+                    <FileText className="h-4 w-4" style={{ color: 'var(--fh-primary)' }} />
                   </div>
                 )}
                 <div className="flex-1 min-w-0">
@@ -1074,7 +1074,7 @@ export default function MessengerPage() {
                 </div>
                 {uploadProgress !== null && (
                   <div className="flex-shrink-0 overflow-hidden" style={{ width: 60, height: 3, borderRadius: 2, background: 'var(--fh-surface-2)' }}>
-                    <div style={{ height: '100%', width: `${uploadProgress}%`, background: '#7170ff', transition: 'width 0.2s' }} />
+                    <div style={{ height: '100%', width: `${uploadProgress}%`, background: 'var(--fh-primary)', transition: 'width 0.2s' }} />
                   </div>
                 )}
                 <button onClick={clearAttachment} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--fh-t4)', padding: 2 }}>
@@ -1152,7 +1152,7 @@ export default function MessengerPage() {
                     display: 'block',
                     transition: 'border-color 0.15s',
                   }}
-                  onFocus={e => { e.currentTarget.style.borderColor = '#7170ff' }}
+                  onFocus={e => { e.currentTarget.style.borderColor = 'var(--fh-primary)'; handleInputFocus() }}
                   onBlur={e => { e.currentTarget.style.borderColor = 'var(--fh-border)' }}
                 />
                 {text.length > MAX_MSG_LEN * 0.85 && (
@@ -1169,7 +1169,7 @@ export default function MessengerPage() {
                 className="flex-shrink-0 flex items-center justify-center transition-all"
                 style={{
                   width: 36, height: 36, borderRadius: 18, border: 'none', cursor: 'pointer',
-                  background: (text.trim() || attachment) ? '#5e6ad2' : 'var(--fh-surface-2)',
+                  background: (text.trim() || attachment) ? 'var(--fh-primary)' : 'var(--fh-surface-2)',
                   color: (text.trim() || attachment) ? '#fff' : 'var(--fh-t4)',
                   opacity: (!text.trim() && !attachment) || sending ? 0.5 : 1,
                   transition: 'background 0.15s, color 0.15s',
@@ -1187,9 +1187,9 @@ export default function MessengerPage() {
           <div className="flex-1 flex flex-col items-center justify-center gap-4 text-center px-8">
             <div
               className="flex items-center justify-center"
-              style={{ width: 72, height: 72, borderRadius: 24, background: 'rgba(113,112,255,0.08)' }}
+              style={{ width: 72, height: 72, borderRadius: 24, background: 'var(--fh-primary-muted)' }}
             >
-              <MessageSquare className="h-9 w-9" style={{ color: '#7170ff' }} />
+              <MessageSquare className="h-9 w-9" style={{ color: 'var(--fh-primary)' }} />
             </div>
             <div>
               <h2 style={{ fontSize: 18, fontWeight: 590, color: 'var(--fh-t1)', letterSpacing: '-0.03em', marginBottom: 6 }}>
@@ -1202,7 +1202,7 @@ export default function MessengerPage() {
             <Link
               href="/freelancers"
               className="px-5 py-2 rounded-xl text-sm font-semibold transition-colors"
-              style={{ background: 'rgba(113,112,255,0.1)', color: '#7170ff', border: '1px solid rgba(113,112,255,0.2)', textDecoration: 'none' }}
+              style={{ background: 'var(--fh-primary-muted)', color: 'var(--fh-primary)', border: '1px solid color-mix(in srgb, var(--fh-primary) 25%, transparent)', textDecoration: 'none' }}
             >
               Find freelancers
             </Link>

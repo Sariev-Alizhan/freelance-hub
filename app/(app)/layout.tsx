@@ -3,15 +3,16 @@ import AppFooter from '@/components/layout/AppFooter'
 import BottomNav from '@/components/layout/BottomNav'
 import LeftSidebar from '@/components/layout/LeftSidebar'
 import PageTransition from '@/components/shared/PageTransition'
+import MainWrapper from './MainWrapper'
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
       <LeftSidebar />
       <Header />
-      <main className="flex-1 pb-safe-mobile md:ml-[72px]">
+      <MainWrapper>
         <PageTransition>{children}</PageTransition>
-      </main>
+      </MainWrapper>
       <div className="md:ml-[72px]">
         <AppFooter />
       </div>
