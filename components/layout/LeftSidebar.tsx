@@ -59,7 +59,7 @@ export default function LeftSidebar() {
     { href: '/',            icon: Home,         label: 'Home'        },
     { href: '/orders',      icon: Briefcase,    label: t.nav.orders  },
     { href: '/freelancers', icon: Users,         label: t.nav.freelancers },
-    { href: '/messages',    icon: MessageSquare, label: t.auth.messages, badge: unreadMsgs },
+    { href: '/messages',    icon: MessageSquare, label: t.auth.messages },
     { href: '/ai-search',   icon: Sparkles,      label: 'AI Search'  },
   ]
 
