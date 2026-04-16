@@ -32,7 +32,7 @@ export default function Header() {
   const [menuOpen,      setMenuOpen]      = useState(false)
   const [langOpen,      setLangOpen]      = useState(false)
   const [currencyOpen,  setCurrencyOpen]  = useState(false)
-  const { user, loading } = useUser()
+  const { user } = useUser()
   const { profile } = useProfile()
   const unreadMsgs = useUnreadMessages()
   const router = useRouter()
@@ -226,9 +226,8 @@ export default function Header() {
             )}
 
             {/* Auth */}
-            {!loading && (
-              <div className="hidden md:flex items-center gap-1.5">
-                {user ? (
+            <div className="hidden md:flex items-center gap-1.5">
+              {user ? (
                   <div className="relative">
                     <button
                       onClick={() => setMenuOpen(!menuOpen)}
@@ -307,30 +306,29 @@ export default function Header() {
                       </div>
                     )}
                   </div>
-                ) : (
-                  <div className="flex items-center gap-1.5">
-                    <Link
-                      href="/auth/login"
-                      className="px-3 py-1.5 text-[13px] transition-colors whitespace-nowrap"
-                      style={{ color: 'var(--fh-t3)', fontWeight: 510 }}
-                      onMouseEnter={e => { e.currentTarget.style.color = 'var(--fh-t1)' }}
-                      onMouseLeave={e => { e.currentTarget.style.color = 'var(--fh-t3)' }}
-                    >
-                      {t.auth.login}
-                    </Link>
-                    <Link
-                      href="/auth/register"
-                      className="px-3 py-1.5 rounded-md text-[13px] text-white transition-all whitespace-nowrap"
-                      style={{ background: '#5e6ad2', fontWeight: 510, letterSpacing: '-0.01em' }}
-                      onMouseEnter={e => { e.currentTarget.style.background = '#828fff' }}
-                      onMouseLeave={e => { e.currentTarget.style.background = '#5e6ad2' }}
-                    >
-                      {t.auth.register}
-                    </Link>
-                  </div>
-                )}
-              </div>
-            )}
+              ) : (
+                <div className="flex items-center gap-1.5">
+                  <Link
+                    href="/auth/login"
+                    className="px-3 py-1.5 text-[13px] transition-colors whitespace-nowrap"
+                    style={{ color: 'var(--fh-t3)', fontWeight: 510 }}
+                    onMouseEnter={e => { e.currentTarget.style.color = 'var(--fh-t1)' }}
+                    onMouseLeave={e => { e.currentTarget.style.color = 'var(--fh-t3)' }}
+                  >
+                    {t.auth.login}
+                  </Link>
+                  <Link
+                    href="/auth/register"
+                    className="px-3 py-1.5 rounded-md text-[13px] text-white transition-all whitespace-nowrap"
+                    style={{ background: '#5e6ad2', fontWeight: 510, letterSpacing: '-0.01em' }}
+                    onMouseEnter={e => { e.currentTarget.style.background = '#828fff' }}
+                    onMouseLeave={e => { e.currentTarget.style.background = '#5e6ad2' }}
+                  >
+                    {t.auth.register}
+                  </Link>
+                </div>
+              )}
+            </div>
 
             {/* Mobile burger */}
             <button
@@ -364,32 +362,30 @@ export default function Header() {
               </Link>
             ))}
 
-            {!loading && (
-              <div className="pt-2 mt-1" style={{ borderTop: '1px solid var(--fh-sep)' }}>
-                {user ? (
-                  <div className="space-y-0.5 pt-2">
-                    <Link href="/dashboard" className="block px-3 py-2.5 rounded-lg text-[14px]" style={{ color: 'var(--fh-t2)', fontWeight: 510 }} onClick={() => setMobileOpen(false)}>
-                      {t.auth.dashboard}
-                    </Link>
-                    <Link href="/messages" className="block px-3 py-2.5 rounded-lg text-[14px]" style={{ color: 'var(--fh-t2)', fontWeight: 510 }} onClick={() => setMobileOpen(false)}>
-                      {t.auth.messages}
-                    </Link>
-                    <button onClick={signOut} className="w-full text-left px-3 py-2.5 rounded-lg text-[14px]" style={{ color: '#e5484d', fontWeight: 510 }}>
-                      {t.auth.logout}
-                    </button>
-                  </div>
-                ) : (
-                  <div className="space-y-2 pt-2">
-                    <Link href="/auth/login" className="block px-3 py-2.5 rounded-lg text-[14px] text-center" style={{ color: 'var(--fh-t3)', fontWeight: 510 }} onClick={() => setMobileOpen(false)}>
-                      {t.auth.login}
-                    </Link>
-                    <Link href="/auth/register" className="block px-3 py-2.5 rounded-lg text-[14px] text-white text-center font-medium" style={{ background: '#5e6ad2' }} onClick={() => setMobileOpen(false)}>
-                      {t.auth.register}
-                    </Link>
-                  </div>
-                )}
-              </div>
-            )}
+            <div className="pt-2 mt-1" style={{ borderTop: '1px solid var(--fh-sep)' }}>
+              {user ? (
+                <div className="space-y-0.5 pt-2">
+                  <Link href="/dashboard" className="block px-3 py-2.5 rounded-lg text-[14px]" style={{ color: 'var(--fh-t2)', fontWeight: 510 }} onClick={() => setMobileOpen(false)}>
+                    {t.auth.dashboard}
+                  </Link>
+                  <Link href="/messages" className="block px-3 py-2.5 rounded-lg text-[14px]" style={{ color: 'var(--fh-t2)', fontWeight: 510 }} onClick={() => setMobileOpen(false)}>
+                    {t.auth.messages}
+                  </Link>
+                  <button onClick={signOut} className="w-full text-left px-3 py-2.5 rounded-lg text-[14px]" style={{ color: '#e5484d', fontWeight: 510 }}>
+                    {t.auth.logout}
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-2 pt-2">
+                  <Link href="/auth/login" className="block px-3 py-2.5 rounded-lg text-[14px] text-center" style={{ color: 'var(--fh-t3)', fontWeight: 510 }} onClick={() => setMobileOpen(false)}>
+                    {t.auth.login}
+                  </Link>
+                  <Link href="/auth/register" className="block px-3 py-2.5 rounded-lg text-[14px] text-white text-center font-medium" style={{ background: '#5e6ad2' }} onClick={() => setMobileOpen(false)}>
+                    {t.auth.register}
+                  </Link>
+                </div>
+              )}
+            </div>
 
             {/* Mobile: currency + theme + lang */}
             <div className="pt-3 mt-1 flex flex-wrap items-center gap-2" style={{ borderTop: '1px solid var(--fh-sep)' }}>

@@ -2,30 +2,8 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 import { rateLimitAsync } from '@/lib/rateLimit'
 
-const SUPABASE_URL  = (process.env.NEXT_PUBLIC_SUPABASE_URL  || '').trim()
-const SUPABASE_HOST = SUPABASE_URL.replace(/^https?:\/\//, '')
-
-function buildCsp(nonce: string): string {
-  const isDev = process.env.NODE_ENV === 'development'
-  return [
-    `default-src 'self'`,
-    // 'unsafe-inline' is required for Next.js RSC payload inline scripts.
-    // Nonce is kept as an additional signal but 'strict-dynamic' is intentionally
-    // omitted — it blocks all non-nonce inline scripts including Next.js hydration.
-    `script-src 'self' 'nonce-${nonce}' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ''} https://va.vercel-scripts.com`,
-    `style-src 'self' 'unsafe-inline'`,
-    `font-src 'self' data:`,
-    `img-src 'self' data: blob: https://api.dicebear.com https://picsum.photos https://images.unsplash.com ${SUPABASE_URL} https://lh3.googleusercontent.com https://avatars.githubusercontent.com https://pbs.twimg.com https://cdn.discordapp.com`,
-    `connect-src 'self' ${SUPABASE_URL} wss://${SUPABASE_HOST} https://api.anthropic.com https://openrouter.ai https://api.telegram.org https://fcm.googleapis.com https://hn.algolia.com https://open.er-api.com https://vitals.vercel-insights.com https://va.vercel-scripts.com`,
-    `media-src 'self' ${SUPABASE_URL}`,
-    `frame-src 'none'`,
-    `frame-ancestors 'none'`,
-    `object-src 'none'`,
-    `base-uri 'self'`,
-    `form-action 'self'`,
-    `upgrade-insecure-requests`,
-  ].join('; ')
-}
+// CSP is handled statically by next.config.ts headers().
+// Proxy handles auth session refresh, rate limiting, and security checks only.
 
 // Pages that require a logged-in session
 const AUTH_PROTECTED = [
@@ -64,10 +42,6 @@ export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
   const ip           = getIp(request)
   const ua           = (request.headers.get('user-agent') || '').toLowerCase()
-
-  // Generate per-request nonce for CSP (only for HTML pages, not API/assets)
-  const isHtmlRequest = !pathname.startsWith('/api/') && !pathname.startsWith('/_next/')
-  const nonce = isHtmlRequest ? Buffer.from(crypto.randomUUID()).toString('base64') : ''
 
   // ── 1. Block known scanner user-agents ──────────────────────────────────
   if (BAD_UA.some(frag => ua.includes(frag))) {
@@ -115,14 +89,7 @@ export async function proxy(request: NextRequest) {
   }
 
   // ── 6. Auth session refresh (required for Server Components) ─────────────
-  // Inject nonce + CSP into request headers so Next.js can extract the nonce
-  // and auto-apply it to all framework scripts during SSR (per Next.js docs).
   const requestHeaders = new Headers(request.headers)
-  if (nonce) {
-    const cspValue = buildCsp(nonce)
-    requestHeaders.set('x-nonce', nonce)
-    requestHeaders.set('Content-Security-Policy', cspValue)
-  }
   const response = NextResponse.next({ request: { headers: requestHeaders } })
 
   const supabase = createServerClient(
@@ -168,11 +135,6 @@ export async function proxy(request: NextRequest) {
   response.headers.set('X-Content-Type-Options', 'nosniff')
   response.headers.set('X-Frame-Options', 'DENY')
   response.headers.set('X-XSS-Protection', '1; mode=block')
-
-  // ── 10. Inject nonce-based CSP (overrides next.config.ts static CSP) ──────
-  if (nonce) {
-    response.headers.set('Content-Security-Policy', buildCsp(nonce))
-  }
 
   return response
 }
