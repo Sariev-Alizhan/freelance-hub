@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 import { Inter } from 'next/font/google'
+import { headers } from 'next/headers'
 import './globals.css'
 import { Analytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
@@ -75,14 +76,15 @@ const themeScript = `(function(){try{var t=localStorage.getItem('fh-theme');if(t
 // Register Service Worker for PWA
 const swScript = `if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){})})}`
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const nonce = (await headers()).get('x-nonce') ?? ''
   return (
-    <html lang="en" className="dark" suppressHydrationWarning>
+    <html lang="en" className="dark" suppressHydrationWarning nonce={nonce}>
       <head>
         {/* Anti-FOUC — must run synchronously before any render */}
-        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+        <script nonce={nonce} dangerouslySetInnerHTML={{ __html: themeScript }} />
         {/* Service Worker for PWA */}
-        <script dangerouslySetInnerHTML={{ __html: swScript }} />
+        <script nonce={nonce} dangerouslySetInnerHTML={{ __html: swScript }} />
         {/* Preconnect to external origins for Lighthouse performance */}
         <link rel="preconnect" href={process.env.NEXT_PUBLIC_SUPABASE_URL ?? 'https://kkvmxtwpgvubwtcalzjm.supabase.co'} />
         <link rel="preconnect" href="https://api.dicebear.com" />

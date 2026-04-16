@@ -71,20 +71,27 @@ export default function LoginPage() {
   const [loading, setLoading] = useState<string | null>(null)
   const [email, setEmail]     = useState('')
   const [sent, setSent]       = useState(false)
+  const [authError, setAuthError] = useState<string | null>(null)
   const supabase = createClient()
 
   async function signIn(provider: Provider) {
+    setAuthError(null)
     setLoading(provider)
     const { error } = await supabase.auth.signInWithOAuth({
       provider,
       options: { redirectTo: `${window.location.origin}/auth/callback` },
     })
-    if (error) { console.error(error); setLoading(null) }
+    if (error) {
+      console.error(error)
+      setAuthError(error.message)
+      setLoading(null)
+    }
   }
 
   async function signInWithEmail(e: React.FormEvent) {
     e.preventDefault()
     if (!email.trim()) return
+    setAuthError(null)
     setLoading('email')
     const { error } = await supabase.auth.signInWithOtp({
       email: email.trim(),
@@ -115,6 +122,12 @@ export default function LoginPage() {
         </div>
 
         <div className="rounded-xl p-5 space-y-3" style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border-2)' }}>
+
+          {authError && (
+            <div className="rounded-lg px-3 py-2.5" style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.25)' }}>
+              <p style={{ fontSize: '13px', color: '#ef4444' }}>{authError}</p>
+            </div>
+          )}
 
           {/* Google — primary */}
           <OAuthButton provider="google" label="Continue with Google" icon={<GoogleIcon />}
