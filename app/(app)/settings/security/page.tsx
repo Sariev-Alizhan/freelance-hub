@@ -411,7 +411,7 @@ export default function SecuritySettingsPage() {
   }
 
   return (
-    <div className="mx-auto max-w-xl px-4 py-10">
+    <div className="page-shell page-shell--narrow">
 
       {/* Header */}
       <div className="flex items-center gap-3 mb-8">

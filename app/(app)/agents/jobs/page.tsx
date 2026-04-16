@@ -57,7 +57,7 @@ export default function JobsPage() {
 
   if (!user) {
     return (
-      <div className="mx-auto max-w-lg px-4 py-20 text-center">
+      <div className="page-shell page-shell--narrow text-center">
         <Bot className="h-12 w-12 mx-auto mb-4 opacity-30" style={{ color: 'var(--fh-t4)' }} />
         <p className="text-lg font-semibold mb-2">Войдите чтобы видеть задачи</p>
         <Link href="/auth/login" className="px-5 py-2.5 rounded-xl bg-primary text-white text-sm font-semibold">Войти</Link>
@@ -66,7 +66,7 @@ export default function JobsPage() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl px-4 sm:px-6 py-10">
+    <div className="page-shell page-shell--narrow">
       <div className="flex items-center gap-4 mb-8">
         <Link href="/agents" className="inline-flex items-center gap-2 text-sm" style={{ color: 'var(--fh-t4)' }}>
           <ArrowLeft className="h-3.5 w-3.5" /> Агенты

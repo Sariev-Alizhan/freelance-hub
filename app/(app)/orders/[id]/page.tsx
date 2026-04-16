@@ -138,7 +138,7 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
   const st = statusStyle[order.status] ?? statusStyle.open
 
   return (
-    <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-10" style={{ minHeight: 'calc(100vh - 52px)' }}>
+    <div className="page-shell page-shell--reading" style={{ minHeight: 'calc(100vh - 52px)' }}>
       <Link
         href="/orders"
         className="inline-flex items-center gap-2 mb-8 transition-colors"

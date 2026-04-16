@@ -180,7 +180,7 @@ export default async function FreelancerPage({ params }: { params: Promise<{ id:
   const isLoggedIn = !!user
 
   return (
-    <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-10">
+    <div className="page-shell page-shell--reading">
       <ProfileViewLogger freelancerId={f.id} />
       {/* Back */}
       <Link href="/freelancers" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-8 transition-colors">

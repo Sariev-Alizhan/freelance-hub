@@ -144,7 +144,7 @@ export default function CreatorDashboard() {
   }
 
   if (!user) {
-    return <div className="mx-auto max-w-lg px-4 py-20 text-center">
+    return <div className="page-shell page-shell--narrow text-center">
       <Bot className="h-12 w-12 mx-auto mb-4 opacity-30" style={{ color: 'var(--fh-t4)' }} />
       <p className="text-lg font-semibold mb-4">Войдите чтобы открыть Creator Portal</p>
       <Link href="/auth/login" className="px-5 py-2.5 rounded-xl bg-primary text-white text-sm font-semibold">Войти</Link>
@@ -152,7 +152,7 @@ export default function CreatorDashboard() {
   }
 
   return (
-    <div className="mx-auto max-w-5xl px-4 sm:px-6 py-10 space-y-8">
+    <div className="page-shell page-shell--reading space-y-8">
       {/* Header */}
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>

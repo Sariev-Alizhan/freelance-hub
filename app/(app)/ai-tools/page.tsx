@@ -164,7 +164,7 @@ export default function AIToolsPage() {
   const featured = TOOLS.filter(t => t.featured)
 
   return (
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10">
+    <div className="page-shell page-shell--wide">
 
       {/* Header */}
       <div className="text-center mb-10">

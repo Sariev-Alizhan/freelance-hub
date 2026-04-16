@@ -258,7 +258,7 @@ export default function DashboardPage() {
   // ── Loading ──────────────────────────────────────────────
   if (loading) {
     return (
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+      <div className="page-shell page-shell--wide space-y-8">
         <SkeletonProfileHeader />
         <SkeletonStats />
       </div>
@@ -357,14 +357,7 @@ export default function DashboardPage() {
   const completionPct = Math.round((completionItems.filter(i => i.done).length / completionItems.length) * 100)
 
   return (
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6 sm:py-10"
-      style={{
-        overflowX: 'clip',
-        maxWidth: '100%',
-        width: '100%',
-        minWidth: 0,
-        boxSizing: 'border-box',
-      }}>
+    <div className="page-shell page-shell--wide">
 
       {/* ── Header ── */}
       {profileLoading ? <SkeletonProfileHeader /> : (

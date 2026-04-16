@@ -549,7 +549,7 @@ export default function GoalsPage() {
   const weekLabel   = `${new Date(weekDays[0]).toLocaleDateString('ru', { day: 'numeric', month: 'short' })} — ${new Date(weekDays[6]).toLocaleDateString('ru', { day: 'numeric', month: 'short' })}`
 
   return (
-    <div className="mx-auto max-w-3xl px-4 sm:px-6 py-10">
+    <div className="page-shell page-shell--narrow">
 
       {/* Header */}
       <div className="flex items-center justify-between mb-6">

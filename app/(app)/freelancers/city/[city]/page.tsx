@@ -62,7 +62,7 @@ export default async function CityFreelancersPage({ params }: { params: Promise<
   }
 
   return (
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
+    <div className="page-shell page-shell--wide">
 
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 mb-8 text-xs" style={{ color: 'var(--fh-t4)' }}>

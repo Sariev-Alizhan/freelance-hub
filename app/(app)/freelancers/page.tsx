@@ -108,7 +108,7 @@ async function fetchRealFreelancers(): Promise<Freelancer[]> {
 export default async function FreelancersPage() {
   const realFreelancers = await fetchRealFreelancers()
   return (
-    <Suspense fallback={<div className="mx-auto max-w-7xl px-4 py-20 text-center" style={{ color: '#62666d', fontSize: '14px' }}>Loading…</div>}>
+    <Suspense fallback={<div className="page-shell page-shell--wide text-center" style={{ color: '#62666d', fontSize: '14px' }}>Loading…</div>}>
       <FreelancersClient realFreelancers={realFreelancers} />
     </Suspense>
   )

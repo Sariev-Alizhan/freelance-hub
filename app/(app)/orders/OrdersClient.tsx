@@ -79,7 +79,7 @@ export default function OrdersClient({ realOrders = [], currentUserId }: Props) 
   const hasMore   = paginated.length < filtered.length
 
   return (
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-4 pb-4 sm:py-10 pb-safe-mobile">
+    <div className="page-shell page-shell--wide pb-safe-mobile">
 
       {/* ── Header ─────────────────────────────────────────────── */}
       <div className="flex items-center justify-between mb-5 sm:mb-8">

@@ -12,7 +12,7 @@ export default async function SettingsLayout({ children }: { children: React.Rea
   return (
     <div style={{ background: 'var(--fh-canvas)', minHeight: 'calc(100vh - 52px)' }}>
       <div
-        className="mx-auto max-w-4xl px-4"
+        className="page-shell page-shell--reading"
         style={{ paddingTop: 'clamp(16px,3vw,32px)', paddingBottom: '72px' }}
       >
         <SettingsMobileNav />

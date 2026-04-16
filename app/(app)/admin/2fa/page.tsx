@@ -68,7 +68,7 @@ export default function AdminTwoFactorPage() {
   }
 
   return (
-    <div className="mx-auto max-w-md px-4 py-12">
+    <div className="page-shell page-shell--narrow">
 
       {/* Back link */}
       <Link href="/admin" className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1 mb-8">

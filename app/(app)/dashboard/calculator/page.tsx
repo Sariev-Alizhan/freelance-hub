@@ -160,7 +160,7 @@ export default function CalculatorPage() {
   }
 
   return (
-    <div className="mx-auto max-w-2xl px-4 sm:px-6 py-10">
+    <div className="page-shell page-shell--narrow">
 
       {/* Header */}
       <div className="flex items-center gap-3 mb-8">

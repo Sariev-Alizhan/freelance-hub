@@ -28,7 +28,7 @@ function FreelancerCardSkeleton() {
 
 export default function FreelancersLoading() {
   return (
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+    <div className="page-shell page-shell--wide">
       {/* Search bar skeleton */}
       <div className="mb-6 flex gap-3">
         <Skeleton className="h-11 flex-1 rounded-xl" />

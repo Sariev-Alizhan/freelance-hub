@@ -630,3 +630,35 @@
     max-width: 100%;
   }
 }
+
+/* ═══════════════════════════════════════════════════════════
+   PAGE-SHELL — shared page-level container
+   Mirrors the sizing behaviour of /notifications so every page
+   adapts identically across foldables, phones, tablets, desktop.
+
+   • fluid horizontal padding that shrinks on narrow devices
+   • max-width ramps up from a phone-friendly column to a wide
+     desktop canvas without breakpoint cliffs
+   • min-width: 0 lets flex/grid children shrink below content size
+   • overflow-x: clip is the final guard against runaway content
+   ═══════════════════════════════════════════════════════════ */
+.page-shell {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  margin-inline: auto;
+  overflow-x: clip;
+  padding-inline: clamp(12px, 4vw, 32px);
+  padding-block: clamp(14px, 3vw, 40px);
+}
+.page-shell--narrow { max-width: 640px; }
+.page-shell--reading { max-width: 760px; }
+.page-shell--wide   { max-width: 1280px; }
+
+/* Any descendant of .page-shell is protected from overflowing it */
+.page-shell > *,
+.page-shell > * > * {
+  max-width: 100%;
+  min-width: 0;
+}

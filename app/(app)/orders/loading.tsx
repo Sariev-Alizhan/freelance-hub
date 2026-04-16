@@ -24,7 +24,7 @@ function OrderCardSkeleton() {
 
 export default function OrdersLoading() {
   return (
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+    <div className="page-shell page-shell--wide">
       <div className="mb-6 flex gap-3">
         <Skeleton className="h-11 flex-1 rounded-xl" />
         <Skeleton className="h-11 w-32 rounded-xl" />

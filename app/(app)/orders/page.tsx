@@ -104,7 +104,7 @@ export default async function OrdersPage() {
     supabase.auth.getUser(),
   ])
   return (
-    <Suspense fallback={<div className="mx-auto max-w-7xl px-4 py-20 text-center" style={{ color: '#62666d', fontSize: '14px' }}>Loading…</div>}>
+    <Suspense fallback={<div className="page-shell page-shell--wide text-center" style={{ color: '#62666d', fontSize: '14px' }}>Loading…</div>}>
       <OrdersClient realOrders={realOrders} currentUserId={user?.id} />
     </Suspense>
   )

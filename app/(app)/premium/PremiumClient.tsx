@@ -209,7 +209,7 @@ export default function PremiumClient() {
         </p>
       </div>
 
-      <div className="mx-auto max-w-5xl px-4 pb-20">
+      <div className="page-shell page-shell--reading" style={{ paddingBottom: 80 }}>
 
         {/* ── Plan selector ── */}
         <div style={{

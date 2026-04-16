@@ -229,7 +229,7 @@ export default function AgentDetailPage() {
 
   if (!agent) {
     return (
-      <div className="mx-auto max-w-2xl px-4 py-20 text-center">
+      <div className="page-shell page-shell--narrow text-center">
         <Bot className="h-12 w-12 mx-auto mb-4 opacity-30" style={{ color: 'var(--fh-t4)' }} />
         <p className="text-lg font-semibold mb-2">Agent not found</p>
         <Link href="/agents" className="text-sm" style={{ color: '#7170ff' }}>← Back</Link>
@@ -289,7 +289,7 @@ export default function AgentDetailPage() {
   }
 
   return (
-    <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-10">
+    <div className="page-shell page-shell--reading">
       <Link href="/agents" className="inline-flex items-center gap-2 mb-8 text-sm" style={{ color: 'var(--fh-t4)' }}>
         <ArrowLeft className="h-3.5 w-3.5" /> Agents
       </Link>

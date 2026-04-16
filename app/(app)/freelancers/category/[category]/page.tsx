@@ -202,7 +202,7 @@ export default async function FreelancersCategoryPage({ params }: Props) {
 
       {/* Category hero */}
       <div className="border-b border-subtle" style={{ background: `${cat.color}08` }}>
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+        <div className="page-shell page-shell--wide">
           <div className="flex items-center gap-3 mb-2">
             <div className="h-9 w-9 rounded-xl flex items-center justify-center"
               style={{ background: `${cat.color}15`, border: `1px solid ${cat.color}30` }}>
@@ -239,7 +239,7 @@ export default async function FreelancersCategoryPage({ params }: Props) {
 
       {/* FAQ section */}
       {faqs.length > 0 && (
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
+        <div className="page-shell page-shell--wide">
           <h2 style={{ fontSize: '20px', fontWeight: 700, letterSpacing: '-0.025em', color: 'var(--fh-t1)', marginBottom: '24px' }}>
             Частые вопросы о {cat.label.toLowerCase()} фрилансерах
           </h2>
@@ -270,7 +270,7 @@ export default async function FreelancersCategoryPage({ params }: Props) {
       )}
 
       {/* Related categories */}
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-12">
+      <div className="page-shell page-shell--wide" style={{ paddingTop: 0 }}>
         <h2 style={{ fontSize: '16px', fontWeight: 700, color: 'var(--fh-t1)', marginBottom: '12px' }}>
           Другие категории
         </h2>

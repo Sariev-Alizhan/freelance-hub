@@ -116,7 +116,7 @@ export default function AnalyticsPage() {
   }) ?? []
 
   return (
-    <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 py-10" style={{ minHeight: 'calc(100vh - 52px)' }}>
+    <div className="page-shell page-shell--reading" style={{ minHeight: 'calc(100vh - 52px)' }}>
       <Link
         href="/dashboard"
         className="inline-flex items-center gap-2 mb-8 transition-colors"
