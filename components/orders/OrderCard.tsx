@@ -107,12 +107,12 @@ export default function OrderCard({ order: o, currentUserId }: Props) {
             {/* Footer */}
             <div className="mt-auto pt-4" style={{ borderTop: '1px solid var(--fh-sep)' }}>
               <div className="flex items-center justify-between mb-3">
-                <div style={{ fontSize: '14px', fontWeight: 590, color: '#7170ff', letterSpacing: '-0.02em' }}>
+                <div style={{ fontSize: '14px', fontWeight: 590, color: 'var(--fh-primary)', letterSpacing: '-0.02em' }}>
                   {o.budget.min > 0 ? (
                     <>
-                      <PriceDisplay amountRub={o.budget.min} prefix="" size="sm" className="text-[#7170ff]" />
+                      <PriceDisplay amountRub={o.budget.min} prefix="" size="sm" />
                       <span style={{ color: 'var(--fh-t4)', fontWeight: 400 }}>{' — '}</span>
-                      <PriceDisplay amountRub={o.budget.max} prefix="" size="sm" className="text-[#7170ff]" />
+                      <PriceDisplay amountRub={o.budget.max} prefix="" size="sm" />
                     </>
                   ) : (
                     <span style={{ color: 'var(--fh-t3)', fontWeight: 400, fontSize: '12px' }}>Negotiable</span>

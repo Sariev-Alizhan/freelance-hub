@@ -9,12 +9,7 @@ import { ToastProvider } from '@/lib/context/ToastContext'
 import { ThemeProvider } from '@/lib/context/ThemeContext'
 import { LanguageProvider } from '@/lib/context/LanguageContext'
 import { ProfileProvider } from '@/lib/context/ProfileContext'
-import Header from '@/components/layout/Header'
-import Footer from '@/components/layout/Footer'
-import BottomNav from '@/components/layout/BottomNav'
-import LeftSidebar from '@/components/layout/LeftSidebar'
 import Toaster from '@/components/ui/Toaster'
-import PageTransition from '@/components/shared/PageTransition'
 import MotionProvider from '@/components/providers/MotionProvider'
 import DeferredUI from '@/components/providers/DeferredUI'
 
@@ -69,6 +64,7 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   viewportFit: 'cover',
+  interactiveWidget: 'resizes-content',
 }
 
 // Anti-FOUC: apply theme BEFORE first paint.
@@ -120,16 +116,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <ToastProvider>
             <CurrencyProvider>
               <ProfileProvider>
-              <LeftSidebar />
-              <Header />
-              <main className="flex-1 pb-safe-mobile md:ml-[72px]">
-                <PageTransition>{children}</PageTransition>
-              </main>
+                {children}
+                <Toaster />
+                <DeferredUI />
               </ProfileProvider>
-              <div className="md:ml-[72px]"><Footer /></div>
-              <BottomNav />
-              <Toaster />
-              <DeferredUI />
             </CurrencyProvider>
           </ToastProvider>
           </LanguageProvider>

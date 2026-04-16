@@ -215,6 +215,7 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     font-feature-settings: "cv01", "ss03";
+    overscroll-behavior: none;
   }
 
   /* Linear heading compression — aggressive negative tracking at large sizes */
@@ -244,6 +245,9 @@
    instead of hardcoded rgba(255,255,255,X) for light-mode compat
    ═══════════════════════════════════════════════════════════ */
 :root {
+  --fh-primary:    #5e6ad2;
+  --fh-primary-hover: #4d59c4;
+  --fh-primary-muted: rgba(94,106,210,0.1);
   --fh-surface:    #ffffff;
   --fh-surface-2:  rgba(0,0,0,0.025);
   --fh-surface-3:  rgba(0,0,0,0.04);
@@ -263,6 +267,9 @@
   --fh-online-bd:  #f7f8f8;
 }
 .dark {
+  --fh-primary:    #6b76e0;
+  --fh-primary-hover: #7a84e8;
+  --fh-primary-muted: rgba(107,118,224,0.12);
   --fh-surface:    rgba(255,255,255,0.02);
   --fh-surface-2:  rgba(255,255,255,0.03);
   --fh-surface-3:  rgba(255,255,255,0.04);
@@ -440,6 +447,7 @@
   button, [role="button"], a, input[type="submit"], input[type="button"] {
     min-height: 44px;
     min-width: 44px;
+    touch-action: manipulation;
   }
   /* Inline/small links inside text shouldn't grow */
   p a, li a, span a { min-height: unset; min-width: unset; }
@@ -498,7 +506,7 @@
 /* Typing indicator animated dots */
 .typing-dots { display: inline-flex; align-items: center; gap: 3px; margin-right: 2px; }
 .typing-dots span {
-  width: 4px; height: 4px; border-radius: 50%; background: #7170ff;
+  width: 4px; height: 4px; border-radius: 50%; background: var(--fh-primary);
   animation: typing-bounce 1.2s infinite ease-in-out;
 }
 .typing-dots span:nth-child(2) { animation-delay: 0.2s; }

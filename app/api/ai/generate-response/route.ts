@@ -29,7 +29,7 @@ export async function POST(request: Request) {
     const priceText = proposedPrice ? `Предлагаемая цена: ${Number(proposedPrice).toLocaleString('ru')} ₸` : 'Цена: обсудим'
 
     const { text: message } = await generateText({
-      model: 'anthropic/claude-sonnet-4.6',
+      model: 'anthropic/claude-sonnet-4-6',
       maxOutputTokens: 400,
       system: SYSTEM,
       messages: [{
@@ -58,7 +58,7 @@ export async function PUT(request: Request) {
     }
 
     const { text } = await generateText({
-      model: 'anthropic/claude-sonnet-4.6',
+      model: 'anthropic/claude-sonnet-4-6',
       maxOutputTokens: 256,
       system: ADVICE_SYSTEM,
       messages: [{

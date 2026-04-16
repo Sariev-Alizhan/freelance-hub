@@ -11,11 +11,11 @@ export default function NewOrderPage() {
             style={{
               width: '52px',
               height: '52px',
-              background: 'rgba(94,106,210,0.1)',
+              background: 'var(--fh-primary-muted)',
               border: '1px solid rgba(94,106,210,0.2)',
             }}
           >
-            <Briefcase className="h-6 w-6" style={{ color: '#7170ff' }} />
+            <Briefcase className="h-6 w-6" style={{ color: 'var(--fh-primary)' }} />
           </div>
           <h1
             style={{

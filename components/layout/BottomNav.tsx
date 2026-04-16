@@ -4,14 +4,15 @@ import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
-  Home, Briefcase, Plus, MessageSquare, User,
+  Home, Briefcase, Plus, User,
   X, Settings, BarChart3, Target, Calculator,
   Search, Zap, Bot, FileText, LogOut,
   LayoutDashboard, Brain, Star, Users, Bell,
 } from 'lucide-react'
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { useUser } from '@/lib/hooks/useUser'
 import { useProfile } from '@/lib/context/ProfileContext'
+import { useUnreadNotifications } from '@/lib/hooks/useUnreadNotifications'
 import { useLang, LANG_LABELS, Lang } from '@/lib/context/LanguageContext'
 import { useCurrency } from '@/lib/context/CurrencyContext'
 import { Currency } from '@/lib/types'
@@ -26,27 +27,27 @@ const CURRENCY_LABELS: Record<Currency, string> = {
 }
 
 const QUICK_LINKS = [
-  { href: '/dashboard',             icon: LayoutDashboard, label: 'Дашборд'    },
-  { href: '/dashboard/analytics',   icon: BarChart3,       label: 'Аналитика'  },
-  { href: '/dashboard/goals',       icon: Target,          label: 'Цели'       },
-  { href: '/dashboard/calculator',  icon: Calculator,      label: 'Калькулятор'},
-  { href: '/ai-search',             icon: Search,          label: 'AI Поиск'   },
-  { href: '/ai-assistant',          icon: Brain,           label: 'AI Чат'     },
-  { href: '/ai-tools',              icon: Zap,             label: 'AI Инструм.'},
-  { href: '/agents',                icon: Bot,             label: 'Агенты'     },
-  { href: '/contracts',             icon: FileText,        label: 'Контракты'  },
-  { href: '/pricing',               icon: Star,            label: 'Тарифы'     },
-  { href: '/orders',                icon: Briefcase,       label: 'Заказы'     },
-  { href: '/freelancers',           icon: Users,           label: 'Люди'       },
+  { href: '/dashboard',             icon: LayoutDashboard, label: 'Dashboard'  },
+  { href: '/dashboard/analytics',   icon: BarChart3,       label: 'Analytics'  },
+  { href: '/dashboard/goals',       icon: Target,          label: 'Goals'      },
+  { href: '/dashboard/calculator',  icon: Calculator,      label: 'Calculator' },
+  { href: '/ai-search',             icon: Search,          label: 'AI Search'  },
+  { href: '/ai-assistant',          icon: Brain,           label: 'AI Chat'    },
+  { href: '/ai-tools',              icon: Zap,             label: 'AI Tools'   },
+  { href: '/agents',                icon: Bot,             label: 'Agents'     },
+  { href: '/contracts',             icon: FileText,        label: 'Contracts'  },
+  { href: '/pricing',               icon: Star,            label: 'Pricing'    },
+  { href: '/orders',                icon: Briefcase,       label: 'Orders'     },
+  { href: '/freelancers',           icon: Users,           label: 'People'     },
 ]
 
 // ── Tab definition ────────────────────────────────────────────────────────────
 const TABS = [
-  { id: 'feed',     href: '/feed',      icon: Home,         matchPrefix: '/feed'     },
-  { id: 'orders',   href: '/orders',    icon: Briefcase,    matchPrefix: '/orders'   },
-  { id: 'create',   href: '/orders/new',icon: Plus,         isCenter: true           },
-  { id: 'messages', href: '/messages',  icon: MessageSquare,matchPrefix: '/messages' },
-  { id: 'profile',  href: null,         icon: User,         isProfile: true          },
+  { id: 'feed',          href: '/feed',          icon: Home,     matchPrefix: '/feed'          },
+  { id: 'orders',        href: '/orders',         icon: Briefcase,matchPrefix: '/orders'        },
+  { id: 'create',        href: '/orders/new',     icon: Plus,     isCenter: true                },
+  { id: 'notifications', href: '/notifications',  icon: Bell,     matchPrefix: '/notifications' },
+  { id: 'profile',       href: null,              icon: User,     isProfile: true               },
 ]
 
 export default function BottomNav() {
@@ -57,6 +58,7 @@ export default function BottomNav() {
   const { lang, setLang, t } = useLang()
   const { currency, setCurrency } = useCurrency()
   const [sheetOpen, setSheetOpen] = useState(false)
+  const unreadNotifs = useUnreadNotifications()
 
   const hidden = pathname.startsWith('/auth') || pathname.startsWith('/messages')
   if (hidden) return null
@@ -64,19 +66,19 @@ export default function BottomNav() {
   const avatarUrl   = profile?.avatar_url || user?.user_metadata?.avatar_url
   const displayName = profile?.full_name || user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Аккаунт'
 
-  async function signOut() {
+  const signOut = useCallback(async () => {
     const supabase = createClient()
     await supabase.auth.signOut()
     setSheetOpen(false)
     router.push('/')
     router.refresh()
-  }
+  }, [router])
 
-  function isActive(tab: typeof TABS[0]) {
+  const isActive = useCallback((tab: typeof TABS[0]) => {
     if (tab.isCenter || tab.isProfile) return false
     if (tab.matchPrefix === '/feed') return pathname === '/feed' || pathname === '/'
     return !!tab.matchPrefix && pathname.startsWith(tab.matchPrefix)
-  }
+  }, [pathname])
 
   return (
     <>
@@ -89,6 +91,8 @@ export default function BottomNav() {
           paddingBottom: 'env(safe-area-inset-bottom)',
           backdropFilter: 'blur(20px)',
           WebkitBackdropFilter: 'blur(20px)',
+          contain: 'layout style',
+          transform: 'translateZ(0)',
         }}
       >
         <div className="flex items-center" style={{ height: 52 }}>
@@ -104,18 +108,16 @@ export default function BottomNav() {
                     href={user ? tab.href! : '/auth/login'}
                     aria-label="Создать заказ"
                   >
-                    <motion.div
-                      whileTap={{ scale: 0.88 }}
+                    <div
                       style={{
-                        width: 44, height: 44,
-                        borderRadius: 14,
-                        background: 'linear-gradient(135deg, #5e6ad2, #7170ff)',
+                        width: 40, height: 40,
+                        borderRadius: 12,
+                        background: 'var(--fh-primary)',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        boxShadow: '0 4px 16px rgba(113,112,255,0.35)',
                       }}
                     >
-                      <Plus style={{ width: 22, height: 22, color: '#fff', strokeWidth: 2.5 }} />
-                    </motion.div>
+                      <Plus style={{ width: 20, height: 20, color: '#fff', strokeWidth: 2.2 }} />
+                    </div>
                   </Link>
                 </div>
               )
@@ -130,11 +132,19 @@ export default function BottomNav() {
                   className="flex-1 flex items-center justify-center"
                   style={{ height: '100%', background: 'none', border: 'none', cursor: 'pointer' }}
                 >
-                  <motion.div whileTap={{ scale: 0.85 }}>
+                  <div className="transition-transform duration-100 active:scale-[0.85]" style={{ position: 'relative' }}>
+                    {unreadNotifs > 0 && (
+                      <span style={{
+                        position: 'absolute', top: -2, right: -2, zIndex: 1,
+                        width: 8, height: 8, borderRadius: '50%',
+                        background: '#e5484d',
+                        boxShadow: '0 0 0 1.5px var(--fh-nav-bg, var(--fh-header-bg))',
+                      }} />
+                    )}
                     {user && avatarUrl ? (
                       <div style={{
                         width: 26, height: 26, borderRadius: '50%', overflow: 'hidden',
-                        outline: sheetOpen ? '2px solid #7170ff' : '2px solid transparent',
+                        outline: sheetOpen ? '2px solid var(--fh-primary)' : '2px solid transparent',
                         outlineOffset: 1.5,
                         transition: 'outline-color 0.15s',
                       }}>
@@ -143,21 +153,22 @@ export default function BottomNav() {
                     ) : (
                       <div style={{
                         width: 26, height: 26, borderRadius: '50%',
-                        background: sheetOpen ? '#7170ff' : 'var(--fh-surface-2)',
-                        border: `1.5px solid ${sheetOpen ? '#7170ff' : 'var(--fh-border)'}`,
+                        background: sheetOpen ? 'var(--fh-primary)' : 'var(--fh-surface-2)',
+                        border: `1.5px solid ${sheetOpen ? 'var(--fh-primary)' : 'var(--fh-border)'}`,
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
                         transition: 'background 0.15s, border-color 0.15s',
                       }}>
                         <User style={{ width: 14, height: 14, color: sheetOpen ? '#fff' : 'var(--fh-t4)' }} />
                       </div>
                     )}
-                  </motion.div>
+                  </div>
                 </button>
               )
             }
 
             // ── Normal tab ─────────────────────────────────────────
-            const href = (tab.id === 'messages' && !user) ? '/auth/login' : tab.href!
+            const href = (tab.id === 'notifications' && !user) ? '/auth/login' : tab.href!
+            const badge = tab.id === 'notifications' ? unreadNotifs : 0
 
             return (
               <Link
@@ -166,7 +177,7 @@ export default function BottomNav() {
                 className="flex-1 flex items-center justify-center"
                 style={{ height: '100%' }}
               >
-                <motion.div whileTap={{ scale: 0.82 }}>
+                <div className="transition-transform duration-100 active:scale-[0.82]" style={{ position: 'relative' }}>
                   <Icon
                     style={{
                       width: 24, height: 24,
@@ -178,7 +189,20 @@ export default function BottomNav() {
                     // Instagram pattern: filled icon when active
                     fill={active ? 'currentColor' : 'none'}
                   />
-                </motion.div>
+                  {badge > 0 && (
+                    <span style={{
+                      position: 'absolute', top: -3, right: -5,
+                      minWidth: 14, height: 14, borderRadius: 7,
+                      background: '#e5484d', color: '#fff',
+                      fontSize: 9, fontWeight: 700,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      padding: '0 3px',
+                      boxShadow: '0 0 0 2px var(--fh-nav-bg, var(--fh-header-bg))',
+                    }}>
+                      {badge > 9 ? '9+' : badge}
+                    </span>
+                  )}
+                </div>
               </Link>
             )
           })}
@@ -240,8 +264,8 @@ export default function BottomNav() {
                         <Image src={avatarUrl} alt={displayName} width={48} height={48}
                           style={{ borderRadius: '50%', flexShrink: 0, objectFit: 'cover' }} unoptimized />
                       ) : (
-                        <div style={{ width: 48, height: 48, borderRadius: '50%', background: '#7170ff20', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                          <User style={{ width: 22, height: 22, color: '#7170ff' }} />
+                        <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'var(--fh-primary-muted)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                          <User style={{ width: 22, height: 22, color: 'var(--fh-primary)' }} />
                         </div>
                       )}
                       <div style={{ flex: 1, minWidth: 0 }}>
@@ -260,12 +284,12 @@ export default function BottomNav() {
                 ) : (
                   <div style={{ display: 'flex', gap: 10, padding: '8px 16px 16px' }}>
                     <Link href="/auth/login" onClick={() => setSheetOpen(false)}
-                      style={{ flex: 1, padding: '14px', borderRadius: 14, textAlign: 'center', fontSize: 15, fontWeight: 600, color: 'var(--fh-t2)', background: 'var(--fh-surface-2)', border: '1px solid var(--fh-border)', textDecoration: 'none' }}>
-                      Войти
+                      style={{ flex: 1, padding: '14px', borderRadius: 12, textAlign: 'center', fontSize: 15, fontWeight: 600, color: 'var(--fh-t2)', background: 'var(--fh-surface-2)', border: '1px solid var(--fh-border)', textDecoration: 'none' }}>
+                      Sign In
                     </Link>
                     <Link href="/auth/register" onClick={() => setSheetOpen(false)}
-                      style={{ flex: 1, padding: '14px', borderRadius: 14, textAlign: 'center', fontSize: 15, fontWeight: 600, color: '#fff', background: 'linear-gradient(135deg,#5e6ad2,#7170ff)', textDecoration: 'none' }}>
-                      Начать
+                      style={{ flex: 1, padding: '14px', borderRadius: 12, textAlign: 'center', fontSize: 15, fontWeight: 600, color: '#fff', background: 'var(--fh-primary)', textDecoration: 'none' }}>
+                      Get Started
                     </Link>
                   </div>
                 )}
@@ -273,14 +297,14 @@ export default function BottomNav() {
                 {/* ── Role switcher ─────────────────────────────── */}
                 {user && (
                   <div style={{ padding: '0 16px 12px' }}>
-                    <SheetSection label="Режим">
+                    <SheetSection label="Mode">
                       <RoleSwitcher />
                     </SheetSection>
                   </div>
                 )}
 
                 {/* ── Quick links — Meta Settings style ─────────── */}
-                <SheetSection label="Разделы">
+                <SheetSection label="Navigate">
                   {QUICK_LINKS.map(item => {
                     const Icon = item.icon
                     return (
@@ -296,13 +320,13 @@ export default function BottomNav() {
                 </SheetSection>
 
                 {/* ── Language ─────────────────────────────────── */}
-                <SheetSection label="Язык">
+                <SheetSection label="Language">
                   <div style={{ display: 'flex', gap: 8, padding: '4px 0' }}>
                     {LANGS.map(l => (
                       <button key={l} onClick={() => setLang(l)} style={{
                         flex: 1, padding: '10px 0', borderRadius: 10, fontSize: 14, fontWeight: 600,
                         border: 'none', cursor: 'pointer',
-                        background: lang === l ? '#7170ff' : 'var(--fh-surface-2)',
+                        background: lang === l ? 'var(--fh-primary)' : 'var(--fh-surface-2)',
                         color: lang === l ? '#fff' : 'var(--fh-t3)',
                       }}>
                         {LANG_LABELS[l]}
@@ -312,13 +336,13 @@ export default function BottomNav() {
                 </SheetSection>
 
                 {/* ── Currency ─────────────────────────────────── */}
-                <SheetSection label="Валюта">
+                <SheetSection label="Currency">
                   <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', padding: '4px 0' }}>
                     {CURRENCIES.map(c => (
                       <button key={c} onClick={() => setCurrency(c)} style={{
                         padding: '9px 14px', borderRadius: 10, fontSize: 14, fontWeight: 600,
                         border: 'none', cursor: 'pointer',
-                        background: currency === c ? '#7170ff' : 'var(--fh-surface-2)',
+                        background: currency === c ? 'var(--fh-primary)' : 'var(--fh-surface-2)',
                         color: currency === c ? '#fff' : 'var(--fh-t3)',
                       }}>
                         {CURRENCY_LABELS[c]}
@@ -328,8 +352,8 @@ export default function BottomNav() {
                 </SheetSection>
 
                 {/* ── Settings + Logout ─────────────────────────── */}
-                <SheetSection label="Настройки">
-                  <SheetRow href="/settings" icon={<Settings style={{ width: 20, height: 20, color: 'var(--fh-t3)' }} />} label="Настройки" onClick={() => setSheetOpen(false)} />
+                <SheetSection label="Account">
+                  <SheetRow href="/settings" icon={<Settings style={{ width: 20, height: 20, color: 'var(--fh-t3)' }} />} label="Settings" onClick={() => setSheetOpen(false)} />
                   {user && (
                     <button
                       onClick={signOut}
@@ -339,10 +363,10 @@ export default function BottomNav() {
                         cursor: 'pointer', borderTop: '0.5px solid var(--fh-sep)',
                       }}
                     >
-                      <div style={{ width: 36, height: 36, borderRadius: 10, background: 'rgba(229,72,77,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <div style={{ width: 36, height: 36, borderRadius: 10, background: 'rgba(229,72,77,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                         <LogOut style={{ width: 18, height: 18, color: '#e5484d' }} />
                       </div>
-                      <span style={{ fontSize: 16, color: '#e5484d', fontWeight: 500 }}>Выйти</span>
+                      <span style={{ fontSize: 16, color: '#e5484d', fontWeight: 500 }}>Sign Out</span>
                     </button>
                   )}
                 </SheetSection>

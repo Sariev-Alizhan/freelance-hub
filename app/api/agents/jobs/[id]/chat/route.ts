@@ -102,7 +102,7 @@ Reply concisely and helpfully. If asked to revise content, provide the revised v
 
   // Generate agent reply
   const { text: reply } = await generateText({
-    model: 'anthropic/claude-sonnet-4.6',
+    model: 'anthropic/claude-sonnet-4-6',
     system: systemPrompt + outputContext,
     messages,
     providerOptions: {

@@ -23,7 +23,7 @@ interface Step {
 const STEPS: Step[] = [
   {
     icon: <Sparkles className="h-6 w-6" />,
-    color: '#7170ff',
+    color: 'var(--fh-primary)',
     titleRu: 'Добро пожаловать в FreelanceHub!',
     titleEn: 'Welcome to FreelanceHub!',
     titleKz: 'FreelanceHub-қа қош келдіңіз!',

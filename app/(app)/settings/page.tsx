@@ -90,10 +90,10 @@ export default function AccountSettings() {
           ) : (
             <div style={{
               width: 56, height: 56, borderRadius: '12px', flexShrink: 0,
-              background: 'rgba(113,112,255,0.1)',
+              background: 'var(--fh-primary-muted)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
             }}>
-              <User style={{ width: 24, height: 24, color: '#7170ff' }} />
+              <User style={{ width: 24, height: 24, color: 'var(--fh-primary)' }} />
             </div>
           )}
 
@@ -105,8 +105,8 @@ export default function AccountSettings() {
               </span>
               {isPremium && (
                 <span style={{
-                  fontSize: '10px', fontWeight: 700, color: '#7170ff',
-                  background: 'rgba(113,112,255,0.1)', border: '1px solid rgba(113,112,255,0.2)',
+                  fontSize: '10px', fontWeight: 700, color: 'var(--fh-primary)',
+                  background: 'var(--fh-primary-muted)', border: '1px solid var(--fh-primary)',
                   padding: '1px 7px', borderRadius: '4px', letterSpacing: '0.04em',
                   display: 'inline-flex', alignItems: 'center', gap: '3px',
                 }}>
@@ -127,7 +127,7 @@ export default function AccountSettings() {
             href="/dashboard"
             style={{
               display: 'flex', alignItems: 'center', gap: '5px',
-              fontSize: '13px', color: '#7170ff', textDecoration: 'none',
+              fontSize: '13px', color: 'var(--fh-primary)', textDecoration: 'none',
               fontWeight: 510, flexShrink: 0, whiteSpace: 'nowrap',
             }}
           >
@@ -151,7 +151,7 @@ export default function AccountSettings() {
             <p style={{ fontSize: '13px', fontWeight: 590, color: isPremium ? '#7170ff' : 'var(--fh-t3)' }}>
               {isPremium === null ? '—' : isPremium ? 'Premium' : 'Free'}
               {isPremium === false && (
-                <Link href="/premium" style={{ color: '#7170ff', textDecoration: 'none', marginLeft: '8px', fontSize: '12px', fontWeight: 400 }}>
+                <Link href="/premium" style={{ color: 'var(--fh-primary)', textDecoration: 'none', marginLeft: '8px', fontSize: '12px', fontWeight: 400 }}>
                   Upgrade →
                 </Link>
               )}

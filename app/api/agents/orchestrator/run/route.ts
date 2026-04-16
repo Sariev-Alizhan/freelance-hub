@@ -79,7 +79,7 @@ export async function POST(req: Request) {
         ).join('\n')
 
         const { text: planText } = await generateText({
-          model: 'anthropic/claude-sonnet-4.6',
+          model: 'anthropic/claude-sonnet-4-6',
           prompt: `You are an AI orchestrator. Break the following task into sub-tasks and assign each to the best available agent.
 
 TASK: ${task}
@@ -149,7 +149,7 @@ Rules:
             : ''
 
           const { text: subResult } = await generateText({
-            model: 'anthropic/claude-sonnet-4.6',
+            model: 'anthropic/claude-sonnet-4-6',
             maxOutputTokens: 1500,
             system: agent.system_prompt,
             prompt: sub.description + priorContext,
@@ -175,7 +175,7 @@ Rules:
         await addLog('📊 Агрегация', 'Собираю финальный отчёт...')
 
         const { text: aggregate } = await generateText({
-          model: 'anthropic/claude-sonnet-4.6',
+          model: 'anthropic/claude-sonnet-4-6',
           maxOutputTokens: 2000,
           prompt: `You are a senior analyst. Synthesize the following sub-task results into a cohesive final report.
 

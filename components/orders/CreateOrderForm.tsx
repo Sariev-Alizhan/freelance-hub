@@ -356,7 +356,7 @@ export default function CreateOrderForm() {
                   title={voiceRecording ? 'Stop recording' : 'Describe by voice'}
                   className="flex-shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium transition-all disabled:opacity-50"
                   style={{
-                    background: voiceRecording ? 'rgba(239,68,68,0.1)' : 'rgba(94,106,210,0.08)',
+                    background: voiceRecording ? 'rgba(239,68,68,0.1)' : 'var(--fh-primary-muted)',
                     border: `1px solid ${voiceRecording ? 'rgba(239,68,68,0.3)' : 'rgba(94,106,210,0.2)'}`,
                     color: voiceRecording ? '#ef4444' : '#7170ff',
                   }}

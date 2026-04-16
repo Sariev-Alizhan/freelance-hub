@@ -302,7 +302,7 @@ export default function NotificationBell({ sidebarMode }: { sidebarMode?: boolea
                 ) : (
                   <button onClick={subscribe}
                     className="flex items-center gap-1 text-xs font-medium transition-colors"
-                    style={{ color: '#7170ff' }}>
+                    style={{ color: 'var(--fh-primary)' }}>
                     <Bell className="h-3 w-3" /> Enable
                   </button>
                 )}

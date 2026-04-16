@@ -7,11 +7,11 @@ import FavoriteButton from '@/components/shared/FavoriteButton'
 import { Freelancer } from '@/lib/types'
 
 const LEVEL_LABELS = {
-  new:    { label: 'Newcomer', color: 'var(--fh-skill-bg)',         text: 'var(--fh-t3)'  },
-  junior: { label: 'Junior',  color: 'rgba(56,189,248,0.1)',        text: '#38bdf8'       },
-  middle: { label: 'Middle',  color: 'rgba(39,166,68,0.1)',         text: '#27a644'       },
-  senior: { label: 'Senior',  color: 'rgba(113,112,255,0.12)',      text: '#7170ff'       },
-  top:    { label: 'TOP',     color: 'rgba(251,191,36,0.12)',       text: '#fbbf24'       },
+  new:    { label: 'Newcomer', color: 'var(--fh-skill-bg)',    text: 'var(--fh-t3)'  },
+  junior: { label: 'Junior',  color: 'rgba(56,189,248,0.1)',   text: '#38bdf8'       },
+  middle: { label: 'Middle',  color: 'rgba(39,166,68,0.1)',    text: '#27a644'       },
+  senior: { label: 'Senior',  color: 'var(--fh-primary-muted)', text: 'var(--fh-primary)' },
+  top:    { label: 'TOP',     color: 'rgba(251,191,36,0.12)',  text: '#fbbf24'       },
 }
 
 const AVAILABILITY_LABELS = {
@@ -42,7 +42,7 @@ export default function FreelancerCard({ freelancer: f }: Props) {
             border: f.isPromoted
               ? '1px solid rgba(251,191,36,0.25)'
               : f.isPremium
-              ? '1px solid rgba(94,106,210,0.2)'
+              ? '1px solid var(--fh-primary-muted)'
               : '1px solid var(--fh-border)',
             borderRadius: '10px',
           }}
@@ -74,12 +74,12 @@ export default function FreelancerCard({ freelancer: f }: Props) {
                 >
                   {f.name}
                 </span>
-                {f.isVerified && <CheckCircle className="h-3.5 w-3.5 shrink-0" style={{ color: '#5e6ad2' }} />}
+                {f.isVerified && <CheckCircle className="h-3.5 w-3.5 shrink-0" style={{ color: 'var(--fh-primary)' }} />}
                 {f.isPremium && (
                   <span className="flex items-center gap-0.5 shrink-0" style={{
                     padding: '1px 6px', borderRadius: '4px',
-                    background: 'rgba(94,106,210,0.1)', border: '1px solid rgba(94,106,210,0.25)',
-                    fontSize: '10px', fontWeight: 590, color: '#5e6ad2', letterSpacing: '0.03em',
+                    background: 'var(--fh-primary-muted)', border: '1px solid rgba(94,106,210,0.25)',
+                    fontSize: '10px', fontWeight: 590, color: 'var(--fh-primary)', letterSpacing: '0.03em',
                   }}>
                     <Crown className="h-2.5 w-2.5" /> Pro
                   </span>
@@ -168,7 +168,7 @@ export default function FreelancerCard({ freelancer: f }: Props) {
             if (f.rating >= 4.8 && f.reviewsCount >= 5)
               badges.push({ icon: '🏆', label: 'Top rated', color: '#f59e0b', bg: 'rgba(245,158,11,0.08)' })
             if (f.responseTime && (f.responseTime.includes('1 hour') || f.responseTime.includes('4 hours')))
-              badges.push({ icon: '⚡', label: 'Fast reply', color: '#7170ff', bg: 'rgba(113,112,255,0.08)' })
+              badges.push({ icon: '⚡', label: 'Fast reply', color: 'var(--fh-primary)', bg: 'var(--fh-primary-muted)' })
             if (f.completedOrders >= 50)
               badges.push({ icon: '🔥', label: 'Pro', color: '#ef4444', bg: 'rgba(239,68,68,0.08)' })
             if (f.reviewsCount >= 20)

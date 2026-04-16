@@ -25,7 +25,7 @@ export async function POST(request: Request) {
     }
 
     const { text: description } = await generateText({
-      model: 'anthropic/claude-sonnet-4.6',
+      model: 'anthropic/claude-sonnet-4-6',
       maxOutputTokens: 512,
       system: SYSTEM,
       messages: [{

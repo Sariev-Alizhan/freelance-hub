@@ -79,7 +79,7 @@ export default function RoleSwitcher() {
         }`}
       >
         <Briefcase className="h-3 w-3" />
-        <span className="hidden sm:inline">{t.roles.client}</span>
+        <span>{t.roles.client}</span>
       </button>
       {/* Freelancer pill */}
       <button
@@ -93,7 +93,7 @@ export default function RoleSwitcher() {
         }`}
       >
         <User2 className="h-3 w-3" />
-        <span className="hidden sm:inline">{t.roles.freelancer}</span>
+        <span>{t.roles.freelancer}</span>
       </button>
     </div>
   )

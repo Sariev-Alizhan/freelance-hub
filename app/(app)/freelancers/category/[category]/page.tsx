@@ -4,7 +4,7 @@ import { Suspense } from 'react'
 import Script from 'next/script'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
-import FreelancersClient from '@/app/freelancers/FreelancersClient'
+import FreelancersClient from '@/app/(app)/freelancers/FreelancersClient'
 import { CATEGORIES } from '@/lib/mock/categories'
 import { Freelancer } from '@/lib/types'
 

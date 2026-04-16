@@ -2,8 +2,8 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
-  Bell, MessageSquare, UserCheck, Briefcase,
-  CheckCheck, X, Trash2, BellOff,
+  Bell, BellOff, MessageSquare, UserCheck, Briefcase,
+  CheckCheck, X, Trash2,
 } from 'lucide-react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
@@ -21,12 +21,14 @@ interface Notification {
   created_at: string
 }
 
-const TYPE_CONFIG: Record<string, { icon: React.ElementType; color: string; bgColor: string; label: string }> = {
-  new_response:    { icon: UserCheck,     color: '#3b82f6', bgColor: 'rgba(59,130,246,0.1)',  label: 'Новый отклик'   },
-  new_message:     { icon: MessageSquare, color: '#7170ff', bgColor: 'rgba(113,112,255,0.1)', label: 'Сообщение'      },
-  order_accepted:  { icon: CheckCheck,    color: '#27a644', bgColor: 'rgba(39,166,68,0.1)',   label: 'Заказ принят'   },
-  order_completed: { icon: Briefcase,     color: '#f59e0b', bgColor: 'rgba(245,158,11,0.1)',  label: 'Заказ выполнен' },
+const TYPE_CONFIG: Record<string, { icon: React.ElementType; color: string; bgColor: string; label: string; filter: string }> = {
+  new_response:    { icon: UserCheck,     color: '#3b82f6', bgColor: 'rgba(59,130,246,0.1)',  label: 'New response',  filter: 'orders'   },
+  new_message:     { icon: MessageSquare, color: 'var(--fh-primary)', bgColor: 'var(--fh-primary-muted)', label: 'Message', filter: 'messages' },
+  order_accepted:  { icon: CheckCheck,    color: '#27a644', bgColor: 'rgba(39,166,68,0.1)',   label: 'Order accepted', filter: 'orders'  },
+  order_completed: { icon: Briefcase,     color: '#f59e0b', bgColor: 'rgba(245,158,11,0.1)',  label: 'Order done',    filter: 'orders'   },
 }
+
+type FilterTab = 'all' | 'orders' | 'messages'
 
 function timeAgo(iso: string) {
   const s = (Date.now() - new Date(iso).getTime()) / 1000
@@ -48,26 +50,35 @@ function NotifRow({ notif, onRead, onDelete }: {
   const inner = (
     <motion.div
       layout
-      initial={{ opacity: 0, x: -10 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, height: 0, marginBottom: 0, overflow: 'hidden' }}
-      transition={{ duration: 0.2 }}
+      initial={{ opacity: 0, y: 6 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, height: 0, overflow: 'hidden' }}
+      transition={{ duration: 0.18 }}
       onClick={() => onRead(notif.id)}
       style={{
         display: 'flex',
         alignItems: 'flex-start',
-        gap: 14,
+        gap: 12,
         padding: '14px 16px',
-        background: !notif.is_read ? 'rgba(113,112,255,0.04)' : 'transparent',
+        background: !notif.is_read ? 'rgba(94,106,210,0.04)' : 'transparent',
         borderBottom: '0.5px solid var(--fh-sep)',
         cursor: 'pointer',
         position: 'relative',
       }}
     >
-      {/* Icon badge */}
+      {/* Left: unread bar */}
+      {!notif.is_read && (
+        <span style={{
+          position: 'absolute', left: 0, top: 0, bottom: 0,
+          width: 3, borderRadius: '0 2px 2px 0',
+          background: 'var(--fh-primary)',
+        }} />
+      )}
+
+      {/* Icon circle */}
       <div style={{
-        width: 44, height: 44,
-        borderRadius: 14, flexShrink: 0,
+        width: 46, height: 46,
+        borderRadius: '50%', flexShrink: 0,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         background: cfg.bgColor,
       }}>
@@ -75,7 +86,7 @@ function NotifRow({ notif, onRead, onDelete }: {
       </div>
 
       {/* Content */}
-      <div style={{ flex: 1, minWidth: 0 }}>
+      <div style={{ flex: 1, minWidth: 0, paddingTop: 1 }}>
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8 }}>
           <span style={{
             fontSize: 14,
@@ -93,42 +104,34 @@ function NotifRow({ notif, onRead, onDelete }: {
         {notif.body && (
           <p style={{
             fontSize: 13, color: 'var(--fh-t3)',
-            marginTop: 3, lineHeight: 1.5,
+            marginTop: 2, lineHeight: 1.5,
             overflow: 'hidden', textOverflow: 'ellipsis',
             display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical',
           }}>
             {notif.body}
           </p>
         )}
-        <span style={{ fontSize: 11, color: cfg.color, marginTop: 4, display: 'block', fontWeight: 500 }}>
+        <span style={{ fontSize: 11, color: cfg.color, marginTop: 3, display: 'block', fontWeight: 500 }}>
           {cfg.label}
         </span>
       </div>
 
-      {/* Unread dot */}
-      {!notif.is_read && (
-        <div style={{
-          width: 8, height: 8, borderRadius: '50%',
-          background: '#7170ff',
-          flexShrink: 0, marginTop: 6,
-        }} />
-      )}
-
-      {/* Delete btn (shown on press) */}
+      {/* Delete btn */}
       <button
         onClick={e => { e.preventDefault(); e.stopPropagation(); onDelete(notif.id) }}
         style={{
-          position: 'absolute', right: 14, top: 14,
-          width: 28, height: 28, borderRadius: 8,
+          position: 'absolute', right: 12, top: 12,
+          width: 26, height: 26, borderRadius: 8,
           background: 'rgba(229,72,77,0.08)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           border: 'none', cursor: 'pointer',
           opacity: 0,
           transition: 'opacity 0.15s',
+          flexShrink: 0,
         }}
         className="notif-delete-btn"
       >
-        <X style={{ width: 14, height: 14, color: '#e5484d' }} />
+        <X style={{ width: 13, height: 13, color: '#e5484d' }} />
       </button>
     </motion.div>
   )
@@ -146,12 +149,21 @@ export default function NotificationsPage() {
   const { user } = useUser()
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [loading, setLoading] = useState(true)
+  const [activeFilter, setActiveFilter] = useState<FilterTab>('all')
   const { state: pushState, subscribe, unsubscribe } = usePushNotifications()
   const supabase = useMemo(() => createClient(), [])
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const db = supabase as any
 
   const unreadCount = notifications.filter(n => !n.is_read).length
+
+  const filteredNotifications = useMemo(() => {
+    if (activeFilter === 'all') return notifications
+    return notifications.filter(n => {
+      const cfg = TYPE_CONFIG[n.type]
+      return cfg?.filter === activeFilter
+    })
+  }, [notifications, activeFilter])
 
   const load = useCallback(async () => {
     if (!user?.id) { setLoading(false); return }
@@ -210,7 +222,7 @@ export default function NotificationsPage() {
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '80px 24px', gap: 16, textAlign: 'center' }}>
         <Bell style={{ width: 40, height: 40, color: 'var(--fh-t4)', opacity: 0.3 }} />
         <p style={{ fontSize: 16, color: 'var(--fh-t2)', fontWeight: 500 }}>Войдите, чтобы видеть уведомления</p>
-        <Link href="/auth/login" style={{ padding: '12px 24px', borderRadius: 12, background: '#7170ff', color: '#fff', textDecoration: 'none', fontSize: 14, fontWeight: 600 }}>
+        <Link href="/auth/login" style={{ padding: '12px 24px', borderRadius: 12, background: 'var(--fh-primary)', color: '#fff', textDecoration: 'none', fontSize: 14, fontWeight: 600 }}>
           Войти
         </Link>
       </div>
@@ -227,72 +239,63 @@ export default function NotificationsPage() {
 
       <div style={{ maxWidth: 640, margin: '0 auto' }}>
 
-        {/* ── Sticky toolbar (desktop has it via Header, mobile relies on this) ── */}
-        <div className="sm:hidden" style={{
+        {/* ── Header row ── */}
+        <div style={{
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          padding: '12px 16px',
-          borderBottom: '0.5px solid var(--fh-sep)',
-          background: 'var(--fh-header-bg)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
+          padding: '14px 16px 10px',
         }}>
-          {unreadCount > 0 ? (
-            <button
-              onClick={markAllRead}
-              style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, color: '#7170ff', fontWeight: 600, padding: 0 }}
-            >
-              <CheckCheck style={{ width: 16, height: 16 }} />
-              Прочитать все ({unreadCount})
-            </button>
-          ) : (
-            <span style={{ fontSize: 13, color: 'var(--fh-t4)' }}>
-              {notifications.length > 0 ? 'Всё прочитано' : ''}
-            </span>
-          )}
-          {notifications.length > 0 && (
-            <button
-              onClick={clearAll}
-              style={{ display: 'flex', alignItems: 'center', gap: 5, background: 'none', border: 'none', cursor: 'pointer', fontSize: 13, color: 'var(--fh-t4)', padding: 0 }}
-            >
-              <Trash2 style={{ width: 14, height: 14 }} />
-              Очистить
-            </button>
-          )}
-        </div>
-
-        {/* Desktop toolbar */}
-        <div className="hidden sm:flex" style={{
-          alignItems: 'center', justifyContent: 'space-between',
-          padding: '16px 0 12px',
-          borderBottom: '0.5px solid var(--fh-sep)',
-        }}>
-          <h1 style={{ fontSize: 20, fontWeight: 700, color: 'var(--fh-t1)', letterSpacing: '-0.03em' }}>
-            Уведомления
+          <h1 style={{ fontSize: 20, fontWeight: 700, color: 'var(--fh-t1)', letterSpacing: '-0.03em', margin: 0 }}>
+            Notifications
           </h1>
-          <div style={{ display: 'flex', gap: 10 }}>
+          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
             {unreadCount > 0 && (
               <button onClick={markAllRead} style={{
-                display: 'flex', alignItems: 'center', gap: 6,
-                background: 'rgba(113,112,255,0.08)', border: 'none',
-                borderRadius: 8, padding: '7px 12px',
-                cursor: 'pointer', fontSize: 13, color: '#7170ff', fontWeight: 600,
+                display: 'flex', alignItems: 'center', gap: 5,
+                background: 'none', border: 'none',
+                cursor: 'pointer', fontSize: 13, color: 'var(--fh-primary)', fontWeight: 600, padding: 0,
               }}>
                 <CheckCheck style={{ width: 14, height: 14 }} />
-                Прочитать все
+                Mark all read
               </button>
             )}
             {notifications.length > 0 && (
               <button onClick={clearAll} style={{
-                display: 'flex', alignItems: 'center', gap: 6,
-                background: 'var(--fh-surface-2)', border: 'none',
-                borderRadius: 8, padding: '7px 12px',
-                cursor: 'pointer', fontSize: 13, color: 'var(--fh-t3)',
+                display: 'flex', alignItems: 'center', gap: 4,
+                background: 'none', border: 'none',
+                cursor: 'pointer', fontSize: 13, color: 'var(--fh-t4)', padding: 0,
               }}>
-                <Trash2 style={{ width: 14, height: 14 }} />
-                Очистить
+                <Trash2 style={{ width: 13, height: 13 }} />
               </button>
             )}
           </div>
+        </div>
+
+        {/* ── LinkedIn-style filter chips ── */}
+        <div style={{
+          display: 'flex', gap: 8, padding: '0 16px 12px',
+          overflowX: 'auto', scrollbarWidth: 'none',
+          borderBottom: '0.5px solid var(--fh-sep)',
+        }}>
+          {([
+            { id: 'all',      label: 'All' },
+            { id: 'orders',   label: 'Orders' },
+            { id: 'messages', label: 'Messages' },
+          ] as { id: FilterTab; label: string }[]).map(f => (
+            <button
+              key={f.id}
+              onClick={() => setActiveFilter(f.id)}
+              style={{
+                padding: '6px 16px', borderRadius: 99, fontSize: 13, fontWeight: 600,
+                border: activeFilter === f.id ? 'none' : '1px solid var(--fh-border)',
+                background: activeFilter === f.id ? 'var(--fh-t1)' : 'transparent',
+                color: activeFilter === f.id ? 'var(--fh-canvas)' : 'var(--fh-t2)',
+                cursor: 'pointer', whiteSpace: 'nowrap', flexShrink: 0,
+                transition: 'all 0.15s',
+              }}
+            >
+              {f.label}
+            </button>
+          ))}
         </div>
 
         {/* ── Push notifications toggle ─────────────────────────────────────── */}
@@ -320,7 +323,7 @@ export default function NotificationsPage() {
               <span style={{ fontSize: 12, color: 'var(--fh-t4)' }}>Заблокированы</span>
             ) : (
               <button onClick={subscribe} style={{
-                fontSize: 13, color: '#7170ff', fontWeight: 600,
+                fontSize: 13, color: 'var(--fh-primary)', fontWeight: 600,
                 background: 'rgba(113,112,255,0.1)', border: 'none',
                 borderRadius: 8, padding: '6px 12px', cursor: 'pointer',
               }}>
@@ -347,7 +350,7 @@ export default function NotificationsPage() {
               </div>
             ))}
           </div>
-        ) : notifications.length === 0 ? (
+        ) : filteredNotifications.length === 0 ? (
           <div style={{
             display: 'flex', flexDirection: 'column', alignItems: 'center',
             justifyContent: 'center', padding: '80px 24px', gap: 14, textAlign: 'center',
@@ -361,16 +364,16 @@ export default function NotificationsPage() {
             </div>
             <div>
               <p style={{ fontSize: 16, fontWeight: 600, color: 'var(--fh-t1)', letterSpacing: '-0.02em' }}>
-                Нет уведомлений
+                No notifications
               </p>
               <p style={{ fontSize: 14, color: 'var(--fh-t4)', marginTop: 6, lineHeight: 1.5 }}>
-                Когда появятся новые отклики,<br />сообщения или обновления заказов
+                New responses, messages and<br />order updates will appear here
               </p>
             </div>
           </div>
         ) : (
           <AnimatePresence initial={false}>
-            {notifications.map(notif => (
+            {filteredNotifications.map(notif => (
               <div key={notif.id} className="notif-row">
                 <NotifRow notif={notif} onRead={markRead} onDelete={deleteNotif} />
               </div>

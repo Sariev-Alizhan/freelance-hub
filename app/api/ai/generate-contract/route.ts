@@ -73,7 +73,7 @@ Payment terms: ${paymentOrder}
 IP rights: ${ipRights}`
 
   const result = streamText({
-    model: 'anthropic/claude-sonnet-4.6',
+    model: 'anthropic/claude-sonnet-4-6',
     maxOutputTokens: 3000,
     system: SYSTEM,
     messages: [{ role: 'user', content: userPrompt }],

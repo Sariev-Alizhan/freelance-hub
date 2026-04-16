@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import {
   Home, Briefcase, Users, MessageSquare, Sparkles, Zap, Bot,
   FileText, Tag, BarChart3, Target, Calculator, Settings,
-  LogOut, User, Bell, ChevronRight, Plus, Shield,
+  LogOut, User, Bell, ChevronRight, Plus, Shield, Sun, Moon,
 } from 'lucide-react'
 import Logo from '@/components/ui/Logo'
 import NotificationBell from '@/components/layout/NotificationBell'
@@ -15,6 +15,7 @@ import { useLang } from '@/lib/context/LanguageContext'
 import { useUser } from '@/lib/hooks/useUser'
 import { useProfile } from '@/lib/context/ProfileContext'
 import { createClient } from '@/lib/supabase/client'
+import { useTheme } from '@/lib/context/ThemeContext'
 
 const SIDEBAR_W_COLLAPSED = 72
 const SIDEBAR_W_EXPANDED = 244
@@ -23,6 +24,7 @@ export default function LeftSidebar() {
   const { t } = useLang()
   const { user } = useUser()
   const { profile } = useProfile()
+  const { theme, setTheme } = useTheme()
   const router = useRouter()
   const pathname = usePathname()
   const [hovered,  setHovered]  = useState(false)
@@ -136,7 +138,7 @@ export default function LeftSidebar() {
             color: 'var(--fh-t1)',
           }}
         >
-          Freelance<span style={{ color: '#7170ff' }}>Hub</span>
+          Freelance<span style={{ color: 'var(--fh-primary)' }}>Hub</span>
         </span>
       </Link>
 
@@ -222,7 +224,7 @@ export default function LeftSidebar() {
           }}>
             <span style={{
               width: 18, height: 18, borderRadius: 6,
-              background: '#5e6ad2',
+              background: 'var(--fh-primary)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
             }}>
               <Plus style={{ width: 11, height: 11, color: '#fff' }} />
@@ -320,8 +322,8 @@ export default function LeftSidebar() {
                     <Link
                       href="/admin"
                       className="flex items-center gap-2.5 px-3.5 py-2 text-[13px] transition-colors"
-                      style={{ color: '#7170ff', fontWeight: 510, textDecoration: 'none' }}
-                      onMouseEnter={e => { e.currentTarget.style.background = 'rgba(113,112,255,0.06)' }}
+                      style={{ color: 'var(--fh-primary)', fontWeight: 510, textDecoration: 'none' }}
+                      onMouseEnter={e => { e.currentTarget.style.background = 'var(--fh-primary-muted)' }}
                       onMouseLeave={e => { e.currentTarget.style.background = 'transparent' }}
                       onClick={() => setMoreOpen(false)}
                     >
@@ -386,11 +388,11 @@ export default function LeftSidebar() {
             ) : (
               <div style={{
                 width: 28, height: 28, borderRadius: '50%',
-                background: 'rgba(113,112,255,0.18)',
+                background: 'var(--fh-primary-muted)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 flexShrink: 0,
               }}>
-                <User style={{ width: 14, height: 14, color: '#7170ff' }} />
+                <User style={{ width: 14, height: 14, color: 'var(--fh-primary)' }} />
               </div>
             )}
             <div style={{ overflow: 'hidden', transition: 'opacity 0.18s, transform 0.18s', opacity: expanded ? 1 : 0, transform: expanded ? 'translateX(0)' : 'translateX(-6px)' }}>
@@ -402,6 +404,35 @@ export default function LeftSidebar() {
           </Link>
         ) : (
           <div style={{ padding: '4px 8px', display: 'flex', flexDirection: 'column', gap: 4 }}>
+            {/* Theme toggle for guests */}
+            <button
+              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              aria-label="Переключить тему"
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 12,
+                height: 36,
+                paddingLeft: 18,
+                borderRadius: 8,
+                border: '1px solid var(--fh-border)',
+                background: 'transparent',
+                cursor: 'pointer',
+                color: 'var(--fh-t3)',
+                width: '100%',
+                transition: 'background 0.15s, color 0.15s',
+              }}
+              onMouseEnter={e => { e.currentTarget.style.background = 'var(--fh-surface-2)'; e.currentTarget.style.color = 'var(--fh-t1)' }}
+              onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--fh-t3)' }}
+            >
+              {theme === 'dark'
+                ? <Sun style={{ width: 16, height: 16, flexShrink: 0 }} />
+                : <Moon style={{ width: 16, height: 16, flexShrink: 0 }} />
+              }
+              <span style={{ ...labelStyle, opacity: expanded ? 1 : 0 }}>
+                {theme === 'dark' ? 'Light mode' : 'Dark mode'}
+              </span>
+            </button>
             <Link
               href="/auth/login"
               style={{

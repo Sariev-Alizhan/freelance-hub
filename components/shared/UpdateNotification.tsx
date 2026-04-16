@@ -120,9 +120,10 @@ export default function UpdateNotification() {
         disabled={checking}
         title="Check for updates"
         aria-label="Check for updates"
+        className="hidden md:flex items-center justify-center"
         style={{
           position:       'fixed',
-          bottom:         'calc(4rem + env(safe-area-inset-bottom, 0px) + 14px)',
+          bottom:         '20px',
           right:          '14px',
           zIndex:         9000,
           width:          '34px',
@@ -131,9 +132,6 @@ export default function UpdateNotification() {
           background:     'var(--fh-surface)',
           border:         '1px solid var(--fh-border)',
           boxShadow:      '0 2px 8px rgba(0,0,0,0.12)',
-          display:        'flex',
-          alignItems:     'center',
-          justifyContent: 'center',
           cursor:         checking ? 'wait' : 'pointer',
           opacity:        0.45,
           transition:     'opacity 0.2s, transform 0.2s',

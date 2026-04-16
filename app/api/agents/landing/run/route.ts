@@ -65,7 +65,7 @@ export async function POST(req: Request) {
         await addLog('🤖 Claude генерирует', 'Создаю HTML/Tailwind лендинг...')
 
         const { text } = await generateText({
-          model: 'anthropic/claude-sonnet-4.6',
+          model: 'anthropic/claude-sonnet-4-6',
           prompt: `You are an expert landing page copywriter and front-end developer.
 Create a complete, conversion-optimized landing page.
 

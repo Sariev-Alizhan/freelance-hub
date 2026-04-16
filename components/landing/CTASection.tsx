@@ -41,15 +41,15 @@ export default function CTASection() {
             <p style={{ fontSize: '16px', color: 'var(--fh-t3)', fontWeight: 400, letterSpacing: '-0.01em', lineHeight: 1.6, maxWidth: '460px', margin: '0 auto 8px' }}>
               {ct.sub}
             </p>
-            <p style={{ fontSize: '13px', color: 'var(--fh-t4)', fontWeight: 400, letterSpacing: '-0.01em', lineHeight: 1.6, maxWidth: '400px', margin: '0 auto 36px' }}>
-              {ct.tag}
+            <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.3)', fontWeight: 400, letterSpacing: '-0.01em', lineHeight: 1.6, maxWidth: '400px', margin: '0 auto 36px' }}>
+              Built in Kazakhstan · Open to the world
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
               <Link
                 href="/orders/new"
                 className="flex items-center gap-2 transition-all"
-                style={{ padding: '11px 26px', borderRadius: '6px', background: '#5e6ad2', color: '#ffffff', fontSize: '15px', fontWeight: 510, letterSpacing: '-0.01em', boxShadow: '0 0 0 1px rgba(113,112,255,0.3), 0 2px 12px rgba(94,106,210,0.25)' }}
+                style={{ padding: '11px 26px', borderRadius: '8px', background: '#5e6ad2', color: '#ffffff', fontSize: '15px', fontWeight: 510, letterSpacing: '-0.01em' }}
                 onMouseEnter={e => { e.currentTarget.style.background = '#828fff' }}
                 onMouseLeave={e => { e.currentTarget.style.background = '#5e6ad2' }}
               >
@@ -60,7 +60,7 @@ export default function CTASection() {
               <Link
                 href="/auth/register"
                 className="flex items-center gap-2 transition-all"
-                style={{ padding: '11px 26px', borderRadius: '6px', background: 'var(--fh-surface-2)', border: '1px solid var(--fh-border-2)', color: 'var(--fh-t2)', fontSize: '15px', fontWeight: 510, letterSpacing: '-0.01em' }}
+                style={{ padding: '11px 26px', borderRadius: '8px', background: 'transparent', border: '1px solid rgba(255,255,255,0.15)', color: 'rgba(255,255,255,0.7)', fontSize: '15px', fontWeight: 510, letterSpacing: '-0.01em' }}
                 onMouseEnter={e => { e.currentTarget.style.color = 'var(--fh-t1)'; e.currentTarget.style.background = 'var(--fh-surface-3)' }}
                 onMouseLeave={e => { e.currentTarget.style.color = 'var(--fh-t2)'; e.currentTarget.style.background = 'var(--fh-surface-2)' }}
               >

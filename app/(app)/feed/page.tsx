@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import {
-  Search, ThumbsUp, ThumbsDown, Bookmark, Share2,
+  Search, ThumbsUp, Bookmark, Share2,
   MessageCircle, RefreshCw, Send, X, CheckCircle2,
   ArrowUp, ExternalLink, Plus, Hash, BadgeCheck,
 } from 'lucide-react'
@@ -55,11 +55,11 @@ interface Comment {
 // ── Constants ─────────────────────────────────────────────────────────────────
 
 const SRC_COLOR: Record<string, string> = {
-  hn: '#f97316', reddit_ai: '#ff4500', reddit_ml: '#7170ff', reddit_llama: '#27a644',
+  hn: '#f97316', reddit_ai: '#ff4500', reddit_ml: 'var(--fh-primary)', reddit_llama: '#27a644',
 }
 const SRC_BG: Record<string, string> = {
   hn: 'rgba(249,115,22,0.1)', reddit_ai: 'rgba(255,69,0,0.1)',
-  reddit_ml: 'rgba(113,112,255,0.1)', reddit_llama: 'rgba(39,166,68,0.1)',
+  reddit_ml: 'var(--fh-primary-muted)', reddit_llama: 'rgba(39,166,68,0.1)',
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -76,7 +76,7 @@ function UserAvatar({ url, name, size = 32 }: { url?: string | null; name?: stri
   if (url) return <Image src={url} alt={name ?? ''} width={size} height={size} className="rounded-full object-cover flex-shrink-0" style={{ width: size, height: size }} unoptimized />
   return (
     <div className="rounded-full flex items-center justify-center flex-shrink-0 text-white font-semibold"
-      style={{ width: size, height: size, fontSize: size * 0.38, background: '#7170ff', flexShrink: 0 }}>
+      style={{ width: size, height: size, fontSize: size * 0.38, background: 'var(--fh-primary)', flexShrink: 0 }}>
       {(name ?? '?')[0]?.toUpperCase()}
     </div>
   )
@@ -134,7 +134,7 @@ function CommentThread({ itemId, user, profile, open }: {
             />
             <button onClick={submit} disabled={!text.trim() || posting}
               className="h-7 w-7 rounded-full flex items-center justify-center flex-shrink-0"
-              style={{ background: text.trim() ? '#7170ff' : 'var(--fh-border)', color: '#fff', border: 'none', cursor: 'pointer' }}>
+              style={{ background: text.trim() ? 'var(--fh-primary)' : 'var(--fh-border)', color: '#fff', border: 'none', cursor: 'pointer' }}>
               <Send className="h-3 w-3" />
             </button>
           </div>
@@ -187,26 +187,56 @@ function ActionBar({ itemId, reactions, onReact, commentsOpen, onToggleComments,
     </button>
   )
 
+  // Reactions summary line (likes count above actions, like LinkedIn)
+  const totalLikes = reactions.likes
   return (
-    <div className="flex items-center gap-0.5 px-3 py-2" style={{ borderTop: '1px solid var(--fh-sep)' }}>
-      <Btn active={liked}    color="#27a644" icon={<ThumbsUp   className="h-3.5 w-3.5" />} count={reactions.likes}    onClick={() => onReact('like')}    />
-      <Btn active={disliked} color="#e5484d" icon={<ThumbsDown className="h-3.5 w-3.5" />} count={reactions.dislikes} onClick={() => onReact('dislike')} />
-      <button onClick={onToggleComments}
-        className="flex items-center gap-1 px-2 py-1 rounded-lg transition-colors text-[12px] font-semibold"
-        style={{ background: commentsOpen ? 'rgba(113,112,255,0.1)' : 'transparent', color: commentsOpen ? '#7170ff' : 'var(--fh-t4)', border: 'none', cursor: 'pointer' }}
-        onMouseEnter={e => { if (!commentsOpen) (e.currentTarget as HTMLElement).style.background = 'var(--fh-surface-2)' }}
-        onMouseLeave={e => { if (!commentsOpen) (e.currentTarget as HTMLElement).style.background = 'transparent' }}>
-        <MessageCircle className="h-3.5 w-3.5" />
-      </button>
-      <Btn active={saved} color="#f59e0b" icon={<Bookmark className="h-3.5 w-3.5" />} onClick={() => onReact('save')} />
-      <button onClick={() => onReact('repost')}
-        className="flex items-center gap-1 px-2 py-1 rounded-lg transition-colors text-[12px] ml-auto"
-        style={{ background: 'transparent', color: 'var(--fh-t4)', border: 'none', cursor: 'pointer' }}
-        onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'var(--fh-surface-2)' }}
-        onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent' }}>
-        <Share2 className="h-3.5 w-3.5" />
-        {reactions.reposts > 0 && <span style={{ fontSize: 12, color: 'var(--fh-t4)' }}>{reactions.reposts}</span>}
-      </button>
+    <div>
+      {/* Reactions count row */}
+      {(totalLikes > 0 || reactions.reposts > 0) && (
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '6px 16px', borderTop: '0.5px solid var(--fh-sep)' }}>
+          {totalLikes > 0 && (
+            <span style={{ fontSize: 12, color: 'var(--fh-t4)' }}>
+              👍 {totalLikes}
+            </span>
+          )}
+          {reactions.reposts > 0 && (
+            <span style={{ fontSize: 12, color: 'var(--fh-t4)', marginLeft: 'auto' }}>
+              {reactions.reposts} reposts
+            </span>
+          )}
+        </div>
+      )}
+      {/* Action buttons — LinkedIn style with labels */}
+      <div style={{ display: 'flex', alignItems: 'center', borderTop: '0.5px solid var(--fh-sep)', padding: '2px 4px' }}>
+        <button onClick={() => onReact('like')}
+          style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5, padding: '8px 4px', background: 'none', border: 'none', cursor: user ? 'pointer' : 'default', borderRadius: 8, color: liked ? '#27a644' : 'var(--fh-t4)', fontWeight: liked ? 700 : 500, fontSize: 13, transition: 'background 0.12s' }}
+          onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'var(--fh-surface-2)' }}
+          onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'none' }}>
+          <ThumbsUp style={{ width: 16, height: 16 }} />
+          <span>Like</span>
+        </button>
+        <button onClick={onToggleComments}
+          style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5, padding: '8px 4px', background: 'none', border: 'none', cursor: 'pointer', borderRadius: 8, color: commentsOpen ? 'var(--fh-primary)' : 'var(--fh-t4)', fontWeight: commentsOpen ? 700 : 500, fontSize: 13, transition: 'background 0.12s' }}
+          onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'var(--fh-surface-2)' }}
+          onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'none' }}>
+          <MessageCircle style={{ width: 16, height: 16 }} />
+          <span>Comment</span>
+        </button>
+        <button onClick={() => onReact('repost')}
+          style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5, padding: '8px 4px', background: 'none', border: 'none', cursor: 'pointer', borderRadius: 8, color: 'var(--fh-t4)', fontWeight: 500, fontSize: 13, transition: 'background 0.12s' }}
+          onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'var(--fh-surface-2)' }}
+          onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'none' }}>
+          <Share2 style={{ width: 16, height: 16 }} />
+          <span>Share</span>
+        </button>
+        <button onClick={() => onReact('save')}
+          style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5, padding: '8px 4px', background: 'none', border: 'none', cursor: 'pointer', borderRadius: 8, color: saved ? '#f59e0b' : 'var(--fh-t4)', fontWeight: saved ? 700 : 500, fontSize: 13, transition: 'background 0.12s' }}
+          onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'var(--fh-surface-2)' }}
+          onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'none' }}>
+          <Bookmark style={{ width: 16, height: 16 }} />
+          <span>Save</span>
+        </button>
+      </div>
     </div>
   )
 }
@@ -288,46 +318,45 @@ function PostCard({ post, reactions, onReact, user, profile, onDelete }: {
 
   return (
     <CardShell itemId={post.id} reactions={reactions} onReact={onReact} user={user} profile={profile}>
-      {/* Author */}
-      <div className="flex items-center gap-2 mb-2">
+      {/* Author row — LinkedIn style */}
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, marginBottom: 10 }}>
         <Link href={post.profiles?.username ? `/u/${post.profiles.username}` : '#'} style={{ textDecoration: 'none', flexShrink: 0 }}>
-          <UserAvatar url={post.profiles?.avatar_url} name={post.profiles?.full_name} size={28} />
+          <UserAvatar url={post.profiles?.avatar_url} name={post.profiles?.full_name} size={40} />
         </Link>
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-1">
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
             <Link href={post.profiles?.username ? `/u/${post.profiles.username}` : '#'}
-              style={{ fontSize: 13, fontWeight: 590, color: 'var(--fh-t1)', textDecoration: 'none' }}>
+              style={{ fontSize: 14, fontWeight: 700, color: 'var(--fh-t1)', textDecoration: 'none', letterSpacing: '-0.01em' }}>
               {post.profiles?.full_name ?? post.profiles?.username ?? 'User'}
             </Link>
             {post.profiles?.is_verified && (
-              <BadgeCheck className="h-3.5 w-3.5 flex-shrink-0" style={{ color: '#5e6ad2' }} />
+              <BadgeCheck className="h-3.5 w-3.5 flex-shrink-0" style={{ color: 'var(--fh-primary)' }} />
             )}
-            <span style={{ fontSize: 11, color: 'var(--fh-t4)', marginLeft: 2 }}>{timeAgo(post.created_at)}</span>
           </div>
+          <span style={{ fontSize: 12, color: 'var(--fh-t4)' }}>{timeAgo(post.created_at)}</span>
         </div>
-        {user?.id === post.user_id && (
-          <button onClick={() => onDelete(post.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--fh-t4)', padding: 4 }}>
-            <X className="h-3.5 w-3.5" />
+        {user?.id === post.user_id ? (
+          <button onClick={() => onDelete(post.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--fh-t4)', padding: 4, flexShrink: 0 }}>
+            <X className="h-4 w-4" />
           </button>
-        )}
+        ) : null}
       </div>
 
       {/* Content */}
-      <p style={{ fontSize: 14, color: 'var(--fh-t1)', lineHeight: 1.6, marginBottom: 6 }}>
+      <p style={{ fontSize: 14, color: 'var(--fh-t1)', lineHeight: 1.65, marginBottom: 8, letterSpacing: '-0.005em' }}>
         {displayContent}
       </p>
       {isLong && (
-        <button onClick={() => setExpanded(o => !o)} style={{ fontSize: 12, color: '#7170ff', background: 'none', border: 'none', cursor: 'pointer', padding: 0, marginBottom: 6 }}>
-          {expanded ? 'Show less' : 'Read more'}
+        <button onClick={() => setExpanded(o => !o)} style={{ fontSize: 13, color: 'var(--fh-primary)', background: 'none', border: 'none', cursor: 'pointer', padding: 0, marginBottom: 8, fontWeight: 500 }}>
+          {expanded ? 'Show less' : '…more'}
         </button>
       )}
 
       {/* Tags */}
       {post.tags?.length > 0 && (
-        <div className="flex flex-wrap gap-1 mb-2">
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 4 }}>
           {post.tags.map(t => (
-            <span key={t} className="rounded-full px-2 py-0.5 text-[11px]"
-              style={{ background: 'rgba(113,112,255,0.08)', color: '#7170ff' }}>
+            <span key={t} style={{ borderRadius: 99, padding: '2px 10px', fontSize: 12, background: 'var(--fh-primary-muted)', color: 'var(--fh-primary)' }}>
               #{t}
             </span>
           ))}
@@ -351,13 +380,13 @@ function UpdateCard({ reactions, onReact, user, profile }: {
     <CardShell itemId={itemId} reactions={reactions} onReact={onReact} user={user} profile={profile}>
       <div className="flex items-center gap-2 mb-2">
         <div className="h-7 w-7 rounded-lg flex items-center justify-center text-base flex-shrink-0"
-          style={{ background: 'rgba(113,112,255,0.12)', border: '1px solid rgba(113,112,255,0.2)' }}>
+          style={{ background: 'var(--fh-primary-muted)', border: '1px solid rgba(113,112,255,0.2)' }}>
           🚀
         </div>
         <div>
           <div className="flex items-center gap-2">
             <span className="text-[10px] font-bold px-1.5 py-0.5 rounded"
-              style={{ background: 'rgba(113,112,255,0.12)', color: '#7170ff' }}>
+              style={{ background: 'var(--fh-primary-muted)', color: 'var(--fh-primary)' }}>
               v{rel.version}
             </span>
             <span style={{ fontSize: 11, color: 'var(--fh-t4)' }}>
@@ -366,7 +395,7 @@ function UpdateCard({ reactions, onReact, user, profile }: {
           </div>
           <p style={{ fontSize: 14, fontWeight: 590, color: 'var(--fh-t1)', letterSpacing: '-0.02em', marginTop: 2 }}>{rel.title}</p>
         </div>
-        <Link href="/updates" style={{ marginLeft: 'auto', fontSize: 11, color: '#7170ff', textDecoration: 'none', flexShrink: 0 }}>
+        <Link href="/updates" style={{ marginLeft: 'auto', fontSize: 11, color: 'var(--fh-primary)', textDecoration: 'none', flexShrink: 0 }}>
           All updates →
         </Link>
       </div>
@@ -445,7 +474,7 @@ function ComposePost({ user, profile, onPost, mobile }: {
           Что у вас нового?
         </span>
         <div style={{ width: 32, height: 32, borderRadius: 10, background: 'var(--fh-surface-2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <Plus style={{ width: 16, height: 16, color: '#7170ff' }} />
+          <Plus style={{ width: 16, height: 16, color: 'var(--fh-primary)' }} />
         </div>
       </button>
     )
@@ -464,7 +493,7 @@ function ComposePost({ user, profile, onPost, mobile }: {
             style={{ background: 'var(--fh-surface-2)', color: 'var(--fh-t4)', border: '1px solid var(--fh-border)' }}>
             Share what's on your mind about your work…
           </span>
-          <Plus className="h-4 w-4 flex-shrink-0" style={{ color: '#7170ff' }} />
+          <Plus className="h-4 w-4 flex-shrink-0" style={{ color: 'var(--fh-primary)' }} />
         </button>
       ) : (
         <div className="px-4 py-3">
@@ -489,9 +518,9 @@ function ComposePost({ user, profile, onPost, mobile }: {
               <div className="flex flex-wrap gap-1.5 mt-2 mb-3">
                 {tags.map(t => (
                   <span key={t} className="flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px]"
-                    style={{ background: 'rgba(113,112,255,0.1)', color: '#7170ff' }}>
+                    style={{ background: 'var(--fh-primary-muted)', color: 'var(--fh-primary)' }}>
                     #{t}
-                    <button onClick={() => setTags(p => p.filter(x => x !== t))} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#7170ff', padding: 0 }}>
+                    <button onClick={() => setTags(p => p.filter(x => x !== t))} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--fh-primary)', padding: 0 }}>
                       <X className="h-2.5 w-2.5" />
                     </button>
                   </span>
@@ -521,7 +550,7 @@ function ComposePost({ user, profile, onPost, mobile }: {
                   </button>
                   <button onClick={submit} disabled={!text.trim() || posting}
                     className="px-4 py-1.5 rounded-lg text-[13px] font-semibold text-white transition-opacity"
-                    style={{ background: '#7170ff', border: 'none', cursor: text.trim() ? 'pointer' : 'not-allowed', opacity: text.trim() ? 1 : 0.5 }}>
+                    style={{ background: 'var(--fh-primary)', border: 'none', cursor: text.trim() ? 'pointer' : 'not-allowed', opacity: text.trim() ? 1 : 0.5 }}>
                     {posting ? '…' : 'Post'}
                   </button>
                 </div>
@@ -613,7 +642,7 @@ export default function FeedPage() {
   useEffect(() => { load() }, [load])
 
   // React handler with optimistic update
-  async function handleReact(itemId: string, action: string) {
+  const handleReact = useCallback(async (itemId: string, action: string) => {
     if (!user) { toastErr('Sign in to react'); return }
 
     if (action === 'repost') {
@@ -636,17 +665,17 @@ export default function FeedPage() {
     }
 
     await fetch('/api/feed/react', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ item_id: itemId, action }) })
-  }
+  }, [user, reactions, toastOk, toastErr, toastInfo])
 
-  function handleNewPost(post: UserPost) {
+  const handleNewPost = useCallback((post: UserPost) => {
     setUserPosts(p => [post, ...p])
-  }
+  }, [])
 
-  async function handleDeletePost(id: string) {
+  const handleDeletePost = useCallback(async (id: string) => {
     await fetch(`/api/feed/posts?id=${id}`, { method: 'DELETE' })
     setUserPosts(p => p.filter(x => x.id !== id))
     toastOk('Post deleted')
-  }
+  }, [toastOk])
 
   const getR = (id: string): Reactions => reactions[id] ?? { likes: 0, dislikes: 0, saves: 0, reposts: 0, mine: [] }
 
@@ -696,14 +725,14 @@ export default function FeedPage() {
       )}
       {refreshing && (
         <div className="flex justify-center py-2 md:hidden">
-          <RefreshCw className="h-5 w-5 animate-spin" style={{ color: '#7170ff' }} />
+          <RefreshCw className="h-5 w-5 animate-spin" style={{ color: 'var(--fh-primary)' }} />
         </div>
       )}
 
       {/* Desktop: constrained width */}
       <div className="hidden sm:block mx-auto max-w-[640px] px-4 sm:px-6">
         {/* Desktop search bar */}
-        <div className="sticky z-20 pt-4 pb-3" style={{ top: 'var(--feed-sticky-top, 0px)', background: 'color-mix(in srgb, var(--fh-bg, #f7f8f8) 88%, transparent)', backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)' }}>
+        <div className="sticky z-20 pt-4 pb-3" style={{ top: 'var(--feed-sticky-top, 0px)', background: 'var(--fh-canvas)', backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)' }}>
           <div className="flex items-center gap-2" style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border)', borderRadius: 24, padding: '10px 16px' }}>
             <Search className="h-4 w-4 flex-shrink-0" style={{ color: 'var(--fh-t4)' }} />
             <input value={search} onChange={e => setSearch(e.target.value)} onKeyDown={e => { if (e.key === 'Enter') setQuery(search) }} placeholder="Search posts, news, topics…" style={{ flex: 1, background: 'none', border: 'none', outline: 'none', fontSize: 14, color: 'var(--fh-t1)', fontFamily: 'inherit' }} />
@@ -712,7 +741,7 @@ export default function FeedPage() {
         </div>
         {!query && <div style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border)', borderRadius: 18, padding: '4px 12px', marginBottom: 12, overflow: 'hidden' }}><StoriesBar currentUserId={user?.id} isDark={isDark} /></div>}
         {!query && <ComposePost user={user} profile={profile} onPost={handleNewPost} />}
-        {loading ? <div className="space-y-3">{[...Array(6)].map((_, i) => <div key={i} className="rounded-2xl animate-pulse" style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border)', height: 140 }} />)}</div> : feedItems.length === 0 ? <div className="flex flex-col items-center justify-center py-20 gap-3 text-center"><Search className="h-8 w-8" style={{ color: 'var(--fh-t4)', opacity: 0.3 }} /><p style={{ fontSize: 14, color: 'var(--fh-t4)' }}>Ничего не найдено</p><button onClick={() => { setSearch(''); setQuery('') }} style={{ fontSize: 13, color: '#7170ff', background: 'none', border: 'none', cursor: 'pointer' }}>Очистить</button></div> : <div className="space-y-3">{feedItems.map((item) => { if (item.kind === 'update') return <UpdateCard key="update" reactions={getR(`update-v${CURRENT_RELEASE.version}`)} onReact={handleReact} user={user} profile={profile} />; if (item.kind === 'post') return <PostCard key={item.data.id} post={item.data} reactions={getR(item.data.id)} onReact={handleReact} user={user} profile={profile} onDelete={handleDeletePost} />; return <NewsCard key={item.data.id} item={item.data} reactions={getR(item.data.id)} onReact={handleReact} user={user} profile={profile} /> })}</div>}
+        {loading ? <div className="space-y-3">{[...Array(6)].map((_, i) => <div key={i} className="rounded-2xl animate-pulse" style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border)', height: 140 }} />)}</div> : feedItems.length === 0 ? <div className="flex flex-col items-center justify-center py-20 gap-3 text-center"><Search className="h-8 w-8" style={{ color: 'var(--fh-t4)', opacity: 0.3 }} /><p style={{ fontSize: 14, color: 'var(--fh-t4)' }}>Ничего не найдено</p><button onClick={() => { setSearch(''); setQuery('') }} style={{ fontSize: 13, color: 'var(--fh-primary)', background: 'none', border: 'none', cursor: 'pointer' }}>Очистить</button></div> : <div className="space-y-3">{feedItems.map((item) => { if (item.kind === 'update') return <UpdateCard key="update" reactions={getR(`update-v${CURRENT_RELEASE.version}`)} onReact={handleReact} user={user} profile={profile} />; if (item.kind === 'post') return <PostCard key={item.data.id} post={item.data} reactions={getR(item.data.id)} onReact={handleReact} user={user} profile={profile} onDelete={handleDeletePost} />; return <NewsCard key={item.data.id} item={item.data} reactions={getR(item.data.id)} onReact={handleReact} user={user} profile={profile} /> })}</div>}
         <div className="h-8" />
       </div>
 
@@ -757,7 +786,7 @@ export default function FeedPage() {
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '80px 24px', gap: 12, textAlign: 'center' }}>
             <Search style={{ width: 32, height: 32, color: 'var(--fh-t4)', opacity: 0.3 }} />
             <p style={{ fontSize: 15, color: 'var(--fh-t4)' }}>Ничего не найдено</p>
-            <button onClick={() => { setSearch(''); setQuery('') }} style={{ fontSize: 14, color: '#7170ff', background: 'none', border: 'none', cursor: 'pointer' }}>Очистить поиск</button>
+            <button onClick={() => { setSearch(''); setQuery('') }} style={{ fontSize: 14, color: 'var(--fh-primary)', background: 'none', border: 'none', cursor: 'pointer' }}>Очистить поиск</button>
           </div>
         ) : (
           <div>

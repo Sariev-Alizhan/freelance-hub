@@ -115,21 +115,21 @@ function AnalyticsTab({ analytics }: {
         <div className="rounded-xl p-4" style={{ background: 'var(--fh-skill-bg)', border: '1px solid var(--fh-border-2)' }}>
           <div className="flex items-center justify-between mb-3">
             <span className="text-xs text-muted-foreground">Profile views — last {data.length} days</span>
-            <span className="text-xs font-semibold" style={{ color: '#7170ff' }}>
+            <span className="text-xs font-semibold" style={{ color: 'var(--fh-primary)' }}>
               {data.reduce((s, d) => s + d.count, 0)} total
             </span>
           </div>
           <svg viewBox={`0 0 ${W} ${H}`} className="w-full" style={{ height: '60px', overflow: 'visible' }}>
             <defs>
               <linearGradient id="sparkGrad2" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#7170ff" stopOpacity="0.3" />
-                <stop offset="100%" stopColor="#7170ff" stopOpacity="0" />
+                <stop offset="0%" stopColor="var(--fh-primary)" stopOpacity="0.3" />
+                <stop offset="100%" stopColor="var(--fh-primary)" stopOpacity="0" />
               </linearGradient>
             </defs>
             {area && <path d={area} fill="url(#sparkGrad2)" />}
-            <polyline points={pts.join(' ')} fill="none" stroke="#7170ff" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
+            <polyline points={pts.join(' ')} fill="none" stroke="var(--fh-primary)" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
             {data.map((d, i) => d.count > 0 && (
-              <circle key={i} cx={i * gap} cy={H - (d.count / max) * H} r="3" fill="#7170ff" />
+              <circle key={i} cx={i * gap} cy={H - (d.count / max) * H} r="3" fill="var(--fh-primary)" />
             ))}
           </svg>
           <div className="flex justify-between mt-1">
@@ -151,7 +151,7 @@ function AnalyticsTab({ analytics }: {
               className="h-full rounded-full transition-all"
               style={{
                 width: `${Math.min(100, (analytics.responsesThisMonth / analytics.responseLimit) * 100)}%`,
-                background: analytics.responsesThisMonth >= analytics.responseLimit ? '#ef4444' : '#5e6ad2',
+                background: analytics.responsesThisMonth >= analytics.responseLimit ? '#ef4444' : 'var(--fh-primary)',
               }}
             />
           </div>
@@ -159,7 +159,7 @@ function AnalyticsTab({ analytics }: {
             <div className="mt-3 flex items-center justify-between">
               <p className="text-xs text-muted-foreground">Premium removes the limit.</p>
               <Link href="/premium" className="text-xs font-semibold px-3 py-1.5 rounded-lg"
-                style={{ background: 'rgba(94,106,210,0.1)', color: '#7170ff', border: '1px solid rgba(94,106,210,0.2)' }}>
+                style={{ background: 'var(--fh-primary-muted)', color: 'var(--fh-primary)', border: '1px solid var(--fh-primary)' }}>
                 <Crown className="h-3 w-3 inline mr-1" />Upgrade
               </Link>
             </div>
@@ -357,7 +357,7 @@ export default function DashboardPage() {
   const completionPct = Math.round((completionItems.filter(i => i.done).length / completionItems.length) * 100)
 
   return (
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10">
+    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 overflow-x-hidden">
 
       {/* ── Header ── */}
       {profileLoading ? <SkeletonProfileHeader /> : (
@@ -782,7 +782,7 @@ export default function DashboardPage() {
               <Link
                 href="/ai-resume"
                 className="mt-2 flex items-center justify-center gap-2 w-full py-2.5 rounded-xl text-sm font-medium transition-colors"
-                style={{ background: 'rgba(113,112,255,0.08)', border: '1px solid rgba(113,112,255,0.2)', color: '#7170ff' }}
+                style={{ background: 'var(--fh-primary-muted)', border: '1px solid var(--fh-primary)', color: 'var(--fh-primary)' }}
               >
                 <Sparkles className="h-3.5 w-3.5" /> AI Resume Builder
               </Link>

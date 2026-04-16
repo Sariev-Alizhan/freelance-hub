@@ -93,7 +93,7 @@ function Avatar({ user, size = 40 }: { user: OtherUser; size?: number }) {
   return (
     <div
       className="rounded-full flex items-center justify-center flex-shrink-0 font-semibold text-white"
-      style={{ width: size, height: size, fontSize: size * 0.38, background: '#7170ff' }}
+      style={{ width: size, height: size, fontSize: size * 0.38, background: 'var(--fh-primary)' }}
     >
       {initials}
     </div>
@@ -601,20 +601,21 @@ export default function MessengerPage() {
           background: 'var(--fh-surface)',
         }}
       >
-        {/* Header */}
-        <div className="px-5 pt-5 pb-3 flex-shrink-0">
-          <h1 style={{ fontSize: 18, fontWeight: 700, color: 'var(--fh-t1)', letterSpacing: '-0.03em', marginBottom: 14 }}>
-            Messages
-          </h1>
-
+        {/* Header — Instagram DM style */}
+        <div className="flex-shrink-0" style={{ borderBottom: '0.5px solid var(--fh-sep)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '14px 16px 10px', position: 'relative' }}>
+            <h1 style={{ fontSize: 17, fontWeight: 700, color: 'var(--fh-t1)', letterSpacing: '-0.02em', margin: 0 }}>
+              Messages
+            </h1>
+          </div>
           {/* Search pill */}
           <div
-            className="flex items-center gap-2 px-3"
+            className="flex items-center gap-2 mx-4 mb-3"
             style={{
-              height: 36,
-              borderRadius: 18,
+              height: 36, borderRadius: 10,
               background: 'var(--fh-surface-2)',
               border: '1px solid var(--fh-border)',
+              padding: '0 12px',
             }}
           >
             <Search className="h-3.5 w-3.5 flex-shrink-0" style={{ color: 'var(--fh-t4)' }} />
@@ -624,7 +625,7 @@ export default function MessengerPage() {
               placeholder="Search"
               style={{
                 flex: 1, background: 'none', border: 'none', outline: 'none',
-                fontSize: 13, color: 'var(--fh-t1)', fontFamily: 'inherit',
+                fontSize: 14, color: 'var(--fh-t1)', fontFamily: 'inherit',
               }}
             />
           </div>
@@ -650,64 +651,73 @@ export default function MessengerPage() {
                 <button
                   key={conv.id}
                   onClick={() => selectConv(conv.id)}
-                  className="w-full flex items-center gap-3 px-4 py-3 text-left transition-colors"
                   style={{
+                    width: '100%', display: 'flex', alignItems: 'center', gap: 12,
+                    padding: '10px 16px', textAlign: 'left',
                     background: isActive ? 'var(--fh-surface-2)' : 'transparent',
-                    border: 'none',
-                    cursor: 'pointer',
+                    border: 'none', cursor: 'pointer',
+                    transition: 'background 0.12s',
                   }}
                   onMouseEnter={e => { if (!isActive) (e.currentTarget as HTMLElement).style.background = 'var(--fh-surface-2)' }}
                   onMouseLeave={e => { if (!isActive) (e.currentTarget as HTMLElement).style.background = 'transparent' }}
                 >
-                  <div className="relative flex-shrink-0">
-                    <Avatar user={conv.other_user} size={44} />
-                    {/* Online dot */}
-                    {onlineUserIds.has(conv.other_user.id) && conv.unread === 0 && (
+                  {/* Avatar with online/unread indicator */}
+                  <div style={{ position: 'relative', flexShrink: 0 }}>
+                    <Avatar user={conv.other_user} size={48} />
+                    {onlineUserIds.has(conv.other_user.id) && (
                       <span style={{
-                        position: 'absolute', bottom: 1, right: 1,
-                        width: 10, height: 10, borderRadius: '50%',
-                        background: '#27a644', border: '2px solid var(--fh-surface)',
+                        position: 'absolute', bottom: 2, right: 2,
+                        width: 11, height: 11, borderRadius: '50%',
+                        background: '#27a644',
+                        border: '2px solid var(--fh-surface)',
                       }} />
-                    )}
-                    {conv.unread > 0 && (
-                      <span
-                        className="absolute -top-0.5 -right-0.5 flex items-center justify-center rounded-full font-bold text-white"
-                        style={{ minWidth: 17, height: 17, fontSize: 10, padding: '0 3px', background: '#7170ff' }}
-                      >
-                        {conv.unread}
-                      </span>
                     )}
                   </div>
 
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-baseline justify-between gap-1 mb-0.5">
-                      <span
-                        className="truncate"
-                        style={{
-                          fontSize: 14,
-                          fontWeight: conv.unread > 0 ? 700 : 590,
-                          color: 'var(--fh-t1)',
-                          letterSpacing: '-0.01em',
-                        }}
-                      >
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 6, marginBottom: 2 }}>
+                      <span style={{
+                        fontSize: 15,
+                        fontWeight: conv.unread > 0 ? 700 : 600,
+                        color: 'var(--fh-t1)',
+                        letterSpacing: '-0.01em',
+                        overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                      }}>
                         {conv.other_user.full_name || 'User'}
                       </span>
                       {conv.last_message_at && (
-                        <span style={{ fontSize: 11, color: 'var(--fh-t4)', flexShrink: 0 }}>
+                        <span style={{
+                          fontSize: 12,
+                          color: conv.unread > 0 ? 'var(--fh-primary)' : 'var(--fh-t4)',
+                          fontWeight: conv.unread > 0 ? 600 : 400,
+                          flexShrink: 0,
+                        }}>
                           {formatTime(conv.last_message_at)}
                         </span>
                       )}
                     </div>
-                    <p
-                      className="truncate"
-                      style={{
-                        fontSize: 12,
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 6 }}>
+                      <p style={{
+                        fontSize: 13,
                         color: conv.unread > 0 ? 'var(--fh-t2)' : 'var(--fh-t4)',
                         fontWeight: conv.unread > 0 ? 500 : 400,
-                      }}
-                    >
-                      {conv.last_message || 'No messages'}
-                    </p>
+                        overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                        flex: 1,
+                      }}>
+                        {conv.last_message || 'No messages'}
+                      </p>
+                      {conv.unread > 0 && (
+                        <span style={{
+                          minWidth: 18, height: 18, borderRadius: 9,
+                          background: 'var(--fh-primary)', color: '#fff',
+                          fontSize: 10, fontWeight: 700,
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          padding: '0 4px', flexShrink: 0,
+                        }}>
+                          {conv.unread > 9 ? '9+' : conv.unread}
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </button>
               )

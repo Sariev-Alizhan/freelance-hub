@@ -72,7 +72,7 @@ export async function POST(request: Request) {
       : `${SYSTEM_BASE}\n\nNo freelancers are registered yet. Let the user know the platform is growing and invite them to check back soon.`
 
     const result = streamText({
-      model: 'anthropic/claude-sonnet-4.6',
+      model: 'anthropic/claude-sonnet-4-6',
       maxOutputTokens: 1024,
       system: systemPrompt,
       messages,

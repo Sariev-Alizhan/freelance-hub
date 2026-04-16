@@ -56,7 +56,7 @@ export default function RespondButton({
     return (
       <div
         className="w-full py-3 rounded-xl flex items-center justify-center gap-2 text-sm font-semibold"
-        style={{ background: 'rgba(113,112,255,0.08)', border: '1px solid rgba(113,112,255,0.25)', color: '#7170ff' }}
+        style={{ background: 'var(--fh-primary-muted)', border: '1px solid rgba(113,112,255,0.25)', color: 'var(--fh-primary)' }}
       >
         <Clock className="h-4 w-4" />
         {STATUS_TEXT.pending[lang]}

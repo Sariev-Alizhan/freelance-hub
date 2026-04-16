@@ -75,7 +75,7 @@ export async function POST(request: Request) {
 
   try {
     const { text } = await generateText({
-      model: 'anthropic/claude-haiku-4.5',
+      model: 'anthropic/claude-haiku-4-5-20251001',
       maxOutputTokens: 800,
       system: SYSTEM,
       messages: [{ role: 'user', content: prompt }],

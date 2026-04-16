@@ -65,7 +65,7 @@ export async function POST(req: Request) {
         await addLog('🤖 Claude генерирует', 'Создаю контент-план...')
 
         const { text } = await generateText({
-          model: 'anthropic/claude-sonnet-4.6',
+          model: 'anthropic/claude-sonnet-4-6',
           prompt: `You are an expert SMM specialist. Generate a social media content plan.
 
 Brand: ${brand}

@@ -41,7 +41,7 @@ Goals / what I want to work on: ${goals || 'not specified'}`
 
   try {
     const { text } = await generateText({
-      model: 'anthropic/claude-haiku-4.5',
+      model: 'anthropic/claude-haiku-4-5-20251001',
       maxOutputTokens: 600,
       system: SYSTEM,
       messages: [{ role: 'user', content: prompt }],

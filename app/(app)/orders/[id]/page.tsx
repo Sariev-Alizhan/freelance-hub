@@ -212,7 +212,7 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
                 <div style={{ fontSize: '11px', color: 'var(--fh-t4)', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 510 }}>
                   Budget
                 </div>
-                <div style={{ fontSize: '15px', fontWeight: 590, color: '#7170ff', letterSpacing: '-0.02em' }}>
+                <div style={{ fontSize: '15px', fontWeight: 590, color: 'var(--fh-primary)', letterSpacing: '-0.02em' }}>
                   {order.budget.min > 0 ? (
                     <>
                       <PriceDisplay amountRub={order.budget.min} prefix="" size="md" />
@@ -253,9 +253,9 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
                     style={{
                       padding: '5px 12px',
                       borderRadius: '5px',
-                      background: 'rgba(113,112,255,0.08)',
+                      background: 'var(--fh-primary-muted)',
                       border: '1px solid rgba(113,112,255,0.18)',
-                      color: '#7170ff',
+                      color: 'var(--fh-primary)',
                       fontSize: '12px',
                       fontWeight: 510,
                     }}
@@ -335,7 +335,7 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
                     borderRadius: '6px',
                     background: 'rgba(94,106,210,0.06)',
                     border: '1px solid rgba(94,106,210,0.2)',
-                    color: '#7170ff',
+                    color: 'var(--fh-primary)',
                     fontSize: '13px',
                     fontWeight: 510,
                   }}
