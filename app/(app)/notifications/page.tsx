@@ -180,6 +180,20 @@ export default function NotificationsPage() {
 
   useEffect(() => { load() }, [load])
 
+  // Auto-mark everything as read the moment the user views this page.
+  // Keep local `is_read: false` styling during the session so the user can still
+  // glance at what's new; the DB flip makes next-visit state correct and clears
+  // the header bell badge.
+  useEffect(() => {
+    if (!user?.id) return
+    if (loading) return
+    if (unreadCount === 0) return
+    db.from('notifications')
+      .update({ is_read: true })
+      .eq('user_id', user.id)
+      .eq('is_read', false)
+  }, [user?.id, loading, unreadCount, db])
+
   // Realtime: append new notifications live
   useEffect(() => {
     if (!user?.id) return
@@ -199,12 +213,6 @@ export default function NotificationsPage() {
   function markRead(id: string) {
     setNotifications(prev => prev.map(n => n.id === id ? { ...n, is_read: true } : n))
     db.from('notifications').update({ is_read: true }).eq('id', id)
-  }
-
-  async function markAllRead() {
-    if (unreadCount === 0) return
-    setNotifications(prev => prev.map(n => ({ ...n, is_read: true })))
-    await db.from('notifications').update({ is_read: true }).eq('user_id', user?.id).eq('is_read', false)
   }
 
   function deleteNotif(id: string) {
@@ -248,16 +256,6 @@ export default function NotificationsPage() {
             Notifications
           </h1>
           <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-            {unreadCount > 0 && (
-              <button onClick={markAllRead} style={{
-                display: 'flex', alignItems: 'center', gap: 5,
-                background: 'none', border: 'none',
-                cursor: 'pointer', fontSize: 13, color: 'var(--fh-primary)', fontWeight: 600, padding: 0,
-              }}>
-                <CheckCheck style={{ width: 14, height: 14 }} />
-                Mark all read
-              </button>
-            )}
             {notifications.length > 0 && (
               <button onClick={clearAll} style={{
                 display: 'flex', alignItems: 'center', gap: 4,
