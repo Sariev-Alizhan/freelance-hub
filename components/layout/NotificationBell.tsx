@@ -121,7 +121,7 @@ export default function NotificationBell({ sidebarMode }: { sidebarMode?: boolea
     alignItems: 'center',
     gap: 12,
     height: 44,
-    paddingLeft: 22,
+    paddingLeft: 18,
     paddingRight: 12,
     width: '100%',
     borderRadius: 10,
