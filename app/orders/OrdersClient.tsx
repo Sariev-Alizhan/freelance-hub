@@ -116,7 +116,7 @@ export default function OrdersClient({ realOrders = [], currentUserId }: Props) 
           href="/orders/new"
           className="flex items-center gap-2 transition-all"
           style={{
-            padding: '9px 18px',
+            padding: '9px 14px',
             borderRadius: '6px',
             background: '#5e6ad2',
             color: '#fff',
@@ -128,7 +128,7 @@ export default function OrdersClient({ realOrders = [], currentUserId }: Props) 
           onMouseLeave={e => { e.currentTarget.style.background = '#5e6ad2' }}
         >
           <Plus className="h-4 w-4" />
-          Post a Job
+          <span className="hidden sm:inline">Post a Job</span>
         </Link>
       </div>
 
@@ -215,7 +215,7 @@ export default function OrdersClient({ realOrders = [], currentUserId }: Props) 
           {/* Sort */}
           <div className="flex flex-col gap-1.5">
             <label style={{ fontSize: '12px', color: 'var(--fh-t4)', fontWeight: 510 }}>Sort by</label>
-            <div className="flex gap-1.5">
+            <div className="flex flex-wrap gap-1.5">
               {([
                 { value: 'newest',       label: 'Newest' },
                 { value: 'budget_desc',  label: '↓ Budget' },

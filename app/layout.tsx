@@ -12,6 +12,7 @@ import { ProfileProvider } from '@/lib/context/ProfileContext'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import BottomNav from '@/components/layout/BottomNav'
+import LeftSidebar from '@/components/layout/LeftSidebar'
 import Toaster from '@/components/ui/Toaster'
 import PageTransition from '@/components/shared/PageTransition'
 import MotionProvider from '@/components/providers/MotionProvider'
@@ -107,12 +108,13 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <ToastProvider>
             <CurrencyProvider>
               <ProfileProvider>
+              <LeftSidebar />
               <Header />
-              <main className="flex-1 pb-safe-mobile">
+              <main className="flex-1 pb-safe-mobile md:ml-[72px]">
                 <PageTransition>{children}</PageTransition>
               </main>
               </ProfileProvider>
-              <Footer />
+              <div className="md:ml-[72px]"><Footer /></div>
               <BottomNav />
               <Toaster />
               <DeferredUI />

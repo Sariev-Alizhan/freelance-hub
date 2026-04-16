@@ -17,14 +17,14 @@ export default function HeroSection() {
   return (
     <section
       className="relative overflow-hidden bg-grid"
-      style={{ backgroundColor: 'var(--fh-canvas)', paddingTop: '80px', paddingBottom: '100px' }}
+      style={{ backgroundColor: 'var(--fh-canvas)', paddingTop: 'clamp(48px,8vw,80px)', paddingBottom: 'clamp(56px,10vw,100px)' }}
     >
       {/* Glow blobs */}
       <div
         className="absolute pointer-events-none"
         style={{
           top: '-200px', left: '25%',
-          width: '700px', height: '700px',
+          width: 'clamp(280px,80vw,700px)', height: 'clamp(280px,80vw,700px)',
           borderRadius: '50%',
           background: 'radial-gradient(circle, rgba(94,106,210,0.12) 0%, transparent 70%)',
           filter: 'blur(40px)',
@@ -34,7 +34,7 @@ export default function HeroSection() {
         className="absolute pointer-events-none"
         style={{
           bottom: '-100px', right: '20%',
-          width: '500px', height: '500px',
+          width: 'clamp(180px,60vw,500px)', height: 'clamp(180px,60vw,500px)',
           borderRadius: '50%',
           background: 'radial-gradient(circle, rgba(251,191,36,0.06) 0%, transparent 70%)',
           filter: 'blur(60px)',
@@ -183,7 +183,7 @@ export default function HeroSection() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.32 }}
-          className="grid grid-cols-3 gap-6 sm:gap-8 max-w-xs mx-auto mt-16"
+          className="grid grid-cols-3 gap-4 sm:gap-8 max-w-sm mx-auto mt-12 sm:mt-16"
           style={{ borderTop: '1px solid var(--fh-sep)', paddingTop: '32px' }}
         >
           {STATS.map((stat) => (

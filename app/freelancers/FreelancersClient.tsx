@@ -209,7 +209,7 @@ export default function FreelancersClient({ realFreelancers = [], defaultCategor
               disabled={aiLoading || !aiQuery.trim()}
               className="flex items-center gap-2 transition-all disabled:opacity-50"
               style={{
-                padding: '10px 18px',
+                padding: '10px 16px',
                 borderRadius: '6px',
                 background: '#5e6ad2',
                 color: '#fff',
@@ -220,13 +220,13 @@ export default function FreelancersClient({ realFreelancers = [], defaultCategor
               onMouseLeave={e => { e.currentTarget.style.background = '#5e6ad2' }}
             >
               {aiLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
-              Search
+              <span className="hidden sm:inline">Search</span>
             </button>
             <button
               onClick={disableAiMode}
               className="flex items-center gap-2 transition-all"
               style={{
-                padding: '10px 14px',
+                padding: '10px 12px',
                 borderRadius: '6px',
                 background: 'var(--fh-surface-2)',
                 border: '1px solid var(--fh-border-2)',
@@ -235,7 +235,8 @@ export default function FreelancersClient({ realFreelancers = [], defaultCategor
                 fontWeight: 510,
               }}
             >
-              <X className="h-4 w-4" /> Classic
+              <X className="h-4 w-4" />
+              <span className="hidden sm:inline">Classic</span>
             </button>
           </div>
         ) : (
@@ -245,7 +246,7 @@ export default function FreelancersClient({ realFreelancers = [], defaultCategor
               onChange={(e) => handleSort(e.target.value as typeof sortBy)}
               className="outline-none transition-all"
               style={{
-                padding: '10px 14px',
+                padding: '10px 10px',
                 borderRadius: '6px',
                 background: 'var(--fh-surface-2)',
                 border: '1px solid var(--fh-border-2)',
@@ -262,7 +263,7 @@ export default function FreelancersClient({ realFreelancers = [], defaultCategor
               onClick={() => setShowFilters(p => !p)}
               className="relative flex items-center gap-1.5 transition-all"
               style={{
-                padding: '10px 14px',
+                padding: '10px 12px',
                 borderRadius: '6px',
                 background: showFilters || activeFiltersCount > 0 ? 'rgba(113,112,255,0.1)' : 'var(--fh-surface-2)',
                 border: showFilters || activeFiltersCount > 0 ? '1px solid rgba(113,112,255,0.3)' : '1px solid var(--fh-border-2)',
@@ -284,9 +285,9 @@ export default function FreelancersClient({ realFreelancers = [], defaultCategor
             </button>
             <button
               onClick={enableAiMode}
-              className="flex items-center gap-2 whitespace-nowrap transition-all"
+              className="flex items-center gap-1.5 whitespace-nowrap transition-all"
               style={{
-                padding: '10px 16px',
+                padding: '10px 12px',
                 borderRadius: '6px',
                 background: 'rgba(113,112,255,0.06)',
                 border: '1px solid rgba(113,112,255,0.2)',
@@ -298,7 +299,8 @@ export default function FreelancersClient({ realFreelancers = [], defaultCategor
               onMouseLeave={e => { e.currentTarget.style.background = 'rgba(113,112,255,0.06)' }}
             >
               <Sparkles className="h-4 w-4" />
-              AI Search
+              <span className="hidden sm:inline">AI Search</span>
+              <span className="sm:hidden">AI</span>
             </button>
           </div>
         )}

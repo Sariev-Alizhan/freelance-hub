@@ -34,7 +34,7 @@ function timeAgo(iso: string) {
   return `${Math.floor(diff / 86400)} d ago`
 }
 
-export default function NotificationBell() {
+export default function NotificationBell({ sidebarMode }: { sidebarMode?: boolean }) {
   const { user } = useUser()
   const [open, setOpen] = useState(false)
   const { state: pushState, subscribe, unsubscribe } = usePushNotifications()
@@ -116,28 +116,77 @@ export default function NotificationBell() {
 
   if (!user) return null
 
+  const bellButtonStyle = sidebarMode ? {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 12,
+    height: 44,
+    paddingLeft: 22,
+    paddingRight: 12,
+    width: '100%',
+    borderRadius: 10,
+    border: 'none',
+    cursor: 'pointer',
+    background: open ? 'var(--fh-surface-2)' : 'transparent',
+    color: open ? 'var(--fh-t1)' : 'var(--fh-t3)',
+    transition: 'background 0.15s, color 0.15s',
+  } as React.CSSProperties : undefined
+
   return (
-    <div className="relative" ref={panelRef}>
+    <div className={sidebarMode ? undefined : 'relative'} ref={panelRef}>
       {/* Bell button */}
       <button
         onClick={() => setOpen(o => !o)}
         aria-label="Notifications"
-        className="relative flex items-center justify-center h-9 w-9 rounded-xl border border-subtle text-muted-foreground hover:text-foreground hover:bg-subtle transition-colors"
+        className={sidebarMode ? undefined : 'relative flex items-center justify-center h-9 w-9 rounded-xl border border-subtle text-muted-foreground hover:text-foreground hover:bg-subtle transition-colors'}
+        style={bellButtonStyle}
+        onMouseEnter={sidebarMode ? (e => { if (!open) { e.currentTarget.style.background = 'var(--fh-surface-2)'; e.currentTarget.style.color = 'var(--fh-t1)' } }) : undefined}
+        onMouseLeave={sidebarMode ? (e => { if (!open) { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--fh-t3)' } }) : undefined}
       >
-        <Bell className="h-4 w-4" />
-        <AnimatePresence>
-          {unreadCount > 0 && (
-            <motion.span
-              key="badge"
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              exit={{ scale: 0 }}
-              className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center"
-            >
-              {unreadCount > 9 ? '9+' : unreadCount}
-            </motion.span>
-          )}
-        </AnimatePresence>
+        {sidebarMode ? (
+          <>
+            <span style={{ position: 'relative', flexShrink: 0 }}>
+              <Bell style={{ width: 18, height: 18 }} strokeWidth={1.8} />
+              {unreadCount > 0 && (
+                <span style={{
+                  position: 'absolute', top: -5, right: -6,
+                  minWidth: 14, height: 14, borderRadius: 7,
+                  background: '#e5484d', color: '#fff',
+                  fontSize: 9, fontWeight: 700,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  padding: '0 3px',
+                }}>
+                  {unreadCount > 9 ? '9+' : unreadCount}
+                </span>
+              )}
+            </span>
+            <span style={{
+              fontSize: 14, fontWeight: 510, whiteSpace: 'nowrap', overflow: 'hidden',
+              transition: 'opacity 0.18s, transform 0.18s',
+              opacity: 1,
+              color: 'var(--fh-t2)',
+            }}>
+              Notifications
+            </span>
+          </>
+        ) : (
+          <>
+            <Bell className="h-4 w-4" />
+            <AnimatePresence>
+              {unreadCount > 0 && (
+                <motion.span
+                  key="badge"
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  exit={{ scale: 0 }}
+                  className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center"
+                >
+                  {unreadCount > 9 ? '9+' : unreadCount}
+                </motion.span>
+              )}
+            </AnimatePresence>
+          </>
+        )}
       </button>
 
       {/* Dropdown */}
@@ -148,7 +197,8 @@ export default function NotificationBell() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 8, scale: 0.97 }}
             transition={{ duration: 0.15 }}
-            className="absolute right-0 top-full mt-2 w-80 rounded-2xl border border-subtle bg-card shadow-2xl overflow-hidden z-50"
+            className={sidebarMode ? 'w-80 rounded-2xl border border-subtle bg-card shadow-2xl overflow-hidden z-[100]' : 'absolute right-0 top-full mt-2 w-80 rounded-2xl border border-subtle bg-card shadow-2xl overflow-hidden z-50'}
+            style={sidebarMode ? { position: 'fixed', left: 260, bottom: 80 } : undefined}
           >
             {/* Header */}
             <div className="flex items-center justify-between px-4 py-3 border-b border-subtle">

@@ -15,7 +15,7 @@ export default function CategoriesSection() {
   const ct = t.categories
 
   return (
-    <section className="py-20 px-4 sm:px-6 lg:px-8" style={{ background: 'var(--card)' }}>
+    <section className="py-12 sm:py-20 px-4 sm:px-6 lg:px-8" style={{ background: 'var(--card)' }}>
       <div className="mx-auto max-w-7xl">
         <motion.div
           initial={{ opacity: 0, y: 16 }}

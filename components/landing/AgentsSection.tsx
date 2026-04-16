@@ -38,7 +38,7 @@ export default function AgentsSection() {
   const previewAgents = MOCK_AGENTS.filter(a => a.isAvailable).slice(0, 3)
 
   return (
-    <section className="py-20" style={{ borderTop: '1px solid var(--fh-sep)' }}>
+    <section className="py-12 sm:py-20" style={{ borderTop: '1px solid var(--fh-sep)' }}>
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
         {/* Header */}

@@ -146,19 +146,19 @@ export default function PricingPage() {
         <div style={{
           display: 'inline-flex', gap: 2, padding: 3,
           borderRadius: 12, background: 'var(--fh-surface)',
-          border: '1px solid var(--fh-border)', marginBottom: 64,
+          border: '1px solid var(--fh-border)', marginBottom: 48,
         }}>
           {(['monthly', 'quarterly', 'annual'] as Period[]).map(p => (
             <button
               key={p}
               onClick={() => setPeriod(p)}
               style={{
-                position: 'relative', padding: '8px 20px', borderRadius: 9,
+                position: 'relative', padding: 'clamp(7px,1.5vw,8px) clamp(10px,3vw,20px)', borderRadius: 9,
                 fontSize: 13, fontWeight: period === p ? 600 : 400,
                 background: period === p ? 'var(--fh-surface-2)' : 'transparent',
                 border: period === p ? '1px solid var(--fh-border)' : '1px solid transparent',
                 color: period === p ? 'var(--fh-t1)' : 'var(--fh-t4)',
-                cursor: 'pointer', transition: 'all 0.15s',
+                cursor: 'pointer', transition: 'all 0.15s', whiteSpace: 'nowrap',
               }}
             >
               {periodLabels[p]}
@@ -359,11 +359,12 @@ export default function PricingPage() {
           Что входит в каждый план
         </h2>
 
-        <div style={{ borderRadius: 18, overflow: 'hidden', border: '1px solid var(--fh-border)' }}>
+        <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' as never, borderRadius: 18, border: '1px solid var(--fh-border)' }}>
+          <div style={{ minWidth: 360 }}>
           {/* Table header */}
           <div style={{
-            display: 'grid', gridTemplateColumns: '1fr 120px 120px',
-            padding: '14px 24px',
+            display: 'grid', gridTemplateColumns: '1fr 96px 96px',
+            padding: '14px 16px',
             background: 'var(--fh-surface-2)',
             borderBottom: '1px solid var(--fh-border)',
           }}>
@@ -378,8 +379,8 @@ export default function PricingPage() {
             <div
               key={i}
               style={{
-                display: 'grid', gridTemplateColumns: '1fr 120px 120px',
-                padding: '11px 24px', alignItems: 'center',
+                display: 'grid', gridTemplateColumns: '1fr 96px 96px',
+                padding: '11px 16px', alignItems: 'center',
                 background: i % 2 === 0 ? 'var(--fh-surface)' : 'var(--fh-surface-2)',
                 borderBottom: i < COMPARISON.length - 1 ? '1px solid var(--fh-border)' : 'none',
               }}
@@ -389,6 +390,7 @@ export default function PricingPage() {
               <Cell val={row.premium} />
             </div>
           ))}
+          </div>
         </div>
 
         {/* ── CTA ── */}

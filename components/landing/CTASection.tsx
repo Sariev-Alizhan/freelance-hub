@@ -9,7 +9,7 @@ export default function CTASection() {
   const ct = t.cta
 
   return (
-    <section className="py-24 px-4 sm:px-6 lg:px-8">
+    <section className="py-14 sm:py-24 px-4 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-4xl">
         <motion.div
           initial={{ opacity: 0, y: 24 }}

@@ -2,35 +2,20 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useState } from 'react'
-import { Menu, X, LogOut, User, MessageSquare, BarChart3, ChevronDown, Languages, Target, Calculator, Settings } from 'lucide-react'
-import RoleSwitcher from '@/components/layout/RoleSwitcher'
+import { Menu, X, LogOut, User, MessageSquare, BarChart3, ChevronDown, Target, Calculator, Settings } from 'lucide-react'
 import Logo from '@/components/ui/Logo'
 import NotificationBell from '@/components/layout/NotificationBell'
-import { useCurrency } from '@/lib/context/CurrencyContext'
-import { useLang, LANG_LABELS, Lang } from '@/lib/context/LanguageContext'
+import { useLang } from '@/lib/context/LanguageContext'
 import { useUser } from '@/lib/hooks/useUser'
 import { useProfile } from '@/lib/context/ProfileContext'
 import { useUnreadMessages } from '@/lib/hooks/useUnreadMessages'
 import { createClient } from '@/lib/supabase/client'
-import { Currency } from '@/lib/types'
 import { useRouter } from 'next/navigation'
 
-const CURRENCIES: Currency[] = ['KZT', 'RUB', 'USD', 'EUR', 'USDT', 'GBP', 'UAH', 'CNY', 'AED', 'TRY']
-const CURRENCY_LABELS: Record<Currency, string> = {
-  KZT: '₸', RUB: '₽', USD: '$', EUR: '€', GBP: '£',
-  USDT: '₮', UAH: '₴', CNY: '¥', AED: 'د.إ', TRY: '₺',
-}
-// Show only top 5 in compact pill, rest in dropdown
-const CURRENCY_COMPACT: Currency[] = ['KZT', 'RUB', 'USD', 'EUR', 'USDT']
-const LANGS: Lang[] = ['en', 'ru', 'kz']
-
 export default function Header() {
-  const { currency, setCurrency } = useCurrency()
-  const { lang, setLang, t } = useLang()
-  const [mobileOpen,    setMobileOpen]    = useState(false)
-  const [menuOpen,      setMenuOpen]      = useState(false)
-  const [langOpen,      setLangOpen]      = useState(false)
-  const [currencyOpen,  setCurrencyOpen]  = useState(false)
+  const { t } = useLang()
+  const [mobileOpen, setMobileOpen] = useState(false)
+  const [menuOpen,   setMenuOpen]   = useState(false)
   const { user } = useUser()
   const { profile } = useProfile()
   const unreadMsgs = useUnreadMessages()
@@ -54,7 +39,6 @@ export default function Header() {
     router.refresh()
   }
 
-  // Always read avatar from DB (profiles table) — user_metadata is stale after upload
   const avatarUrl   = profile?.avatar_url || user?.user_metadata?.avatar_url
   const displayName = profile?.full_name || user?.user_metadata?.full_name || user?.email?.split('@')[0] || t.auth.dashboard
   const adminEmail  = process.env.NEXT_PUBLIC_ADMIN_EMAIL
@@ -62,7 +46,7 @@ export default function Header() {
 
   return (
     <header
-      className="sticky top-0 z-50 glass header-safe"
+      className="sticky top-0 z-50 glass header-safe md:hidden"
       style={{
         borderBottom: '1px solid var(--fh-sep)',
         backgroundColor: 'var(--fh-header-bg)',
@@ -94,102 +78,6 @@ export default function Header() {
 
           {/* Right side */}
           <div className="flex items-center gap-1.5 shrink-0">
-
-            {/* Currency switcher — dropdown on desktop */}
-            <div className="relative hidden md:block">
-              <button
-                onClick={() => setCurrencyOpen(!currencyOpen)}
-                className="flex items-center gap-1 px-2 py-1.5 rounded-md text-[12px] transition-colors"
-                style={{
-                  background: currencyOpen ? 'var(--fh-surface-3)' : 'var(--fh-surface-2)',
-                  border: '1px solid var(--fh-border)',
-                  color: 'var(--fh-t3)',
-                  fontWeight: 590,
-                }}
-              >
-                <span style={{ color: '#5e6ad2', fontWeight: 590 }}>{CURRENCY_LABELS[currency]}</span>
-                <ChevronDown className="h-3 w-3" />
-              </button>
-              {currencyOpen && (
-                <div
-                  className="absolute right-0 top-full mt-1.5 rounded-xl overflow-hidden py-1 z-50 grid grid-cols-2"
-                  style={{
-                    minWidth: '130px',
-                    background: 'var(--popover)',
-                    border: '1px solid var(--fh-border-2)',
-                    boxShadow: 'var(--shadow-dropdown)',
-                  }}
-                >
-                  {CURRENCIES.map(c => (
-                    <button
-                      key={c}
-                      onClick={() => { setCurrency(c); setCurrencyOpen(false) }}
-                      className="flex items-center gap-1.5 px-3 py-2 text-[12px] transition-colors"
-                      style={{
-                        fontWeight: c === currency ? 590 : 400,
-                        color: c === currency ? '#7170ff' : 'var(--fh-t2)',
-                        background: c === currency ? 'rgba(113,112,255,0.06)' : 'transparent',
-                      }}
-                      onMouseEnter={e => { if (c !== currency) e.currentTarget.style.background = 'var(--fh-surface-2)' }}
-                      onMouseLeave={e => { if (c !== currency) e.currentTarget.style.background = 'transparent' }}
-                    >
-                      <span style={{ fontWeight: 700, width: '14px', textAlign: 'center' }}>{CURRENCY_LABELS[c]}</span>
-                      <span>{c}</span>
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Language switcher */}
-            <div className="relative">
-              <button
-                onClick={() => setLangOpen(!langOpen)}
-                className="flex items-center gap-1 px-2 py-1.5 rounded-md text-[12px] transition-colors"
-                style={{
-                  background: langOpen ? 'var(--fh-surface-3)' : 'var(--fh-surface-2)',
-                  border: '1px solid var(--fh-border)',
-                  color: 'var(--fh-t3)',
-                  fontWeight: 590,
-                }}
-                aria-label="Select language"
-              >
-                <Languages className="h-3.5 w-3.5" />
-                <span>{LANG_LABELS[lang]}</span>
-              </button>
-
-              {langOpen && (
-                <div
-                  className="absolute right-0 top-full mt-1.5 rounded-xl overflow-hidden py-1 z-50"
-                  style={{
-                    minWidth: '80px',
-                    background: 'var(--popover)',
-                    border: '1px solid var(--fh-border-2)',
-                    boxShadow: 'var(--shadow-dropdown)',
-                  }}
-                >
-                  {LANGS.map(l => (
-                    <button
-                      key={l}
-                      onClick={() => { setLang(l); setLangOpen(false) }}
-                      className="w-full text-left px-3.5 py-2 text-[13px] transition-colors flex items-center gap-2"
-                      style={{
-                        fontWeight: l === lang ? 590 : 400,
-                        color: l === lang ? '#7170ff' : 'var(--fh-t2)',
-                        background: l === lang ? 'rgba(113,112,255,0.06)' : 'transparent',
-                      }}
-                      onMouseEnter={e => { if (l !== lang) e.currentTarget.style.background = 'var(--fh-surface-2)' }}
-                      onMouseLeave={e => { if (l !== lang) e.currentTarget.style.background = 'transparent' }}
-                    >
-                      {LANG_LABELS[l]}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Role switcher — only shown when logged in */}
-            {user && <RoleSwitcher />}
 
             {/* Messages + Bell (logged in) */}
             {user && (
@@ -369,6 +257,9 @@ export default function Header() {
                   <Link href="/messages" className="block px-3 py-2.5 rounded-lg text-[14px]" style={{ color: 'var(--fh-t2)', fontWeight: 510 }} onClick={() => setMobileOpen(false)}>
                     {t.auth.messages}
                   </Link>
+                  <Link href="/settings" className="block px-3 py-2.5 rounded-lg text-[14px]" style={{ color: 'var(--fh-t2)', fontWeight: 510 }} onClick={() => setMobileOpen(false)}>
+                    {t.auth.settings ?? 'Settings'}
+                  </Link>
                   <button onClick={signOut} className="w-full text-left px-3 py-2.5 rounded-lg text-[14px]" style={{ color: '#e5484d', fontWeight: 510 }}>
                     {t.auth.logout}
                   </button>
@@ -383,36 +274,6 @@ export default function Header() {
                   </Link>
                 </div>
               )}
-            </div>
-
-            {/* Mobile: currency + lang */}
-            <div className="pt-3 mt-1 flex flex-wrap items-center gap-2" style={{ borderTop: '1px solid var(--fh-sep)' }}>
-              {/* Language */}
-              <div className="flex items-center gap-0.5 p-0.5 rounded-md" style={{ background: 'var(--fh-surface-2)', border: '1px solid var(--fh-border)' }}>
-                {LANGS.map(l => (
-                  <button
-                    key={l}
-                    onClick={() => setLang(l)}
-                    className="px-2.5 py-1 rounded text-[11px] transition-all"
-                    style={{ fontWeight: 590, background: lang === l ? '#5e6ad2' : 'transparent', color: lang === l ? '#fff' : 'var(--fh-t3)' }}
-                  >
-                    {LANG_LABELS[l]}
-                  </button>
-                ))}
-              </div>
-              {/* Currency */}
-              <div className="flex items-center gap-0.5 p-0.5 rounded-md" style={{ background: 'var(--fh-surface-2)', border: '1px solid var(--fh-border)' }}>
-                {CURRENCY_COMPACT.map((c) => (
-                  <button
-                    key={c}
-                    onClick={() => setCurrency(c)}
-                    className="px-2.5 py-1 rounded text-[12px] transition-all"
-                    style={{ fontWeight: 510, background: currency === c ? '#5e6ad2' : 'transparent', color: currency === c ? '#fff' : 'var(--fh-t3)' }}
-                  >
-                    {CURRENCY_LABELS[c]}
-                  </button>
-                ))}
-              </div>
             </div>
           </div>
         </div>

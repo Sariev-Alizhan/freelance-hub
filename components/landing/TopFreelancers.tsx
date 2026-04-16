@@ -65,7 +65,7 @@ export default function TopFreelancers() {
   const c = (CONTENT as Record<string, typeof CONTENT.en>)[lang] ?? CONTENT.en
 
   return (
-    <section className="py-20 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: 'var(--fh-canvas)' }}>
+    <section className="py-12 sm:py-20 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: 'var(--fh-canvas)' }}>
       <div className="mx-auto max-w-7xl">
         <motion.div
           initial={{ opacity: 0, y: 16 }}

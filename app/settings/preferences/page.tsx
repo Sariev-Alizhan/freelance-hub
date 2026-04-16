@@ -5,6 +5,8 @@ import { useCurrency } from '@/lib/context/CurrencyContext'
 import { useTheme } from '@/lib/context/ThemeContext'
 import type { ThemeMode } from '@/lib/context/ThemeContext'
 import type { Currency } from '@/lib/types'
+import RoleSwitcher from '@/components/layout/RoleSwitcher'
+import { useUser } from '@/lib/hooks/useUser'
 
 const LANGS = [
   { code: 'en' as const, flag: '🇬🇧', name: 'English'  },
@@ -29,6 +31,7 @@ export default function PreferencesPage() {
   const { lang, setLang } = useLang()
   const { currency, setCurrency } = useCurrency()
   const { themeMode, theme, setThemeMode } = useTheme()
+  const { user } = useUser()
 
   return (
     <div>
@@ -196,6 +199,13 @@ export default function PreferencesPage() {
           </p>
         )}
       </Card>
+
+      {/* Role */}
+      {user && (
+        <Card label="Platform Role" description="Switch between posting orders as a client or offering services as a freelancer.">
+          <RoleSwitcher />
+        </Card>
+      )}
     </div>
   )
 }
