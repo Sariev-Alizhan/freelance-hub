@@ -25,8 +25,10 @@ export default function LeftSidebar() {
   const { profile } = useProfile()
   const router = useRouter()
   const pathname = usePathname()
-  const [expanded, setExpanded] = useState(false)
+  const [hovered,  setHovered]  = useState(false)
   const [moreOpen, setMoreOpen] = useState(false)
+  // Keep sidebar expanded while the More popup is open so its position stays stable
+  const expanded = hovered || moreOpen
   const sidebarRef = useRef<HTMLDivElement>(null)
   const moreRef = useRef<HTMLDivElement>(null)
 
@@ -54,7 +56,7 @@ export default function LeftSidebar() {
   }, [])
 
   const mainNav = [
-    { href: '/',            icon: Home,         label: 'Home'        },
+    { href: '/feed',         icon: Home,         label: 'Home'        },
     { href: '/orders',      icon: Briefcase,    label: t.nav.orders  },
     { href: '/freelancers', icon: Users,         label: t.nav.freelancers },
     { href: '/messages',    icon: MessageSquare, label: t.auth.messages },
@@ -94,8 +96,8 @@ export default function LeftSidebar() {
   return (
     <aside
       ref={sidebarRef}
-      onMouseEnter={() => setExpanded(true)}
-      onMouseLeave={() => { setExpanded(false); setMoreOpen(false) }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
       className="hidden md:flex flex-col"
       style={{
         position: 'fixed',

@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Bell, MessageSquare, UserCheck, Briefcase, CheckCheck, X, BellOff } from 'lucide-react'
 import Link from 'next/link'
@@ -36,51 +36,53 @@ function timeAgo(iso: string) {
 
 export default function NotificationBell({ sidebarMode }: { sidebarMode?: boolean }) {
   const { user } = useUser()
+  const userId = user?.id
   const [open, setOpen] = useState(false)
   const { state: pushState, subscribe, unsubscribe } = usePushNotifications()
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [loading, setLoading] = useState(false)
   const panelRef = useRef<HTMLDivElement>(null)
   const channelRef = useRef<RealtimeChannel | null>(null)
-  const supabase = createClient()
+  // Stable supabase client — never recreated
+  const supabase = useMemo(() => createClient(), [])
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const db = supabase as any
 
   const unreadCount = notifications.filter(n => !n.is_read).length
 
   const loadNotifications = useCallback(async () => {
-    if (!user) return
+    if (!userId) return
     setLoading(true)
     const { data } = await db
       .from('notifications')
       .select('*')
-      .eq('user_id', user.id)
+      .eq('user_id', userId)
       .order('created_at', { ascending: false })
       .limit(30)
     if (data) setNotifications(data)
     setLoading(false)
-  }, [user])
+  }, [userId, db])
 
   // Load on mount
   useEffect(() => { loadNotifications() }, [loadNotifications])
 
-  // Realtime subscription
+  // Realtime subscription — unique name per mount avoids "callbacks after subscribe()" error
   useEffect(() => {
-    if (!user) return
+    if (!userId) return
     const channel = supabase
-      .channel(`notifs:${user.id}`)
+      .channel(`notifs:${userId}:${Date.now()}`)
       .on('postgres_changes', {
         event: 'INSERT',
         schema: 'public',
         table: 'notifications',
-        filter: `user_id=eq.${user.id}`,
+        filter: `user_id=eq.${userId}`,
       }, (payload: any) => {
         setNotifications(prev => [payload.new as Notification, ...prev])
       })
       .subscribe()
     channelRef.current = channel
     return () => { supabase.removeChannel(channel) }
-  }, [user])
+  }, [userId, supabase])
 
   // Close on outside click
   useEffect(() => {
@@ -94,11 +96,11 @@ export default function NotificationBell({ sidebarMode }: { sidebarMode?: boolea
   }, [])
 
   async function markAllRead() {
-    if (!user || unreadCount === 0) return
+    if (!userId || unreadCount === 0) return
     setNotifications(prev => prev.map(n => ({ ...n, is_read: true })))
     await db.from('notifications')
       .update({ is_read: true })
-      .eq('user_id', user.id)
+      .eq('user_id', userId)
       .eq('is_read', false)
   }
 
@@ -114,7 +116,7 @@ export default function NotificationBell({ sidebarMode }: { sidebarMode?: boolea
     await db.from('notifications').delete().eq('id', id)
   }
 
-  if (!user) return null
+  if (!userId) return null
 
   const bellButtonStyle = sidebarMode ? {
     display: 'flex',
