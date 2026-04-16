@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import {
   Send, Search, ArrowLeft, MessageSquare, LogIn,
-  CheckCheck, Check, Loader2, Paperclip, X, FileText, Download, BadgeCheck,
+  CheckCheck, Check, Loader2, Paperclip, X, FileText, Download, BadgeCheck, CornerUpLeft,
 } from 'lucide-react'
 import EmojiPickerPopover, { FH_STICKER_SET } from './EmojiPickerPopover'
 import { createClient } from '@/lib/supabase/client'
@@ -43,6 +43,9 @@ interface Message {
   attachment_url?: string | null
   attachment_type?: 'image' | 'file' | null
   attachment_name?: string | null
+  reply_to_id?:   string | null
+  reply_to_text?: string | null
+  reply_to_name?: string | null
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -158,6 +161,9 @@ export default function MessengerPage() {
   const [msgsLoading,   setMsgsLoading]    = useState(false)
   const [sending,       setSending]        = useState(false)
   const [showList,      setShowList]       = useState(true)
+
+  // Reply-to
+  const [replyTo, setReplyTo] = useState<{ id: string; text: string; name: string } | null>(null)
 
   // ── Message reactions ─────────────────────────────────────────────────────
   // { messageId: { emoji: { count, mine } } }
@@ -453,8 +459,10 @@ export default function MessengerPage() {
   async function sendMessage() {
     if ((!text.trim() && !attachment) || !activeId || !user || sending) return
     if (text.length > MAX_MSG_LEN) return
-    const msgText = text.trim()
+    const msgText  = text.trim()
+    const replySnap = replyTo ? { ...replyTo } : null
     setText('')
+    setReplyTo(null)
     setSending(true)
 
     let attachmentUrl: string | null = null
@@ -479,6 +487,7 @@ export default function MessengerPage() {
       id: crypto.randomUUID(), conversation_id: activeId, sender_id: user.id,
       text: msgText || (attachmentName ?? ''), is_read: false, created_at: new Date().toISOString(),
       attachment_url: attachmentUrl, attachment_type: attachmentType, attachment_name: attachmentName,
+      reply_to_id: replySnap?.id ?? null, reply_to_text: replySnap?.text ?? null, reply_to_name: replySnap?.name ?? null,
     }
     setMessages(prev => [...prev, optimistic])
 
@@ -487,6 +496,7 @@ export default function MessengerPage() {
         conversation_id: activeId, sender_id: user.id,
         text: msgText || (attachmentName ?? '📎'),
         attachment_url: attachmentUrl, attachment_type: attachmentType, attachment_name: attachmentName,
+        reply_to_id: replySnap?.id ?? null, reply_to_text: replySnap?.text ?? null, reply_to_name: replySnap?.name ?? null,
       }).select('*').single()
       if (error) throw error
       setMessages(prev => prev.map(m => m.id === optimistic.id ? data : m))
@@ -792,6 +802,29 @@ export default function MessengerPage() {
                                   {emoji}
                                 </button>
                               ))}
+                              {/* Separator + Reply */}
+                              <div style={{ width: 1, height: 18, background: 'var(--fh-sep)', margin: '0 2px' }} />
+                              <button
+                                onClick={() => {
+                                  const senderName = isMine
+                                    ? 'You'
+                                    : (activeConv.other_user.full_name ?? 'User')
+                                  setReplyTo({ id: msg.id, text: msg.text || '📎 Attachment', name: senderName })
+                                  setHoveredMsgId(null)
+                                  inputRef.current?.focus()
+                                }}
+                                title="Reply"
+                                style={{
+                                  background: 'transparent', border: 'none', cursor: 'pointer',
+                                  borderRadius: 6, padding: '3px 5px', color: 'var(--fh-t3)',
+                                  display: 'flex', alignItems: 'center',
+                                  transition: 'color 0.15s',
+                                }}
+                                onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = '#7170ff' }}
+                                onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'var(--fh-t3)' }}
+                              >
+                                <CornerUpLeft className="h-3.5 w-3.5" />
+                              </button>
                             </div>
                           </div>
                         )}
@@ -837,7 +870,7 @@ export default function MessengerPage() {
                               ) : (
                                 // ── Regular text bubble ───────────────────────
                                 <div style={{
-                                  padding: '9px 14px',
+                                  padding: msg.reply_to_text ? '8px 14px 9px' : '9px 14px',
                                   borderRadius: br,
                                   fontSize: 14,
                                   lineHeight: 1.45,
@@ -845,6 +878,23 @@ export default function MessengerPage() {
                                   background: isMine ? '#5e6ad2' : 'var(--fh-surface-2)',
                                   color: isMine ? '#ffffff' : 'var(--fh-t1)',
                                 }}>
+                                  {/* Quoted reply */}
+                                  {msg.reply_to_text && (
+                                    <div style={{
+                                      marginBottom: 7,
+                                      padding: '5px 10px',
+                                      borderRadius: 8,
+                                      borderLeft: `3px solid ${isMine ? 'rgba(255,255,255,0.5)' : '#7170ff'}`,
+                                      background: isMine ? 'rgba(255,255,255,0.12)' : 'rgba(113,112,255,0.08)',
+                                    }}>
+                                      <p style={{ fontSize: 11, fontWeight: 700, marginBottom: 2, color: isMine ? 'rgba(255,255,255,0.8)' : '#7170ff' }}>
+                                        {msg.reply_to_name}
+                                      </p>
+                                      <p className="line-clamp-2" style={{ fontSize: 12, color: isMine ? 'rgba(255,255,255,0.65)' : 'var(--fh-t3)', lineHeight: 1.35 }}>
+                                        {msg.reply_to_text}
+                                      </p>
+                                    </div>
+                                  )}
                                   {msg.text}
                                 </div>
                               )
@@ -900,6 +950,24 @@ export default function MessengerPage() {
               )}
               <div style={{ height: 4 }} />
             </div>
+
+            {/* Reply preview */}
+            {replyTo && (
+              <div
+                className="mx-3 mb-1 flex items-center gap-2 px-3 py-2 rounded-xl"
+                style={{ background: 'rgba(113,112,255,0.06)', border: '1px solid rgba(113,112,255,0.2)', borderLeft: '3px solid #7170ff' }}
+              >
+                <CornerUpLeft className="h-3.5 w-3.5 flex-shrink-0" style={{ color: '#7170ff' }} />
+                <div className="flex-1 min-w-0">
+                  <p style={{ fontSize: 11, fontWeight: 700, color: '#7170ff', marginBottom: 1 }}>{replyTo.name}</p>
+                  <p className="truncate" style={{ fontSize: 12, color: 'var(--fh-t3)' }}>{replyTo.text}</p>
+                </div>
+                <button onClick={() => setReplyTo(null)}
+                  style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--fh-t4)', padding: 2, flexShrink: 0 }}>
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            )}
 
             {/* Attachment preview */}
             {attachment && (
