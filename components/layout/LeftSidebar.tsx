@@ -14,7 +14,6 @@ import NotificationBell from '@/components/layout/NotificationBell'
 import { useLang } from '@/lib/context/LanguageContext'
 import { useUser } from '@/lib/hooks/useUser'
 import { useProfile } from '@/lib/context/ProfileContext'
-import { useUnreadMessages } from '@/lib/hooks/useUnreadMessages'
 import { createClient } from '@/lib/supabase/client'
 
 const SIDEBAR_W_COLLAPSED = 72
@@ -24,7 +23,6 @@ export default function LeftSidebar() {
   const { t } = useLang()
   const { user } = useUser()
   const { profile } = useProfile()
-  const unreadMsgs = useUnreadMessages()
   const router = useRouter()
   const pathname = usePathname()
   const [expanded, setExpanded] = useState(false)
@@ -178,23 +176,11 @@ export default function LeftSidebar() {
               }}
             >
               <span style={{
-                position: 'relative', flexShrink: 0,
+                flexShrink: 0,
                 width: 20, height: 20,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
               }}>
                 <item.icon style={{ width: 18, height: 18 }} strokeWidth={active ? 2.2 : 1.8} />
-                {(item.badge ?? 0) > 0 && (
-                  <span style={{
-                    position: 'absolute', top: -5, right: -6,
-                    minWidth: 14, height: 14, borderRadius: 7,
-                    background: '#e5484d', color: '#fff',
-                    fontSize: 9, fontWeight: 700,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    padding: '0 3px',
-                  }}>
-                    {(item.badge ?? 0) > 99 ? '99+' : item.badge}
-                  </span>
-                )}
               </span>
               <span style={labelStyle}>{item.label}</span>
             </Link>
