@@ -60,7 +60,7 @@ export default function Footer() {
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
               <Logo size={22} showWordmark={false} />
               <span style={{ fontSize: 15, fontWeight: 700, color: 'var(--fh-t1)', letterSpacing: '-0.03em' }}>
-                Freelance<span style={{ color: '#7170ff' }}>Hub</span>
+                Freelance<span style={{ color: 'var(--fh-primary)' }}>Hub</span>
               </span>
             </div>
             <p style={{ fontSize: 12, color: 'var(--fh-t4)', lineHeight: 1.6, maxWidth: 210 }}>
@@ -114,7 +114,7 @@ export default function Footer() {
           {/* AI Tools */}
           <NavCol
             label="AI Tools"
-            labelColor="rgba(113,112,255,0.7)"
+            labelColor="var(--fh-primary)"
             links={AI_TOOLS}
             lang={lang}
           />
@@ -148,26 +148,22 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Company links as compact pills — mobile only */}
-        <div className="flex md:hidden flex-wrap gap-2 mb-5">
+        {/* Company + contact links — mobile only, clean text row */}
+        <div className="flex md:hidden flex-wrap items-center gap-x-4 gap-y-1.5 mb-5">
           {COMPANY.map(l => (
             <Link
               key={l.href}
               href={l.href}
               className="footer-link"
-              style={{
-                padding: '5px 10px', borderRadius: 6,
-                border: '1px solid var(--fh-border)',
-                fontSize: 12, textDecoration: 'none',
-              }}
+              style={{ fontSize: 12, textDecoration: 'none' }}
             >
               {l[lang as LangKey]}
             </Link>
           ))}
-          <a href="https://t.me/zhanmate" target="_blank" rel="noopener noreferrer" className="footer-link" style={{ padding: '5px 10px', borderRadius: 6, border: '1px solid var(--fh-border)', fontSize: 12, textDecoration: 'none' }}>
+          <a href="https://t.me/zhanmate" target="_blank" rel="noopener noreferrer" className="footer-link" style={{ fontSize: 12, textDecoration: 'none' }}>
             Telegram
           </a>
-          <a href="https://wa.me/87774961358" target="_blank" rel="noopener noreferrer" className="footer-link" style={{ padding: '5px 10px', borderRadius: 6, border: '1px solid var(--fh-border)', fontSize: 12, textDecoration: 'none' }}>
+          <a href="https://wa.me/87774961358" target="_blank" rel="noopener noreferrer" className="footer-link" style={{ fontSize: 12, textDecoration: 'none' }}>
             WhatsApp
           </a>
         </div>
@@ -175,10 +171,10 @@ export default function Footer() {
         {/* ── Donate strip ─────────────────────────────────────────────── */}
         <div style={{
           padding: '11px 14px', borderRadius: 10, marginBottom: 20,
-          background: 'rgba(94,106,210,0.04)', border: '1px solid rgba(94,106,210,0.12)',
+          background: 'var(--fh-primary-muted)', border: '1px solid color-mix(in srgb, var(--fh-primary) 20%, transparent)',
           display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap',
         }}>
-          <span style={{ fontSize: 12, fontWeight: 600, color: '#7170ff', flexShrink: 0 }}>
+          <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--fh-primary)', flexShrink: 0 }}>
             {t.footer.donate}
           </span>
           <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
@@ -200,7 +196,7 @@ export default function Footer() {
             <span className="pulse-green" style={{ display: 'block', width: 5, height: 5, borderRadius: '50%', background: '#27a644', flexShrink: 0 }} />
             <span style={{ fontSize: 11, color: 'var(--fh-t4)' }}>
               © 2025 FreelanceHub by{' '}
-              <a href="https://www.instagram.com/sariyev.it.solutions/?hl=ru" target="_blank" rel="noopener noreferrer" style={{ color: '#7170ff', textDecoration: 'none' }}>
+              <a href="https://www.instagram.com/sariyev.it.solutions/?hl=ru" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--fh-primary)', textDecoration: 'none' }}>
                 SITS
               </a>
             </span>

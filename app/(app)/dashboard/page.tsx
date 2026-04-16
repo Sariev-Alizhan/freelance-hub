@@ -357,7 +357,7 @@ export default function DashboardPage() {
   const completionPct = Math.round((completionItems.filter(i => i.done).length / completionItems.length) * 100)
 
   return (
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 overflow-x-hidden">
+    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6 sm:py-10" style={{ overflowX: 'clip' }}>
 
       {/* ── Header ── */}
       {profileLoading ? <SkeletonProfileHeader /> : (
@@ -440,41 +440,46 @@ export default function DashboardPage() {
 
       {/* Bio */}
       {!profileLoading && profile?.bio && (
-        <div className="mb-6 p-4 rounded-xl bg-subtle border border-subtle text-sm text-muted-foreground leading-relaxed">
+        <div className="mb-5 p-4 rounded-xl bg-subtle border border-subtle text-sm text-muted-foreground leading-relaxed"
+          style={{ wordBreak: 'break-word', overflowWrap: 'break-word' }}>
           {profile.bio}
         </div>
       )}
 
-      {/* Skills */}
+      {/* Skills + price */}
       {!profileLoading && (fp?.skills?.length ?? 0) > 0 && (
-        <div className="mb-6 flex items-center gap-2 flex-wrap">
-          <Tag className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
-          {fp!.skills.map(s => (
-            <span key={s} className="text-xs px-2.5 py-1 rounded-full bg-primary/10 text-primary border border-primary/20">{s}</span>
-          ))}
+        <div className="mb-5">
+          <div className="flex items-center gap-2 flex-wrap">
+            <Tag className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
+            {fp!.skills.map(s => (
+              <span key={s} className="text-xs px-2.5 py-1 rounded-full bg-primary/10 text-primary border border-primary/20 flex-shrink-0">{s}</span>
+            ))}
+          </div>
           {fp?.price_from ? (
-            <span className="ml-auto text-sm font-semibold text-green-400">
+            <div className="mt-1.5 text-sm font-semibold" style={{ color: '#27a644' }}>
               from {fp.price_from.toLocaleString()} ₸{fp.price_to ? ` — ${fp.price_to.toLocaleString()} ₸` : ''}
-            </span>
+            </div>
           ) : null}
         </div>
       )}
 
       {/* ── Availability toggle (freelancers only) ── */}
       {!profileLoading && fp && (
-        <div className="mb-6 flex items-center gap-3 flex-wrap">
-          <Circle className="h-3 w-3 flex-shrink-0" style={{ color: AVAILABILITY_CONFIG[availability].dot, fill: AVAILABILITY_CONFIG[availability].dot }} />
-          <span className="text-sm text-muted-foreground">Status:</span>
+        <div className="mb-5">
+          <div className="flex items-center gap-2 mb-2">
+            <Circle className="h-3 w-3 flex-shrink-0" style={{ color: AVAILABILITY_CONFIG[availability].dot, fill: AVAILABILITY_CONFIG[availability].dot }} />
+            <span className="text-xs text-muted-foreground font-medium">Status</span>
+          </div>
           <div className="flex gap-1.5 flex-wrap">
             {(Object.entries(AVAILABILITY_CONFIG) as [AvailabilityStatus, typeof AVAILABILITY_CONFIG['open']][]).map(([key, cfg]) => (
               <button
                 key={key}
                 onClick={() => saveAvailability(key)}
                 disabled={availSaving}
-                className="transition-all disabled:opacity-50"
+                className="transition-all disabled:opacity-50 flex-shrink-0"
                 style={{
-                  padding: '4px 12px',
-                  borderRadius: '6px',
+                  padding: '5px 14px',
+                  borderRadius: '20px',
                   fontSize: '12px',
                   fontWeight: 510,
                   background: availability === key ? cfg.bg : 'transparent',

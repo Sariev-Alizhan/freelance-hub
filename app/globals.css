@@ -202,6 +202,8 @@
 
   html {
     @apply font-sans;
+    /* Prevent horizontal scroll on all pages — clips overflow without creating scroll container */
+    overflow-x: clip;
     /* Linear OpenType features — cv01: single-story 'a', ss03: geometric alternates */
     font-feature-settings: "cv01", "ss03";
     font-variation-settings: normal;
@@ -216,6 +218,10 @@
     -moz-osx-font-smoothing: grayscale;
     font-feature-settings: "cv01", "ss03";
     overscroll-behavior: none;
+    overflow-x: clip;
+    /* Prevent word overflow on any child text node */
+    overflow-wrap: break-word;
+    word-break: break-word;
   }
 
   /* Linear heading compression — aggressive negative tracking at large sizes */
