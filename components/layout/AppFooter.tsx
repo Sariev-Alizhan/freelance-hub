@@ -14,7 +14,7 @@ export default function AppFooter() {
   if (pathname.startsWith('/messages')) return null
 
   return (
-    <footer style={{
+    <footer className="hidden md:block" style={{
       borderTop: '1px solid var(--fh-sep)',
       background: 'var(--fh-canvas)',
     }}>
