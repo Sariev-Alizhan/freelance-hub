@@ -165,6 +165,12 @@ export default function MessengerPage() {
   // Reply-to
   const [replyTo, setReplyTo] = useState<{ id: string; text: string; name: string } | null>(null)
 
+  // Typing indicator + online presence
+  const [isOtherTyping,  setIsOtherTyping]  = useState(false)
+  const [isOtherOnline,  setIsOtherOnline]  = useState(false)
+  const [onlineUserIds,  setOnlineUserIds]  = useState<Set<string>>(new Set())
+  const typingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
   // ── Message reactions ─────────────────────────────────────────────────────
   // { messageId: { emoji: { count, mine } } }
   type ReactionMap = Record<string, Record<string, { count: number; mine: boolean }>>
@@ -289,19 +295,23 @@ export default function MessengerPage() {
     }
   }, [activeId])
 
-  // ── Realtime per-conversation ─────────────────────────────────────────────
+  // ── Realtime per-conversation (messages + presence) ──────────────────────
 
   useEffect(() => {
-    if (!activeId) return
+    if (!activeId || !user) return
     if (channelRef.current) supabase.removeChannel(channelRef.current)
-    const channel = supabase.channel(`msgs:${activeId}`)
+    setIsOtherTyping(false)
+    setIsOtherOnline(false)
+
+    const channel = supabase.channel(`msgs:${activeId}`, { config: { presence: { key: user.id } } })
+      // DB changes
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages', filter: `conversation_id=eq.${activeId}` },
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (payload: any) => {
           const newMsg = payload.new as Message
           setMessages(prev => prev.some(m => m.id === newMsg.id) ? prev : [...prev, newMsg])
           setConversations(prev => prev.map(c => c.id === activeId ? { ...c, last_message: newMsg.text || (newMsg.attachment_name ?? '📎'), last_message_at: newMsg.created_at } : c))
-          if (user && newMsg.sender_id !== user.id) db.from('messages').update({ is_read: true }).eq('id', newMsg.id)
+          if (newMsg.sender_id !== user.id) db.from('messages').update({ is_read: true }).eq('id', newMsg.id)
         })
       .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'messages', filter: `conversation_id=eq.${activeId}` },
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -309,10 +319,52 @@ export default function MessengerPage() {
           const updated = payload.new as Message
           setMessages(prev => prev.map(m => m.id === updated.id ? { ...m, is_read: updated.is_read } : m))
         })
-      .subscribe()
+      // Presence — typing + online
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .on('presence', { event: 'sync' }, () => {
+        const state = channel.presenceState() as Record<string, { userId: string; typing: boolean }[]>
+        const others = Object.values(state).flat().filter(p => p.userId !== user.id)
+        setIsOtherOnline(others.length > 0)
+        setIsOtherTyping(others.some(p => p.typing))
+      })
+      .subscribe(async (status) => {
+        if (status === 'SUBSCRIBED') {
+          await channel.track({ userId: user.id, typing: false })
+        }
+      })
+
     channelRef.current = channel
     return () => { supabase.removeChannel(channel) }
-  }, [activeId])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeId, user?.id])
+
+  // ── Global online presence (who's currently in the app) ──────────────────
+
+  useEffect(() => {
+    if (!user) return
+    const ch = supabase.channel('online:global', { config: { presence: { key: user.id } } })
+      .on('presence', { event: 'sync' }, () => {
+        const state = ch.presenceState() as Record<string, { userId: string }[]>
+        const ids = new Set(Object.values(state).flat().map(p => p.userId))
+        setOnlineUserIds(ids)
+      })
+      .subscribe(async (status) => {
+        if (status === 'SUBSCRIBED') await ch.track({ userId: user.id })
+      })
+    return () => { supabase.removeChannel(ch) }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.id])
+
+  // ── Broadcast typing state ────────────────────────────────────────────────
+
+  function broadcastTyping() {
+    if (!channelRef.current) return
+    channelRef.current.track({ userId: user?.id, typing: true })
+    if (typingTimerRef.current) clearTimeout(typingTimerRef.current)
+    typingTimerRef.current = setTimeout(() => {
+      channelRef.current?.track({ userId: user?.id, typing: false })
+    }, 2500)
+  }
 
   // ── Realtime global inbox ─────────────────────────────────────────────────
 
@@ -609,6 +661,14 @@ export default function MessengerPage() {
                 >
                   <div className="relative flex-shrink-0">
                     <Avatar user={conv.other_user} size={44} />
+                    {/* Online dot */}
+                    {onlineUserIds.has(conv.other_user.id) && conv.unread === 0 && (
+                      <span style={{
+                        position: 'absolute', bottom: 1, right: 1,
+                        width: 10, height: 10, borderRadius: '50%',
+                        background: '#27a644', border: '2px solid var(--fh-surface)',
+                      }} />
+                    )}
                     {conv.unread > 0 && (
                       <span
                         className="absolute -top-0.5 -right-0.5 flex items-center justify-center rounded-full font-bold text-white"
@@ -703,6 +763,22 @@ export default function MessengerPage() {
                   {activeConv.other_user.is_verified && (
                     <BadgeCheck className="h-4 w-4 flex-shrink-0" style={{ color: '#5e6ad2' }} />
                   )}
+                </div>
+                {/* Online / Typing status line */}
+                <div style={{ height: 16, display: 'flex', alignItems: 'center' }}>
+                  {isOtherTyping ? (
+                    <span style={{ fontSize: 11, color: '#7170ff', display: 'flex', alignItems: 'center', gap: 4 }}>
+                      <span className="typing-dots">
+                        <span /><span /><span />
+                      </span>
+                      typing…
+                    </span>
+                  ) : isOtherOnline ? (
+                    <span style={{ fontSize: 11, color: '#27a644', display: 'flex', alignItems: 'center', gap: 4 }}>
+                      <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#27a644', display: 'inline-block' }} />
+                      online
+                    </span>
+                  ) : null}
                 </div>
               </div>
             </div>
@@ -1040,6 +1116,7 @@ export default function MessengerPage() {
                   onChange={e => {
                     if (e.target.value.length > MAX_MSG_LEN) return
                     setText(e.target.value)
+                    if (e.target.value) broadcastTyping()
                     e.target.style.height = 'auto'
                     e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px'
                   }}
