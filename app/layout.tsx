@@ -75,8 +75,35 @@ export const viewport: Viewport = {
 // Reads fh-theme-mode: 'auto' | 'dark' | 'light' (falls back to old fh-theme key).
 // Auto default: 6am–8pm = light, otherwise dark.
 const themeScript = `(function(){try{var m=localStorage.getItem('fh-theme-mode')||localStorage.getItem('fh-theme');var r;if(m==='dark'){r='dark'}else if(m==='light'){r='light'}else{var h=new Date().getHours();r=(h>=6&&h<20)?'light':'dark'}if(r==='light'){document.documentElement.classList.remove('dark')}else{document.documentElement.classList.add('dark')}}catch(e){}})();`
-// Register Service Worker for PWA
-const swScript = `if('serviceWorker' in navigator){window.addEventListener('load',function(){navigator.serviceWorker.register('/sw.js').catch(function(){})})}`
+// Register Service Worker for PWA + auto-recover from stale-cache chunk errors
+const swScript = `(function(){
+  if(!('serviceWorker' in navigator)) return;
+  window.addEventListener('load', function(){
+    navigator.serviceWorker.register('/sw.js').then(function(reg){
+      // If a new SW is waiting, activate it immediately so stale caches are cleared
+      if(reg.waiting){ reg.waiting.postMessage({type:'SKIP_WAITING'}); }
+      reg.addEventListener('updatefound', function(){
+        var nw = reg.installing;
+        if(!nw) return;
+        nw.addEventListener('statechange', function(){
+          if(nw.state==='installed' && reg.waiting){
+            reg.waiting.postMessage({type:'SKIP_WAITING'});
+          }
+        });
+      });
+    }).catch(function(){});
+  });
+  // Auto-reload once on chunk-loading errors (stale SW cache artifact)
+  window.addEventListener('unhandledrejection', function(e){
+    var msg = e && e.reason && (e.reason.message||e.reason+'');
+    if(msg && (msg.indexOf('Loading chunk')!==-1 || msg.indexOf('ChunkLoad')!==-1 || msg.indexOf('Failed to fetch')!==-1)){
+      if(!sessionStorage.getItem('fh-chunk-reload')){
+        sessionStorage.setItem('fh-chunk-reload','1');
+        window.location.reload();
+      }
+    }
+  });
+})();`
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const nonce = (await headers()).get('x-nonce') ?? ''
