@@ -14,6 +14,8 @@ import ReviewsSection from '@/components/shared/ReviewsSection'
 import ShareProfileButton from '@/components/shared/ShareProfileButton'
 import { PortfolioItem } from '@/lib/types'
 import ProfileViewLogger from '@/components/shared/ProfileViewLogger'
+import FriendButton from '@/components/profile/FriendButton'
+import ProfilePosts from '@/components/profile/ProfilePosts'
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.freelance-hub.kz'
 
@@ -65,7 +67,7 @@ async function getProfile(username: string): Promise<PageProfile | null> {
     // 1. Find profile by username
     const { data: profile, error: pErr } = await db
       .from('profiles')
-      .select('id, full_name, username, avatar_url, location, bio, role')
+      .select('id, full_name, username, avatar_url, location, bio, role, is_verified')
       .eq('username', username)
       .single()
 
@@ -83,6 +85,7 @@ async function getProfile(username: string): Promise<PageProfile | null> {
       bio:         profile.bio || '',
       location:    profile.location || 'CIS',
       isFreelancer: false,
+      isVerified:   profile.is_verified ?? false,
     }
 
     // 2. Check if they have a freelancer profile
@@ -355,11 +358,16 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
           )}
 
           {/* Reviews */}
-          <ReviewsSection
-            freelancerId={p.userId}
-            freelancerName={p.name}
-            isLoggedIn={!!user}
-          />
+          {p.isFreelancer && (
+            <ReviewsSection
+              freelancerId={p.userId}
+              freelancerName={p.name}
+              isLoggedIn={!!user}
+            />
+          )}
+
+          {/* User posts */}
+          <ProfilePosts userId={p.userId} />
         </div>
 
         {/* ── Sidebar ──────────────────────────────────────────── */}
@@ -421,6 +429,7 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
                 >
                   <MessageCircle className="h-4 w-4" /> Send message
                 </Link>
+                <FriendButton targetUserId={p.userId} />
                 <Link
                   href="/orders/new"
                   style={{

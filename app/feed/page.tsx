@@ -5,7 +5,7 @@ import Image from 'next/image'
 import {
   Search, ThumbsUp, ThumbsDown, Bookmark, Share2,
   MessageCircle, RefreshCw, Send, X, CheckCircle2,
-  ArrowUp, ExternalLink, Plus, Hash,
+  ArrowUp, ExternalLink, Plus, Hash, BadgeCheck,
 } from 'lucide-react'
 // RefreshCw kept for the pull-to-refresh indicator only
 import { CURRENT_RELEASE } from '@/lib/company-report'
@@ -34,7 +34,7 @@ interface UserPost {
   tags: string[]
   created_at: string
   user_id: string
-  profiles: { full_name: string | null; avatar_url: string | null; username: string | null } | null
+  profiles: { full_name: string | null; avatar_url: string | null; username: string | null; is_verified?: boolean | null } | null
 }
 
 type FeedItem =
@@ -283,12 +283,20 @@ function PostCard({ post, reactions, onReact, user, profile, onDelete }: {
     <CardShell itemId={post.id} reactions={reactions} onReact={onReact} user={user} profile={profile}>
       {/* Author */}
       <div className="flex items-center gap-2 mb-2">
-        <UserAvatar url={post.profiles?.avatar_url} name={post.profiles?.full_name} size={28} />
+        <Link href={post.profiles?.username ? `/u/${post.profiles.username}` : '#'} style={{ textDecoration: 'none', flexShrink: 0 }}>
+          <UserAvatar url={post.profiles?.avatar_url} name={post.profiles?.full_name} size={28} />
+        </Link>
         <div className="flex-1 min-w-0">
-          <span style={{ fontSize: 13, fontWeight: 590, color: 'var(--fh-t1)' }}>
-            {post.profiles?.full_name ?? post.profiles?.username ?? 'User'}
-          </span>
-          <span style={{ fontSize: 11, color: 'var(--fh-t4)', marginLeft: 6 }}>{timeAgo(post.created_at)}</span>
+          <div className="flex items-center gap-1">
+            <Link href={post.profiles?.username ? `/u/${post.profiles.username}` : '#'}
+              style={{ fontSize: 13, fontWeight: 590, color: 'var(--fh-t1)', textDecoration: 'none' }}>
+              {post.profiles?.full_name ?? post.profiles?.username ?? 'User'}
+            </Link>
+            {post.profiles?.is_verified && (
+              <BadgeCheck className="h-3.5 w-3.5 flex-shrink-0" style={{ color: '#5e6ad2' }} />
+            )}
+            <span style={{ fontSize: 11, color: 'var(--fh-t4)', marginLeft: 2 }}>{timeAgo(post.created_at)}</span>
+          </div>
         </div>
         {user?.id === post.user_id && (
           <button onClick={() => onDelete(post.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--fh-t4)', padding: 4 }}>

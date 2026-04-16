@@ -3,23 +3,23 @@ import { createClient } from '@/lib/supabase/server'
 
 export const dynamic = 'force-dynamic'
 
-// GET /api/feed/posts?search=...&limit=40
+// GET /api/feed/posts?search=...&limit=40&user_id=xxx
 export async function GET(req: NextRequest) {
   const supabase = await createClient()
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const db = supabase as any
   const search = req.nextUrl.searchParams.get('search') ?? ''
+  const userId = req.nextUrl.searchParams.get('user_id') ?? ''
   const limit  = Math.min(parseInt(req.nextUrl.searchParams.get('limit') ?? '60'), 100)
 
   let q = db
     .from('feed_posts')
-    .select('id, content, tags, created_at, user_id, profiles(full_name, avatar_url, username)')
+    .select('id, content, tags, created_at, user_id, profiles(full_name, avatar_url, username, is_verified)')
     .order('created_at', { ascending: false })
     .limit(limit)
 
-  if (search) {
-    q = q.ilike('content', `%${search}%`)
-  }
+  if (search) q = q.ilike('content', `%${search}%`)
+  if (userId) q = q.eq('user_id', userId)
 
   const { data, error } = await q
   if (error) return NextResponse.json({ posts: [] })
@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
   const { data, error } = await db
     .from('feed_posts')
     .insert({ user_id: user.id, content: trimmed, tags: cleanTags })
-    .select('id, content, tags, created_at, user_id, profiles(full_name, avatar_url, username)')
+    .select('id, content, tags, created_at, user_id, profiles(full_name, avatar_url, username, is_verified)')
     .single()
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })

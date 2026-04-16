@@ -1,5 +1,5 @@
 'use client'
-import { createContext, useContext, useEffect, useState, useCallback } from 'react'
+import { createContext, useContext, useEffect, useState, useCallback, useMemo } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useUser } from '@/lib/hooks/useUser'
 
@@ -47,8 +47,13 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
     fetchProfile()
   }, [fetchProfile])
 
+  const value = useMemo(
+    () => ({ profile, refreshProfile: fetchProfile }),
+    [profile, fetchProfile]
+  )
+
   return (
-    <ProfileContext.Provider value={{ profile, refreshProfile: fetchProfile }}>
+    <ProfileContext.Provider value={value}>
       {children}
     </ProfileContext.Provider>
   )
