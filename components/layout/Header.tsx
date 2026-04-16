@@ -4,11 +4,9 @@ import Image from 'next/image'
 import { useState } from 'react'
 import { Menu, X, LogOut, User, MessageSquare, BarChart3, ChevronDown, Target, Calculator, Settings } from 'lucide-react'
 import Logo from '@/components/ui/Logo'
-import NotificationBell from '@/components/layout/NotificationBell'
 import { useLang } from '@/lib/context/LanguageContext'
 import { useUser } from '@/lib/hooks/useUser'
 import { useProfile } from '@/lib/context/ProfileContext'
-import { useUnreadMessages } from '@/lib/hooks/useUnreadMessages'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 
@@ -18,7 +16,6 @@ export default function Header() {
   const [menuOpen,   setMenuOpen]   = useState(false)
   const { user } = useUser()
   const { profile } = useProfile()
-  const unreadMsgs = useUnreadMessages()
   const router = useRouter()
 
   const NAV_LINKS = [
@@ -56,7 +53,7 @@ export default function Header() {
         <div className="flex h-[52px] items-center justify-between gap-2">
 
           {/* Logo */}
-          <Link href="/" className="shrink-0 flex items-center">
+          <Link href={user ? '/feed' : '/'} className="shrink-0 flex items-center">
             <Logo size={28} />
           </Link>
 
@@ -79,36 +76,6 @@ export default function Header() {
           {/* Right side */}
           <div className="flex items-center gap-1.5 shrink-0">
 
-            {/* Messages + Bell (logged in) */}
-            {user && (
-              <div className="hidden md:flex items-center gap-1">
-                <Link
-                  href="/messages"
-                  aria-label="Messages"
-                  className="relative flex items-center justify-center h-8 w-8 rounded-md transition-colors"
-                  style={{ color: 'var(--fh-t3)' }}
-                  onMouseEnter={e => { e.currentTarget.style.color = 'var(--fh-t1)'; e.currentTarget.style.background = 'var(--fh-surface-2)' }}
-                  onMouseLeave={e => { e.currentTarget.style.color = 'var(--fh-t3)'; e.currentTarget.style.background = 'transparent' }}
-                >
-                  <MessageSquare className="h-4 w-4" />
-                  {unreadMsgs > 0 && (
-                    <span
-                      style={{
-                        position: 'absolute', top: '-3px', right: '-3px',
-                        minWidth: '15px', height: '15px', borderRadius: '8px',
-                        background: '#e5484d', color: '#fff',
-                        fontSize: '9px', fontWeight: 700,
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        padding: '0 3px',
-                      }}
-                    >
-                      {unreadMsgs > 99 ? '99+' : unreadMsgs}
-                    </span>
-                  )}
-                </Link>
-                <NotificationBell />
-              </div>
-            )}
 
             {/* Auth */}
             <div className="hidden md:flex items-center gap-1.5">

@@ -114,7 +114,7 @@ export default function LeftSidebar() {
     >
       {/* Logo */}
       <Link
-        href="/"
+        href={user ? '/feed' : '/'}
         style={{
           display: 'flex',
           alignItems: 'center',
