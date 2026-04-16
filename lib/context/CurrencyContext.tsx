@@ -10,13 +10,13 @@ interface CurrencyContextValue {
 }
 
 const CurrencyContext = createContext<CurrencyContextValue>({
-  currency: 'KZT',
+  currency: 'USD',
   setCurrency: () => {},
   rates: EXCHANGE_RATES,
 })
 
 export function CurrencyProvider({ children }: { children: ReactNode }) {
-  const [currency, setCurrencyState] = useState<Currency>('KZT')
+  const [currency, setCurrencyState] = useState<Currency>('USD')
   const [rates, setRates] = useState<Record<string, number>>(EXCHANGE_RATES)
 
   useEffect(() => {

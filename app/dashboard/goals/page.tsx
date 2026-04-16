@@ -3,13 +3,16 @@
 import { useState, useEffect, useCallback } from 'react'
 import {
   Target, Plus, Crown, Calendar, Flame, TrendingUp,
-  CheckCircle2, Clock, Trash2, Edit3, X, Loader2,
+  CheckCircle2, Clock, Trash2, X, Loader2,
   ChevronLeft, ChevronRight, BarChart3, Zap
 } from 'lucide-react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { useUser } from '@/lib/hooks/useUser'
+import { useCurrency } from '@/lib/context/CurrencyContext'
+import { convertFromUSD, convertToUSD, CURRENCY_SYMBOLS } from '@/lib/utils/currency'
+import type { Currency } from '@/lib/types'
 
 // ── Types ─────────────────────────────────────────────────────────────────
 
@@ -38,8 +41,23 @@ interface ScheduleBlock {
 
 // ── Helpers ───────────────────────────────────────────────────────────────
 
-function fmt(n: number, type: Goal['type']) {
-  if (type === 'income') return '₸' + Math.round(n).toLocaleString('ru-RU')
+/** Format a goal amount in the user's chosen display currency */
+function fmtGoal(
+  n: number,
+  type: Goal['type'],
+  goalCurrency: string,
+  displayCurrency: Currency,
+  rates: Record<string, number>,
+): string {
+  if (type === 'income') {
+    const src = (goalCurrency || 'KZT') as Currency
+    const usd = convertToUSD(n, src, rates)
+    const out = convertFromUSD(usd, displayCurrency, rates)
+    const sym = CURRENCY_SYMBOLS[displayCurrency]
+    if (['USD', 'EUR', 'GBP', 'USDT'].includes(displayCurrency))
+      return `${sym}${Math.round(out).toLocaleString('en-US')}`
+    return `${Math.round(out).toLocaleString('ru-RU')} ${sym}`
+  }
   if (type === 'orders') return n + ' заказов'
   return n + ' ч'
 }
@@ -100,11 +118,13 @@ function ProgressRing({ pct: p, color = '#7170ff', size = 80, stroke = 7 }: {
 
 // ── Goal Card ─────────────────────────────────────────────────────────────
 function GoalCard({ goal, onDelete }: { goal: Goal; onDelete: (id: string) => void }) {
+  const { currency, rates } = useCurrency()
   const p      = pct(goal.progress ?? 0, goal.target)
   const done   = p >= 100
   const color  = done ? '#22c55e' : p > 50 ? '#7170ff' : '#f59e0b'
   const today  = isoToday()
   const days   = Math.max(0, Math.ceil((new Date(goal.end_date).getTime() - new Date(today).getTime()) / 86400_000))
+  const fmt    = (n: number) => fmtGoal(n, goal.type, goal.currency, currency as Currency, rates)
 
   return (
     <div className="rounded-2xl border border-subtle bg-card p-5">
@@ -114,7 +134,7 @@ function GoalCard({ goal, onDelete }: { goal: Goal; onDelete: (id: string) => vo
             <span style={{ color: '#7170ff' }}>{TYPE_ICONS[goal.type]}</span>
             <span className="text-xs font-medium text-muted-foreground">{TYPE_LABELS[goal.type]} · {PERIOD_LABELS[goal.period_type]}</span>
           </div>
-          <p className="font-semibold text-sm">{goal.title ?? `${TYPE_LABELS[goal.type]} — ${fmt(goal.target, goal.type)}`}</p>
+          <p className="font-semibold text-sm">{goal.title ?? `${TYPE_LABELS[goal.type]} — ${fmt(goal.target)}`}</p>
         </div>
         <button
           onClick={() => onDelete(goal.id)}
@@ -141,11 +161,11 @@ function GoalCard({ goal, onDelete }: { goal: Goal; onDelete: (id: string) => vo
         <div className="flex-1 space-y-2">
           <div className="flex justify-between text-sm">
             <span className="text-muted-foreground">Выполнено</span>
-            <span className="font-semibold">{fmt(goal.progress ?? 0, goal.type)}</span>
+            <span className="font-semibold">{fmt(goal.progress ?? 0)}</span>
           </div>
           <div className="flex justify-between text-sm">
             <span className="text-muted-foreground">Цель</span>
-            <span className="font-semibold">{fmt(goal.target, goal.type)}</span>
+            <span className="font-semibold">{fmt(goal.target)}</span>
           </div>
           <div className="flex justify-between text-sm">
             <span className="text-muted-foreground">Осталось дней</span>
@@ -169,17 +189,31 @@ function GoalCard({ goal, onDelete }: { goal: Goal; onDelete: (id: string) => vo
 
 // ── Create Goal Modal ─────────────────────────────────────────────────────
 function CreateGoalModal({
-  onClose, onCreated, presetGoal, presetPeriod, presetCategory,
+  onClose, onCreated, presetGoal, presetPeriod, presetCategory, presetCurrency,
 }: {
   onClose: () => void
   onCreated: (g: Goal) => void
   presetGoal?: string
   presetPeriod?: string
   presetCategory?: string
+  presetCurrency?: string
 }) {
   const { user }  = useUser()
+  const { currency, rates } = useCurrency()
+
+  function calcDefaultTarget() {
+    if (presetGoal) {
+      const src = (presetCurrency || 'USD') as Currency
+      if (src === currency) return Number(presetGoal)
+      // convert preset to current display currency via USD
+      const usd = convertToUSD(Number(presetGoal), src, rates)
+      return Math.round(convertFromUSD(usd, currency as Currency, rates))
+    }
+    return Math.round(convertFromUSD(500, currency as Currency, rates))
+  }
+
   const [type, setType]         = useState<Goal['type']>('income')
-  const [target, setTarget]     = useState(presetGoal ? Number(presetGoal) : 1_000_000)
+  const [target, setTarget]     = useState(calcDefaultTarget)
   const [period, setPeriod]     = useState<Goal['period_type']>(presetPeriod === 'month' ? 'month' : 'week')
   const [title, setTitle]       = useState('')
   const [saving, setSaving]     = useState(false)
@@ -204,6 +238,7 @@ function CreateGoalModal({
       user_id:     user.id,
       type,
       target,
+      currency:    currency,
       period_type: period,
       start_date:  start,
       end_date:    end,
@@ -246,7 +281,7 @@ function CreateGoalModal({
         {/* Target */}
         <div>
           <label className="text-xs font-medium text-muted-foreground mb-2 block">
-            {type === 'income' ? 'Сумма (₸)' : type === 'orders' ? 'Кол-во заказов' : 'Кол-во часов'}
+            {type === 'income' ? `Сумма (${CURRENCY_SYMBOLS[currency as Currency] ?? '$'})` : type === 'orders' ? 'Кол-во заказов' : 'Кол-во часов'}
           </label>
           <input
             type="number"
@@ -426,10 +461,11 @@ function AddBlockModal({ date, onClose, onSave }: {
 // ── Main Page ─────────────────────────────────────────────────────────────
 export default function GoalsPage() {
   const { user }     = useUser()
-  const params       = useSearchParams()
-  const presetGoal   = params.get('preset') ?? undefined
-  const presetPeriod = params.get('period') ?? undefined
-  const presetCat    = params.get('category') ?? undefined
+  const params           = useSearchParams()
+  const presetGoal       = params.get('preset') ?? undefined
+  const presetPeriod     = params.get('period') ?? undefined
+  const presetCat        = params.get('category') ?? undefined
+  const presetCurrency   = params.get('currency') ?? undefined
 
   const [goals, setGoals]         = useState<Goal[]>([])
   const [blocks, setBlocks]       = useState<ScheduleBlock[]>([])
@@ -682,6 +718,7 @@ export default function GoalsPage() {
           presetGoal={presetGoal}
           presetPeriod={presetPeriod}
           presetCategory={presetCat}
+          presetCurrency={presetCurrency}
         />
       )}
       {addBlockDate && (
