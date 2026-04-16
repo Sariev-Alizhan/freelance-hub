@@ -14,7 +14,7 @@ const SUPABASE_HOST = SUPABASE_URL.replace(/^https?:\/\//, '')
  */
 const CSP = [
   `default-src 'self'`,
-  `script-src 'self' 'unsafe-inline' 'unsafe-eval' https://va.vercel-scripts.com`,  // unsafe-eval needed by Next.js dev HMR
+  `script-src 'self' 'unsafe-inline' 'unsafe-eval' https://va.vercel-scripts.com https://telegram.org`,  // unsafe-eval needed by Next.js dev HMR
   `style-src 'self' 'unsafe-inline'`,
   `font-src 'self' data:`,
   `img-src 'self' data: blob: https://api.dicebear.com https://picsum.photos https://images.unsplash.com ${SUPABASE_URL} https://lh3.googleusercontent.com https://avatars.githubusercontent.com https://pbs.twimg.com https://cdn.discordapp.com`,

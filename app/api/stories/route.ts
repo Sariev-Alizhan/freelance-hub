@@ -32,7 +32,8 @@ export async function GET() {
     .gt('expires_at', new Date().toISOString())
     .order('created_at', { ascending: true }) as { data: StoryRow[] | null; error: unknown }
 
-  if (error) return NextResponse.json({ error: String(error) }, { status: 500 })
+  // Table may not exist yet (migration pending) — return empty gracefully
+  if (error) return NextResponse.json({ groups: [], viewedIds: [] })
 
   // Fetch viewer's seen story IDs
   let viewedIds: string[] = []
@@ -112,6 +113,6 @@ export async function POST(req: NextRequest) {
     media_url: media_url ?? null,
   }).select().single()
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  if (error) return NextResponse.json({ error: error.message }, { status: error.code === '42P01' ? 503 : 500 })
   return NextResponse.json({ story: data })
 }
