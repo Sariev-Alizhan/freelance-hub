@@ -51,7 +51,11 @@ export async function POST(request: Request) {
     }
 
     const { userId, type } = body
-    if (typeof userId !== 'string' || !userId || !['premium', 'verification', 'promotion'].includes(type as string)) {
+    const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
+    if (
+      typeof userId !== 'string' || !UUID_RE.test(userId) ||
+      !['premium', 'verification', 'promotion'].includes(type as string)
+    ) {
       return Response.json({ error: 'Invalid params' }, { status: 400 })
     }
 

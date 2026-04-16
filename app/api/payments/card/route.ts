@@ -106,7 +106,12 @@ export async function POST(req: NextRequest) {
 
   const amount = PLAN_AMOUNTS[plan]
   const bytes  = await screenshot.arrayBuffer()
-  const ext    = screenshot.name.split('.').pop()?.toLowerCase() || 'jpg'
+  // Derive extension from MIME type (ignore filename — it could be spoofed)
+  const MIME_EXT: Record<string, string> = {
+    'image/jpeg': 'jpg', 'image/jpg': 'jpg',
+    'image/png': 'png', 'image/webp': 'webp', 'image/gif': 'gif',
+  }
+  const ext = MIME_EXT[screenshot.type] ?? 'jpg'
   const ts     = Date.now()
   const storagePath = `${user.id}/${ts}.${ext}`
 

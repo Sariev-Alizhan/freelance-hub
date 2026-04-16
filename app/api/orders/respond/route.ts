@@ -174,7 +174,7 @@ export async function POST(request: Request) {
 
       // Web Push
       const pushSecret = process.env.PUSH_INTERNAL_SECRET
-      const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
+      const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.freelance-hub.kz'
       if (pushSecret) {
         fetch(`${siteUrl}/api/push/send`, {
           method: 'POST',

@@ -51,6 +51,10 @@ const SECURITY_HEADERS = [
 
 const nextConfig: NextConfig = {
   reactStrictMode: false,
+  // Strip all console.log calls in production builds (keep error + warn for monitoring)
+  compiler: process.env.NODE_ENV === 'production'
+    ? { removeConsole: { exclude: ['error', 'warn'] } }
+    : {},
   images: {
     remotePatterns: [
       { protocol: 'https', hostname: 'api.dicebear.com' },
