@@ -8,6 +8,7 @@ import {
   Send, Search, ArrowLeft, MessageSquare, LogIn,
   CheckCheck, Check, Loader2, Paperclip, X, FileText, Download, BadgeCheck,
 } from 'lucide-react'
+import EmojiPickerPopover, { FH_STICKER_SET } from './EmojiPickerPopover'
 import { createClient } from '@/lib/supabase/client'
 import { useUser } from '@/lib/hooks/useUser'
 import { RealtimeChannel } from '@supabase/supabase-js'
@@ -340,6 +341,48 @@ export default function MessengerPage() {
 
   function clearAttachment() { setAttachment(null); setAttachPreview(null); setUploadProgress(null) }
 
+  // ── Emoji / sticker helpers ────────────────────────────────────────────────
+
+  function insertEmoji(emoji: string) {
+    const el = inputRef.current
+    if (!el) { setText(t => t + emoji); return }
+    const start = el.selectionStart ?? text.length
+    const end   = el.selectionEnd   ?? text.length
+    const next  = text.slice(0, start) + emoji + text.slice(end)
+    setText(next)
+    requestAnimationFrame(() => {
+      el.focus()
+      el.setSelectionRange(start + emoji.length, start + emoji.length)
+    })
+  }
+
+  async function sendSticker(stickerText: string) {
+    if (!activeId || !user || sending) return
+    setSending(true)
+    const optimistic: Message = {
+      id: crypto.randomUUID(), conversation_id: activeId, sender_id: user.id,
+      text: stickerText, is_read: false, created_at: new Date().toISOString(),
+      attachment_url: null, attachment_type: null, attachment_name: null,
+    }
+    setMessages(prev => [...prev, optimistic])
+    try {
+      const { data, error } = await db.from('messages')
+        .insert({ conversation_id: activeId, sender_id: user.id, text: stickerText })
+        .select('*').single()
+      if (error) throw error
+      setMessages(prev => prev.map(m => m.id === optimistic.id ? data : m))
+    } catch {
+      setMessages(prev => prev.filter(m => m.id !== optimistic.id))
+    } finally {
+      setSending(false)
+    }
+  }
+
+  // Detect current theme for emoji picker
+  const isDark = typeof document !== 'undefined'
+    ? document.documentElement.classList.contains('dark')
+    : true
+
   // ── Send message ──────────────────────────────────────────────────────────
 
   async function sendMessage() {
@@ -663,19 +706,46 @@ export default function MessengerPage() {
                           )}
 
                           <div className={`flex flex-col ${isMine ? 'items-end' : 'items-start'}`} style={{ maxWidth: '68%' }}>
-                            {/* Text bubble */}
+                            {/* Text bubble — or sticker if in FH pack */}
                             {msg.text && !(msg.attachment_url && !msg.text.trim()) && (
-                              <div style={{
-                                padding: '9px 14px',
-                                borderRadius: br,
-                                fontSize: 14,
-                                lineHeight: 1.45,
-                                wordBreak: 'break-word',
-                                background: isMine ? '#5e6ad2' : 'var(--fh-surface-2)',
-                                color: isMine ? '#ffffff' : 'var(--fh-t1)',
-                              }}>
-                                {msg.text}
-                              </div>
+                              FH_STICKER_SET.has(msg.text) ? (
+                                // ── FH Sticker bubble ────────────────────────
+                                <div style={{
+                                  display: 'flex', flexDirection: 'column', alignItems: 'center',
+                                  gap: 2, padding: '10px 14px',
+                                  borderRadius: 20,
+                                  background: isMine ? 'rgba(94,106,210,0.12)' : 'var(--fh-surface-2)',
+                                  border: `1px solid ${isMine ? 'rgba(94,106,210,0.25)' : 'var(--fh-sep)'}`,
+                                  minWidth: 80,
+                                }}>
+                                  <span style={{ fontSize: 36, lineHeight: 1 }}>
+                                    {msg.text.split(' ')[0]}
+                                  </span>
+                                  <span style={{
+                                    fontSize: 11, fontWeight: 700,
+                                    color: isMine ? '#7170ff' : 'var(--fh-t2)',
+                                    letterSpacing: '-0.01em',
+                                  }}>
+                                    {msg.text.slice(msg.text.indexOf(' ') + 1)}
+                                  </span>
+                                  <span style={{ fontSize: 8, color: 'var(--fh-t4)', fontWeight: 600, letterSpacing: '0.05em' }}>
+                                    FreelanceHub
+                                  </span>
+                                </div>
+                              ) : (
+                                // ── Regular text bubble ───────────────────────
+                                <div style={{
+                                  padding: '9px 14px',
+                                  borderRadius: br,
+                                  fontSize: 14,
+                                  lineHeight: 1.45,
+                                  wordBreak: 'break-word',
+                                  background: isMine ? '#5e6ad2' : 'var(--fh-surface-2)',
+                                  color: isMine ? '#ffffff' : 'var(--fh-t1)',
+                                }}>
+                                  {msg.text}
+                                </div>
+                              )
                             )}
 
                             {/* Attachment */}
@@ -761,6 +831,13 @@ export default function MessengerPage() {
                 <Paperclip className="h-4 w-4" />
               </button>
               <input ref={fileInputRef} type="file" className="hidden" accept="image/*,.pdf,.doc,.docx,.xls,.xlsx,.zip,.txt" onChange={handleFileSelect} />
+
+              {/* Emoji + Sticker picker */}
+              <EmojiPickerPopover
+                onEmoji={insertEmoji}
+                onSticker={sendSticker}
+                isDark={isDark}
+              />
 
               {/* Text input — pill shape */}
               <div className="flex-1 relative">
