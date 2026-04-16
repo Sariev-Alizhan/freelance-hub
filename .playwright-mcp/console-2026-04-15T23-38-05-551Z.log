@@ -1,0 +1,6 @@
+[     548ms] [ERROR] The source list for the Content Security Policy directive 'img-src' contains an invalid source: 'https://kkvmxtwpgvubwtcalzjm.supabase.co%0A'. It will be ignored. @ https://www.freelance-hub.kz/auth/login:0
+[     548ms] [ERROR] The source list for the Content Security Policy directive 'connect-src' contains an invalid source: 'https://kkvmxtwpgvubwtcalzjm.supabase.co%0A'. It will be ignored. @ https://www.freelance-hub.kz/auth/login:0
+[     548ms] [ERROR] The source list for the Content Security Policy directive 'connect-src' contains an invalid source: 'wss://kkvmxtwpgvubwtcalzjm.supabase.co%0A'. It will be ignored. @ https://www.freelance-hub.kz/auth/login:0
+[     548ms] [ERROR] The source list for the Content Security Policy directive 'media-src' contains an invalid source: 'https://kkvmxtwpgvubwtcalzjm.supabase.co%0A'. It will be ignored. @ https://www.freelance-hub.kz/auth/login:0
+[    3468ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://www.freelance-hub.kz/freelancers?_rsc=ne5al:0
+[    3478ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://www.freelance-hub.kz/orders?_rsc=ne5al:0

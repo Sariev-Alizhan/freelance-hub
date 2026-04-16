@@ -87,6 +87,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="preconnect" href={process.env.NEXT_PUBLIC_SUPABASE_URL ?? 'https://kkvmxtwpgvubwtcalzjm.supabase.co'} />
         <link rel="preconnect" href="https://api.dicebear.com" />
         <link rel="dns-prefetch" href="https://open.er-api.com" />
+        <link rel="dns-prefetch" href="https://lh3.googleusercontent.com" />
+        <link rel="dns-prefetch" href="https://avatars.githubusercontent.com" />
+        <link rel="dns-prefetch" href="https://va.vercel-scripts.com" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />

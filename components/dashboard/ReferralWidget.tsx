@@ -1,6 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { Gift, Copy, Check, Users, Crown, ChevronRight } from 'lucide-react'
+import { Gift, Copy, Check, Users, Crown, ChevronRight, Share2 } from 'lucide-react'
 import Link from 'next/link'
 
 interface Props {
@@ -34,6 +34,21 @@ export default function ReferralWidget({ username }: Props) {
       setTimeout(() => setCopied(false), 2000)
     }).catch(() => {})
   }
+
+  function shareVia(channel: 'telegram' | 'twitter' | 'whatsapp') {
+    if (!referralLink) return
+    const text = encodeURIComponent(`Join me on FreelanceHub — the best freelance platform for CIS! ${referralLink}`)
+    const urls: Record<string, string> = {
+      telegram:  `https://t.me/share/url?url=${encodeURIComponent(referralLink)}&text=${text}`,
+      twitter:   `https://twitter.com/intent/tweet?text=${text}`,
+      whatsapp:  `https://wa.me/?text=${text}`,
+    }
+    window.open(urls[channel], '_blank', 'noopener,noreferrer,width=600,height=500')
+  }
+
+  // Progress toward next reward: every 1 referral = 1 month Premium
+  const progress = stats ? Math.min((stats.total % 1 === 0 ? 0 : stats.total % 1) * 100, 100) : 0
+  const nextRewardAt = stats ? stats.total + 1 : 1
 
   if (!username) return null
 
@@ -117,6 +132,7 @@ export default function ReferralWidget({ username }: Props) {
         </span>
         <button
           onClick={copyLink}
+          aria-label="Copy referral link"
           className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex-shrink-0"
           style={{
             background: copied ? 'rgba(39,166,68,0.1)' : 'rgba(113,112,255,0.1)',
@@ -129,7 +145,51 @@ export default function ReferralWidget({ username }: Props) {
         </button>
       </div>
 
-      {/* CTA if no premium */}
+      {/* Social share buttons */}
+      <div className="flex items-center gap-2 mb-4">
+        <span className="text-xs" style={{ color: 'var(--fh-t4)' }}>Share via:</span>
+        {([
+          { id: 'telegram',  label: 'Telegram', bg: 'rgba(0,136,204,0.1)',   border: 'rgba(0,136,204,0.25)',   color: '#0088cc' },
+          { id: 'twitter',   label: 'X',        bg: 'rgba(0,0,0,0.08)',      border: 'rgba(0,0,0,0.15)',       color: 'var(--fh-t2)' },
+          { id: 'whatsapp',  label: 'WhatsApp', bg: 'rgba(37,211,102,0.1)',  border: 'rgba(37,211,102,0.25)',  color: '#25d366' },
+        ] as const).map(s => (
+          <button
+            key={s.id}
+            onClick={() => shareVia(s.id)}
+            aria-label={`Share on ${s.label}`}
+            className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all"
+            style={{ background: s.bg, border: `1px solid ${s.border}`, color: s.color }}
+          >
+            <Share2 className="h-3 w-3" />
+            {s.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Progress bar toward next reward */}
+      {stats && (
+        <div className="mb-4">
+          <div className="flex items-center justify-between mb-1.5">
+            <span className="text-xs" style={{ color: 'var(--fh-t4)' }}>
+              {stats.rewarded} month{stats.rewarded !== 1 ? 's' : ''} Premium earned
+            </span>
+            <span className="text-xs" style={{ color: 'var(--fh-t4)' }}>
+              Next reward at {nextRewardAt} referral{nextRewardAt !== 1 ? 's' : ''}
+            </span>
+          </div>
+          <div className="h-1.5 rounded-full overflow-hidden" style={{ background: 'var(--fh-border-2)' }}>
+            <div
+              className="h-full rounded-full transition-all"
+              style={{
+                width: `${Math.min((stats.total / nextRewardAt) * 100, 100)}%`,
+                background: 'linear-gradient(90deg, #5e6ad2, #7170ff)',
+              }}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* CTA */}
       <Link
         href="/premium"
         className="flex items-center justify-between text-xs transition-colors group"

@@ -40,7 +40,7 @@ export default function BottomNav() {
 
           if (item.isCenter) {
             return (
-              <Link key={item.href} href={item.href} className="flex items-center justify-center -mt-5">
+              <Link key={item.href} href={item.href} aria-label="Create new order" className="flex items-center justify-center -mt-5">
                 <motion.div
                   whileTap={{ scale: 0.9 }}
                   className="flex items-center justify-center"

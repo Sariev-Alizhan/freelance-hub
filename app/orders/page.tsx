@@ -46,7 +46,7 @@ async function fetchRealOrders(): Promise<Order[]> {
         promoted_until,
         responses_count,
         created_at,
-        user_id,
+        client_id,
         profiles!inner (
           full_name,
           username,
@@ -79,7 +79,7 @@ async function fetchRealOrders(): Promise<Order[]> {
         deadline: o.deadline,
         skills: o.skills ?? [],
         client: {
-          id: o.user_id,
+          id: o.client_id,
           name: clientName,
           avatar: clientAvatar,
           ordersPosted: 1,

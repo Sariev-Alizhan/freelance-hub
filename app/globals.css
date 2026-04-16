@@ -494,6 +494,26 @@
 .scrollbar-none::-webkit-scrollbar { display: none; }
 
 /* ═══════════════════════════════════════════════════════════
+   TEXT OVERFLOW — CJK / Arabic / long-string safety
+   Prevents Korean, Japanese, Chinese, Arabic, and other
+   non-Latin scripts from breaking out of card containers.
+   ═══════════════════════════════════════════════════════════ */
+.card-text,
+.line-clamp-1,
+.line-clamp-2,
+.line-clamp-3,
+.truncate {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+/* RTL text inside LTR layout — avoid visual glitches */
+:is([lang="ar"], [lang="fa"], [lang="he"]) {
+  direction: rtl;
+  text-align: right;
+}
+
+/* ═══════════════════════════════════════════════════════════
    FOCUS RINGS — Linear brand ring
    ═══════════════════════════════════════════════════════════ */
 :focus-visible {

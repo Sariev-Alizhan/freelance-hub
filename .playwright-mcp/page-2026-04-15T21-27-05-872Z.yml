@@ -1,0 +1,43 @@
+- generic [ref=e1]:
+  - generic [ref=e3]:
+    - generic [ref=e4]:
+      - progressbar [ref=e6]
+      - main [ref=e14]:
+        - generic [ref=e15]:
+          - generic [ref=e18]:
+            - img [ref=e20]
+            - generic [ref=e25]: Вход через аккаунт Google
+          - generic [ref=e26]:
+            - heading "Вход" [level=1] [ref=e27]
+            - generic [ref=e29]:
+              - text: Переход в приложение "
+              - button "kkvmxtwpgvubwtcalzjm.supabase.co" [ref=e30] [cursor=pointer]
+              - text: "\""
+        - generic [ref=e38]:
+          - generic [ref=e43]:
+            - textbox "Телефон или адрес эл. почты" [active] [ref=e44]
+            - generic: Телефон или адрес эл. почты
+          - button "Забыли адрес электронной почты?" [ref=e48] [cursor=pointer]
+        - generic [ref=e50]:
+          - button "Далее" [ref=e54]:
+            - generic [ref=e57]: Далее
+          - button "Создать аккаунт" [ref=e62]:
+            - generic [ref=e65]: Создать аккаунт
+    - contentinfo [ref=e69]:
+      - combobox "Изменение языковых настроек Русский" [ref=e73] [cursor=pointer]:
+        - generic:
+          - generic: Русский
+        - generic:
+          - img
+      - list [ref=e75]:
+        - listitem [ref=e76]:
+          - link "Справка" [ref=e77] [cursor=pointer]:
+            - /url: https://support.google.com/accounts?hl=ru&p=account_iph
+        - listitem [ref=e78]:
+          - link "Конфиденциальность" [ref=e79] [cursor=pointer]:
+            - /url: https://accounts.google.com/TOS?loc=KZ&hl=ru&privacy=true
+        - listitem [ref=e80]:
+          - link "Условия" [ref=e81] [cursor=pointer]:
+            - /url: https://accounts.google.com/TOS?loc=KZ&hl=ru
+  - iframe [ref=e82]:
+    

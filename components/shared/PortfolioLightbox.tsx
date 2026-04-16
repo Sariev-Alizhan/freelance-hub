@@ -75,6 +75,7 @@ export default function PortfolioLightbox({ items, index, onClose, onPrev, onNex
             )}
             <button
               onClick={onClose}
+              aria-label="Close"
               className="flex items-center justify-center transition-opacity hover:opacity-70"
               style={{
                 width: '32px', height: '32px', borderRadius: '8px',
@@ -114,6 +115,7 @@ export default function PortfolioLightbox({ items, index, onClose, onPrev, onNex
           <>
             <button
               onClick={onPrev}
+              aria-label="Previous"
               className="absolute left-0 top-1/2 -translate-y-1/2 flex items-center justify-center transition-all hover:opacity-80"
               style={{
                 width: '40px', height: '40px', borderRadius: '50%',
@@ -125,6 +127,7 @@ export default function PortfolioLightbox({ items, index, onClose, onPrev, onNex
             </button>
             <button
               onClick={onNext}
+              aria-label="Next"
               className="absolute right-0 top-1/2 -translate-y-1/2 flex items-center justify-center transition-all hover:opacity-80"
               style={{
                 width: '40px', height: '40px', borderRadius: '50%',

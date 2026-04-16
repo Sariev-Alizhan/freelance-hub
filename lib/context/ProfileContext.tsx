@@ -4,9 +4,10 @@ import { createClient } from '@/lib/supabase/client'
 import { useUser } from '@/lib/hooks/useUser'
 
 interface ProfileSnapshot {
-  avatar_url:  string | null
-  full_name:   string | null
-  username:    string | null
+  avatar_url:    string | null
+  full_name:     string | null
+  username:      string | null
+  role:          'client' | 'freelancer'
   is_freelancer: boolean
 }
 
@@ -32,10 +33,13 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
     const supabase = createClient()
     const { data } = await supabase
       .from('profiles')
-      .select('avatar_url, full_name, username, is_freelancer')
+      .select('avatar_url, full_name, username, role')
       .eq('id', user.id)
       .single()
-    if (data) setProfile(data as ProfileSnapshot)
+    if (data) {
+      const d = data as { avatar_url: string | null; full_name: string | null; username: string | null; role: 'client' | 'freelancer' }
+      setProfile({ ...d, is_freelancer: d.role === 'freelancer' })
+    }
   }, [user?.id])
 
   // Re-fetch whenever auth user changes (login / logout / navigation)

@@ -1,5 +1,6 @@
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
+import { isAdmin } from '@/lib/auth/isAdmin'
 import { createServerClient } from '@supabase/ssr'
 import PitchDeck from './PitchDeck'
 
@@ -21,7 +22,7 @@ export const metadata = {
 
 export default async function PitchPage() {
   const user = await getSessionUser()
-  const adminEmail = process.env.ADMIN_EMAIL
-  if (!user || (adminEmail && user.email !== adminEmail)) redirect('/auth/login')
+  // Auth gate: JWT claim or ADMIN_EMAIL fallback
+  if (!isAdmin(user)) redirect('/auth/login')
   return <PitchDeck />
 }

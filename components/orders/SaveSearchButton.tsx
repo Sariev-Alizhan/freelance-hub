@@ -89,7 +89,7 @@ export default function SaveSearchButton({ keyword, category, urgentOnly }: Prop
           }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
               <span style={{ fontSize: '12px', fontWeight: 590, color: 'var(--fh-t2)' }}>Save search</span>
-              <button onClick={() => setOpen(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--fh-t4)', display: 'flex' }}>
+              <button onClick={() => setOpen(false)} aria-label="Close" style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--fh-t4)', display: 'flex' }}>
                 <X className="h-3.5 w-3.5" />
               </button>
             </div>

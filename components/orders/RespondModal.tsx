@@ -42,6 +42,7 @@ export default function RespondModal({
   const [advice, setAdvice] = useState<AIAdvice | null>(null)
   const [showAdvice, setShowAdvice] = useState(false)
   const [submitting, setSubmitting] = useState(false)
+  const submittingRef = useRef(false) // synchronous guard against rapid double-clicks
   const [sessionExpired, setSessionExpired] = useState(false)
 
   // Auto-resize textarea
@@ -109,6 +110,8 @@ export default function RespondModal({
   async function handleSubmit() {
     if (!user) { router.push('/auth/login'); return }
     if (!message.trim()) return
+    if (submittingRef.current) return // guard against rapid double-clicks
+    submittingRef.current = true
     setSubmitting(true)
     try {
       const res = await fetch('/api/orders/respond', {
@@ -134,6 +137,7 @@ export default function RespondModal({
       const msg = e instanceof Error ? e.message : 'Please try again'
       toastError('Failed to send', msg)
     } finally {
+      submittingRef.current = false
       setSubmitting(false)
     }
   }

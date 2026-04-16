@@ -2,7 +2,7 @@ import type { NextConfig } from 'next'
 
 // Derive Supabase host from env var so switching to a custom domain
 // (e.g. api.freelance-hub.kz) requires only updating NEXT_PUBLIC_SUPABASE_URL.
-const SUPABASE_URL  = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://kkvmxtwpgvubwtcalzjm.supabase.co'
+const SUPABASE_URL  = (process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://kkvmxtwpgvubwtcalzjm.supabase.co').trim()
 const SUPABASE_HOST = SUPABASE_URL.replace(/^https?:\/\//, '')
 
 /**
@@ -29,7 +29,8 @@ const CSP = [
 ].join('; ')
 
 const SECURITY_HEADERS = [
-  // Content Security Policy
+  // Note: CSP is now set per-request with a nonce by proxy.ts (overrides this)
+  // This static fallback is kept for API routes and static assets not handled by proxy
   { key: 'Content-Security-Policy', value: CSP },
   // Prevent MIME-type sniffing
   { key: 'X-Content-Type-Options', value: 'nosniff' },
@@ -50,6 +51,10 @@ const SECURITY_HEADERS = [
 
 const nextConfig: NextConfig = {
   reactStrictMode: false,
+  experimental: {
+    // SRI adds integrity hashes to static chunk <script> tags for extra CSP security
+    sri: { algorithm: 'sha256' },
+  },
   images: {
     remotePatterns: [
       { protocol: 'https', hostname: 'api.dicebear.com' },

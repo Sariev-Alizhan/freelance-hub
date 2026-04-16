@@ -41,7 +41,6 @@ async function getFreelancerFromSupabase(userId: string): Promise<Freelancer | n
         level, response_time, languages, is_verified, is_premium, premium_until, rating,
         reviews_count, completed_orders, created_at, availability_status,
         portfolio_website, github_url, linkedin_url, resume_url, resume_filename, headline,
-        telegram_url, instagram_url, twitter_url, youtube_url, tiktok_url,
         profiles!inner (full_name, username, avatar_url, location, bio)
       `)
       .eq('user_id', userId)
@@ -102,12 +101,12 @@ async function getFreelancerFromSupabase(userId: string): Promise<Freelancer | n
       resumeUrl:        data.resume_url ?? null,
       resumeFilename:   data.resume_filename ?? null,
       headline:         data.headline ?? null,
-      // Social links
-      telegramUrl:      data.telegram_url ?? null,
-      instagramUrl:     data.instagram_url ?? null,
-      twitterUrl:       data.twitter_url ?? null,
-      youtubeUrl:       data.youtube_url ?? null,
-      tiktokUrl:        data.tiktok_url ?? null,
+      // Social links (columns not yet in DB — added via future migration)
+      telegramUrl:      null,
+      instagramUrl:     null,
+      twitterUrl:       null,
+      youtubeUrl:       null,
+      tiktokUrl:        null,
     }
   } catch {
     return null
@@ -195,7 +194,7 @@ export default async function FreelancerPage({ params }: { params: Promise<{ id:
           <div className="rounded-2xl border border-subtle bg-card p-6">
             <div className="flex items-start gap-5">
               <div className="relative shrink-0">
-                <Image src={f.avatar} alt={f.name} width={80} height={80} className="rounded-2xl" unoptimized />
+                <Image src={f.avatar} alt={f.name} width={80} height={80} className="rounded-2xl" unoptimized priority />
                 {f.isOnline && (
                   <div className="absolute -bottom-1 -right-1 h-4 w-4 rounded-full bg-green-500 border-2 border-card pulse-green" />
                 )}

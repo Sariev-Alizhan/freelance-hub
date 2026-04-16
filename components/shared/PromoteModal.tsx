@@ -50,6 +50,7 @@ export default function PromoteModal({ type, title, onClose }: Props) {
           </div>
           <button
             onClick={onClose}
+            aria-label="Close"
             className="flex items-center justify-center h-8 w-8 rounded-lg transition-colors"
             style={{ color: 'var(--fh-t4)' }}
             onMouseEnter={e => { e.currentTarget.style.background = 'var(--fh-surface-2)' }}

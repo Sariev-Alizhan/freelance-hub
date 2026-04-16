@@ -1,0 +1,181 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - generic [ref=e4]:
+      - link "FreelanceHub" [ref=e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e6]:
+          - img [ref=e7]
+          - generic [ref=e14]: FreelanceHub
+      - navigation [ref=e15]:
+        - link "Orders" [ref=e16] [cursor=pointer]:
+          - /url: /orders
+        - link "Freelancers" [ref=e17] [cursor=pointer]:
+          - /url: /freelancers
+        - link "AI Agents" [ref=e18] [cursor=pointer]:
+          - /url: /agents
+        - link "AI Search" [ref=e19] [cursor=pointer]:
+          - /url: /ai-search
+        - link "AI Match" [ref=e20] [cursor=pointer]:
+          - /url: /ai-assistant
+        - link "Contracts" [ref=e21] [cursor=pointer]:
+          - /url: /contracts
+      - generic [ref=e22]:
+        - button "₸" [ref=e24]:
+          - generic [ref=e25]: ₸
+          - img [ref=e26]
+        - button "Select language" [ref=e29]:
+          - img [ref=e30]
+          - generic [ref=e34]: EN
+        - button "Switch to light theme" [ref=e35]:
+          - img [ref=e37]
+  - main [ref=e39]:
+    - generic [ref=e42]:
+      - generic [ref=e43]:
+        - generic [ref=e45]:
+          - img [ref=e46]
+          - generic [ref=e53]: FreelanceHub
+        - heading "Sign In" [level=1] [ref=e54]
+        - paragraph [ref=e55]:
+          - text: No account?
+          - link "Register" [ref=e56] [cursor=pointer]:
+            - /url: /auth/register
+      - generic [ref=e57]:
+        - generic [ref=e58]:
+          - button "Continue with Google" [ref=e59]:
+            - img [ref=e60]
+            - text: Continue with Google
+          - button "GitHub" [ref=e66]:
+            - img [ref=e67]
+            - text: GitHub
+        - generic [ref=e71]: or via email
+        - generic [ref=e73]:
+          - textbox "your@email.com" [ref=e74]
+          - button "Get magic link" [disabled] [ref=e75]:
+            - img [ref=e76]
+            - text: Get magic link
+      - paragraph [ref=e79]:
+        - text: By signing in you agree to our
+        - link "Terms of Use" [ref=e80] [cursor=pointer]:
+          - /url: /terms
+        - text: and
+        - link "Privacy Policy" [ref=e81] [cursor=pointer]:
+          - /url: /privacy
+  - contentinfo [ref=e82]:
+    - generic [ref=e83]:
+      - generic [ref=e84]:
+        - generic [ref=e85]:
+          - link "FreelanceHub" [ref=e86] [cursor=pointer]:
+            - /url: /
+            - generic [ref=e87]:
+              - img [ref=e88]
+              - generic [ref=e95]: FreelanceHub
+          - paragraph [ref=e96]: Decentralized freelance space for the whole world. 0% commission forever.
+          - paragraph [ref=e97]: 🇰🇿 Built in Kazakhstan · Sariyev IT Solutions
+          - generic [ref=e100]: Platform is live
+          - generic [ref=e101]:
+            - link "Telegram" [ref=e102] [cursor=pointer]:
+              - /url: https://t.me/zhanmate
+              - img [ref=e103]
+            - link "Instagram" [ref=e105] [cursor=pointer]:
+              - /url: https://www.instagram.com/sariyev.it.solutions/?hl=ru
+              - img [ref=e106]
+            - link "LinkedIn" [ref=e108] [cursor=pointer]:
+              - /url: https://www.linkedin.com/in/alizhan-sariyev-5a3804278/
+              - img [ref=e109]
+        - generic [ref=e111]:
+          - heading "Platform" [level=3] [ref=e112]
+          - list [ref=e113]:
+            - listitem [ref=e114]:
+              - link "Browse Orders" [ref=e115] [cursor=pointer]:
+                - /url: /orders
+            - listitem [ref=e116]:
+              - link "Find Freelancers" [ref=e117] [cursor=pointer]:
+                - /url: /freelancers
+            - listitem [ref=e118]:
+              - link "Dashboard" [ref=e119] [cursor=pointer]:
+                - /url: /dashboard
+            - listitem [ref=e120]:
+              - link "Premium" [ref=e121] [cursor=pointer]:
+                - /url: /premium
+            - listitem [ref=e122]:
+              - link "Updates" [ref=e123] [cursor=pointer]:
+                - /url: /updates
+            - listitem [ref=e124]:
+              - link "Vote" [ref=e125] [cursor=pointer]:
+                - /url: /vote
+        - generic [ref=e126]:
+          - heading "AI Tools" [level=3] [ref=e127]
+          - list [ref=e128]:
+            - listitem [ref=e129]:
+              - link "AI Agents" [ref=e130] [cursor=pointer]:
+                - /url: /agents
+            - listitem [ref=e131]:
+              - link "AI Search" [ref=e132] [cursor=pointer]:
+                - /url: /ai-search
+            - listitem [ref=e133]:
+              - link "AI Match" [ref=e134] [cursor=pointer]:
+                - /url: /ai-assistant
+            - listitem [ref=e135]:
+              - link "AI Contracts" [ref=e136] [cursor=pointer]:
+                - /url: /contracts
+            - listitem [ref=e137]:
+              - link "🧠 AI News" [ref=e138] [cursor=pointer]:
+                - /url: /news
+            - listitem [ref=e139]:
+              - link "🎮 Block Blast" [ref=e140] [cursor=pointer]:
+                - /url: /play
+        - generic [ref=e141]:
+          - heading "Company" [level=3] [ref=e142]
+          - list [ref=e143]:
+            - listitem [ref=e144]:
+              - link "About Us" [ref=e145] [cursor=pointer]:
+                - /url: /about
+            - listitem [ref=e146]:
+              - link "Terms" [ref=e147] [cursor=pointer]:
+                - /url: /terms
+            - listitem [ref=e148]:
+              - link "Privacy" [ref=e149] [cursor=pointer]:
+                - /url: /privacy
+            - listitem [ref=e150]:
+              - link "SITS Instagram" [ref=e151] [cursor=pointer]:
+                - /url: https://www.instagram.com/sariyev.it.solutions/?hl=ru
+            - listitem [ref=e152]:
+              - link "LinkedIn" [ref=e153] [cursor=pointer]:
+                - /url: https://www.linkedin.com/in/alizhan-sariyev-5a3804278/
+            - listitem [ref=e154]:
+              - link "Telegram" [ref=e155] [cursor=pointer]:
+                - /url: https://t.me/zhanmate
+      - generic [ref=e156]:
+        - generic [ref=e157]:
+          - generic [ref=e158]:
+            - paragraph [ref=e159]: 💬 Community & Feedback
+            - paragraph [ref=e160]: Share ideas, report bugs, or just say hi!
+          - generic [ref=e161]:
+            - link "Telegram" [ref=e162] [cursor=pointer]:
+              - /url: https://t.me/zhanmate
+              - img [ref=e163]
+              - text: Telegram
+            - link "WhatsApp" [ref=e165] [cursor=pointer]:
+              - /url: https://wa.me/87774961358
+              - img [ref=e166]
+              - text: WhatsApp
+        - generic [ref=e168]:
+          - generic [ref=e169]:
+            - paragraph [ref=e170]: Support the project
+            - paragraph [ref=e171]: All funds go to promoting the platform so people worldwide can work for free
+          - generic [ref=e172]:
+            - generic [ref=e173]: "Kaspi: 4400 4303 1167 6685"
+            - generic [ref=e174]: "Freedom: 4002 8900 3407 5055"
+      - generic [ref=e175]:
+        - paragraph [ref=e176]:
+          - text: © 2026 FreelanceHub by
+          - link "SITS" [ref=e177] [cursor=pointer]:
+            - /url: https://www.instagram.com/sariyev.it.solutions/?hl=ru
+          - text: — 0% commission forever
+        - generic [ref=e178]:
+          - link "Terms" [ref=e179] [cursor=pointer]:
+            - /url: /terms
+          - link "Privacy" [ref=e180] [cursor=pointer]:
+            - /url: /privacy
+          - link "About" [ref=e181] [cursor=pointer]:
+            - /url: /about

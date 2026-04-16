@@ -1,0 +1,213 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - generic [ref=e4]:
+      - link "FreelanceHub" [ref=e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e6]:
+          - img [ref=e7]
+          - generic [ref=e14]: FreelanceHub
+      - navigation [ref=e15]:
+        - link "Orders" [ref=e16] [cursor=pointer]:
+          - /url: /orders
+        - link "Freelancers" [ref=e17] [cursor=pointer]:
+          - /url: /freelancers
+        - link "AI Agents" [ref=e18] [cursor=pointer]:
+          - /url: /agents
+        - link "AI Search" [ref=e19] [cursor=pointer]:
+          - /url: /ai-search
+        - link "AI Match" [ref=e20] [cursor=pointer]:
+          - /url: /ai-assistant
+        - link "Contracts" [ref=e21] [cursor=pointer]:
+          - /url: /contracts
+      - generic [ref=e22]:
+        - button "₸" [ref=e24]:
+          - generic [ref=e25]: ₸
+          - img [ref=e26]
+        - button "Select language" [ref=e29]:
+          - img [ref=e30]
+          - generic [ref=e34]: EN
+        - button "Switch to light theme" [ref=e35]:
+          - img [ref=e37]
+        - generic [ref=e40]:
+          - link "Sign In" [ref=e41] [cursor=pointer]:
+            - /url: /auth/login
+          - link "Get Started" [ref=e42] [cursor=pointer]:
+            - /url: /auth/register
+  - main [ref=e43]:
+    - generic [ref=e44]:
+      - generic [ref=e45]:
+        - heading "Freelancers" [level=1] [ref=e46]
+        - paragraph [ref=e47]: Find the perfect specialist for your project
+      - generic [ref=e48]:
+        - generic [ref=e49]:
+          - img [ref=e50]
+          - textbox "Search by name, skills..." [ref=e53]
+        - generic [ref=e54]:
+          - combobox [ref=e55]:
+            - option "By rating" [selected]
+            - option "By price"
+            - option "By orders"
+          - button [ref=e56]:
+            - img [ref=e57]
+          - button "AI Search" [ref=e58]:
+            - img [ref=e59]
+            - text: AI Search
+      - generic [ref=e62]:
+        - button "All" [ref=e63]
+        - button "Development" [ref=e64]
+        - button "UX/UI Design" [ref=e65]
+        - button "SMM" [ref=e66]
+        - button "Paid Ads" [ref=e67]
+        - button "Copywriting" [ref=e68]
+        - button "Video Editing" [ref=e69]
+        - button "Telegram Bots" [ref=e70]
+        - button "AI / ML" [ref=e71]
+        - button "No-code" [ref=e72]
+        - button "3D / AI Art" [ref=e73]
+      - generic [ref=e74]: "Found: 2 freelancers"
+      - generic [ref=e75]:
+        - link "Alizhan Sariyev Alizhan Sariyev Deputy of CEO TOP New member Astana React Python AI from 24 500 ₸ / hr в течение суток" [ref=e77] [cursor=pointer]:
+          - /url: /freelancers/17d11166-f8b7-41e7-b0de-09b84874c1e0
+          - generic [ref=e78]:
+            - generic [ref=e79]:
+              - img "Alizhan Sariyev" [ref=e81]
+              - generic [ref=e82]:
+                - generic [ref=e84]: Alizhan Sariyev
+                - paragraph [ref=e85]: Deputy of CEO
+              - generic [ref=e86]: TOP
+            - generic [ref=e87]:
+              - generic [ref=e88]: New member
+              - generic [ref=e89]:
+                - img [ref=e90]
+                - generic [ref=e93]: Astana
+            - generic [ref=e94]:
+              - generic [ref=e95]: React
+              - generic [ref=e96]: Python
+              - generic [ref=e97]: AI
+            - generic [ref=e98]:
+              - generic [ref=e99]:
+                - generic [ref=e100]: from 24 500 ₸
+                - text: / hr
+              - generic [ref=e101]:
+                - img [ref=e102]
+                - generic [ref=e105]: в течение суток
+        - link "Test Freelancer Test Freelancer Frontend Developer Middle New member Almaty React Next.js TypeScript Tailwind from 24 500 ₸ / hr 1 час" [ref=e107] [cursor=pointer]:
+          - /url: /freelancers/2714e408-756f-412e-a212-79e8e78ce76c
+          - generic [ref=e108]:
+            - generic [ref=e109]:
+              - img "Test Freelancer" [ref=e111]
+              - generic [ref=e112]:
+                - generic [ref=e114]: Test Freelancer
+                - paragraph [ref=e115]: Frontend Developer
+              - generic [ref=e116]: Middle
+            - generic [ref=e117]:
+              - generic [ref=e118]: New member
+              - generic [ref=e119]:
+                - img [ref=e120]
+                - generic [ref=e123]: Almaty
+            - generic [ref=e124]:
+              - generic [ref=e125]: React
+              - generic [ref=e126]: Next.js
+              - generic [ref=e127]: TypeScript
+              - generic [ref=e128]: Tailwind
+            - generic [ref=e129]:
+              - generic [ref=e130]:
+                - generic [ref=e131]: from 24 500 ₸
+                - text: / hr
+              - generic [ref=e132]:
+                - img [ref=e133]
+                - generic [ref=e136]: 1 час
+  - contentinfo [ref=e137]:
+    - generic [ref=e138]:
+      - generic [ref=e139]:
+        - generic [ref=e140]:
+          - link "FreelanceHub" [ref=e141] [cursor=pointer]:
+            - /url: /
+            - generic [ref=e142]:
+              - img [ref=e143]
+              - generic [ref=e150]: FreelanceHub
+          - paragraph [ref=e151]: Decentralized freelance space for the whole world. 0% commission forever.
+          - paragraph [ref=e152]: 🇰🇿 Built in Kazakhstan · Sariyev IT Solutions
+          - generic [ref=e155]: Platform is live
+        - generic [ref=e156]:
+          - heading "Platform" [level=3] [ref=e157]
+          - list [ref=e158]:
+            - listitem [ref=e159]:
+              - link "Find Order" [ref=e160] [cursor=pointer]:
+                - /url: /orders
+            - listitem [ref=e161]:
+              - link "Find Freelancer" [ref=e162] [cursor=pointer]:
+                - /url: /freelancers
+            - listitem [ref=e163]:
+              - link "AI Agents" [ref=e164] [cursor=pointer]:
+                - /url: /agents
+            - listitem [ref=e165]:
+              - link "AI Match" [ref=e166] [cursor=pointer]:
+                - /url: /ai-assistant
+            - listitem [ref=e167]:
+              - link "AI Contracts" [ref=e168] [cursor=pointer]:
+                - /url: /contracts
+            - listitem [ref=e169]:
+              - link "Dashboard" [ref=e170] [cursor=pointer]:
+                - /url: /dashboard
+        - generic [ref=e171]:
+          - heading "Categories" [level=3] [ref=e172]
+          - list [ref=e173]:
+            - listitem [ref=e174]:
+              - link "Development" [ref=e175] [cursor=pointer]:
+                - /url: /freelancers?category=dev
+            - listitem [ref=e176]:
+              - link "UX/UI Design" [ref=e177] [cursor=pointer]:
+                - /url: /freelancers?category=ux-ui
+            - listitem [ref=e178]:
+              - link "SMM" [ref=e179] [cursor=pointer]:
+                - /url: /freelancers?category=smm
+            - listitem [ref=e180]:
+              - link "AI / ML" [ref=e181] [cursor=pointer]:
+                - /url: /freelancers?category=ai-ml
+        - generic [ref=e182]:
+          - heading "About" [level=3] [ref=e183]
+          - list [ref=e184]:
+            - listitem [ref=e185]:
+              - link "About Us" [ref=e186] [cursor=pointer]:
+                - /url: /about
+            - listitem [ref=e187]:
+              - link "Terms" [ref=e188] [cursor=pointer]:
+                - /url: "#terms"
+            - listitem [ref=e189]:
+              - link "Privacy" [ref=e190] [cursor=pointer]:
+                - /url: "#privacy"
+            - listitem [ref=e191]:
+              - link "SITS Instagram" [ref=e192] [cursor=pointer]:
+                - /url: https://www.instagram.com/sariyev.it.solutions/?hl=ru
+            - listitem [ref=e193]:
+              - link "LinkedIn" [ref=e194] [cursor=pointer]:
+                - /url: https://www.linkedin.com/in/alizhan-sariyev-5a3804278/
+      - generic [ref=e195]:
+        - generic [ref=e196]:
+          - paragraph [ref=e197]: 💬 Community & Feedback
+          - paragraph [ref=e198]: Share your ideas, report bugs, or just say hi!
+        - generic [ref=e199]:
+          - link "Telegram" [ref=e200] [cursor=pointer]:
+            - /url: https://t.me/zhanmate
+            - img [ref=e201]
+            - text: Telegram
+          - link "WhatsApp" [ref=e203] [cursor=pointer]:
+            - /url: https://wa.me/87774961358
+            - img [ref=e204]
+            - text: WhatsApp
+      - generic [ref=e206]:
+        - generic [ref=e207]:
+          - paragraph [ref=e208]: Support the project
+          - paragraph [ref=e209]: All funds go to promoting the platform so people worldwide can work for free
+        - generic [ref=e210]:
+          - generic [ref=e211]: "Kaspi: 4400 4303 1167 6685"
+          - generic [ref=e212]: "Freedom: 4002 8900 3407 5055"
+      - generic [ref=e213]:
+        - paragraph [ref=e214]:
+          - text: © 2026 FreelanceHub by
+          - link "SITS" [ref=e215] [cursor=pointer]:
+            - /url: https://www.instagram.com/sariyev.it.solutions/?hl=ru
+          - text: — 0% commission forever
+        - paragraph [ref=e216]: 🇰🇿 🇷🇺 🇺🇦 🇧🇾 🇬🇪 · The World
+  - alert [ref=e217]

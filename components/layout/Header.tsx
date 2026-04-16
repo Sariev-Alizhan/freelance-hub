@@ -2,7 +2,8 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useState } from 'react'
-import { Menu, X, LogOut, User, MessageSquare, BarChart3, ChevronDown, Languages } from 'lucide-react'
+import { Menu, X, LogOut, User, MessageSquare, BarChart3, ChevronDown, Languages, Target, Calculator } from 'lucide-react'
+import RoleSwitcher from '@/components/layout/RoleSwitcher'
 import Logo from '@/components/ui/Logo'
 import NotificationBell from '@/components/layout/NotificationBell'
 import ThemeToggle from '@/components/ui/ThemeToggle'
@@ -42,6 +43,7 @@ export default function Header() {
     { href: '/agents',       label: t.nav.agents       },
     { href: '/ai-search',    label: 'AI Search'        },
     { href: '/ai-assistant', label: t.nav.ai           },
+    { href: '/ai-tools',     label: 'AI Tools'         },
     { href: '/contracts',    label: t.nav.contracts    },
   ]
 
@@ -186,6 +188,9 @@ export default function Header() {
               )}
             </div>
 
+            {/* Role switcher — only shown when logged in */}
+            {user && <RoleSwitcher />}
+
             {/* Theme toggle */}
             <ThemeToggle />
 
@@ -256,8 +261,11 @@ export default function Header() {
                         }}
                       >
                         {[
-                          { href: '/dashboard', icon: User,          label: t.auth.dashboard },
-                          { href: '/messages',  icon: MessageSquare, label: t.auth.messages  },
+                          { href: '/dashboard',            icon: User,          label: t.auth.dashboard },
+                          { href: '/dashboard/analytics',  icon: BarChart3,     label: 'Analytics'      },
+                          { href: '/dashboard/goals',      icon: Target,        label: 'Мои цели'       },
+                          { href: '/dashboard/calculator', icon: Calculator,    label: 'Калькулятор'    },
+                          { href: '/messages',             icon: MessageSquare, label: t.auth.messages  },
                         ].map(item => (
                           <Link
                             key={item.href}

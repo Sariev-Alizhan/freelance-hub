@@ -43,6 +43,27 @@ export async function POST(req: NextRequest) {
   if (budgetMin > 100_000_000)                   return NextResponse.json({ error: 'Budget too large' }, { status: 400 })
   if (deadline.length < 2)                       return NextResponse.json({ error: 'Deadline is required' }, { status: 400 })
 
+  // ── Freemium gate: free clients limited to 2 orders/month ────────────────
+  const db = supabase as any
+  const { data: clientProfile } = await db
+    .from('freelancer_profiles')
+    .select('is_premium, premium_until')
+    .eq('user_id', user.id)
+    .maybeSingle()
+
+  const isPremiumClient = clientProfile?.is_premium && (!clientProfile.premium_until || new Date(clientProfile.premium_until) > new Date())
+
+  if (!isPremiumClient) {
+    const { data: orderCount } = await db.rpc('orders_this_month', { uid: user.id })
+    if ((orderCount ?? 0) >= 2) {
+      return NextResponse.json(
+        { error: 'Достигнут лимит размещения заказов (2 в месяц). Перейдите на Premium для безлимитного размещения.' },
+        { status: 429 }
+      )
+    }
+  }
+  // ─────────────────────────────────────────────────────────────────────────
+
   const admin = createServiceClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!,

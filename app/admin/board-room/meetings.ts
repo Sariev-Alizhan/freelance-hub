@@ -313,4 +313,219 @@ export const MEETINGS: Meeting[] = [
     ],
     revenueEstimate: 'Combined potential: $500K+ MRR at 100K users across all verticals',
   },
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // MEETING #4 — Freemium Strategy, Goals & Calendar, Calculator, Role Switching
+  // VP Report delivered to President Alizhan Sariyev
+  // ══════════════════════════════════════════════════════════════════════════
+  {
+    id:       'mtg-004',
+    number:   4,
+    date:     '2026-04-16',
+    title:    'Freemium Model + Goals/Calendar + Role Switching',
+    subtitle: 'VP Report: 4 strategic initiatives — freemium tiers, freelancer goal system, income calculator, client↔freelancer role toggle',
+    category: 'Product Strategy',
+    priority: 'critical',
+    decision: 'approved',
+    participants: ['VP Product', 'CTO', 'Head of Design', 'CFO', 'CMO', 'Head of Growth', 'AI Lead'],
+    agenda: `
+      President Alizhan Sariyev commissioned this report on April 16, 2026.
+
+      Four topics on the table:
+      1. FREEMIUM MODEL — define exactly what is free forever vs. what is paid. Both freelancers and clients.
+      2. GOALS & CALENDAR — premium tool for freelancers to set income goals (e.g. ₸1,000,000/week),
+         get AI-calculated breakdown (X orders at Y price), track daily progress, manage schedule.
+      3. INCOME CALCULATOR — interactive tool: enter goal → AI calculates orders/price needed by profile.
+      4. ROLE SWITCHING — users can be both client and freelancer without re-registering. One account, two modes.
+
+      This report consolidates positions from all departments and delivers a final VP recommendation.
+    `.trim(),
+    proposals: [
+      {
+        dept: 'Product',
+        emoji: '📦',
+        color: '#06b6d4',
+        verdict: 'for',
+        points: [
+          '--- FREEMIUM TIERS ---',
+          'FREE FOREVER (Freelancer): create profile, apply to 5 orders/month, receive messages, receive reviews, access public job board, basic AI search.',
+          'FREE FOREVER (Client): post 2 orders/month, hire freelancers, basic messaging, leave reviews.',
+          'PREMIUM (Freelancer) ₸3,900/mo: unlimited applications, Goals & Calendar, Income Calculator, AI resume builder, profile promotion, analytics, priority in search results, AI assistant unlimited.',
+          'PREMIUM (Client) ₸2,900/mo: unlimited order posting, AI-match (top 3 freelancers auto-suggested), bulk hiring tools, contract templates, invoice generator.',
+          'PRO STUDIO ₸7,900/mo: all premium features for both roles + all AI modules + API access.',
+          'Philosophy: free tier is genuinely useful (no "crippled free"). Premium adds power tools — Goals, Calendar, AI Calculator are the core premium hooks for freelancers.',
+          '--- GOALS & CALENDAR ---',
+          'Goal types: Income goal (₸/week, ₸/month), Order count goal (N orders/period), Work hours goal (X hours/day), Response rate goal (reply within Y hours).',
+          'Calendar view: weekly + monthly. Each day shows: scheduled tasks from active orders, self-set work blocks, reminder notifications, deadline markers from contracts.',
+          'Progress ring: visual donut chart showing % toward weekly income goal. Updates daily based on completed orders.',
+          'Streak system: "14-day streak — working every day". Gamification boosts daily retention. Streak badge shown on profile (social proof).',
+          '--- ROLE SWITCHING ---',
+          'One account, two modes: "Freelancer Mode" and "Client Mode". Toggle in header (dropdown or toggle pill).',
+          'Mode determines: which dashboard shows, which nav links appear, what AI suggests, which onboarding tips show.',
+          'DB: profiles table already has role column. Add dual_role boolean. When true, show role switcher UI.',
+          'Edge case: users who registered as freelancer and want to post an order → one click to switch to Client Mode, post order, switch back.',
+        ],
+      },
+      {
+        dept: 'CTO / Engineering',
+        emoji: '⚙️',
+        color: '#7170ff',
+        verdict: 'for',
+        points: [
+          '--- INCOME CALCULATOR ---',
+          'Core formula: Goal ÷ avg_order_price = orders_needed. avg_order_price derived from user\'s profile category + historical platform data.',
+          'Personalization: if user has completed orders, use their actual avg. If new, use category median (e.g. Development = ₸75,000, Design = ₸45,000, Copywriting = ₸15,000).',
+          'Time factor: "To earn ₸1,000,000 in 7 days → 13.3 orders at your avg price of ₸75,000. That\'s 1.9 orders/day. Based on your current response rate, this is Achievable."',
+          'Difficulty rating: Impossible / Hard / Achievable / Easy — calculated from historical completion rate in category + user\'s active order count.',
+          'No external API needed — all data already in Supabase. Pure frontend math + one DB query for category median.',
+          '--- GOALS DB SCHEMA ---',
+          'New table: freelancer_goals (id, user_id, type, target_amount, target_currency, period_type [week/month/custom], start_date, end_date, created_at).',
+          'New table: goal_progress (id, goal_id, date, amount_earned, orders_completed, hours_worked). Updated nightly via cron job or on order completion.',
+          'Calendar: store work blocks in freelancer_schedule (id, user_id, date, start_time, end_time, label, color). No external calendar sync needed in v1.',
+          '--- ROLE SWITCHING ---',
+          'DB change: ALTER TABLE profiles ADD COLUMN dual_role boolean DEFAULT false. When user requests role switch → set dual_role = true.',
+          'Route logic in proxy.ts: read user role + dual_role → inject x-user-mode cookie. Dashboard reads cookie to render correct view.',
+          'Estimated dev time: Goals+Calendar = 4 days. Calculator = 1 day. Role switch = 2 days. Total: 7 days for full sprint.',
+        ],
+      },
+      {
+        dept: 'Finance / CFO',
+        emoji: '💰',
+        color: '#22c55e',
+        verdict: 'for',
+        points: [
+          '--- REVENUE PROJECTION ---',
+          'Premium Freelancer (₸3,900/mo): if 5% of 10,000 freelancers convert = 500 subscribers = ₸1,950,000/mo (≈$3,900/mo).',
+          'Premium Client (₸2,900/mo): if 3% of 5,000 clients convert = 150 subscribers = ₸435,000/mo (≈$870/mo).',
+          'Combined subscription MRR at modest 5% conversion: ₸2,385,000/mo. At 10% conversion: ₸4,770,000/mo.',
+          'Goals & Calendar is the killer feature — it gives freelancers a REASON to upgrade. "This tool will help you earn ₸1M this week" is a direct ROI pitch.',
+          '--- PRICING RATIONALE ---',
+          '₸3,900 = 13 cups of coffee in Almaty = 0.5% of a ₸750,000 monthly income goal. ROI is obvious.',
+          'Annual billing discount: pay ₸39,000/year (save 2 months). Annual subscribers have 4× lower churn.',
+          'Freemium limit (5 applications/month) is the natural conversion trigger — power users hit it in week 1.',
+          'Do NOT charge for basic messaging or viewing profiles — these are network effects, not premium features.',
+          '--- FREEMIUM ECONOMICS ---',
+          'Free users cost us ~$0.08/month in infrastructure. Premium users generate ₸3,900. CAC payback: 3-4 months. LTV:CAC ratio > 5:1 at scale.',
+        ],
+      },
+      {
+        dept: 'Marketing / CMO',
+        emoji: '📣',
+        color: '#27a644',
+        verdict: 'for',
+        points: [
+          '--- POSITIONING ---',
+          'Free tier message: "Work on FreelanceHub — 0% commission, no hidden fees, forever free." → mass acquisition, word of mouth.',
+          'Premium message: "Hit your income goals every week. Premium gives you the tools to earn ₸1,000,000/month — not just hope for it." → ROI-based pitch.',
+          '--- GOALS FEATURE AS MARKETING HOOK ---',
+          'Shareable goal cards: user sets goal ₸1M/week → achieves it → platform generates a shareable image "I earned ₸1,024,500 this week on FreelanceHub 🔥" → posts to Instagram/Telegram.',
+          'This is our viral loop: every goal achievement = free marketing post. Each post reaches 200-2,000 followers in our exact target demographic.',
+          'Community leaderboard: "Top earners this week" — public list of highest-earning freelancers (opt-in). Creates aspiration. FOMO drives premium upgrades.',
+          '--- ROLE SWITCHING AS ACQUISITION ---',
+          '"Be your own client. Hire other freelancers for your projects while also taking orders." → unlocks referral from existing freelancers who also have their own projects.',
+          'Many top freelancers earn ₸1M+ and outsource work — they are also clients. Role switching captures this dual behavior and increases GMV.',
+          '--- LAUNCH CAMPAIGN ---',
+          'Week 1: "FreelanceHub Premium: Set your income goal. We calculate how to get there." — focus on Goals feature in all ads.',
+          'Week 2: User generated content push — prompt 10 premium users to post their goal achievement story on Telegram.',
+          'Goal: 200 premium subscribers in first 30 days post-launch.',
+        ],
+      },
+      {
+        dept: 'Design',
+        emoji: '🎨',
+        color: '#f59e0b',
+        verdict: 'for',
+        points: [
+          '--- GOALS & CALENDAR UI ---',
+          'Goal creation: modal with 3 steps: (1) choose goal type (Income/Orders/Hours), (2) set amount + timeframe, (3) see instant AI calculation. Animated, satisfying.',
+          'Dashboard widget: prominent "Weekly Goal" card at top of dashboard. Progress ring (SVG donut) + "₸340,000 of ₸1,000,000" + days remaining countdown.',
+          'Calendar: clean week view. Color-coded blocks: blue = work time, green = completed order, red = deadline, gray = personal block. No clutter.',
+          'Calculator page: single-screen interactive widget. Slider for goal amount → instant calculation update → "Start Your Goal" CTA → upgrade prompt if not premium.',
+          '--- ROLE SWITCHER UI ---',
+          'Header pill: "👤 Freelancer ↕ Client" toggle. Smooth animation on switch. Active mode highlighted in primary color.',
+          'Dashboard morphs: role switch triggers page transition → different cards, different quick actions, different AI suggestions.',
+          'Onboarding flow: "You switched to Client Mode. Here\'s how to post your first order →" — contextual guidance on first switch.',
+          '--- PREMIUM UPGRADE FLOW ---',
+          'Paywall: soft gate — show feature preview with blur overlay + "Upgrade to Premium" CTA. Never hard-block or show error.',
+          'Calculator is partially free: basic calculation available to all. "Personalized calculation based on your profile history" → Premium only.',
+        ],
+      },
+      {
+        dept: 'AI Lead',
+        emoji: '🤖',
+        color: '#8b5cf6',
+        verdict: 'for',
+        points: [
+          '--- AI INSIDE GOALS ---',
+          'AI Goal Coach: when user sets a goal, AI analyzes their profile → generates a weekly action plan: "Monday: apply to 3 Design orders. Tuesday: follow up on pending applications. Thursday: optimize portfolio..."',
+          'Smart nudges: push notification at 5pm if user hasn\'t applied to any orders that day. "You\'re ₸240,000 behind your weekly goal. 3 matching orders are waiting for you."',
+          'Goal difficulty prediction: ML model (simple logistic regression on Supabase data) predicts probability of achieving goal based on user history + current market conditions.',
+          '--- AI INSIDE CALCULATOR ---',
+          'Beyond simple math: "At your current response rate of 34%, you\'ll need to apply to 39 orders to get 13 accepted. Here are 15 orders posted today that match your skills."',
+          'Adaptive advice: if goal is deemed Impossible → AI suggests a realistic alternative. "₸1M in 7 days is unlikely given your history. ₸400,000 in 7 days is Achievable."',
+          '--- AI ROLE SWITCH ---',
+          'When user switches to Client Mode → AI context resets: different greeting, different suggestions, client-focused tips.',
+          '"Welcome to Client Mode. You have ₸50,000 in your wallet. Here are 3 freelancers matching your usual project type."',
+          'Cross-mode AI memory: if you frequently post Design orders in Client Mode, AI in Freelancer Mode says "Your clients often need design work similar to what you do."',
+        ],
+      },
+    ],
+    deputyVerdict: `
+ВИЦЕ-ПРЕЗИДЕНТ — ФИНАЛЬНОЕ РЕШЕНИЕ (16 апреля 2026)
+
+Уважаемый Президент Ализхан,
+
+По результатам заседания всех департаментов докладываю:
+
+━━━ РЕШЕНИЕ ПО 4 ИНИЦИАТИВАМ ━━━
+
+1. FREEMIUM МОДЕЛЬ — УТВЕРЖДЕНО ✅
+   Структура: Free (5 откликов/мес, 2 заказа клиент) → Premium Freelancer ₸3,900/мес → Premium Client ₸2,900/мес → Pro Studio ₸7,900/мес.
+   Ключевой принцип: бесплатный уровень должен быть реально полезен — не кастрированная версия, а рабочий инструмент. Деньги берём за инструменты роста, не за базовые функции.
+   Срок запуска: Q2 2026, первые 30 дней после этого заседания.
+
+2. ЦЕЛИ + КАЛЕНДАРЬ (PREMIUM) — УТВЕРЖДЕНО ✅
+   Это наш главный крючок для конверсии в Premium. "Поставь цель ₸1,000,000 — мы покажем как её достичь" — это конкретный ROI, не абстрактная ценность.
+   Реализация: таблицы freelancer_goals + goal_progress + freelancer_schedule в Supabase. Dashboard виджет с кольцом прогресса. Ежедневные AI-напоминания.
+   Геймификация: стрики, таблица лидеров, шарящиеся карточки достижений — это наш вирусный контент.
+
+3. КАЛЬКУЛЯТОР ДОХОДОВ — УТВЕРЖДЕНО ✅
+   Доступен всем как preview, персонализация (по истории профиля) — только Premium.
+   Формула: Цель ÷ средняя стоимость заказа = нужных заказов. + оценка реалистичности по категории.
+   Это конвертер: каждый кто посчитает и увидит "Achievable" — захочет Premium чтобы дойти туда.
+
+4. ПЕРЕКЛЮЧЕНИЕ РОЛЕЙ — УТВЕРЖДЕНО ✅
+   dual_role boolean в таблице profiles. Режим читается из cookie. Дашборд адаптируется.
+   Это открывает новый сегмент: топовые фрилансеры (доход ₸1М+) которые сами являются клиентами — они нанимают субподрядчиков. Сейчас мы их теряем.
+   Приоритет реализации: средний. Цели/Калькулятор — сначала.
+
+━━━ ПЛАН РЕАЛИЗАЦИИ ━━━
+Неделя 1: Freemium ограничения в proxy.ts + upgrade paywall UI
+Неделя 2: Калькулятор (₸-калькулятор, категорийные медианы)
+Неделя 3: Goals система (DB + dashboard виджет + progress ring)
+Неделя 4: Календарь (week view + work blocks)
+Неделя 5: Role switching (dual_role + header toggle + dashboard morph)
+Неделя 6: AI coach inside Goals + push notifications
+
+━━━ ПРОГНОЗ ВЫРУЧКИ ━━━
+Консервативно (5% конверсия): ₸2,385,000/мес MRR при 15,000 пользователях.
+Цель (10% конверсия): ₸4,770,000/мес — достижимо через 6 месяцев.
+Goals+Calendar — это причина #1 для апгрейда. Без этой фичи конверсия < 2%. С ней — 7-10%.
+
+Вице-президент по продукту,
+FreelanceHub Executive Team
+    `.trim(),
+    presidentNote: `Принято. Начинаем с Калькулятора и Целей — это наш главный аргумент для Premium. Роль-свитчер делаем параллельно. Жду первый деплой через неделю.`,
+    actionItems: [
+      'CTO: ALTER TABLE profiles ADD COLUMN dual_role boolean; CREATE TABLE freelancer_goals; CREATE TABLE goal_progress',
+      'CTO: implement freemium gates in proxy.ts — check subscription before allowing >5 applications',
+      'Product: build /dashboard/goals page — goal creation modal + progress ring widget',
+      'Product: build /dashboard/calculator page — income goal calculator with category medians',
+      'Design: design goal creation flow, progress ring component, role switcher pill in header',
+      'Finance: create Premium Freelancer + Premium Client products in payment system (₸3,900 / ₸2,900)',
+      'Marketing: prepare goal achievement shareable card template for virality',
+      'AI Lead: build Goal Coach prompt — weekly action plan generator based on user profile + goal',
+    ],
+    revenueEstimate: '₸2,385,000/мес MRR (консервативно) → ₸4,770,000/мес при 10% конверсии',
+  },
 ]

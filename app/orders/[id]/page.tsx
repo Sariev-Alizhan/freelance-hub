@@ -27,7 +27,6 @@ async function getOrder(id: string): Promise<Order | null> {
         budget_min, budget_max, budget_type,
         deadline, skills, status, is_urgent,
         responses_count, created_at, client_id,
-        progress_status,
         profiles!inner (full_name, username, avatar_url)
       `)
       .eq('id', id)
@@ -54,7 +53,7 @@ async function getOrder(id: string): Promise<Order | null> {
       responsesCount:  data.responses_count ?? 0,
       status:          data.status ?? 'open',
       isUrgent:        data.is_urgent ?? false,
-      progressStatus:  data.progress_status ?? 'not_started',
+      progressStatus:  'not_started',
     }
   } catch {
     return null

@@ -12,6 +12,7 @@ import AdminManageButtons from '@/components/admin/AdminManageButtons'
 import PaymentApproveButton from '@/components/admin/PaymentApproveButton'
 import CompanyReport from '@/components/admin/CompanyReport'
 import Link from 'next/link'
+import { isAdmin } from '@/lib/auth/isAdmin'
 
 export const metadata: Metadata = {
   title: 'Analytics — FreelanceHub',
@@ -239,9 +240,8 @@ function SparkBars({ data, color }: { data: DayRow[]; color: string }) {
 export default async function AdminPage() {
   const user = await getSessionUser()
 
-  // Auth gate — only the admin email can access
-  const adminEmail = process.env.ADMIN_EMAIL
-  if (!user || (adminEmail && user.email !== adminEmail)) {
+  // Auth gate — JWT claim (is_admin) OR fallback to ADMIN_EMAIL env var
+  if (!isAdmin(user)) {
     redirect('/auth/login')
   }
 
@@ -295,6 +295,13 @@ export default async function AdminPage() {
           >
             <BarChart3 className="h-4 w-4 text-primary" />
             Board Room
+          </Link>
+          <Link
+            href="/admin/2fa"
+            className="flex items-center gap-2 px-4 py-2 rounded-xl border border-subtle bg-subtle text-sm font-medium hover:bg-surface transition-colors"
+          >
+            <ShieldCheck className="h-4 w-4 text-green-400" />
+            2FA
           </Link>
           <Link
             href="/admin/nexus"

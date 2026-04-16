@@ -5,10 +5,10 @@ import { AlertTriangle, RefreshCw, Home } from 'lucide-react'
 
 export default function GlobalError({
   error,
-  reset,
+  unstable_retry,
 }: {
   error: Error & { digest?: string }
-  reset: () => void
+  unstable_retry: () => void
 }) {
   useEffect(() => {
     console.error('[FreelanceHub error]', error)
@@ -73,7 +73,7 @@ export default function GlobalError({
 
         <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', flexWrap: 'wrap' }}>
           <button
-            onClick={reset}
+            onClick={() => unstable_retry()}
             style={{
               display: 'inline-flex',
               alignItems: 'center',

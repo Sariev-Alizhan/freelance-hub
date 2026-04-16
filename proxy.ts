@@ -1,6 +1,28 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
-import { rateLimit } from '@/lib/rateLimit'
+import { rateLimitAsync } from '@/lib/rateLimit'
+
+const SUPABASE_URL  = (process.env.NEXT_PUBLIC_SUPABASE_URL  || '').trim()
+const SUPABASE_HOST = SUPABASE_URL.replace(/^https?:\/\//, '')
+
+function buildCsp(nonce: string): string {
+  const isDev = process.env.NODE_ENV === 'development'
+  return [
+    `default-src 'self'`,
+    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'${isDev ? " 'unsafe-eval'" : ''} https://va.vercel-scripts.com`,
+    `style-src 'self' 'unsafe-inline'`,
+    `font-src 'self' data:`,
+    `img-src 'self' data: blob: https://api.dicebear.com https://picsum.photos https://images.unsplash.com ${SUPABASE_URL} https://lh3.googleusercontent.com https://avatars.githubusercontent.com https://pbs.twimg.com https://cdn.discordapp.com`,
+    `connect-src 'self' ${SUPABASE_URL} wss://${SUPABASE_HOST} https://api.anthropic.com https://openrouter.ai https://api.telegram.org https://fcm.googleapis.com https://hn.algolia.com https://open.er-api.com https://vitals.vercel-insights.com https://va.vercel-scripts.com`,
+    `media-src 'self' ${SUPABASE_URL}`,
+    `frame-src 'none'`,
+    `frame-ancestors 'none'`,
+    `object-src 'none'`,
+    `base-uri 'self'`,
+    `form-action 'self'`,
+    `upgrade-insecure-requests`,
+  ].join('; ')
+}
 
 // Pages that require a logged-in session
 const AUTH_PROTECTED = [
@@ -40,6 +62,10 @@ export async function proxy(request: NextRequest) {
   const ip           = getIp(request)
   const ua           = (request.headers.get('user-agent') || '').toLowerCase()
 
+  // Generate per-request nonce for CSP (only for HTML pages, not API/assets)
+  const isHtmlRequest = !pathname.startsWith('/api/') && !pathname.startsWith('/_next/')
+  const nonce = isHtmlRequest ? Buffer.from(crypto.randomUUID()).toString('base64') : ''
+
   // ── 1. Block known scanner user-agents ──────────────────────────────────
   if (BAD_UA.some(frag => ua.includes(frag))) {
     console.warn(JSON.stringify({ level: 'SECURITY', event: 'bad_ua', ip, ua: ua.slice(0, 100), path: pathname }))
@@ -63,7 +89,7 @@ export async function proxy(request: NextRequest) {
 
   // ── 4. Sensitive API: 30 req/min per IP ──────────────────────────────────
   if (SENSITIVE_API_PREFIXES.some(p => pathname.startsWith(p))) {
-    const rl = rateLimit(`sensitive:${ip}`, 30, 60_000)
+    const rl = await rateLimitAsync(`sensitive:${ip}`, 30, 60_000)
     if (!rl.success) {
       console.warn(JSON.stringify({ level: 'SECURITY', event: 'sensitive_rate_limit', ip, path: pathname }))
       return new NextResponse(
@@ -75,7 +101,7 @@ export async function proxy(request: NextRequest) {
 
   // ── 5. Global API rate limit: 120 req/min per IP ─────────────────────────
   if (pathname.startsWith('/api/')) {
-    const rl = rateLimit(`global:${ip}`, 120, 60_000)
+    const rl = await rateLimitAsync(`global:${ip}`, 120, 60_000)
     if (!rl.success) {
       console.warn(JSON.stringify({ level: 'SECURITY', event: 'global_rate_limit', ip, path: pathname }))
       return new NextResponse(
@@ -86,7 +112,10 @@ export async function proxy(request: NextRequest) {
   }
 
   // ── 6. Auth session refresh (required for Server Components) ─────────────
-  const response = NextResponse.next({ request })
+  // Inject x-nonce into request headers so Server Components can read it
+  const requestHeaders = new Headers(request.headers)
+  if (nonce) requestHeaders.set('x-nonce', nonce)
+  const response = NextResponse.next({ request: { headers: requestHeaders } })
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -131,6 +160,11 @@ export async function proxy(request: NextRequest) {
   response.headers.set('X-Content-Type-Options', 'nosniff')
   response.headers.set('X-Frame-Options', 'DENY')
   response.headers.set('X-XSS-Protection', '1; mode=block')
+
+  // ── 10. Inject nonce-based CSP (overrides next.config.ts static CSP) ──────
+  if (nonce) {
+    response.headers.set('Content-Security-Policy', buildCsp(nonce))
+  }
 
   return response
 }
