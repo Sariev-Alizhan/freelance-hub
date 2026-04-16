@@ -611,3 +611,22 @@
   .px-4  { padding-left: 8px  !important; padding-right: 8px  !important; }
   .gap-3 { gap: 6px !important; }
 }
+
+/* ═══════════════════════════════════════════════════════════
+   MOBILE OVERFLOW SAFEGUARD
+   Guarantees no content can extend past the viewport on any
+   mobile device, regardless of inline widths or flex blow-out.
+   This is the final defense against runaway horizontal scroll.
+   ═══════════════════════════════════════════════════════════ */
+@media (max-width: 767px) {
+  main {
+    max-width: 100vw;
+    overflow-x: clip;
+  }
+  /* Prevent any direct descendant of main from exceeding the viewport.
+     max-width: 100% caps them at parent width (which is already capped to 100vw). */
+  main > *,
+  main > * > * {
+    max-width: 100%;
+  }
+}

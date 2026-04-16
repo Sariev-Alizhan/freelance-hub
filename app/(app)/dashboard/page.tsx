@@ -357,11 +357,18 @@ export default function DashboardPage() {
   const completionPct = Math.round((completionItems.filter(i => i.done).length / completionItems.length) * 100)
 
   return (
-    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6 sm:py-10" style={{ overflowX: 'clip' }}>
+    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6 sm:py-10"
+      style={{
+        overflowX: 'clip',
+        maxWidth: '100%',
+        width: '100%',
+        minWidth: 0,
+        boxSizing: 'border-box',
+      }}>
 
       {/* ── Header ── */}
       {profileLoading ? <SkeletonProfileHeader /> : (
-        <div className="flex items-start gap-4 mb-6">
+        <div className="flex items-start gap-4 mb-6" style={{ minWidth: 0, maxWidth: '100%' }}>
           <div className="flex-shrink-0">
             <input
               ref={avatarInputRef}
@@ -441,7 +448,16 @@ export default function DashboardPage() {
       {/* Bio */}
       {!profileLoading && profile?.bio && (
         <div className="mb-5 p-4 rounded-xl bg-subtle border border-subtle text-sm text-muted-foreground leading-relaxed"
-          style={{ overflowWrap: 'anywhere', wordBreak: 'break-word', minWidth: 0 }}>
+          style={{
+            overflowWrap: 'anywhere',
+            wordBreak: 'break-word',
+            hyphens: 'auto',
+            minWidth: 0,
+            maxWidth: '100%',
+            width: '100%',
+            boxSizing: 'border-box',
+            whiteSpace: 'pre-wrap',
+          }}>
           {profile.bio}
         </div>
       )}
