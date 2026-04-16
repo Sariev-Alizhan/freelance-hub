@@ -1,0 +1,461 @@
+'use client'
+
+import { useState, useEffect } from 'react'
+import Image from 'next/image'
+import Link from 'next/link'
+import {
+  Shield, ShieldCheck, ShieldOff, Copy, CheckCircle,
+  AlertCircle, Loader2, Lock, Smartphone, ArrowLeft,
+  Key, Eye, EyeOff,
+} from 'lucide-react'
+import { useUser } from '@/lib/hooks/useUser'
+import { createClient } from '@/lib/supabase/client'
+
+type SetupState = 'idle' | 'loading' | 'scan' | 'verify' | 'done' | 'error'
+
+// ── 2FA section ───────────────────────────────────────────────────────────
+function TwoFactorSection() {
+  const [state, setState]           = useState<SetupState>('idle')
+  const [secret, setSecret]         = useState('')
+  const [qrDataUrl, setQrDataUrl]   = useState('')
+  const [token, setToken]           = useState('')
+  const [errorMsg, setErrorMsg]     = useState('')
+  const [enabled, setEnabled]       = useState<boolean | null>(null)
+  const [copied, setCopied]         = useState(false)
+  const [disabling, setDisabling]   = useState(false)
+
+  // Load current status
+  useEffect(() => {
+    fetch('/api/profile/2fa/status')
+      .then(r => r.json())
+      .then(d => setEnabled(!!d.enabled))
+      .catch(() => setEnabled(false))
+  }, [])
+
+  async function startSetup() {
+    setState('loading')
+    setErrorMsg('')
+    const res = await fetch('/api/profile/2fa/setup')
+    if (!res.ok) { setState('error'); setErrorMsg('Не удалось сгенерировать QR-код'); return }
+    const data = await res.json()
+    setSecret(data.secret)
+    setQrDataUrl(data.qrDataUrl)
+    setState('scan')
+  }
+
+  async function verifyAndSave() {
+    if (token.length !== 6) { setErrorMsg('Введите 6-значный код'); return }
+    setState('loading')
+    setErrorMsg('')
+    const res = await fetch('/api/profile/2fa/setup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ secret, token }),
+    })
+    const data = await res.json()
+    if (!res.ok) { setState('scan'); setErrorMsg(data.error ?? 'Неверный код, попробуйте снова'); return }
+    setState('done')
+    setEnabled(true)
+  }
+
+  async function disable2FA() {
+    if (!confirm('Отключить двухфакторную аутентификацию? Ваш аккаунт станет менее защищённым.')) return
+    setDisabling(true)
+    const res = await fetch('/api/profile/2fa/setup', { method: 'DELETE' })
+    setDisabling(false)
+    if (res.ok) { setEnabled(false); setState('idle') }
+  }
+
+  function copySecret() {
+    navigator.clipboard.writeText(secret)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
+
+  return (
+    <div
+      className="rounded-2xl p-6"
+      style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border)' }}
+    >
+      {/* Section header */}
+      <div className="flex items-center gap-3 mb-5">
+        <div className="h-10 w-10 rounded-xl flex items-center justify-center"
+          style={{ background: 'rgba(113,112,255,0.1)' }}>
+          <Smartphone className="h-5 w-5" style={{ color: '#7170ff' }} />
+        </div>
+        <div>
+          <h2 className="font-semibold text-sm">Двухфакторная аутентификация (2FA)</h2>
+          <p className="text-xs" style={{ color: 'var(--fh-t4)' }}>
+            TOTP через Google Authenticator, Authy или 1Password
+          </p>
+        </div>
+      </div>
+
+      {/* Status banner */}
+      {enabled !== null && (
+        <div className={`rounded-xl border p-3.5 mb-5 flex items-center gap-3 ${
+          enabled
+            ? 'border-green-500/30 bg-green-500/5'
+            : 'border-amber-500/30 bg-amber-500/5'
+        }`}>
+          {enabled
+            ? <ShieldCheck className="h-5 w-5 text-green-400 flex-shrink-0" />
+            : <ShieldOff   className="h-5 w-5 text-amber-400 flex-shrink-0" />
+          }
+          <div>
+            <p className={`text-sm font-semibold ${enabled ? 'text-green-400' : 'text-amber-400'}`}>
+              {enabled ? '2FA включена' : '2FA не настроена'}
+            </p>
+            <p className="text-xs" style={{ color: 'var(--fh-t4)' }}>
+              {enabled
+                ? 'Ваш аккаунт защищён одноразовыми кодами.'
+                : 'Включите 2FA для дополнительной защиты аккаунта.'}
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* ── Idle / not configured ── */}
+      {state === 'idle' && !enabled && (
+        <button
+          onClick={startSetup}
+          className="w-full py-3 rounded-xl text-white font-semibold text-sm transition-colors"
+          style={{ background: '#7170ff' }}
+          onMouseEnter={e => { e.currentTarget.style.background = '#8280ff' }}
+          onMouseLeave={e => { e.currentTarget.style.background = '#7170ff' }}
+        >
+          Настроить 2FA
+        </button>
+      )}
+
+      {/* ── Loading ── */}
+      {state === 'loading' && (
+        <div className="flex justify-center py-8">
+          <Loader2 className="h-6 w-6 animate-spin text-primary" />
+        </div>
+      )}
+
+      {/* ── Scan QR ── */}
+      {state === 'scan' && (
+        <div className="space-y-5">
+          <div className="rounded-xl border p-5 text-center"
+            style={{ background: 'var(--fh-surface-2)', borderColor: 'var(--fh-border)' }}>
+            <p className="text-sm font-medium mb-1">1. Отсканируйте QR-код</p>
+            <p className="text-xs mb-4" style={{ color: 'var(--fh-t4)' }}>
+              Откройте Google Authenticator, Authy или любое TOTP-приложение
+            </p>
+            {qrDataUrl && (
+              <div className="flex justify-center mb-4">
+                <Image
+                  src={qrDataUrl}
+                  alt="QR код для 2FA"
+                  width={180}
+                  height={180}
+                  className="rounded-xl"
+                  unoptimized
+                />
+              </div>
+            )}
+            <p className="text-xs mb-2" style={{ color: 'var(--fh-t4)' }}>
+              Или введите ключ вручную:
+            </p>
+            <div className="flex items-center gap-2 rounded-lg px-3 py-2"
+              style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border)' }}>
+              <code className="text-xs font-mono flex-1 tracking-wider break-all" style={{ color: 'var(--fh-t2)' }}>
+                {secret}
+              </code>
+              <button
+                onClick={copySecret}
+                className="flex-shrink-0 transition-colors"
+                style={{ color: 'var(--fh-t4)' }}
+                aria-label="Скопировать секретный ключ"
+                onMouseEnter={e => { e.currentTarget.style.color = 'var(--fh-t1)' }}
+                onMouseLeave={e => { e.currentTarget.style.color = 'var(--fh-t4)' }}
+              >
+                {copied
+                  ? <CheckCircle className="h-4 w-4 text-green-400" />
+                  : <Copy className="h-4 w-4" />}
+              </button>
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            <label className="block text-sm font-medium">
+              2. Введите 6-значный код из приложения
+            </label>
+            <input
+              type="text"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              maxLength={6}
+              value={token}
+              onChange={e => { setToken(e.target.value.replace(/\D/g, '')); setErrorMsg('') }}
+              autoFocus
+              placeholder="000000"
+              className="w-full px-4 py-3 rounded-xl border bg-surface text-center text-2xl font-mono tracking-[0.4em] focus:outline-none focus:ring-2 focus:ring-primary/30"
+              style={{ borderColor: 'var(--fh-border)' }}
+            />
+            {errorMsg && (
+              <div className="flex items-center gap-2 text-xs text-red-400">
+                <AlertCircle className="h-3.5 w-3.5 flex-shrink-0" />
+                {errorMsg}
+              </div>
+            )}
+            <button
+              onClick={verifyAndSave}
+              disabled={token.length !== 6}
+              className="w-full py-3 rounded-xl text-white font-semibold text-sm transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              style={{ background: '#7170ff' }}
+              onMouseEnter={e => { if (token.length === 6) e.currentTarget.style.background = '#8280ff' }}
+              onMouseLeave={e => { e.currentTarget.style.background = '#7170ff' }}
+            >
+              Подтвердить и включить 2FA
+            </button>
+            <button
+              onClick={() => { setState('idle'); setToken(''); setErrorMsg('') }}
+              className="w-full py-2.5 rounded-xl border text-sm transition-colors"
+              style={{ borderColor: 'var(--fh-border)', color: 'var(--fh-t3)' }}
+              onMouseEnter={e => { e.currentTarget.style.background = 'var(--fh-surface-2)' }}
+              onMouseLeave={e => { e.currentTarget.style.background = 'transparent' }}
+            >
+              Отмена
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* ── Done ── */}
+      {state === 'done' && (
+        <div className="rounded-xl border border-green-500/30 bg-green-500/5 p-6 text-center space-y-3">
+          <ShieldCheck className="h-12 w-12 text-green-400 mx-auto" />
+          <div>
+            <p className="font-semibold text-green-400 text-base">2FA включена!</p>
+            <p className="text-xs mt-1" style={{ color: 'var(--fh-t4)' }}>
+              Теперь при входе будет запрашиваться код из приложения-аутентификатора.
+            </p>
+          </div>
+          <button
+            onClick={() => setState('idle')}
+            className="text-xs px-4 py-2 rounded-lg border transition-colors"
+            style={{ borderColor: 'var(--fh-border)', color: 'var(--fh-t3)' }}
+            onMouseEnter={e => { e.currentTarget.style.background = 'var(--fh-surface-2)' }}
+            onMouseLeave={e => { e.currentTarget.style.background = 'transparent' }}
+          >
+            Готово
+          </button>
+        </div>
+      )}
+
+      {/* ── Error ── */}
+      {state === 'error' && (
+        <div className="rounded-xl border border-red-500/30 bg-red-500/5 p-4 flex items-center gap-3">
+          <AlertCircle className="h-5 w-5 text-red-400 flex-shrink-0" />
+          <p className="text-sm text-red-400">{errorMsg}</p>
+        </div>
+      )}
+
+      {/* ── Enabled — manage ── */}
+      {enabled && state === 'idle' && (
+        <div className="space-y-3 mt-2">
+          <button
+            onClick={startSetup}
+            className="w-full py-2.5 rounded-xl border text-sm font-medium transition-colors"
+            style={{ borderColor: 'var(--fh-border)', color: 'var(--fh-t2)' }}
+            onMouseEnter={e => { e.currentTarget.style.background = 'var(--fh-surface-2)' }}
+            onMouseLeave={e => { e.currentTarget.style.background = 'transparent' }}
+          >
+            Переподключить аутентификатор
+          </button>
+          <button
+            onClick={disable2FA}
+            disabled={disabling}
+            className="w-full py-2.5 rounded-xl border border-red-500/30 text-red-400 text-sm font-medium transition-colors disabled:opacity-50"
+            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(239,68,68,0.05)' }}
+            onMouseLeave={e => { e.currentTarget.style.background = 'transparent' }}
+          >
+            {disabling ? <Loader2 className="h-4 w-4 animate-spin mx-auto" /> : 'Отключить 2FA'}
+          </button>
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ── Password change section ───────────────────────────────────────────────
+function PasswordSection() {
+  const [currentPw, setCurrentPw] = useState('')
+  const [newPw,     setNewPw]     = useState('')
+  const [confirmPw, setConfirmPw] = useState('')
+  const [showCurrent, setShowCurrent] = useState(false)
+  const [showNew,     setShowNew]     = useState(false)
+  const [saving,   setSaving]   = useState(false)
+  const [msg,      setMsg]      = useState<{ type: 'ok' | 'err'; text: string } | null>(null)
+
+  async function changePassword() {
+    if (!newPw || newPw.length < 8) { setMsg({ type: 'err', text: 'Пароль должен быть минимум 8 символов' }); return }
+    if (newPw !== confirmPw) { setMsg({ type: 'err', text: 'Пароли не совпадают' }); return }
+    setSaving(true)
+    setMsg(null)
+    try {
+      const supabase = createClient()
+      const { error } = await supabase.auth.updateUser({ password: newPw })
+      if (error) throw error
+      setMsg({ type: 'ok', text: 'Пароль успешно изменён' })
+      setCurrentPw(''); setNewPw(''); setConfirmPw('')
+    } catch (e: unknown) {
+      const err = e as { message?: string }
+      setMsg({ type: 'err', text: err.message ?? 'Ошибка при смене пароля' })
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  return (
+    <div
+      className="rounded-2xl p-6"
+      style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border)' }}
+    >
+      <div className="flex items-center gap-3 mb-5">
+        <div className="h-10 w-10 rounded-xl flex items-center justify-center"
+          style={{ background: 'rgba(34,197,94,0.1)' }}>
+          <Key className="h-5 w-5" style={{ color: '#22c55e' }} />
+        </div>
+        <div>
+          <h2 className="font-semibold text-sm">Смена пароля</h2>
+          <p className="text-xs" style={{ color: 'var(--fh-t4)' }}>
+            Обновите пароль вашего аккаунта
+          </p>
+        </div>
+      </div>
+
+      <div className="space-y-3">
+        {[
+          { label: 'Новый пароль', value: newPw, set: setNewPw, show: showNew, toggle: () => setShowNew(v => !v) },
+          { label: 'Подтвердите пароль', value: confirmPw, set: setConfirmPw, show: showNew, toggle: () => setShowNew(v => !v) },
+        ].map(({ label, value, set, show, toggle }) => (
+          <div key={label}>
+            <label className="block text-xs font-medium mb-1" style={{ color: 'var(--fh-t3)' }}>{label}</label>
+            <div className="relative">
+              <input
+                type={show ? 'text' : 'password'}
+                value={value}
+                onChange={e => set(e.target.value)}
+                className="w-full px-4 py-2.5 pr-10 rounded-xl border text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
+                style={{ background: 'var(--fh-surface-2)', borderColor: 'var(--fh-border)', color: 'var(--fh-t1)' }}
+              />
+              <button
+                type="button"
+                onClick={toggle}
+                className="absolute right-3 top-1/2 -translate-y-1/2"
+                style={{ color: 'var(--fh-t4)' }}
+              >
+                {show ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
+            </div>
+          </div>
+        ))}
+
+        {msg && (
+          <div className={`flex items-center gap-2 text-xs rounded-lg px-3 py-2 ${
+            msg.type === 'ok'
+              ? 'bg-green-500/10 text-green-400 border border-green-500/20'
+              : 'bg-red-500/10 text-red-400 border border-red-500/20'
+          }`}>
+            {msg.type === 'ok'
+              ? <CheckCircle className="h-3.5 w-3.5 flex-shrink-0" />
+              : <AlertCircle className="h-3.5 w-3.5 flex-shrink-0" />}
+            {msg.text}
+          </div>
+        )}
+
+        <button
+          onClick={changePassword}
+          disabled={saving || !newPw || !confirmPw}
+          className="w-full py-2.5 rounded-xl text-white text-sm font-semibold transition-colors disabled:opacity-40"
+          style={{ background: '#22c55e' }}
+          onMouseEnter={e => { e.currentTarget.style.opacity = '0.9' }}
+          onMouseLeave={e => { e.currentTarget.style.opacity = '1' }}
+        >
+          {saving ? <Loader2 className="h-4 w-4 animate-spin mx-auto" /> : 'Сменить пароль'}
+        </button>
+        <p className="text-[11px]" style={{ color: 'var(--fh-t4)' }}>
+          Минимум 8 символов. После смены вы останетесь в системе.
+        </p>
+      </div>
+    </div>
+  )
+}
+
+// ── Main page ─────────────────────────────────────────────────────────────
+export default function SecuritySettingsPage() {
+  const { user, loading } = useUser()
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <Loader2 className="h-6 w-6 animate-spin text-primary" />
+      </div>
+    )
+  }
+
+  if (!user) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4 text-center px-4">
+        <Lock className="h-12 w-12 text-muted-foreground/30" />
+        <p className="font-medium">Войдите, чтобы открыть настройки безопасности</p>
+        <Link href="/auth/login" className="px-5 py-2.5 rounded-xl bg-primary text-white text-sm font-semibold">
+          Войти
+        </Link>
+      </div>
+    )
+  }
+
+  return (
+    <div className="mx-auto max-w-xl px-4 py-10">
+
+      {/* Header */}
+      <div className="flex items-center gap-3 mb-8">
+        <Link
+          href="/dashboard"
+          className="flex items-center gap-1.5 text-xs transition-colors"
+          style={{ color: 'var(--fh-t4)' }}
+          onMouseEnter={e => { e.currentTarget.style.color = 'var(--fh-t2)' }}
+          onMouseLeave={e => { e.currentTarget.style.color = 'var(--fh-t4)' }}
+        >
+          <ArrowLeft className="h-3.5 w-3.5" /> Личный кабинет
+        </Link>
+      </div>
+
+      <div className="flex items-center gap-3 mb-8">
+        <div className="h-12 w-12 rounded-2xl flex items-center justify-center"
+          style={{ background: 'rgba(113,112,255,0.1)' }}>
+          <Shield className="h-6 w-6" style={{ color: '#7170ff' }} />
+        </div>
+        <div>
+          <h1 className="text-xl font-bold">Безопасность</h1>
+          <p className="text-sm" style={{ color: 'var(--fh-t4)' }}>
+            Пароль и двухфакторная аутентификация
+          </p>
+        </div>
+      </div>
+
+      <div className="space-y-4">
+        <TwoFactorSection />
+        <PasswordSection />
+
+        {/* Info block */}
+        <div className="rounded-xl p-4 flex gap-3"
+          style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border)' }}>
+          <Shield className="h-4 w-4 flex-shrink-0 mt-0.5" style={{ color: 'var(--fh-t4)' }} />
+          <div className="text-xs" style={{ color: 'var(--fh-t4)', lineHeight: 1.6 }}>
+            <strong style={{ color: 'var(--fh-t3)' }}>Рекомендуем включить 2FA.</strong>{' '}
+            Двухфакторная аутентификация защищает аккаунт даже если кто-то узнал ваш пароль.
+            Используйте <strong style={{ color: 'var(--fh-t3)' }}>Google Authenticator</strong>,{' '}
+            <strong style={{ color: 'var(--fh-t3)' }}>Authy</strong> или{' '}
+            <strong style={{ color: 'var(--fh-t3)' }}>1Password</strong>.
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}

@@ -30,6 +30,7 @@ export const T: Record<Lang, any> = {
       goals:      'My Goals',
       calculator: 'Calculator',
       analytics:  'Analytics',
+      security:   'Security',
     },
     roles: {
       client:     'Client',
@@ -122,6 +123,7 @@ export const T: Record<Lang, any> = {
       goals:      'Мои цели',
       calculator: 'Калькулятор',
       analytics:  'Аналитика',
+      security:   'Безопасность',
     },
     roles: {
       client:     'Заказчик',
@@ -214,6 +216,7 @@ export const T: Record<Lang, any> = {
       goals:      'Мақсаттар',
       calculator: 'Калькулятор',
       analytics:  'Аналитика',
+      security:   'Қауіпсіздік',
     },
     roles: {
       client:     'Тапсырыс беруші',

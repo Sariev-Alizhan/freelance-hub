@@ -2,7 +2,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useState } from 'react'
-import { Menu, X, LogOut, User, MessageSquare, BarChart3, ChevronDown, Languages, Target, Calculator } from 'lucide-react'
+import { Menu, X, LogOut, User, MessageSquare, BarChart3, ChevronDown, Languages, Target, Calculator, Shield } from 'lucide-react'
 import RoleSwitcher from '@/components/layout/RoleSwitcher'
 import Logo from '@/components/ui/Logo'
 import NotificationBell from '@/components/layout/NotificationBell'
@@ -261,11 +261,12 @@ export default function Header() {
                         }}
                       >
                         {[
-                          { href: '/dashboard',            icon: User,          label: t.auth.dashboard  },
+                          { href: '/dashboard',             icon: User,          label: t.auth.dashboard  },
                           { href: '/dashboard/analytics',  icon: BarChart3,     label: t.auth.analytics  },
                           { href: '/dashboard/goals',      icon: Target,        label: t.auth.goals      },
                           { href: '/dashboard/calculator', icon: Calculator,    label: t.auth.calculator },
                           { href: '/messages',             icon: MessageSquare, label: t.auth.messages   },
+                          { href: '/settings/security',    icon: Shield,        label: t.auth.security ?? 'Security' },
                         ].map(item => (
                           <Link
                             key={item.href}
