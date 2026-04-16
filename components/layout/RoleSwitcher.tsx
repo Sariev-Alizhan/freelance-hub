@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { Briefcase, User2, Loader2 } from 'lucide-react'
 import { useProfile } from '@/lib/context/ProfileContext'
+import { useLang } from '@/lib/context/LanguageContext'
 import { useRouter } from 'next/navigation'
 
 type Mode = 'client' | 'freelancer'
@@ -20,6 +21,7 @@ function readCookie(name: string): string | null {
 
 export default function RoleSwitcher() {
   const { profile, refreshProfile } = useProfile()
+  const { t } = useLang()
   const router   = useRouter()
   const [mode, setMode]       = useState<Mode>(() => getMode(profile?.role, null))
   const [loading, setLoading] = useState(false)
@@ -69,7 +71,7 @@ export default function RoleSwitcher() {
       <button
         onClick={() => switchTo('client')}
         disabled={loading}
-        title="Режим заказчика"
+        title={t.roles.client}
         className={`relative flex items-center gap-1 px-2 py-1 rounded-md text-[11px] font-semibold transition-all ${
           !isFreelancer
             ? 'bg-primary text-white shadow-sm'
@@ -77,13 +79,13 @@ export default function RoleSwitcher() {
         }`}
       >
         <Briefcase className="h-3 w-3" />
-        <span className="hidden sm:inline">Заказчик</span>
+        <span className="hidden sm:inline">{t.roles.client}</span>
       </button>
       {/* Freelancer pill */}
       <button
         onClick={() => switchTo('freelancer')}
         disabled={loading}
-        title="Режим фрилансера"
+        title={t.roles.freelancer}
         className={`relative flex items-center gap-1 px-2 py-1 rounded-md text-[11px] font-semibold transition-all ${
           isFreelancer
             ? 'bg-primary text-white shadow-sm'
@@ -91,7 +93,7 @@ export default function RoleSwitcher() {
         }`}
       >
         <User2 className="h-3 w-3" />
-        <span className="hidden sm:inline">Фрилансер</span>
+        <span className="hidden sm:inline">{t.roles.freelancer}</span>
       </button>
     </div>
   )

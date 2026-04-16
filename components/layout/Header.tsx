@@ -260,11 +260,11 @@ export default function Header() {
                         }}
                       >
                         {[
-                          { href: '/dashboard',            icon: User,          label: t.auth.dashboard },
-                          { href: '/dashboard/analytics',  icon: BarChart3,     label: 'Analytics'      },
-                          { href: '/dashboard/goals',      icon: Target,        label: 'Мои цели'       },
-                          { href: '/dashboard/calculator', icon: Calculator,    label: 'Калькулятор'    },
-                          { href: '/messages',             icon: MessageSquare, label: t.auth.messages  },
+                          { href: '/dashboard',            icon: User,          label: t.auth.dashboard  },
+                          { href: '/dashboard/analytics',  icon: BarChart3,     label: t.auth.analytics  },
+                          { href: '/dashboard/goals',      icon: Target,        label: t.auth.goals      },
+                          { href: '/dashboard/calculator', icon: Calculator,    label: t.auth.calculator },
+                          { href: '/messages',             icon: MessageSquare, label: t.auth.messages   },
                         ].map(item => (
                           <Link
                             key={item.href}
