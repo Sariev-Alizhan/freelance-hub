@@ -45,6 +45,7 @@ export default function Header() {
     { href: '/ai-assistant', label: t.nav.ai           },
     { href: '/ai-tools',     label: 'AI Tools'         },
     { href: '/contracts',    label: t.nav.contracts    },
+    { href: '/pricing',      label: t.nav.pricing ?? 'Pricing' },
   ]
 
   async function signOut() {

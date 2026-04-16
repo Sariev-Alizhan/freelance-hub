@@ -33,28 +33,6 @@ export default function FreelancerCard({ freelancer: f }: Props) {
         className="absolute top-3 right-3 z-10 opacity-0 group-hover/card:opacity-100 transition-opacity"
       />
 
-      {/* Premium badge */}
-      {f.isPremium && (
-        <div
-          className="absolute top-3 left-3 z-10 flex items-center gap-1 rounded-full"
-          style={{ padding: '2px 8px', background: 'rgba(94,106,210,0.12)', border: '1px solid rgba(94,106,210,0.3)' }}
-        >
-          <Crown className="h-2.5 w-2.5" style={{ color: '#5e6ad2' }} />
-          <span style={{ fontSize: '10px', fontWeight: 590, color: '#5e6ad2', letterSpacing: '0.04em' }}>Premium</span>
-        </div>
-      )}
-
-      {/* Promoted badge */}
-      {f.isPromoted && !f.isPremium && (
-        <div
-          className="absolute top-3 left-3 z-10 flex items-center gap-1 rounded-full"
-          style={{ padding: '2px 8px', background: 'rgba(251,191,36,0.12)', border: '1px solid rgba(251,191,36,0.3)' }}
-        >
-          <TrendingUp className="h-2.5 w-2.5" style={{ color: '#fbbf24' }} />
-          <span style={{ fontSize: '10px', fontWeight: 590, color: '#fbbf24', letterSpacing: '0.04em' }}>TOP</span>
-        </div>
-      )}
-
       <Link href={`/freelancers/${f.id}`}>
         <div
           className="card-hover rounded-xl h-full flex flex-col gap-4 transition-all"
@@ -63,6 +41,8 @@ export default function FreelancerCard({ freelancer: f }: Props) {
             background: 'var(--fh-surface)',
             border: f.isPromoted
               ? '1px solid rgba(251,191,36,0.25)'
+              : f.isPremium
+              ? '1px solid rgba(94,106,210,0.2)'
               : '1px solid var(--fh-border)',
             borderRadius: '10px',
           }}
@@ -87,7 +67,7 @@ export default function FreelancerCard({ freelancer: f }: Props) {
               )}
             </div>
             <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-1.5 flex-wrap">
                 <span
                   className="font-medium truncate"
                   style={{ fontSize: '14px', fontWeight: 510, color: 'var(--fh-t1)', letterSpacing: '-0.01em' }}
@@ -95,6 +75,24 @@ export default function FreelancerCard({ freelancer: f }: Props) {
                   {f.name}
                 </span>
                 {f.isVerified && <CheckCircle className="h-3.5 w-3.5 shrink-0" style={{ color: '#5e6ad2' }} />}
+                {f.isPremium && (
+                  <span className="flex items-center gap-0.5 shrink-0" style={{
+                    padding: '1px 6px', borderRadius: '4px',
+                    background: 'rgba(94,106,210,0.1)', border: '1px solid rgba(94,106,210,0.25)',
+                    fontSize: '10px', fontWeight: 590, color: '#5e6ad2', letterSpacing: '0.03em',
+                  }}>
+                    <Crown className="h-2.5 w-2.5" /> Pro
+                  </span>
+                )}
+                {f.isPromoted && !f.isPremium && (
+                  <span className="flex items-center gap-0.5 shrink-0" style={{
+                    padding: '1px 6px', borderRadius: '4px',
+                    background: 'rgba(251,191,36,0.1)', border: '1px solid rgba(251,191,36,0.25)',
+                    fontSize: '10px', fontWeight: 590, color: '#fbbf24', letterSpacing: '0.03em',
+                  }}>
+                    <TrendingUp className="h-2.5 w-2.5" /> TOP
+                  </span>
+                )}
               </div>
               <p
                 className="truncate mt-0.5"

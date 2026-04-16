@@ -17,10 +17,13 @@ export default function ChatInterface() {
   const [messages, setMessages] = useState<ChatMsg[]>([WELCOME])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
-  const bottomRef = useRef<HTMLDivElement>(null)
+  const bottomRef        = useRef<HTMLDivElement>(null)
+  const msgsContainerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
+    const el = msgsContainerRef.current
+    if (!el) return
+    el.scrollTop = el.scrollHeight
   }, [messages, loading])
 
   async function sendMessage() {
@@ -88,7 +91,7 @@ export default function ChatInterface() {
   return (
     <div className="flex flex-col h-[calc(100vh-5rem)] max-h-[700px]">
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      <div ref={msgsContainerRef} className="flex-1 overflow-y-auto p-4 space-y-4">
         <AnimatePresence initial={false}>
           {messages.map((msg) => (
             <motion.div

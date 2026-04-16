@@ -19,6 +19,7 @@ export const T: Record<Lang, any> = {
       ai:          'AI Match',
       contracts:   'Contracts',
       agents:      'AI Agents',
+      pricing:     'Pricing',
     },
     auth: {
       login:      'Sign In',
@@ -110,6 +111,7 @@ export const T: Record<Lang, any> = {
       ai:          'AI‑подбор',
       contracts:   'Контракты',
       agents:      'AI Агенты',
+      pricing:     'Тарифы',
     },
     auth: {
       login:      'Войти',
@@ -201,6 +203,7 @@ export const T: Record<Lang, any> = {
       ai:          'AI‑іздеу',
       contracts:   'Келісімшарт',
       agents:      'AI Агенттер',
+      pricing:     'Тарифтер',
     },
     auth: {
       login:      'Кіру',

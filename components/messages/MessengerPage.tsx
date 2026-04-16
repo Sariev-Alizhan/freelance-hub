@@ -161,12 +161,13 @@ export default function MessengerPage() {
   const [attachPreview,     setAttachPreview]     = useState<string | null>(null)
   const [uploadProgress,    setUploadProgress]    = useState<number | null>(null)
 
-  const bottomRef    = useRef<HTMLDivElement>(null)
-  const channelRef   = useRef<RealtimeChannel | null>(null)
-  const inputRef     = useRef<HTMLTextAreaElement>(null)
-  const fileInputRef = useRef<HTMLInputElement>(null)
+  const bottomRef       = useRef<HTMLDivElement>(null)
+  const msgsContainerRef = useRef<HTMLDivElement>(null)
+  const channelRef      = useRef<RealtimeChannel | null>(null)
+  const inputRef        = useRef<HTMLTextAreaElement>(null)
+  const fileInputRef    = useRef<HTMLInputElement>(null)
   // Ref so the global inbox subscription can read activeId without recreating
-  const activeIdRef  = useRef<string | null>(null)
+  const activeIdRef     = useRef<string | null>(null)
 
   const MAX_MSG_LEN = 4000
 
@@ -358,9 +359,19 @@ export default function MessengerPage() {
     return () => { supabase.removeChannel(channel) }
   }, [activeId])
 
-  // ── Auto-scroll ─────────────────────────────────────────
+  // ── Auto-scroll (scroll the container, not the page) ────
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
+    const el = msgsContainerRef.current
+    if (!el) return
+    // If we're already near the bottom (within 200px), scroll smoothly;
+    // otherwise jump instantly (e.g. initial load of history).
+    const distFromBottom = el.scrollHeight - el.scrollTop - el.clientHeight
+    if (distFromBottom < 200) {
+      el.scrollTop = el.scrollHeight
+    } else if (messages.length <= 20) {
+      // Initial load — jump to bottom instantly
+      el.scrollTop = el.scrollHeight
+    }
   }, [messages])
 
   // ── Global inbox: update conversation list when any new message arrives ──
@@ -644,7 +655,7 @@ export default function MessengerPage() {
             </div>
 
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto px-4 py-4 space-y-1">
+            <div ref={msgsContainerRef} className="flex-1 overflow-y-auto px-4 py-4 space-y-1">
               {msgsLoading ? (
                 <div className="flex items-center justify-center h-full">
                   <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />

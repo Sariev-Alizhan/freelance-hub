@@ -286,7 +286,8 @@ export default function JobDetailPage() {
   const [chatLoading, setChatLoading] = useState(false)
   const [ratingScore, setRatingScore] = useState(0)
   const [rated, setRated] = useState(false)
-  const chatEndRef = useRef<HTMLDivElement>(null)
+  const chatEndRef        = useRef<HTMLDivElement>(null)
+  const chatContainerRef  = useRef<HTMLDivElement>(null)
 
   const load = useCallback(async () => {
     const res = await fetch(`/api/agents/jobs/${id}`)
@@ -336,7 +337,10 @@ export default function JobDetailPage() {
       setMessages(prev => [...prev, { id: (Date.now() + 1).toString(), role: 'agent', content: reply, created_at: new Date().toISOString() }])
     }
     setChatLoading(false)
-    setTimeout(() => chatEndRef.current?.scrollIntoView({ behavior: 'smooth' }), 100)
+    setTimeout(() => {
+      const el = chatContainerRef.current
+      if (el) el.scrollTop = el.scrollHeight
+    }, 100)
   }
 
   async function handleRate(score: number) {
@@ -557,7 +561,7 @@ export default function JobDetailPage() {
 
           <div className="rounded-2xl overflow-hidden" style={{ border: '1px solid var(--fh-border-2)' }}>
             {/* Message list */}
-            <div className="p-4 space-y-3 min-h-[100px] max-h-[400px] overflow-y-auto"
+            <div ref={chatContainerRef} className="p-4 space-y-3 min-h-[100px] max-h-[400px] overflow-y-auto"
               style={{ background: 'var(--fh-surface-2)' }}>
               {messages.length === 0 && (
                 <p className="text-xs text-center py-4" style={{ color: 'var(--fh-t4)' }}>

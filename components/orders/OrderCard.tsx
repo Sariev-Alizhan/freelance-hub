@@ -25,37 +25,6 @@ export default function OrderCard({ order: o, currentUserId }: Props) {
           className="absolute top-3 right-3 z-10 opacity-0 group-hover/card:opacity-100 transition-opacity"
         />
 
-        {/* Promoted badge — always visible when promoted */}
-        {o.isPromoted && (
-          <div
-            className="absolute top-3 left-3 z-10 flex items-center gap-1 rounded-full"
-            style={{ padding: '2px 8px', background: 'rgba(251,191,36,0.12)', border: '1px solid rgba(251,191,36,0.3)' }}
-          >
-            <TrendingUp className="h-2.5 w-2.5" style={{ color: '#fbbf24' }} />
-            <span style={{ fontSize: '10px', fontWeight: 590, color: '#fbbf24', letterSpacing: '0.04em' }}>TOP</span>
-          </div>
-        )}
-
-        {/* Promote button — owner only, shows on hover, only when not already promoted */}
-        {isOwner && !o.isPromoted && (
-          <button
-            onClick={() => setShowPromote(true)}
-            className="absolute top-3 left-3 z-10 flex items-center gap-1 rounded-lg opacity-0 group-hover/card:opacity-100 transition-all"
-            style={{
-              padding: '4px 8px',
-              background: 'rgba(251,191,36,0.1)',
-              border: '1px solid rgba(251,191,36,0.25)',
-              color: '#fbbf24',
-              fontSize: '11px',
-              fontWeight: 590,
-            }}
-            aria-label="Promote order in feed"
-          >
-            <TrendingUp className="h-3 w-3" />
-            Promote
-          </button>
-        )}
-
         <Link href={`/orders/${o.id}`}>
           <div
             className="card-hover h-full flex flex-col gap-4 transition-all"
@@ -68,9 +37,9 @@ export default function OrderCard({ order: o, currentUserId }: Props) {
               borderRadius: '10px',
             }}
           >
-            {/* Badges */}
+            {/* Badges row */}
             <div>
-              <div className="flex items-center gap-1.5 mb-3">
+              <div className="flex items-center gap-1.5 mb-3 flex-wrap">
                 {category && (
                   <span
                     className="text-[11px] px-2 py-0.5 rounded"
@@ -85,6 +54,14 @@ export default function OrderCard({ order: o, currentUserId }: Props) {
                     style={{ fontWeight: 590, background: 'rgba(229,72,77,0.1)', color: '#e5484d' }}
                   >
                     <Zap className="h-3 w-3" /> Urgent
+                  </span>
+                )}
+                {o.isPromoted && (
+                  <span
+                    className="flex items-center gap-1 text-[11px] px-2 py-0.5 rounded"
+                    style={{ fontWeight: 590, background: 'rgba(251,191,36,0.1)', color: '#fbbf24', border: '1px solid rgba(251,191,36,0.2)' }}
+                  >
+                    <TrendingUp className="h-3 w-3" /> TOP
                   </span>
                 )}
               </div>
@@ -159,15 +136,36 @@ export default function OrderCard({ order: o, currentUserId }: Props) {
                   />
                   <span style={{ fontSize: '12px', color: 'var(--fh-t4)', fontWeight: 400 }}>{o.client.name}</span>
                 </div>
-                <div className="flex items-center gap-1" style={{ color: 'var(--fh-t4)' }}>
-                  <Users className="h-3 w-3" />
-                  <span style={{ fontSize: '11px', fontWeight: 400 }}>{o.responsesCount}</span>
+                <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1" style={{ color: 'var(--fh-t4)' }}>
+                    <Users className="h-3 w-3" />
+                    <span style={{ fontSize: '11px', fontWeight: 400 }}>{o.responsesCount}</span>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </Link>
 
+        {/* Promote button — outside Link to avoid nested anchor, owner only */}
+        {isOwner && !o.isPromoted && (
+          <button
+            onClick={e => { e.stopPropagation(); setShowPromote(true) }}
+            className="absolute bottom-3 right-3 z-10 flex items-center gap-1 rounded-lg opacity-0 group-hover/card:opacity-100 transition-all"
+            style={{
+              padding: '4px 8px',
+              background: 'rgba(251,191,36,0.08)',
+              border: '1px solid rgba(251,191,36,0.22)',
+              color: '#fbbf24',
+              fontSize: '11px',
+              fontWeight: 590,
+            }}
+            aria-label="Promote order in feed"
+          >
+            <TrendingUp className="h-3 w-3" />
+            Boost
+          </button>
+        )}
       </div>
 
       {showPromote && (
