@@ -441,7 +441,7 @@ export default function DashboardPage() {
       {/* Bio */}
       {!profileLoading && profile?.bio && (
         <div className="mb-5 p-4 rounded-xl bg-subtle border border-subtle text-sm text-muted-foreground leading-relaxed"
-          style={{ wordBreak: 'break-word', overflowWrap: 'break-word' }}>
+          style={{ overflowWrap: 'anywhere', wordBreak: 'break-word', minWidth: 0 }}>
           {profile.bio}
         </div>
       )}

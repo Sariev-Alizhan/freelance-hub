@@ -27,18 +27,15 @@ const CURRENCY_LABELS: Record<Currency, string> = {
 }
 
 const QUICK_LINKS = [
-  { href: '/dashboard',             icon: LayoutDashboard, label: 'Dashboard'  },
-  { href: '/dashboard/analytics',   icon: BarChart3,       label: 'Analytics'  },
-  { href: '/dashboard/goals',       icon: Target,          label: 'Goals'      },
-  { href: '/dashboard/calculator',  icon: Calculator,      label: 'Calculator' },
-  { href: '/ai-search',             icon: Search,          label: 'AI Search'  },
-  { href: '/ai-assistant',          icon: Brain,           label: 'AI Chat'    },
-  { href: '/ai-tools',              icon: Zap,             label: 'AI Tools'   },
-  { href: '/agents',                icon: Bot,             label: 'Agents'     },
-  { href: '/contracts',             icon: FileText,        label: 'Contracts'  },
-  { href: '/pricing',               icon: Star,            label: 'Pricing'    },
-  { href: '/orders',                icon: Briefcase,       label: 'Orders'     },
-  { href: '/freelancers',           icon: Users,           label: 'People'     },
+  { href: '/dashboard',            icon: LayoutDashboard, label: 'Dashboard'  },
+  { href: '/ai-search',            icon: Search,          label: 'AI Search'  },
+  { href: '/ai-assistant',         icon: Brain,           label: 'AI Chat'    },
+  { href: '/freelancers',          icon: Users,           label: 'People'     },
+  { href: '/contracts',            icon: FileText,        label: 'Contracts'  },
+  { href: '/ai-tools',             icon: Zap,             label: 'AI Tools'   },
+  { href: '/pricing',              icon: Star,            label: 'Pricing'    },
+  { href: '/dashboard/analytics',  icon: BarChart3,       label: 'Analytics'  },
+  { href: '/settings',             icon: Settings,        label: 'Settings'   },
 ]
 
 // ── Tab definition ────────────────────────────────────────────────────────────
@@ -303,20 +300,34 @@ export default function BottomNav() {
                   </div>
                 )}
 
-                {/* ── Quick links — Meta Settings style ─────────── */}
+                {/* ── Quick links — 3-column icon grid ─────────── */}
                 <SheetSection label="Navigate">
-                  {QUICK_LINKS.map(item => {
-                    const Icon = item.icon
-                    return (
-                      <SheetRow
-                        key={item.href}
-                        href={item.href}
-                        icon={<Icon style={{ width: 20, height: 20, color: 'var(--fh-t3)' }} />}
-                        label={item.label}
-                        onClick={() => setSheetOpen(false)}
-                      />
-                    )
-                  })}
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8, paddingTop: 8 }}>
+                    {QUICK_LINKS.map(item => {
+                      const Icon = item.icon
+                      return (
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          onClick={() => setSheetOpen(false)}
+                          style={{
+                            display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6,
+                            padding: '12px 8px', borderRadius: 12,
+                            background: 'var(--fh-surface-2)',
+                            textDecoration: 'none',
+                            transition: 'background 0.15s',
+                          }}
+                        >
+                          <div style={{ width: 36, height: 36, borderRadius: 10, background: 'var(--fh-surface-3, var(--fh-surface))', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <Icon style={{ width: 18, height: 18, color: 'var(--fh-t2)' }} />
+                          </div>
+                          <span style={{ fontSize: 11, color: 'var(--fh-t3)', fontWeight: 500, textAlign: 'center', lineHeight: 1.2 }}>
+                            {item.label}
+                          </span>
+                        </Link>
+                      )
+                    })}
+                  </div>
                 </SheetSection>
 
                 {/* ── Language ─────────────────────────────────── */}
@@ -351,25 +362,24 @@ export default function BottomNav() {
                   </div>
                 </SheetSection>
 
-                {/* ── Settings + Logout ─────────────────────────── */}
+                {/* ── Sign Out ─────────────────────────────────── */}
+                {user && (
                 <SheetSection label="Account">
-                  <SheetRow href="/settings" icon={<Settings style={{ width: 20, height: 20, color: 'var(--fh-t3)' }} />} label="Settings" onClick={() => setSheetOpen(false)} />
-                  {user && (
-                    <button
-                      onClick={signOut}
-                      style={{
-                        width: '100%', display: 'flex', alignItems: 'center', gap: 14,
-                        padding: '14px 0', background: 'none', border: 'none',
-                        cursor: 'pointer', borderTop: '0.5px solid var(--fh-sep)',
-                      }}
-                    >
-                      <div style={{ width: 36, height: 36, borderRadius: 10, background: 'rgba(229,72,77,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <LogOut style={{ width: 18, height: 18, color: '#e5484d' }} />
-                      </div>
-                      <span style={{ fontSize: 16, color: '#e5484d', fontWeight: 500 }}>Sign Out</span>
-                    </button>
-                  )}
+                  <button
+                    onClick={signOut}
+                    style={{
+                      width: '100%', display: 'flex', alignItems: 'center', gap: 14,
+                      padding: '14px 0', background: 'none', border: 'none',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    <div style={{ width: 36, height: 36, borderRadius: 10, background: 'rgba(229,72,77,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <LogOut style={{ width: 18, height: 18, color: '#e5484d' }} />
+                    </div>
+                    <span style={{ fontSize: 16, color: '#e5484d', fontWeight: 500 }}>Sign Out</span>
+                  </button>
                 </SheetSection>
+                )}
 
               </div>
             </motion.div>

@@ -49,12 +49,61 @@ export default function Footer() {
 
   return (
     <footer style={{ borderTop: '1px solid var(--fh-sep)', background: 'var(--fh-footer-bg)', marginTop: 60 }}>
-      {/* Purple gradient accent line */}
-      <div style={{ height: 1, background: 'linear-gradient(90deg, transparent 0%, rgba(113,112,255,0.35) 40%, rgba(94,106,210,0.35) 60%, transparent 100%)' }} />
+      {/* Accent gradient line */}
+      <div style={{ height: 1, background: 'linear-gradient(90deg, transparent 0%, color-mix(in srgb, var(--fh-primary) 35%, transparent) 40%, color-mix(in srgb, var(--fh-primary) 35%, transparent) 60%, transparent 100%)' }} />
 
-      <div style={{ maxWidth: 1160, margin: '0 auto', padding: '36px 20px 20px' }}>
+      {/* ── MOBILE footer — compact and clean ─────────────────── */}
+      <div className="md:hidden" style={{ padding: '20px 20px 16px' }}>
+        {/* Brand row */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <Logo size={20} showWordmark={false} />
+            <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--fh-t1)', letterSpacing: '-0.03em' }}>
+              Freelance<span style={{ color: 'var(--fh-primary)' }}>Hub</span>
+            </span>
+          </div>
+          {/* Social icons */}
+          <div style={{ display: 'flex', gap: 6 }}>
+            {SOCIALS.map(s => (
+              <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer" aria-label={s.label}
+                style={{ width: 30, height: 30, borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--fh-surface-2)', color: 'var(--fh-t4)', textDecoration: 'none' }}>
+                {s.icon}
+              </a>
+            ))}
+          </div>
+        </div>
 
-        {/* ── Brand + socials row ──────────────────────────────────────── */}
+        {/* Key links row */}
+        <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '6px 0', marginBottom: 16 }}>
+          {[
+            { href: '/about',   label: lang === 'en' ? 'About' : 'О нас'     },
+            { href: '/terms',   label: lang === 'en' ? 'Terms' : 'Условия'   },
+            { href: '/privacy', label: lang === 'en' ? 'Privacy' : 'Privacy' },
+            { href: '/updates', label: lang === 'en' ? 'Updates' : 'Новости' },
+          ].map((l, i, arr) => (
+            <span key={l.href} style={{ display: 'flex', alignItems: 'center' }}>
+              <Link href={l.href} className="footer-link" style={{ fontSize: 12, textDecoration: 'none', padding: '0 10px' }}>
+                {l.label}
+              </Link>
+              {i < arr.length - 1 && <span style={{ color: 'var(--fh-sep)', fontSize: 12 }}>·</span>}
+            </span>
+          ))}
+        </div>
+
+        {/* Copyright */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <span className="pulse-green" style={{ display: 'block', width: 5, height: 5, borderRadius: '50%', background: '#27a644', flexShrink: 0 }} />
+            <span style={{ fontSize: 11, color: 'var(--fh-t4)' }}>© 2025 FreelanceHub · SITS</span>
+          </div>
+          <span style={{ fontSize: 11, color: 'var(--fh-t4)' }}>{t.footer.made}</span>
+        </div>
+      </div>
+
+      {/* ── DESKTOP footer — full 4-column ─────────────────────── */}
+      <div className="hidden md:block" style={{ maxWidth: 1160, margin: '0 auto', padding: '36px 20px 20px' }}>
+
+        {/* Brand + socials */}
         <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16, marginBottom: 28, flexWrap: 'wrap' }}>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
@@ -63,149 +112,60 @@ export default function Footer() {
                 Freelance<span style={{ color: 'var(--fh-primary)' }}>Hub</span>
               </span>
             </div>
-            <p style={{ fontSize: 12, color: 'var(--fh-t4)', lineHeight: 1.6, maxWidth: 210 }}>
-              {t.footer.tagline}
-            </p>
+            <p style={{ fontSize: 12, color: 'var(--fh-t4)', lineHeight: 1.6, maxWidth: 210 }}>{t.footer.tagline}</p>
           </div>
-
-          {/* Social icons */}
           <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
             {SOCIALS.map(s => (
-              <a
-                key={s.label}
-                href={s.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={s.label}
-                style={{
-                  width: 34, height: 34, borderRadius: 9,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  background: 'var(--fh-surface-2)', border: '1px solid var(--fh-border)',
-                  color: 'var(--fh-t4)', textDecoration: 'none',
-                  transition: 'color 0.15s, border-color 0.15s, background 0.15s',
-                }}
-                onMouseEnter={e => {
-                  const el = e.currentTarget as HTMLElement
-                  el.style.color = s.color; el.style.borderColor = s.color + '50'; el.style.background = s.color + '12'
-                }}
-                onMouseLeave={e => {
-                  const el = e.currentTarget as HTMLElement
-                  el.style.color = 'var(--fh-t4)'; el.style.borderColor = 'var(--fh-border)'; el.style.background = 'var(--fh-surface-2)'
-                }}
-              >
-                {s.icon}
-              </a>
+              <a key={s.label} href={s.href} target="_blank" rel="noopener noreferrer" aria-label={s.label}
+                style={{ width: 34, height: 34, borderRadius: 9, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--fh-surface-2)', border: '1px solid var(--fh-border)', color: 'var(--fh-t4)', textDecoration: 'none', transition: 'color 0.15s, border-color 0.15s, background 0.15s' }}
+                onMouseEnter={e => { const el = e.currentTarget as HTMLElement; el.style.color = s.color; el.style.borderColor = s.color + '50'; el.style.background = s.color + '12' }}
+                onMouseLeave={e => { const el = e.currentTarget as HTMLElement; el.style.color = 'var(--fh-t4)'; el.style.borderColor = 'var(--fh-border)'; el.style.background = 'var(--fh-surface-2)' }}
+              >{s.icon}</a>
             ))}
           </div>
         </div>
 
-        {/* ── Nav grid ─────────────────────────────────────────────────── */}
-        {/* Mobile: 2 cols. Desktop md+: 4 cols (brand col replaced by spanning) */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-x-5 gap-y-7 mb-7">
-
-          {/* Platform */}
-          <NavCol
-            label="Platform"
-            labelColor="var(--fh-t4)"
-            links={PLATFORM}
-            lang={lang}
-          />
-
-          {/* AI Tools */}
-          <NavCol
-            label="AI Tools"
-            labelColor="var(--fh-primary)"
-            links={AI_TOOLS}
-            lang={lang}
-          />
-
-          {/* Company — hidden on mobile (rendered as pills below), visible md+ */}
-          <div className="hidden md:block">
-            <NavCol
-              label={lang === 'en' ? 'Company' : 'Компания'}
-              labelColor="var(--fh-t4)"
-              links={COMPANY}
-              lang={lang}
-            />
-          </div>
-
-          {/* Contact / community — desktop 4th col */}
-          <div className="hidden md:block">
+        {/* Nav grid */}
+        <div className="grid grid-cols-4 gap-x-5 gap-y-7 mb-7">
+          <NavCol label="Platform" labelColor="var(--fh-t4)" links={PLATFORM} lang={lang} />
+          <NavCol label="AI Tools" labelColor="var(--fh-primary)" links={AI_TOOLS} lang={lang} />
+          <NavCol label={lang === 'en' ? 'Company' : 'Компания'} labelColor="var(--fh-t4)" links={COMPANY} lang={lang} />
+          <div>
             <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--fh-t4)', marginBottom: 10 }}>
               {lang === 'en' ? 'Contact' : 'Контакты'}
             </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 7 }}>
-              <a href="https://t.me/zhanmate" target="_blank" rel="noopener noreferrer" className="footer-link" style={{ fontSize: 13, textDecoration: 'none' }}>
-                Telegram
-              </a>
-              <a href="https://wa.me/87774961358" target="_blank" rel="noopener noreferrer" className="footer-link" style={{ fontSize: 13, textDecoration: 'none' }}>
-                WhatsApp
-              </a>
-              <a href="https://www.instagram.com/sariyev.it.solutions/?hl=ru" target="_blank" rel="noopener noreferrer" className="footer-link" style={{ fontSize: 13, textDecoration: 'none' }}>
-                Instagram
-              </a>
+              {[
+                { href: 'https://t.me/zhanmate', label: 'Telegram' },
+                { href: 'https://wa.me/87774961358', label: 'WhatsApp' },
+                { href: 'https://www.instagram.com/sariyev.it.solutions/?hl=ru', label: 'Instagram' },
+              ].map(c => (
+                <a key={c.label} href={c.href} target="_blank" rel="noopener noreferrer" className="footer-link" style={{ fontSize: 13, textDecoration: 'none' }}>{c.label}</a>
+              ))}
             </div>
           </div>
         </div>
 
-        {/* Company + contact links — mobile only, clean text row */}
-        <div className="flex md:hidden flex-wrap items-center gap-x-4 gap-y-1.5 mb-5">
-          {COMPANY.map(l => (
-            <Link
-              key={l.href}
-              href={l.href}
-              className="footer-link"
-              style={{ fontSize: 12, textDecoration: 'none' }}
-            >
-              {l[lang as LangKey]}
-            </Link>
-          ))}
-          <a href="https://t.me/zhanmate" target="_blank" rel="noopener noreferrer" className="footer-link" style={{ fontSize: 12, textDecoration: 'none' }}>
-            Telegram
-          </a>
-          <a href="https://wa.me/87774961358" target="_blank" rel="noopener noreferrer" className="footer-link" style={{ fontSize: 12, textDecoration: 'none' }}>
-            WhatsApp
-          </a>
-        </div>
-
-        {/* ── Donate strip ─────────────────────────────────────────────── */}
-        <div style={{
-          padding: '11px 14px', borderRadius: 10, marginBottom: 20,
-          background: 'var(--fh-primary-muted)', border: '1px solid color-mix(in srgb, var(--fh-primary) 20%, transparent)',
-          display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap',
-        }}>
-          <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--fh-primary)', flexShrink: 0 }}>
-            {t.footer.donate}
-          </span>
+        {/* Donate strip */}
+        <div style={{ padding: '11px 14px', borderRadius: 10, marginBottom: 20, background: 'var(--fh-primary-muted)', border: '1px solid color-mix(in srgb, var(--fh-primary) 20%, transparent)', display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+          <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--fh-primary)', flexShrink: 0 }}>{t.footer.donate}</span>
           <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-            <span style={{ padding: '3px 9px', borderRadius: 5, background: 'rgba(251,191,36,0.08)', border: '1px solid rgba(251,191,36,0.2)', fontSize: 11, color: '#fbbf24', fontFamily: 'monospace', letterSpacing: '0.02em' }}>
-              Kaspi: 4400 4303 1167 6685
-            </span>
-            <span style={{ padding: '3px 9px', borderRadius: 5, background: 'rgba(39,166,68,0.06)', border: '1px solid rgba(39,166,68,0.18)', fontSize: 11, color: '#27a644', fontFamily: 'monospace', letterSpacing: '0.02em' }}>
-              Freedom: 4002 8900 3407 5055
-            </span>
+            <span style={{ padding: '3px 9px', borderRadius: 5, background: 'rgba(251,191,36,0.08)', border: '1px solid rgba(251,191,36,0.2)', fontSize: 11, color: '#fbbf24', fontFamily: 'monospace', letterSpacing: '0.02em' }}>Kaspi: 4400 4303 1167 6685</span>
+            <span style={{ padding: '3px 9px', borderRadius: 5, background: 'rgba(39,166,68,0.06)', border: '1px solid rgba(39,166,68,0.18)', fontSize: 11, color: '#27a644', fontFamily: 'monospace', letterSpacing: '0.02em' }}>Freedom: 4002 8900 3407 5055</span>
           </div>
         </div>
 
-        {/* ── Bottom bar ───────────────────────────────────────────────── */}
-        <div style={{
-          paddingTop: 14, borderTop: '1px solid var(--fh-sep)',
-          display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8,
-        }}>
+        {/* Bottom bar */}
+        <div style={{ paddingTop: 14, borderTop: '1px solid var(--fh-sep)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
             <span className="pulse-green" style={{ display: 'block', width: 5, height: 5, borderRadius: '50%', background: '#27a644', flexShrink: 0 }} />
             <span style={{ fontSize: 11, color: 'var(--fh-t4)' }}>
               © 2025 FreelanceHub by{' '}
-              <a href="https://www.instagram.com/sariyev.it.solutions/?hl=ru" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--fh-primary)', textDecoration: 'none' }}>
-                SITS
-              </a>
+              <a href="https://www.instagram.com/sariyev.it.solutions/?hl=ru" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--fh-primary)', textDecoration: 'none' }}>SITS</a>
             </span>
           </div>
-          <span style={{ fontSize: 11, color: 'var(--fh-t4)', display: 'flex', alignItems: 'center', gap: 4 }}>
-            {t.footer.made}
-          </span>
+          <span style={{ fontSize: 11, color: 'var(--fh-t4)', display: 'flex', alignItems: 'center', gap: 4 }}>{t.footer.made}</span>
         </div>
-
       </div>
     </footer>
   )

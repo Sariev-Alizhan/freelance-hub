@@ -12,7 +12,7 @@ export default function PageTransition({ children }: { children: React.ReactNode
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -4 }}
         transition={{ duration: 0.18, ease: [0.25, 0.46, 0.45, 0.94] }}
-        style={{ flex: 1, display: 'flex', flexDirection: 'column' }}
+        style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, width: '100%' }}
       >
         {children}
       </motion.div>

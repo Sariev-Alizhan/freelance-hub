@@ -12,7 +12,9 @@ export default function MainWrapper({ children }: { children: React.ReactNode })
   return (
     <main
       className={`flex-1 md:ml-[72px] ${isMessages ? 'overflow-hidden' : 'pb-safe-mobile'}`}
-      style={isMessages ? { height: '100dvh', display: 'flex', flexDirection: 'column' } : undefined}
+      style={isMessages
+        ? { height: '100dvh', display: 'flex', flexDirection: 'column' }
+        : { minWidth: 0, overflowX: 'clip' }}
     >
       {children}
     </main>
