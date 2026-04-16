@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -159,6 +159,13 @@ export default function MessengerPage() {
   const [sending,       setSending]        = useState(false)
   const [showList,      setShowList]       = useState(true)
 
+  // ── Message reactions ─────────────────────────────────────────────────────
+  // { messageId: { emoji: { count, mine } } }
+  type ReactionMap = Record<string, Record<string, { count: number; mine: boolean }>>
+  const [reactions,    setReactions]    = useState<ReactionMap>({})
+  const [hoveredMsgId, setHoveredMsgId] = useState<string | null>(null)
+  const QUICK_REACTIONS = useMemo(() => ['👍', '❤️', '😂', '😮', '😢', '🔥', '💜', '✅'], [])
+
   const [attachment,     setAttachment]    = useState<File | null>(null)
   const [attachPreview,  setAttachPreview] = useState<string | null>(null)
   const [uploadProgress, setUploadProgress] = useState<number | null>(null)
@@ -260,9 +267,16 @@ export default function MessengerPage() {
     if (!activeId) return
     setMsgsLoading(true)
     setMessages([])
+    setReactions({})
     db.from('messages').select('*').eq('conversation_id', activeId).order('created_at', { ascending: true })
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      .then(({ data }: any) => { if (data) setMessages(data); setMsgsLoading(false) })
+      .then(({ data }: any) => {
+        if (data) {
+          setMessages(data)
+          loadReactions(data.map((m: Message) => m.id))
+        }
+        setMsgsLoading(false)
+      })
     if (user) {
       db.from('messages').update({ is_read: true }).eq('conversation_id', activeId).neq('sender_id', user.id).eq('is_read', false)
       setConversations(prev => prev.map(c => c.id === activeId ? { ...c, unread: 0 } : c))
@@ -375,6 +389,57 @@ export default function MessengerPage() {
       setMessages(prev => prev.filter(m => m.id !== optimistic.id))
     } finally {
       setSending(false)
+    }
+  }
+
+  // ── Load reactions for a batch of message IDs ────────────────────────────
+  const loadReactions = useCallback(async (msgIds: string[]) => {
+    if (!msgIds.length) return
+    const { data } = await db
+      .from('message_reactions')
+      .select('message_id, emoji, user_id')
+      .in('message_id', msgIds)
+    const map: ReactionMap = {}
+    for (const r of (data ?? [])) {
+      if (!map[r.message_id]) map[r.message_id] = {}
+      if (!map[r.message_id][r.emoji]) map[r.message_id][r.emoji] = { count: 0, mine: false }
+      map[r.message_id][r.emoji].count++
+      if (r.user_id === user?.id) map[r.message_id][r.emoji].mine = true
+    }
+    setReactions(map)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.id])
+
+  // ── Toggle a reaction (optimistic) ────────────────────────────────────────
+  async function toggleReaction(messageId: string, emoji: string) {
+    if (!user) return
+    const cur = reactions[messageId]?.[emoji]
+    const isMine = cur?.mine ?? false
+
+    // Optimistic update
+    setReactions(prev => {
+      const msgR = { ...(prev[messageId] ?? {}) }
+      if (isMine) {
+        const newCount = (msgR[emoji]?.count ?? 1) - 1
+        if (newCount <= 0) {
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          const { [emoji]: _removed, ...rest } = msgR
+          return { ...prev, [messageId]: rest }
+        }
+        return { ...prev, [messageId]: { ...msgR, [emoji]: { count: newCount, mine: false } } }
+      }
+      return { ...prev, [messageId]: { ...msgR, [emoji]: { count: (msgR[emoji]?.count ?? 0) + 1, mine: true } } }
+    })
+
+    if (isMine) {
+      await db.from('message_reactions')
+        .delete()
+        .eq('message_id', messageId)
+        .eq('user_id', user.id)
+        .eq('emoji', emoji)
+    } else {
+      await db.from('message_reactions')
+        .upsert({ message_id: messageId, user_id: user.id, emoji })
     }
   }
 
@@ -674,6 +739,8 @@ export default function MessengerPage() {
                       : `20px 20px 20px ${sameAsNext ? '4px' : '20px'}`
 
                     const isLastInGroup = !sameAsNext
+                    const msgReactions  = reactions[msg.id] ?? {}
+                    const hasReactions  = Object.keys(msgReactions).length > 0
 
                     return (
                       <motion.div
@@ -681,7 +748,9 @@ export default function MessengerPage() {
                         initial={{ opacity: 0, y: 6 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.12 }}
-                        style={{ marginTop: sameAsPrev ? 2 : 12 }}
+                        style={{ marginTop: sameAsPrev ? 2 : 12, position: 'relative' }}
+                        onMouseEnter={() => setHoveredMsgId(msg.id)}
+                        onMouseLeave={() => setHoveredMsgId(null)}
                       >
                         {/* Date divider */}
                         {showDate && (
@@ -691,6 +760,39 @@ export default function MessengerPage() {
                               {formatDate(msg.created_at)}
                             </span>
                             <div className="flex-1 h-px" style={{ background: 'var(--fh-sep)' }} />
+                          </div>
+                        )}
+
+                        {/* ── Hover reaction bar ───────────────────────── */}
+                        {hoveredMsgId === msg.id && (
+                          <div
+                            className={`flex items-center gap-1 mb-1 ${isMine ? 'justify-end pr-10' : 'justify-start pl-10'}`}
+                          >
+                            <div
+                              className="flex items-center gap-0.5 px-2 py-1 rounded-full"
+                              style={{
+                                background: 'var(--fh-surface)',
+                                border: '1px solid var(--fh-border)',
+                                boxShadow: '0 2px 12px rgba(0,0,0,0.12)',
+                              }}
+                            >
+                              {QUICK_REACTIONS.map(emoji => (
+                                <button
+                                  key={emoji}
+                                  onClick={() => toggleReaction(msg.id, emoji)}
+                                  style={{
+                                    background: msgReactions[emoji]?.mine ? 'rgba(113,112,255,0.12)' : 'transparent',
+                                    border: 'none', cursor: 'pointer', borderRadius: 6,
+                                    padding: '2px 3px', fontSize: 16, lineHeight: 1,
+                                    transition: 'transform 0.1s, background 0.15s',
+                                  }}
+                                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = 'scale(1.25)' }}
+                                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = 'scale(1)' }}
+                                >
+                                  {emoji}
+                                </button>
+                              ))}
+                            </div>
                           </div>
                         )}
 
@@ -764,6 +866,29 @@ export default function MessengerPage() {
                                     ? <CheckCheck className="h-3 w-3" style={{ color: '#7170ff' }} />
                                     : <Check className="h-3 w-3" style={{ color: 'var(--fh-t4)' }} />
                                 )}
+                              </div>
+                            )}
+
+                            {/* Reaction pills */}
+                            {hasReactions && (
+                              <div className={`flex flex-wrap gap-1 mt-1 ${isMine ? 'justify-end' : 'justify-start'}`}>
+                                {Object.entries(msgReactions).map(([emoji, { count, mine }]) => (
+                                  <button
+                                    key={emoji}
+                                    onClick={() => toggleReaction(msg.id, emoji)}
+                                    style={{
+                                      display: 'flex', alignItems: 'center', gap: 3,
+                                      padding: '2px 7px', borderRadius: 10, fontSize: 12,
+                                      border: `1px solid ${mine ? 'rgba(113,112,255,0.4)' : 'var(--fh-border)'}`,
+                                      background: mine ? 'rgba(113,112,255,0.1)' : 'var(--fh-surface)',
+                                      cursor: 'pointer', fontWeight: mine ? 700 : 400,
+                                      color: mine ? '#7170ff' : 'var(--fh-t2)',
+                                    }}
+                                  >
+                                    <span style={{ fontSize: 13 }}>{emoji}</span>
+                                    {count > 1 && <span>{count}</span>}
+                                  </button>
+                                ))}
                               </div>
                             )}
                           </div>
