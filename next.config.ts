@@ -51,10 +51,6 @@ const SECURITY_HEADERS = [
 
 const nextConfig: NextConfig = {
   reactStrictMode: false,
-  experimental: {
-    // SRI adds integrity hashes to static chunk <script> tags for extra CSP security
-    sri: { algorithm: 'sha256' },
-  },
   images: {
     remotePatterns: [
       { protocol: 'https', hostname: 'api.dicebear.com' },
