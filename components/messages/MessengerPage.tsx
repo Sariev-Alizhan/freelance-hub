@@ -266,7 +266,7 @@ export default function MessengerPage() {
       const { data: found } = await db.from('conversations').select('id').eq('participant_1', p1).eq('participant_2', p2).maybeSingle()
       if (found) { setActiveId(found.id); setShowList(false); await loadConversations(); return }
       const { data: created, error } = await db.from('conversations').insert({ participant_1: p1, participant_2: p2 }).select('id').single()
-      if (error) { console.error('[messenger] createConversation error:', error.message); return }
+      if (error) return // failed to create conversation — user stays on list
       if (created) { await loadConversations(); setActiveId(created.id); setShowList(false) }
     }
     createAndOpen()

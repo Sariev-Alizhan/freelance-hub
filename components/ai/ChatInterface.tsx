@@ -81,8 +81,8 @@ export default function ChatInterface() {
           )
         )
       }
-    } catch (e) {
-      console.error(e)
+    } catch {
+      // network/stream failure — UI stays in loading=false state
     } finally {
       setLoading(false)
     }

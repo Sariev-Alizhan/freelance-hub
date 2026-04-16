@@ -1,250 +1,222 @@
 'use client'
 import Link from 'next/link'
-import Image from 'next/image'
-import { useState } from 'react'
-import { Menu, X, LogOut, User, MessageSquare, BarChart3, ChevronDown, Target, Calculator, Settings } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { MessageSquare, Bell, Search } from 'lucide-react'
 import Logo from '@/components/ui/Logo'
-import { useLang } from '@/lib/context/LanguageContext'
 import { useUser } from '@/lib/hooks/useUser'
-import { useProfile } from '@/lib/context/ProfileContext'
-import { createClient } from '@/lib/supabase/client'
-import { useRouter } from 'next/navigation'
+import { usePathname } from 'next/navigation'
+import { useUnreadNotifications } from '@/lib/hooks/useUnreadNotifications'
+import { useUnreadMessages } from '@/lib/hooks/useUnreadMessages'
+
+// ── Page title map ─────────────────────────────────────────────────────────────
+const PAGE_TITLES: Record<string, string> = {
+  '/feed':          'Лента',
+  '/orders':        'Заказы',
+  '/freelancers':   'Люди',
+  '/messages':      'Сообщения',
+  '/notifications': 'Уведомления',
+  '/dashboard':     'Профиль',
+  '/settings':      'Настройки',
+  '/ai-assistant':  'AI Чат',
+  '/ai-search':     'AI Поиск',
+  '/agents':        'Агенты',
+  '/pricing':       'Тарифы',
+  '/contracts':     'Контракты',
+}
+
+function getPageTitle(pathname: string): string | null {
+  for (const [prefix, label] of Object.entries(PAGE_TITLES)) {
+    if (pathname === prefix || pathname.startsWith(prefix + '/')) return label
+  }
+  return null
+}
 
 export default function Header() {
-  const { t } = useLang()
-  const [mobileOpen, setMobileOpen] = useState(false)
-  const [menuOpen,   setMenuOpen]   = useState(false)
   const { user } = useUser()
-  const { profile } = useProfile()
-  const router = useRouter()
+  const pathname = usePathname()
 
-  const NAV_LINKS = [
-    { href: '/orders',       label: t.nav.orders      },
-    { href: '/freelancers',  label: t.nav.freelancers  },
-    { href: '/agents',       label: t.nav.agents       },
-    { href: '/ai-search',    label: 'AI Search'        },
-    { href: '/ai-assistant', label: t.nav.ai           },
-    { href: '/ai-tools',     label: 'AI Tools'         },
-    { href: '/contracts',    label: t.nav.contracts    },
-    { href: '/pricing',      label: t.nav.pricing ?? 'Pricing' },
-  ]
+  // Landing page: transparent floating header
+  const isLanding = pathname === '/' && !user
+  const [scrolled, setScrolled] = useState(false)
+  useEffect(() => {
+    if (!isLanding) return
+    function onScroll() { setScrolled(window.scrollY > 60) }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [isLanding])
 
-  async function signOut() {
-    const supabase = createClient()
-    await supabase.auth.signOut()
-    router.push('/')
-    router.refresh()
+  // Is this an "app" page (authenticated user experience)?
+  const isApp = !!user && !isLanding
+
+  const pageTitle = getPageTitle(pathname)
+  const unreadNotifs = useUnreadNotifications()
+  const unreadMsgs   = useUnreadMessages()
+
+  // ── Landing header ─────────────────────────────────────────────────────────
+  if (isLanding) {
+    return (
+      <header
+        className="sticky top-0 z-50 md:hidden"
+        style={{
+          borderBottom: scrolled ? '0.5px solid rgba(255,255,255,0.08)' : 'none',
+          background: scrolled ? 'rgba(6,6,18,0.85)' : 'transparent',
+          backdropFilter: scrolled ? 'blur(20px)' : 'none',
+          WebkitBackdropFilter: scrolled ? 'blur(20px)' : 'none',
+          transition: 'background 0.3s, border-color 0.3s',
+          paddingTop: 'env(safe-area-inset-top)',
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 52, padding: '0 16px' }}>
+          <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: 8, textDecoration: 'none' }}>
+            <Logo size={26} />
+            <span style={{ fontSize: 16, fontWeight: 700, color: '#fff', letterSpacing: '-0.02em' }}>FreelanceHub</span>
+          </Link>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <Link href="/auth/login" style={{
+              padding: '7px 14px', borderRadius: 99, fontSize: 13, fontWeight: 600,
+              color: 'rgba(255,255,255,0.75)', background: 'rgba(255,255,255,0.08)',
+              border: '1px solid rgba(255,255,255,0.12)', textDecoration: 'none',
+            }}>
+              Войти
+            </Link>
+          </div>
+        </div>
+      </header>
+    )
   }
 
-  const avatarUrl   = profile?.avatar_url || user?.user_metadata?.avatar_url
-  const displayName = profile?.full_name || user?.user_metadata?.full_name || user?.email?.split('@')[0] || t.auth.dashboard
-  const adminEmail  = process.env.NEXT_PUBLIC_ADMIN_EMAIL
-  const isAdmin     = adminEmail && user?.email === adminEmail
+  // ── App header (authenticated, mobile) ────────────────────────────────────
+  if (isApp) {
+    const isFeed = pathname === '/feed'
 
+    return (
+      <header
+        className="sticky top-0 z-50 md:hidden"
+        style={{
+          background: 'var(--fh-header-bg)',
+          borderBottom: '0.5px solid var(--fh-sep)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          paddingTop: 'env(safe-area-inset-top)',
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', height: 52, padding: '0 4px 0 16px' }}>
+
+          {/* Left: logo or back — on feed show brand name */}
+          {isFeed ? (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, flex: 1 }}>
+              <Logo size={22} />
+              <span style={{
+                fontSize: 18, fontWeight: 700, letterSpacing: '-0.03em',
+                color: 'var(--fh-t1)',
+                fontFeatureSettings: '"cv01"',
+              }}>
+                FreelanceHub
+              </span>
+            </div>
+          ) : (
+            <div style={{ flex: 1 }}>
+              {pageTitle ? (
+                <span style={{ fontSize: 17, fontWeight: 600, color: 'var(--fh-t1)', letterSpacing: '-0.02em' }}>
+                  {pageTitle}
+                </span>
+              ) : (
+                <Link href="/feed" style={{ display: 'flex', alignItems: 'center', gap: 6, textDecoration: 'none' }}>
+                  <Logo size={22} />
+                </Link>
+              )}
+            </div>
+          )}
+
+          {/* Right: action icons */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 0 }}>
+            {/* Search */}
+            <HeaderIconBtn href="/orders" aria-label="Поиск">
+              <Search style={{ width: 22, height: 22 }} />
+            </HeaderIconBtn>
+
+            {/* Notifications */}
+            <HeaderIconBtn href="/notifications" aria-label="Уведомления" badge={unreadNotifs}>
+              <Bell style={{ width: 22, height: 22 }} />
+            </HeaderIconBtn>
+
+            {/* Messages */}
+            <HeaderIconBtn href="/messages" aria-label="Сообщения" badge={unreadMsgs}>
+              <MessageSquare style={{ width: 22, height: 22 }} />
+            </HeaderIconBtn>
+          </div>
+        </div>
+      </header>
+    )
+  }
+
+  // ── Guest / non-auth mobile header ────────────────────────────────────────
   return (
     <header
-      className="sticky top-0 z-50 glass header-safe md:hidden"
+      className="sticky top-0 z-50 md:hidden"
       style={{
-        borderBottom: '1px solid var(--fh-sep)',
-        backgroundColor: 'var(--fh-header-bg)',
+        background: 'var(--fh-header-bg)',
+        borderBottom: '0.5px solid var(--fh-sep)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
+        paddingTop: 'env(safe-area-inset-top)',
       }}
     >
-      <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8">
-        <div className="flex h-[52px] items-center justify-between gap-2">
-
-          {/* Logo */}
-          <Link href={user ? '/feed' : '/'} className="shrink-0 flex items-center">
-            <Logo size={28} />
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 52, padding: '0 16px' }}>
+        <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: 6, textDecoration: 'none' }}>
+          <Logo size={22} />
+          <span style={{ fontSize: 17, fontWeight: 700, color: 'var(--fh-t1)', letterSpacing: '-0.02em' }}>FreelanceHub</span>
+        </Link>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <Link href="/auth/login" style={{
+            padding: '8px 14px', borderRadius: 99, fontSize: 13, fontWeight: 600,
+            color: 'var(--fh-t2)', background: 'var(--fh-surface-2)',
+            border: '1px solid var(--fh-border)', textDecoration: 'none',
+          }}>
+            Войти
           </Link>
-
-          {/* Desktop nav */}
-          <nav className="hidden lg:flex items-center">
-            {NAV_LINKS.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="px-3 py-1.5 text-[13px] transition-colors whitespace-nowrap"
-                style={{ color: 'var(--fh-t4)', fontWeight: 510, letterSpacing: '-0.01em' }}
-                onMouseEnter={e => (e.currentTarget.style.color = 'var(--fh-t1)')}
-                onMouseLeave={e => (e.currentTarget.style.color = 'var(--fh-t4)')}
-              >
-                {link.label}
-              </Link>
-            ))}
-          </nav>
-
-          {/* Right side */}
-          <div className="flex items-center gap-1.5 shrink-0">
-
-
-            {/* Auth */}
-            <div className="hidden md:flex items-center gap-1.5">
-              {user ? (
-                  <div className="relative">
-                    <button
-                      onClick={() => setMenuOpen(!menuOpen)}
-                      className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md transition-colors"
-                      style={{
-                        background: menuOpen ? 'var(--fh-surface-3)' : 'var(--fh-surface-2)',
-                        border: '1px solid var(--fh-border)',
-                      }}
-                    >
-                      {avatarUrl ? (
-                        <Image src={avatarUrl} alt={displayName} width={20} height={20} className="rounded-full" unoptimized />
-                      ) : (
-                        <div className="h-5 w-5 rounded-full bg-primary/30 flex items-center justify-center">
-                          <User className="h-3 w-3 text-primary" />
-                        </div>
-                      )}
-                      <span className="text-[13px] max-w-[80px] truncate hidden sm:block" style={{ color: 'var(--fh-t2)', fontWeight: 510 }}>
-                        {displayName}
-                      </span>
-                      <ChevronDown className="h-3 w-3" style={{ color: 'var(--fh-t4)' }} />
-                    </button>
-
-                    {menuOpen && (
-                      <div
-                        className="absolute right-0 top-full mt-1.5 w-52 rounded-xl overflow-hidden py-1 z-50"
-                        style={{
-                          background: 'var(--popover)',
-                          border: '1px solid var(--fh-border-2)',
-                          boxShadow: 'var(--shadow-dropdown)',
-                        }}
-                      >
-                        {[
-                          { href: '/dashboard',             icon: User,          label: t.auth.dashboard  },
-                          { href: '/dashboard/analytics',  icon: BarChart3,     label: t.auth.analytics  },
-                          { href: '/dashboard/goals',      icon: Target,        label: t.auth.goals      },
-                          { href: '/dashboard/calculator', icon: Calculator,    label: t.auth.calculator },
-                          { href: '/messages',             icon: MessageSquare, label: t.auth.messages   },
-                          { href: '/settings',             icon: Settings,      label: t.auth.settings ?? 'Settings' },
-                        ].map(item => (
-                          <Link
-                            key={item.href}
-                            href={item.href}
-                            className="flex items-center gap-2.5 px-3.5 py-2 text-[13px] transition-colors"
-                            style={{ color: 'var(--fh-t2)', fontWeight: 510 }}
-                            onMouseEnter={e => { e.currentTarget.style.background = 'var(--fh-surface-2)'; e.currentTarget.style.color = 'var(--fh-t1)' }}
-                            onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--fh-t2)' }}
-                            onClick={() => setMenuOpen(false)}
-                          >
-                            <item.icon className="h-3.5 w-3.5" style={{ color: 'var(--fh-t4)' }} />
-                            {item.label}
-                          </Link>
-                        ))}
-                        {isAdmin && (
-                          <Link
-                            href="/admin"
-                            className="flex items-center gap-2.5 px-3.5 py-2 text-[13px] transition-colors"
-                            style={{ color: '#7170ff', fontWeight: 510 }}
-                            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(113,112,255,0.06)' }}
-                            onMouseLeave={e => { e.currentTarget.style.background = 'transparent' }}
-                            onClick={() => setMenuOpen(false)}
-                          >
-                            <BarChart3 className="h-3.5 w-3.5" />
-                            Admin
-                          </Link>
-                        )}
-                        <div className="my-1 h-px mx-3" style={{ background: 'var(--fh-sep)' }} />
-                        <button
-                          onClick={() => { signOut(); setMenuOpen(false) }}
-                          className="w-full flex items-center gap-2.5 px-3.5 py-2 text-[13px] transition-colors"
-                          style={{ color: '#e5484d', fontWeight: 510 }}
-                          onMouseEnter={e => { e.currentTarget.style.background = 'rgba(229,72,77,0.08)' }}
-                          onMouseLeave={e => { e.currentTarget.style.background = 'transparent' }}
-                        >
-                          <LogOut className="h-3.5 w-3.5" />
-                          {t.auth.logout}
-                        </button>
-                      </div>
-                    )}
-                  </div>
-              ) : (
-                <div className="flex items-center gap-1.5">
-                  <Link
-                    href="/auth/login"
-                    className="px-3 py-1.5 text-[13px] transition-colors whitespace-nowrap"
-                    style={{ color: 'var(--fh-t3)', fontWeight: 510 }}
-                    onMouseEnter={e => { e.currentTarget.style.color = 'var(--fh-t1)' }}
-                    onMouseLeave={e => { e.currentTarget.style.color = 'var(--fh-t3)' }}
-                  >
-                    {t.auth.login}
-                  </Link>
-                  <Link
-                    href="/auth/register"
-                    className="px-3 py-1.5 rounded-md text-[13px] text-white transition-all whitespace-nowrap"
-                    style={{ background: '#5e6ad2', fontWeight: 510, letterSpacing: '-0.01em' }}
-                    onMouseEnter={e => { e.currentTarget.style.background = '#828fff' }}
-                    onMouseLeave={e => { e.currentTarget.style.background = '#5e6ad2' }}
-                  >
-                    {t.auth.register}
-                  </Link>
-                </div>
-              )}
-            </div>
-
-            {/* Mobile burger */}
-            <button
-              className="md:hidden flex items-center justify-center h-8 w-8 rounded-md transition-colors"
-              style={{ color: 'var(--fh-t3)' }}
-              onClick={() => setMobileOpen(!mobileOpen)}
-              aria-label="Menu"
-            >
-              {mobileOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
-            </button>
-          </div>
+          <Link href="/auth/register" style={{
+            padding: '8px 14px', borderRadius: 99, fontSize: 13, fontWeight: 600,
+            color: '#fff', background: '#5e6ad2', textDecoration: 'none',
+          }}>
+            Начать
+          </Link>
         </div>
       </div>
-
-      {/* Mobile menu */}
-      {mobileOpen && (
-        <div
-          className="md:hidden"
-          style={{ borderTop: '1px solid var(--fh-sep)', background: 'var(--card)' }}
-        >
-          <div className="px-4 py-3 space-y-0.5">
-            {NAV_LINKS.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="block px-3 py-2.5 rounded-lg text-[14px] transition-colors"
-                style={{ color: 'var(--fh-t3)', fontWeight: 510 }}
-                onClick={() => setMobileOpen(false)}
-              >
-                {link.label}
-              </Link>
-            ))}
-
-            <div className="pt-2 mt-1" style={{ borderTop: '1px solid var(--fh-sep)' }}>
-              {user ? (
-                <div className="space-y-0.5 pt-2">
-                  <Link href="/dashboard" className="block px-3 py-2.5 rounded-lg text-[14px]" style={{ color: 'var(--fh-t2)', fontWeight: 510 }} onClick={() => setMobileOpen(false)}>
-                    {t.auth.dashboard}
-                  </Link>
-                  <Link href="/messages" className="block px-3 py-2.5 rounded-lg text-[14px]" style={{ color: 'var(--fh-t2)', fontWeight: 510 }} onClick={() => setMobileOpen(false)}>
-                    {t.auth.messages}
-                  </Link>
-                  <Link href="/settings" className="block px-3 py-2.5 rounded-lg text-[14px]" style={{ color: 'var(--fh-t2)', fontWeight: 510 }} onClick={() => setMobileOpen(false)}>
-                    {t.auth.settings ?? 'Settings'}
-                  </Link>
-                  <button onClick={signOut} className="w-full text-left px-3 py-2.5 rounded-lg text-[14px]" style={{ color: '#e5484d', fontWeight: 510 }}>
-                    {t.auth.logout}
-                  </button>
-                </div>
-              ) : (
-                <div className="space-y-2 pt-2">
-                  <Link href="/auth/login" className="block px-3 py-2.5 rounded-lg text-[14px] text-center" style={{ color: 'var(--fh-t3)', fontWeight: 510 }} onClick={() => setMobileOpen(false)}>
-                    {t.auth.login}
-                  </Link>
-                  <Link href="/auth/register" className="block px-3 py-2.5 rounded-lg text-[14px] text-white text-center font-medium" style={{ background: '#5e6ad2' }} onClick={() => setMobileOpen(false)}>
-                    {t.auth.register}
-                  </Link>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
     </header>
+  )
+
+  // Note: desktop nav is handled by LeftSidebar on md+ screens
+}
+
+// ── Small icon button for header ─────────────────────────────────────────────
+function HeaderIconBtn({ href, children, 'aria-label': label, badge = 0 }: {
+  href: string; children: React.ReactNode; 'aria-label': string; badge?: number
+}) {
+  return (
+    <Link
+      href={href}
+      aria-label={label}
+      style={{
+        width: 44, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center',
+        borderRadius: 12, color: 'var(--fh-t2)', textDecoration: 'none',
+        position: 'relative',
+      }}
+    >
+      {children}
+      {badge > 0 && (
+        <span style={{
+          position: 'absolute', top: 8, right: 8,
+          minWidth: 14, height: 14, borderRadius: 7,
+          background: '#e5484d', color: '#fff',
+          fontSize: 9, fontWeight: 700,
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          padding: '0 3px',
+          boxShadow: '0 0 0 2px var(--fh-header-bg)',
+        }}>
+          {badge > 9 ? '9+' : badge}
+        </span>
+      )}
+    </Link>
   )
 }

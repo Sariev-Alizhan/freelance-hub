@@ -249,7 +249,8 @@
   --fh-surface-3:  rgba(0,0,0,0.04);
   --fh-border:     rgba(0,0,0,0.07);
   --fh-border-2:   rgba(0,0,0,0.11);
-  --fh-header-bg:  rgba(247,248,248,0.90);
+  --fh-header-bg:  rgba(247,248,248,0.92);
+  --fh-nav-bg:     rgba(255,255,255,0.92);
   --fh-footer-bg:  #f0f1f3;
   --fh-t1:         #1a1d21;
   --fh-t2:         #4a4f57;
@@ -267,7 +268,8 @@
   --fh-surface-3:  rgba(255,255,255,0.04);
   --fh-border:     rgba(255,255,255,0.06);
   --fh-border-2:   rgba(255,255,255,0.10);
-  --fh-header-bg:  rgba(8,9,10,0.85);
+  --fh-header-bg:  rgba(8,9,10,0.88);
+  --fh-nav-bg:     rgba(10,10,14,0.92);
   --fh-footer-bg:  #08090a;
   --fh-t1:         #f7f8f8;
   --fh-t2:         #d0d6e0;
@@ -477,8 +479,9 @@
    ═══════════════════════════════════════════════════════════ */
 .pb-safe-mobile { padding-bottom: 0; }
 @media (max-width: 767px) {
+  /* 52px bottom nav + safe area for home-bar devices */
   .pb-safe-mobile {
-    padding-bottom: calc(4rem + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(52px + env(safe-area-inset-bottom, 0px) + 16px);
   }
 }
 

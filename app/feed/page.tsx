@@ -12,6 +12,7 @@ import { CURRENT_RELEASE } from '@/lib/company-report'
 import { useProfile } from '@/lib/context/ProfileContext'
 import { useUser } from '@/lib/hooks/useUser'
 import { useToastHelpers } from '@/lib/context/ToastContext'
+import StoriesBar from '@/components/stories/StoriesBar'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -210,7 +211,7 @@ function ActionBar({ itemId, reactions, onReact, commentsOpen, onToggleComments,
   )
 }
 
-// ── Card shell (uniform look) ─────────────────────────────────────────────────
+// ── Card shell (Instagram-style: no border, thin separator) ──────────────────
 
 function CardShell({ children, itemId, reactions, onReact, user, profile }: {
   children: React.ReactNode; itemId: string; reactions: Reactions
@@ -219,7 +220,13 @@ function CardShell({ children, itemId, reactions, onReact, user, profile }: {
 }) {
   const [commentsOpen, setCommentsOpen] = useState(false)
   return (
-    <div className="rounded-2xl overflow-hidden" style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border)' }}>
+    <div
+      className="sm:rounded-2xl sm:border overflow-hidden"
+      style={{
+        background: 'var(--fh-surface)',
+        borderBottom: '0.5px solid var(--fh-sep)',
+      }}
+    >
       <div style={{ padding: '14px 16px 0' }}>{children}</div>
       <ActionBar itemId={itemId} reactions={reactions} onReact={a => onReact(itemId, a)}
         commentsOpen={commentsOpen} onToggleComments={() => setCommentsOpen(o => !o)} user={user} />
@@ -383,10 +390,11 @@ function UpdateCard({ reactions, onReact, user, profile }: {
 
 // ── Compose post ──────────────────────────────────────────────────────────────
 
-function ComposePost({ user, profile, onPost }: {
+function ComposePost({ user, profile, onPost, mobile }: {
   user: { id: string } | null
   profile: { avatar_url: string | null; full_name: string | null } | null
   onPost: (post: UserPost) => void
+  mobile?: boolean
 }) {
   const [open, setOpen] = useState(false)
   const [text, setText] = useState('')
@@ -416,6 +424,32 @@ function ComposePost({ user, profile, onPost }: {
   }
 
   if (!user) return null
+
+  // Mobile: slim Instagram-style row, tapping opens full compose
+  if (mobile && !open) {
+    return (
+      <button
+        onClick={() => { setOpen(true); setTimeout(() => textareaRef.current?.focus(), 50) }}
+        style={{
+          width: '100%', display: 'flex', alignItems: 'center', gap: 12,
+          padding: '12px 16px',
+          background: 'none', border: 'none', borderBottom: '0.5px solid var(--fh-sep)',
+          cursor: 'pointer', textAlign: 'left',
+        }}
+      >
+        <UserAvatar url={profile?.avatar_url} name={profile?.full_name} size={36} />
+        <span style={{
+          flex: 1, fontSize: 15, color: 'var(--fh-t4)',
+          letterSpacing: '-0.01em',
+        }}>
+          Что у вас нового?
+        </span>
+        <div style={{ width: 32, height: 32, borderRadius: 10, background: 'var(--fh-surface-2)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <Plus style={{ width: 16, height: 16, color: '#7170ff' }} />
+        </div>
+      </button>
+    )
+  }
 
   return (
     <div className="rounded-2xl overflow-hidden mb-2" style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border)' }}>
@@ -506,6 +540,10 @@ export default function FeedPage() {
   const { user } = useUser()
   const { profile } = useProfile()
   const { success: toastOk, error: toastErr, info: toastInfo } = useToastHelpers()
+
+  const isDark = typeof document !== 'undefined'
+    ? document.documentElement.classList.contains('dark')
+    : false
 
   const [news,       setNews]       = useState<NewsItem[]>([])
   const [userPosts,  setUserPosts]  = useState<UserPost[]>([])
@@ -649,9 +687,8 @@ export default function FeedPage() {
   }, [news, userPosts, query])
 
   return (
-    <div className="mx-auto max-w-[640px] px-4 sm:px-6">
-
-      {/* ── Pull-to-refresh indicator (mobile) ─────────────────────────────── */}
+    <div>
+      {/* ── Pull-to-refresh indicator ──────────────────────────────────────── */}
       {pullY > 0 && (
         <div className="flex justify-center pt-2 pb-1 md:hidden" style={{ height: pullY, overflow: 'hidden', transition: 'height 0.1s' }}>
           <RefreshCw className="h-5 w-5 animate-spin" style={{ color: 'var(--fh-t4)', opacity: pullY / PULL_THRESHOLD }} />
@@ -663,69 +700,77 @@ export default function FeedPage() {
         </div>
       )}
 
-      {/* ── Search bar — sticky so it stays visible while scrolling ────────── */}
-      <div
-        className="sticky z-20 pt-4 pb-3"
-        style={{
-          top: 'var(--feed-sticky-top, 52px)',
-          background: 'color-mix(in srgb, var(--fh-bg, #f7f8f8) 88%, transparent)',
-          backdropFilter: 'blur(14px)',
-          WebkitBackdropFilter: 'blur(14px)',
-        }}
-      >
-        <div
-          className="flex items-center gap-2"
-          style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border)', borderRadius: 24, padding: '10px 16px' }}
-        >
-          <Search className="h-4 w-4 flex-shrink-0" style={{ color: 'var(--fh-t4)' }} />
-          <input
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            onKeyDown={e => { if (e.key === 'Enter') setQuery(search) }}
-            placeholder="Search posts, news, topics…"
-            style={{ flex: 1, background: 'none', border: 'none', outline: 'none', fontSize: 14, color: 'var(--fh-t1)', fontFamily: 'inherit' }}
-          />
-          {search && (
-            <button onClick={() => { setSearch(''); setQuery('') }} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--fh-t4)', padding: 0 }}>
-              <X className="h-3.5 w-3.5" />
-            </button>
-          )}
+      {/* Desktop: constrained width */}
+      <div className="hidden sm:block mx-auto max-w-[640px] px-4 sm:px-6">
+        {/* Desktop search bar */}
+        <div className="sticky z-20 pt-4 pb-3" style={{ top: 'var(--feed-sticky-top, 0px)', background: 'color-mix(in srgb, var(--fh-bg, #f7f8f8) 88%, transparent)', backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)' }}>
+          <div className="flex items-center gap-2" style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border)', borderRadius: 24, padding: '10px 16px' }}>
+            <Search className="h-4 w-4 flex-shrink-0" style={{ color: 'var(--fh-t4)' }} />
+            <input value={search} onChange={e => setSearch(e.target.value)} onKeyDown={e => { if (e.key === 'Enter') setQuery(search) }} placeholder="Search posts, news, topics…" style={{ flex: 1, background: 'none', border: 'none', outline: 'none', fontSize: 14, color: 'var(--fh-t1)', fontFamily: 'inherit' }} />
+            {search && <button onClick={() => { setSearch(''); setQuery('') }} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--fh-t4)', padding: 0 }}><X className="h-3.5 w-3.5" /></button>}
+          </div>
         </div>
+        {!query && <div style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border)', borderRadius: 18, padding: '4px 12px', marginBottom: 12, overflow: 'hidden' }}><StoriesBar currentUserId={user?.id} isDark={isDark} /></div>}
+        {!query && <ComposePost user={user} profile={profile} onPost={handleNewPost} />}
+        {loading ? <div className="space-y-3">{[...Array(6)].map((_, i) => <div key={i} className="rounded-2xl animate-pulse" style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border)', height: 140 }} />)}</div> : feedItems.length === 0 ? <div className="flex flex-col items-center justify-center py-20 gap-3 text-center"><Search className="h-8 w-8" style={{ color: 'var(--fh-t4)', opacity: 0.3 }} /><p style={{ fontSize: 14, color: 'var(--fh-t4)' }}>Ничего не найдено</p><button onClick={() => { setSearch(''); setQuery('') }} style={{ fontSize: 13, color: '#7170ff', background: 'none', border: 'none', cursor: 'pointer' }}>Очистить</button></div> : <div className="space-y-3">{feedItems.map((item) => { if (item.kind === 'update') return <UpdateCard key="update" reactions={getR(`update-v${CURRENT_RELEASE.version}`)} onReact={handleReact} user={user} profile={profile} />; if (item.kind === 'post') return <PostCard key={item.data.id} post={item.data} reactions={getR(item.data.id)} onReact={handleReact} user={user} profile={profile} onDelete={handleDeletePost} />; return <NewsCard key={item.data.id} item={item.data} reactions={getR(item.data.id)} onReact={handleReact} user={user} profile={profile} /> })}</div>}
+        <div className="h-8" />
       </div>
 
-      {/* ── Compose post ───────────────────────────────────────────────────── */}
-      {!query && <ComposePost user={user} profile={profile} onPost={handleNewPost} />}
+      {/* Mobile: edge-to-edge Instagram layout */}
+      <div className="sm:hidden">
 
-      {/* ── Feed ───────────────────────────────────────────────────────────── */}
-      {loading ? (
-        <div className="space-y-3">
-          {[...Array(6)].map((_, i) => (
-            <div key={i} className="rounded-2xl animate-pulse" style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border)', height: 140 }} />
-          ))}
-        </div>
-      ) : feedItems.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-20 gap-3 text-center">
-          <Search className="h-8 w-8" style={{ color: 'var(--fh-t4)', opacity: 0.3 }} />
-          <p style={{ fontSize: 14, color: 'var(--fh-t4)' }}>Nothing found for "{query}"</p>
-          <button onClick={() => { setSearch(''); setQuery('') }} style={{ fontSize: 13, color: '#7170ff', background: 'none', border: 'none', cursor: 'pointer' }}>
-            Clear search
-          </button>
-        </div>
-      ) : (
-        <div className="space-y-3">
-          {feedItems.map((item, i) => {
-            if (item.kind === 'update') {
-              return <UpdateCard key="update" reactions={getR(`update-v${CURRENT_RELEASE.version}`)} onReact={handleReact} user={user} profile={profile} />
-            }
-            if (item.kind === 'post') {
-              return <PostCard key={item.data.id} post={item.data} reactions={getR(item.data.id)} onReact={handleReact} user={user} profile={profile} onDelete={handleDeletePost} />
-            }
-            return <NewsCard key={item.data.id} item={item.data} reactions={getR(item.data.id)} onReact={handleReact} user={user} profile={profile} />
-          })}
-        </div>
-      )}
+        {/* ── Stories — full width, no card wrapper ────────────── */}
+        {!query && (
+          <div style={{ borderBottom: '0.5px solid var(--fh-sep)', paddingBottom: 2 }}>
+            <StoriesBar currentUserId={user?.id} isDark={isDark} />
+          </div>
+        )}
 
-      <div className="h-8" />
+        {/* ── Mobile search bar (only when query active) ────────── */}
+        {query && (
+          <div style={{ padding: '10px 16px', borderBottom: '0.5px solid var(--fh-sep)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, background: 'var(--fh-surface-2)', borderRadius: 12, padding: '10px 14px' }}>
+              <Search style={{ width: 16, height: 16, flexShrink: 0, color: 'var(--fh-t4)' }} />
+              <input value={search} onChange={e => setSearch(e.target.value)} onKeyDown={e => { if (e.key === 'Enter') setQuery(search) }} placeholder="Поиск…" style={{ flex: 1, background: 'none', border: 'none', outline: 'none', fontSize: 15, color: 'var(--fh-t1)', fontFamily: 'inherit' }} autoFocus />
+              <button onClick={() => { setSearch(''); setQuery('') }} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--fh-t4)', padding: 0 }}><X style={{ width: 16, height: 16 }} /></button>
+            </div>
+          </div>
+        )}
+
+        {/* ── Compose — slim inline row ──────────────────────────── */}
+        {!query && <ComposePost user={user} profile={profile} onPost={handleNewPost} mobile />}
+
+        {/* ── Feed items ─────────────────────────────────────────── */}
+        {loading ? (
+          <div>
+            {[...Array(5)].map((_, i) => (
+              <div key={i} style={{ borderBottom: '0.5px solid var(--fh-sep)', padding: '16px', display: 'flex', gap: 12 }}>
+                <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'var(--fh-surface-2)', flexShrink: 0, animation: 'pulse 1.5s ease-in-out infinite' }} />
+                <div style={{ flex: 1 }}>
+                  <div style={{ height: 12, borderRadius: 6, background: 'var(--fh-surface-2)', marginBottom: 8, width: '40%', animation: 'pulse 1.5s ease-in-out infinite' }} />
+                  <div style={{ height: 10, borderRadius: 5, background: 'var(--fh-surface-2)', width: '80%', animation: 'pulse 1.5s ease-in-out infinite' }} />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : feedItems.length === 0 ? (
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '80px 24px', gap: 12, textAlign: 'center' }}>
+            <Search style={{ width: 32, height: 32, color: 'var(--fh-t4)', opacity: 0.3 }} />
+            <p style={{ fontSize: 15, color: 'var(--fh-t4)' }}>Ничего не найдено</p>
+            <button onClick={() => { setSearch(''); setQuery('') }} style={{ fontSize: 14, color: '#7170ff', background: 'none', border: 'none', cursor: 'pointer' }}>Очистить поиск</button>
+          </div>
+        ) : (
+          <div>
+            {feedItems.map((item) => {
+              if (item.kind === 'update') return <UpdateCard key="update" reactions={getR(`update-v${CURRENT_RELEASE.version}`)} onReact={handleReact} user={user} profile={profile} />
+              if (item.kind === 'post')   return <PostCard   key={item.data.id} post={item.data} reactions={getR(item.data.id)} onReact={handleReact} user={user} profile={profile} onDelete={handleDeletePost} />
+              return <NewsCard key={item.data.id} item={item.data} reactions={getR(item.data.id)} onReact={handleReact} user={user} profile={profile} />
+            })}
+          </div>
+        )}
+
+        <div style={{ height: 80 }} />
+      </div>
     </div>
   )
 }

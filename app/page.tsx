@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import HeroSection from '@/components/landing/HeroSection'
+import AppPreviewSection from '@/components/landing/AppPreviewSection'
 import CategoriesSection from '@/components/landing/CategoriesSection'
 import TopFreelancers from '@/components/landing/TopFreelancers'
 import HowItWorks from '@/components/landing/HowItWorks'
@@ -14,14 +15,27 @@ export default async function Home() {
   if (user) redirect('/feed')
 
   return (
-    <>
+    // Force dark landing — the hero always renders on a dark canvas
+    <div style={{ background: '#060612' }}>
       <HeroSection />
-      <CategoriesSection />
+      <AppPreviewSection />
+
+      {/* Transition wrapper: dark → site theme */}
+      <div style={{
+        background: 'linear-gradient(to bottom, #060612 0%, var(--fh-canvas) 100%)',
+        paddingTop: 60,
+      }}>
+        <CategoriesSection />
+      </div>
+
       <TopFreelancers />
       <HowItWorks />
       <AIFeaturesSection />
       <AgentsSection />
-      <CTASection />
-    </>
+      {/* Extra bottom padding on mobile for sticky CTA bar */}
+      <div className="md:pb-0 pb-24">
+        <CTASection />
+      </div>
+    </div>
   )
 }

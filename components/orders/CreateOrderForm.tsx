@@ -119,8 +119,8 @@ export default function CreateOrderForm() {
       })
       const { description } = await res.json()
       if (description) set('description', description)
-    } catch (e) {
-      console.error(e)
+    } catch {
+      // AI generation failed silently — user can try again
     } finally {
       setAiLoading(false)
     }
@@ -203,8 +203,8 @@ export default function CreateOrderForm() {
       })
       const data = await res.json()
       if (data.min && data.max) setPriceAdvice(data)
-    } catch (e) {
-      console.error(e)
+    } catch {
+      // Price advice unavailable — not critical
     } finally {
       setPriceAdviceLoading(false)
     }
@@ -252,8 +252,7 @@ export default function CreateOrderForm() {
         body:    JSON.stringify({ orderId: json.id }),
       }).catch(() => {})
     } catch (e) {
-      console.error(e)
-      toastError('Failed to create order', 'Please try again')
+      toastError('Failed to create order', e instanceof Error ? e.message : 'Please try again')
     } finally {
       setSubmitting(false)
     }

@@ -47,7 +47,9 @@ export async function POST(req: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const { label, keyword, category, urgent_only } = await req.json()
+  let body: { label?: string; keyword?: string; category?: string; urgent_only?: boolean }
+  try { body = await req.json() } catch { return Response.json({ error: 'Invalid JSON' }, { status: 400 }) }
+  const { label, keyword, category, urgent_only } = body
   if (!label?.trim()) return Response.json({ error: 'Label required' }, { status: 400 })
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -85,7 +87,8 @@ export async function DELETE(req: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const { id } = await req.json()
+  let id: string
+  try { ({ id } = await req.json()) } catch { return Response.json({ error: 'Invalid JSON' }, { status: 400 }) }
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const db = supabase as any
   await db.from('saved_searches').delete().eq('id', id).eq('user_id', user.id)
@@ -98,7 +101,8 @@ export async function PATCH(req: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const { id } = await req.json()
+  let id: string
+  try { ({ id } = await req.json()) } catch { return Response.json({ error: 'Invalid JSON' }, { status: 400 }) }
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const db = supabase as any
   await db

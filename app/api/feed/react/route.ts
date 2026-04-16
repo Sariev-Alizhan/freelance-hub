@@ -53,7 +53,8 @@ export async function POST(req: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const { item_id, action } = await req.json() as { item_id: string; action: string }
+  let item_id: string, action: string
+  try { ({ item_id, action } = await req.json()) } catch { return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 }) }
   if (!item_id || !['like', 'dislike', 'save', 'repost'].includes(action)) {
     return NextResponse.json({ error: 'Invalid request' }, { status: 400 })
   }

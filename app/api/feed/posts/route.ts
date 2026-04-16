@@ -34,7 +34,9 @@ export async function POST(req: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const { content, tags } = await req.json() as { content: string; tags?: string[] }
+  let body: { content?: string; tags?: string[] }
+  try { body = await req.json() } catch { return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 }) }
+  const { content, tags } = body
   const trimmed = (content ?? '').trim()
   if (!trimmed || trimmed.length > 2000) {
     return NextResponse.json({ error: 'Invalid content' }, { status: 400 })

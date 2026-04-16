@@ -192,7 +192,7 @@ export default function FreelancerSetupForm() {
         const upRes = await fetch('/api/profile/avatar', { method: 'POST', body: fd })
         const upJson = await upRes.json()
         if (upRes.ok && upJson.url) avatarUrl = upJson.url
-        else console.warn('Avatar upload:', upJson.error)
+        // avatar upload failure is non-fatal — continue with existing avatar
       }
 
       // 2. Сохраняем через server-side API (service_role, обходит RLS)
@@ -223,7 +223,6 @@ export default function FreelancerSetupForm() {
       success('Profile saved!', 'Now clients can find you')
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : 'Unknown error'
-      console.error('Profile save error:', e)
       setSubmitError(msg)
       toastError('Save error', msg)
     } finally {
