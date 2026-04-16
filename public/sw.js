@@ -1,41 +1,41 @@
-// FreelanceHub Service Worker v5
-const CACHE = 'fh-v5'
-const OFFLINE_URL = '/'
-
-const PRECACHE = [
-  '/',
-  '/orders',
-  '/freelancers',
-  '/manifest.json',
-  '/icon-192.png',
-  '/icon-512.png',
-  '/apple-touch-icon.png',
-]
+// FreelanceHub Service Worker v6
+const CACHE = 'fh-v6'
+const STATIC_CACHE = 'fh-static-v6'
 
 self.addEventListener('install', (e) => {
+  // Skip waiting immediately so the new SW activates right away
+  self.skipWaiting()
   e.waitUntil(
-    caches.open(CACHE).then((c) => c.addAll(PRECACHE))
-    // Do NOT skipWaiting automatically — let the UI prompt the user
+    caches.open(STATIC_CACHE).then((c) =>
+      c.addAll([
+        '/manifest.json',
+        '/icon-192.png',
+        '/icon-512.png',
+        '/apple-touch-icon.png',
+      ])
+    )
   )
 })
 
 self.addEventListener('activate', (e) => {
   e.waitUntil(
-    // Delete ALL old caches (v1, v2, v3 …)
     caches.keys().then((keys) =>
-      Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k)))
+      Promise.all(
+        keys
+          .filter((k) => k !== CACHE && k !== STATIC_CACHE)
+          .map((k) => caches.delete(k))
+      )
     ).then(() => self.clients.claim())
   )
 })
 
-// Page can trigger skipWaiting via postMessage({ type: 'SKIP_WAITING' })
 self.addEventListener('message', (e) => {
   if (e.data?.type === 'SKIP_WAITING') {
     self.skipWaiting()
   }
 })
 
-// ── Web Push ─────────────────────────────────────────────────
+// ── Web Push ──────────────────────────────────────────────────────────────────
 self.addEventListener('push', (e) => {
   if (!e.data) return
   let data = {}
@@ -68,28 +68,51 @@ self.addEventListener('notificationclick', (e) => {
   )
 })
 
-// ── Fetch (caching) ───────────────────────────────────────────
+// ── Fetch ─────────────────────────────────────────────────────────────────────
 self.addEventListener('fetch', (e) => {
   if (e.request.method !== 'GET') return
   const url = new URL(e.request.url)
 
-  // Skip cross-origin, API, auth, and Next.js internal routes
+  // Skip cross-origin and API/auth routes
   if (url.origin !== location.origin) return
   if (
     url.pathname.startsWith('/api/') ||
-    url.pathname.startsWith('/auth/') ||
-    url.pathname.startsWith('/_next/') && !url.pathname.startsWith('/_next/static/')
+    url.pathname.startsWith('/auth/')
   ) return
 
+  // /_next/static/ — immutable assets, cache-first forever
+  if (url.pathname.startsWith('/_next/static/')) {
+    e.respondWith(
+      caches.match(e.request).then((cached) => {
+        if (cached) return cached
+        return fetch(e.request).then((res) => {
+          if (res.ok) {
+            const clone = res.clone()
+            caches.open(STATIC_CACHE).then((c) => c.put(e.request, clone))
+          }
+          return res
+        })
+      })
+    )
+    return
+  }
+
+  // /_next/ internal (non-static) — skip caching
+  if (url.pathname.startsWith('/_next/')) return
+
+  // Everything else (HTML pages, images, fonts) — NETWORK FIRST
+  // This ensures deploys always serve fresh HTML with correct chunk references
   e.respondWith(
-    caches.match(e.request).then((cached) => {
-      if (cached) return cached
-      return fetch(e.request).then((res) => {
-        if (!res || res.status !== 200 || res.type !== 'basic') return res
-        const clone = res.clone()
-        caches.open(CACHE).then((c) => c.put(e.request, clone))
+    fetch(e.request)
+      .then((res) => {
+        if (res.ok) {
+          const clone = res.clone()
+          caches.open(CACHE).then((c) => c.put(e.request, clone))
+        }
         return res
-      }).catch(() => caches.match(OFFLINE_URL))
-    })
+      })
+      .catch(() =>
+        caches.match(e.request).then((cached) => cached || caches.match('/'))
+      )
   )
 })
