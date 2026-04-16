@@ -173,6 +173,14 @@ export default function MessengerPage() {
 
   const activeConv = conversations.find(c => c.id === activeId) ?? null
 
+  // Lock page scroll while messenger is mounted — prevents the page from
+  // scrolling behind the messenger on mobile (especially iOS Safari).
+  useEffect(() => {
+    const prev = document.documentElement.style.overflow
+    document.documentElement.style.overflow = 'hidden'
+    return () => { document.documentElement.style.overflow = prev }
+  }, [])
+
   // Keep ref in sync so the global inbox subscription always has the current value
   useEffect(() => { activeIdRef.current = activeId }, [activeId])
 
@@ -549,7 +557,13 @@ export default function MessengerPage() {
   }
 
   return (
-    <div className="flex h-[calc(100vh-4rem)] overflow-hidden">
+    // 100dvh = dynamic viewport height (shrinks when mobile keyboard opens).
+    // 52px = header height. This makes the messenger fill exactly the visible
+    // screen without causing the page to scroll on iOS/Android.
+    <div
+      className="flex overflow-hidden"
+      style={{ height: 'calc(100dvh - 52px)' }}
+    >
 
       {/* ── Conversation List ──────────────────────────── */}
       <div className={`
