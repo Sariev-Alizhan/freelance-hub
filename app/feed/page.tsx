@@ -7,6 +7,7 @@ import {
   MessageCircle, RefreshCw, Send, X, CheckCircle2,
   ArrowUp, ExternalLink, Plus, Hash,
 } from 'lucide-react'
+// RefreshCw kept for the pull-to-refresh indicator only
 import { CURRENT_RELEASE } from '@/lib/company-report'
 import { useProfile } from '@/lib/context/ProfileContext'
 import { useUser } from '@/lib/hooks/useUser'
@@ -506,6 +507,11 @@ export default function FeedPage() {
   const [search,     setSearch]     = useState('')
   const [query,      setQuery]      = useState('')   // committed search
 
+  // Pull-to-refresh state
+  const [pullY,    setPullY]   = useState(0)
+  const touchStart             = useRef(0)
+  const PULL_THRESHOLD         = 72
+
   // Load news + posts in parallel
   const load = useCallback(async (isRefresh = false) => {
     if (isRefresh) setRefreshing(true); else setLoading(true)
@@ -532,6 +538,31 @@ export default function FeedPage() {
       setLoading(false); setRefreshing(false)
     }
   }, [])
+
+  // Mobile pull-to-refresh
+  useEffect(() => {
+    function onStart(e: TouchEvent) {
+      touchStart.current = window.scrollY === 0 ? e.touches[0].clientY : 0
+    }
+    function onMove(e: TouchEvent) {
+      if (!touchStart.current) return
+      const delta = e.touches[0].clientY - touchStart.current
+      if (delta > 0) setPullY(Math.min(delta * 0.5, PULL_THRESHOLD + 12))
+      else { setPullY(0); touchStart.current = 0 }
+    }
+    function onEnd() {
+      if (pullY >= PULL_THRESHOLD && !loading && !refreshing) load(true)
+      setPullY(0); touchStart.current = 0
+    }
+    window.addEventListener('touchstart', onStart, { passive: true })
+    window.addEventListener('touchmove',  onMove,  { passive: true })
+    window.addEventListener('touchend',   onEnd,   { passive: true })
+    return () => {
+      window.removeEventListener('touchstart', onStart)
+      window.removeEventListener('touchmove',  onMove)
+      window.removeEventListener('touchend',   onEnd)
+    }
+  }, [pullY, loading, refreshing, load])
 
   useEffect(() => { load() }, [load])
 
@@ -610,12 +641,32 @@ export default function FeedPage() {
   }, [news, userPosts, query])
 
   return (
-    <div className="mx-auto max-w-[640px] px-4 sm:px-6 py-6">
+    <div className="mx-auto max-w-[640px] px-4 sm:px-6">
 
-      {/* ── Search bar ─────────────────────────────────────────────────────── */}
-      <div className="flex items-center gap-2 mb-6">
+      {/* ── Pull-to-refresh indicator (mobile) ─────────────────────────────── */}
+      {pullY > 0 && (
+        <div className="flex justify-center pt-2 pb-1 md:hidden" style={{ height: pullY, overflow: 'hidden', transition: 'height 0.1s' }}>
+          <RefreshCw className="h-5 w-5 animate-spin" style={{ color: 'var(--fh-t4)', opacity: pullY / PULL_THRESHOLD }} />
+        </div>
+      )}
+      {refreshing && (
+        <div className="flex justify-center py-2 md:hidden">
+          <RefreshCw className="h-5 w-5 animate-spin" style={{ color: '#7170ff' }} />
+        </div>
+      )}
+
+      {/* ── Search bar — sticky so it stays visible while scrolling ────────── */}
+      <div
+        className="sticky z-20 pt-4 pb-3"
+        style={{
+          top: 'var(--feed-sticky-top, 52px)',
+          background: 'color-mix(in srgb, var(--fh-bg, #f7f8f8) 88%, transparent)',
+          backdropFilter: 'blur(14px)',
+          WebkitBackdropFilter: 'blur(14px)',
+        }}
+      >
         <div
-          className="flex items-center gap-2 flex-1"
+          className="flex items-center gap-2"
           style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border)', borderRadius: 24, padding: '10px 16px' }}
         >
           <Search className="h-4 w-4 flex-shrink-0" style={{ color: 'var(--fh-t4)' }} />
@@ -632,16 +683,6 @@ export default function FeedPage() {
             </button>
           )}
         </div>
-        <button
-          onClick={() => load(true)}
-          disabled={refreshing}
-          className="flex items-center justify-center rounded-full flex-shrink-0 transition-colors"
-          style={{ width: 42, height: 42, background: 'var(--fh-surface)', border: '1px solid var(--fh-border)', color: 'var(--fh-t4)', cursor: 'pointer' }}
-          onMouseEnter={e => { (e.currentTarget as HTMLElement).style.color = 'var(--fh-t2)' }}
-          onMouseLeave={e => { (e.currentTarget as HTMLElement).style.color = 'var(--fh-t4)' }}
-        >
-          <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
-        </button>
       </div>
 
       {/* ── Compose post ───────────────────────────────────────────────────── */}

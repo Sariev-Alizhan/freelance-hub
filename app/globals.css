@@ -284,6 +284,10 @@
    ADAPTIVE UTILITIES
    ═══════════════════════════════════════════════════════════ */
 @layer utilities {
+  /* Hide scrollbar but keep scrollability */
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
   /* Surfaces — Linear luminance step system */
   .bg-subtle            { background-color: var(--overlay-subtle); }
   .bg-surface           { background-color: var(--overlay-mid); }
@@ -477,6 +481,16 @@
     padding-bottom: calc(4rem + env(safe-area-inset-bottom, 0px));
   }
 }
+
+/* Messenger fills full viewport on desktop (no header), minus header on mobile */
+.messenger-height { height: 100dvh; }
+@media (max-width: 767px) {
+  .messenger-height { height: calc(100dvh - 52px); }
+}
+
+/* Feed sticky search bar: 0 on desktop (no top header), 52px on mobile */
+:root { --feed-sticky-top: 0px; }
+@media (max-width: 767px) { :root { --feed-sticky-top: 52px; } }
 
 /* Sticky header safe area for Dynamic Island (iPhone 14 Pro+) */
 .header-safe {
