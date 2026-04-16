@@ -177,9 +177,13 @@ export default function LeftSidebar() {
                 }
               }}
             >
-              <span style={{ position: 'relative', flexShrink: 0 }}>
+              <span style={{
+                position: 'relative', flexShrink: 0,
+                width: 20, height: 20,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}>
                 <item.icon style={{ width: 18, height: 18 }} strokeWidth={active ? 2.2 : 1.8} />
-                {item.badge && item.badge > 0 && (
+                {(item.badge ?? 0) > 0 && (
                   <span style={{
                     position: 'absolute', top: -5, right: -6,
                     minWidth: 14, height: 14, borderRadius: 7,
@@ -188,7 +192,7 @@ export default function LeftSidebar() {
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     padding: '0 3px',
                   }}>
-                    {item.badge > 99 ? '99+' : item.badge}
+                    {(item.badge ?? 0) > 99 ? '99+' : item.badge}
                   </span>
                 )}
               </span>
@@ -224,12 +228,17 @@ export default function LeftSidebar() {
           }}
         >
           <span style={{
-            width: 18, height: 18, borderRadius: 6,
-            background: '#5e6ad2',
+            width: 20, height: 20,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             flexShrink: 0,
           }}>
-            <Plus style={{ width: 12, height: 12, color: '#fff' }} />
+            <span style={{
+              width: 18, height: 18, borderRadius: 6,
+              background: '#5e6ad2',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}>
+              <Plus style={{ width: 11, height: 11, color: '#fff' }} />
+            </span>
           </span>
           <span style={labelStyle}>Post a Job</span>
         </Link>
