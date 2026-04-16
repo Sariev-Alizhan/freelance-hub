@@ -413,19 +413,19 @@ export default function DashboardPage() {
               </div>
             )}
           </div>
-          <div className="flex items-center gap-2 flex-shrink-0">
+          <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
             {profile?.username && (
               <button
                 onClick={() => navigator.clipboard?.writeText(`${process.env.NEXT_PUBLIC_SITE_URL || 'https://www.freelance-hub.kz'}/u/${profile.username}`).catch(() => {})}
                 title={`/u/${profile.username}`}
-                className="flex items-center gap-1.5 px-2.5 sm:px-3 py-2 rounded-xl border border-subtle text-sm hover:bg-subtle transition-colors text-muted-foreground"
+                className="narrow-hide flex items-center gap-1.5 px-2.5 sm:px-3 py-2 rounded-xl border border-subtle text-sm hover:bg-subtle transition-colors text-muted-foreground"
               >
                 <Share2 className="h-3.5 w-3.5" />
                 <span className="hidden sm:inline">Share</span>
               </button>
             )}
             {profile?.username && (
-              <Link href={`/u/${profile.username}`} className="flex items-center gap-1.5 px-2.5 sm:px-3 py-2 rounded-xl border border-subtle text-sm hover:bg-subtle transition-colors text-muted-foreground">
+              <Link href={`/u/${profile.username}`} className="narrow-hide flex items-center gap-1.5 px-2.5 sm:px-3 py-2 rounded-xl border border-subtle text-sm hover:bg-subtle transition-colors text-muted-foreground">
                 <Eye className="h-3.5 w-3.5" />
                 <span className="hidden sm:inline">View</span>
               </Link>

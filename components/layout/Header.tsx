@@ -99,15 +99,16 @@ export default function Header() {
           </Link>
 
           {/* Center: search bar — tappable, goes to /orders */}
-          <Link href="/orders" style={{ flex: 1, textDecoration: 'none' }}>
+          <Link href="/orders" style={{ flex: 1, minWidth: 0, textDecoration: 'none' }}>
             <div style={{
               height: 36, borderRadius: 18,
               background: 'var(--fh-surface-2)',
               border: '1px solid var(--fh-border)',
               display: 'flex', alignItems: 'center', gap: 8, padding: '0 12px',
+              minWidth: 0,
             }}>
               <Search style={{ width: 15, height: 15, color: 'var(--fh-t4)', flexShrink: 0 }} />
-              <span style={{ fontSize: 14, color: 'var(--fh-t4)', letterSpacing: '-0.01em' }}>
+              <span style={{ fontSize: 14, color: 'var(--fh-t4)', letterSpacing: '-0.01em', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', minWidth: 0 }}>
                 Search orders, people…
               </span>
             </div>
@@ -157,15 +158,16 @@ export default function Header() {
         paddingTop: 'env(safe-area-inset-top)',
       }}
     >
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 52, padding: '0 16px' }}>
-        <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: 6, textDecoration: 'none' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 52, padding: '0 16px', gap: 8, minWidth: 0 }}>
+        <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: 6, textDecoration: 'none', minWidth: 0, flexShrink: 1 }}>
           <Logo size={22} showWordmark={false} />
-          <span style={{ fontSize: 17, fontWeight: 700, color: 'var(--fh-t1)', letterSpacing: '-0.02em' }}>FreelanceHub</span>
+          <span className="narrow-hide" style={{ fontSize: 17, fontWeight: 700, color: 'var(--fh-t1)', letterSpacing: '-0.02em', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>FreelanceHub</span>
         </Link>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0 }}>
           <button
             onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
             aria-label="Переключить тему"
+            className="narrow-hide"
             style={{
               width: 36, height: 36, flexShrink: 0,
               background: 'none', border: 'none', padding: 0,
@@ -176,15 +178,17 @@ export default function Header() {
             {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
           </button>
           <Link href="/auth/login" style={{
-            padding: '8px 14px', borderRadius: 99, fontSize: 13, fontWeight: 600,
+            padding: '8px 12px', borderRadius: 99, fontSize: 13, fontWeight: 600,
             color: 'var(--fh-t2)', background: 'var(--fh-surface-2)',
             border: '1px solid var(--fh-border)', textDecoration: 'none',
+            whiteSpace: 'nowrap',
           }}>
             Sign In
           </Link>
           <Link href="/auth/register" style={{
-            padding: '8px 14px', borderRadius: 99, fontSize: 13, fontWeight: 600,
+            padding: '8px 12px', borderRadius: 99, fontSize: 13, fontWeight: 600,
             color: '#fff', background: 'var(--fh-primary)', textDecoration: 'none',
+            whiteSpace: 'nowrap',
           }}>
             Get Started
           </Link>

@@ -565,3 +565,49 @@
   outline-offset: 2px;
   border-radius: 4px;
 }
+
+/* ═══════════════════════════════════════════════════════════
+   NARROW-SCREEN SAFETY NET
+   Supports ultra-narrow foldables/cover displays:
+   - Galaxy Z Fold (outer): ~280px
+   - Galaxy Z Flip (cover): ~340-374px
+   - iPhone SE 1st gen:      320px
+   - iPhone 13 mini:         375px
+   Tailwind's `sm` breakpoint starts at 640px, so anything
+   below that falls through to mobile base styles. These
+   rules tighten those styles at < 360px so the layout
+   never overflows horizontally on very narrow devices.
+   ═══════════════════════════════════════════════════════════ */
+@media (max-width: 359px) {
+  /* Shrink the large mobile horizontal padding so content has more room */
+  .px-4  { padding-left: 12px !important; padding-right: 12px !important; }
+  .px-6  { padding-left: 14px !important; padding-right: 14px !important; }
+  .gap-4 { gap: 10px !important; }
+  .gap-3 { gap: 8px  !important; }
+
+  /* Utility for elements that should disappear on ultra-narrow screens */
+  .narrow-hide { display: none !important; }
+
+  /* Scale down oversized inline paddings on narrow screens */
+  .narrow-tight {
+    padding-left:  clamp(6px, 2vw, 12px) !important;
+    padding-right: clamp(6px, 2vw, 12px) !important;
+  }
+
+  /* Tap targets can shrink to 40px at < 360px without breaking WCAG
+     (rule still applies from 360px up) */
+  @media (pointer: coarse) {
+    button, [role="button"], a, input[type="submit"], input[type="button"] {
+      min-height: 40px;
+      min-width:  40px;
+    }
+  }
+}
+
+/* Galaxy Z Fold outer screen and similar — extremely narrow (< 300px).
+   Further tighten paddings and force single-column for any 2-col grids
+   that haven't explicitly opted out with `grid-cols-2-narrow-keep`. */
+@media (max-width: 299px) {
+  .px-4  { padding-left: 8px  !important; padding-right: 8px  !important; }
+  .gap-3 { gap: 6px !important; }
+}

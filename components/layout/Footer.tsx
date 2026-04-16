@@ -53,7 +53,7 @@ export default function Footer() {
       <div style={{ height: 1, background: 'linear-gradient(90deg, transparent 0%, color-mix(in srgb, var(--fh-primary) 35%, transparent) 40%, color-mix(in srgb, var(--fh-primary) 35%, transparent) 60%, transparent 100%)' }} />
 
       {/* ── MOBILE footer — compact and clean ─────────────────── */}
-      <div className="md:hidden" style={{ padding: '20px 20px 16px' }}>
+      <div className="md:hidden" style={{ padding: 'clamp(14px, 5vw, 20px) clamp(12px, 5vw, 20px) 16px' }}>
         {/* Brand row */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
