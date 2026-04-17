@@ -22,6 +22,8 @@ import ProfileStickyActions from '@/components/profile/ProfileStickyActions'
 import ProfileOwnerActions from '@/components/profile/ProfileOwnerActions'
 import ProfileBadges from '@/components/profile/ProfileBadges'
 import ProfileHighlights from '@/components/profile/ProfileHighlights'
+import ProfileActivityHeatmap from '@/components/profile/ProfileActivityHeatmap'
+import SkillsWithEndorsements from '@/components/profile/SkillsWithEndorsements'
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.freelance-hub.kz'
 
@@ -178,14 +180,29 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
 
   // Follower/following counts (public, no auth required)
   const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
-  const [{ count: followersCount }, { count: followingCount }, { count: viewsWeek }] = await Promise.all([
+  const oneYearAgo   = new Date(Date.now() - 365 * 24 * 60 * 60 * 1000).toISOString()
+  const [
+    { count: followersCount },
+    { count: followingCount },
+    { count: viewsWeek },
+    { data: postRows },
+  ] = await Promise.all([
     db.from('follows').select('follower',  { count: 'exact', head: true }).eq('following', p.userId),
     db.from('follows').select('following', { count: 'exact', head: true }).eq('follower',  p.userId),
     p.isFreelancer
       ? db.from('profile_views').select('id', { count: 'exact', head: true })
           .eq('freelancer_id', p.userId).gte('created_at', sevenDaysAgo)
       : Promise.resolve({ count: 0 }),
+    db.from('feed_posts').select('created_at').eq('author_id', p.userId).gte('created_at', oneYearAgo),
   ])
+
+  // Bucket posts by day for activity heatmap
+  const activityCounts: Record<string, number> = {}
+  for (const r of (postRows ?? []) as Array<{ created_at: string }>) {
+    const key = r.created_at.slice(0, 10) // YYYY-MM-DD
+    activityCounts[key] = (activityCounts[key] ?? 0) + 1
+  }
+  const totalActivity = (postRows ?? []).length
 
   const category = p.category ? CATEGORIES.find(c => c.slug === p.category) : null
   const profileUrl = `${SITE_URL}/u/${username}`
@@ -242,18 +259,21 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
 
       {p.skills && p.skills.length > 0 && (
         <div style={{ padding: 16, borderRadius: 12, background: 'var(--fh-surface)', border: '1px solid var(--fh-border-2)' }}>
-          <h2 style={{ fontSize: 14, fontWeight: 590, color: 'var(--fh-t1)', marginBottom: 12 }}>Skills</h2>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-            {p.skills.map(s => (
-              <span key={s} style={{
-                padding: '5px 12px', borderRadius: 6, fontSize: 12, fontWeight: 510,
-                background: 'rgba(113,112,255,0.08)', color: '#7170ff',
-                border: '1px solid rgba(113,112,255,0.18)',
-              }}>{s}</span>
-            ))}
+          <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 12 }}>
+            <h2 style={{ fontSize: 14, fontWeight: 590, color: 'var(--fh-t1)' }}>Skills</h2>
+            {!isOwnProfile && (
+              <span style={{ fontSize: 11, color: 'var(--fh-t4)' }}>Tap + to endorse</span>
+            )}
           </div>
+          <SkillsWithEndorsements
+            skills={p.skills}
+            targetUserId={p.userId}
+            isOwnProfile={isOwnProfile}
+          />
         </div>
       )}
+
+      <ProfileActivityHeatmap counts={activityCounts} totalCount={totalActivity} />
 
       <div style={{ padding: 16, borderRadius: 12, background: 'var(--fh-surface)', border: '1px solid var(--fh-border-2)' }}>
         <ShareProfileSheet url={profileUrl} username={p.username} />
