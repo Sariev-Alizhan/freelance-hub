@@ -24,6 +24,8 @@ import ProfileBadges from '@/components/profile/ProfileBadges'
 import ProfileHighlights from '@/components/profile/ProfileHighlights'
 import ProfileActivityHeatmap from '@/components/profile/ProfileActivityHeatmap'
 import SkillsWithEndorsements from '@/components/profile/SkillsWithEndorsements'
+import ProfileProSection from '@/components/freelancers/ProfileProSection'
+import FounderCard from '@/components/freelancers/FounderCard'
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.freelance-hub.kz'
 
@@ -51,6 +53,18 @@ interface PageProfile {
   availability?: string
   languages?: string[]
   portfolio?: PortfolioItem[]
+  // Pro section fields (freelancer_profiles v6/v7)
+  headline?: string
+  portfolioWebsite?: string
+  githubUrl?: string
+  linkedinUrl?: string
+  resumeUrl?: string
+  resumeFilename?: string
+  telegramUrl?: string
+  instagramUrl?: string
+  twitterUrl?: string
+  youtubeUrl?: string
+  tiktokUrl?: string
 }
 
 async function getProfile(username: string): Promise<PageProfile | null> {
@@ -89,7 +103,10 @@ async function getProfile(username: string): Promise<PageProfile | null> {
       .select(`
         id, title, category, skills, level, rating, reviews_count,
         completed_orders, price_from, price_to, response_time,
-        is_verified, is_premium, premium_until, availability_status, languages
+        is_verified, is_premium, premium_until, availability_status, languages,
+        headline, portfolio_website, github_url, linkedin_url,
+        resume_url, resume_filename,
+        telegram_url, instagram_url, twitter_url, youtube_url, tiktok_url
       `)
       .eq('user_id', profile.id)
       .single()
@@ -132,6 +149,17 @@ async function getProfile(username: string): Promise<PageProfile | null> {
       availability:    fp.availability_status ?? 'open',
       languages:       fp.languages ?? [],
       portfolio,
+      headline:         fp.headline ?? undefined,
+      portfolioWebsite: fp.portfolio_website ?? undefined,
+      githubUrl:        fp.github_url ?? undefined,
+      linkedinUrl:      fp.linkedin_url ?? undefined,
+      resumeUrl:        fp.resume_url ?? undefined,
+      resumeFilename:   fp.resume_filename ?? undefined,
+      telegramUrl:      fp.telegram_url ?? undefined,
+      instagramUrl:     fp.instagram_url ?? undefined,
+      twitterUrl:       fp.twitter_url ?? undefined,
+      youtubeUrl:       fp.youtube_url ?? undefined,
+      tiktokUrl:        fp.tiktok_url ?? undefined,
     }
   } catch {
     return null
@@ -274,6 +302,29 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
       )}
 
       <ProfileActivityHeatmap counts={activityCounts} totalCount={totalActivity} />
+
+      {p.isFreelancer && (
+        p.headline || p.portfolioWebsite || p.githubUrl || p.linkedinUrl ||
+        p.resumeUrl || p.telegramUrl || p.instagramUrl ||
+        p.twitterUrl || p.youtubeUrl || p.tiktokUrl
+      ) && (
+        <ProfileProSection
+          userId={p.userId}
+          headline={p.headline}
+          portfolioWebsite={p.portfolioWebsite}
+          githubUrl={p.githubUrl}
+          linkedinUrl={p.linkedinUrl}
+          resumeUrl={p.resumeUrl}
+          resumeFilename={p.resumeFilename}
+          telegramUrl={p.telegramUrl}
+          instagramUrl={p.instagramUrl}
+          twitterUrl={p.twitterUrl}
+          youtubeUrl={p.youtubeUrl}
+          tiktokUrl={p.tiktokUrl}
+        />
+      )}
+
+      {process.env.FOUNDER_USER_ID === p.userId && <FounderCard />}
 
       <div style={{ padding: 16, borderRadius: 12, background: 'var(--fh-surface)', border: '1px solid var(--fh-border-2)' }}>
         <ShareProfileSheet url={profileUrl} username={p.username} />
