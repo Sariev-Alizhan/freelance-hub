@@ -1,7 +1,5 @@
 import type { Metadata } from 'next'
-import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
-import { createServerClient } from '@supabase/ssr'
 import { createClient } from '@supabase/supabase-js'
 import {
   Users, Briefcase, MessageSquare, TrendingUp,
@@ -13,6 +11,7 @@ import PaymentApproveButton from '@/components/admin/PaymentApproveButton'
 import CompanyReport from '@/components/admin/CompanyReport'
 import Link from 'next/link'
 import { isAdmin } from '@/lib/auth/isAdmin'
+import { getSessionUser } from '@/lib/auth/getSessionUser'
 
 export const metadata: Metadata = {
   title: 'Analytics — FreelanceHub',
@@ -26,17 +25,6 @@ function serviceClient() {
     process.env.SUPABASE_SERVICE_ROLE_KEY!,
     { auth: { persistSession: false } }
   )
-}
-
-async function getSessionUser() {
-  const cookieStore = await cookies()
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    { cookies: { getAll: () => cookieStore.getAll(), setAll: () => {} } }
-  )
-  const { data: { user } } = await supabase.auth.getUser()
-  return user
 }
 
 // ── Types ────────────────────────────────────────────────────
