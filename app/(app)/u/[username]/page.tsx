@@ -412,7 +412,12 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
           isFreelancer={p.isFreelancer}
           completionPct={completionPct}
           completionHref={isOwnProfile ? '/profile/setup' : undefined}
-          ownerActions={isOwnProfile ? <ProfileOwnerActions /> : undefined}
+          ownerActions={isOwnProfile
+            ? <ProfileOwnerActions
+                isFreelancer={p.isFreelancer}
+                initialAvailability={p.availability as 'open' | 'busy' | 'vacation' | undefined}
+              />
+            : undefined}
         />
 
         <ProfileStats

@@ -3,7 +3,7 @@ import { useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Settings, LogOut, Sun, Moon, Pencil, X } from 'lucide-react'
+import { Settings, LogOut, Sun, Moon, Pencil, X, Circle } from 'lucide-react'
 import RoleSwitcher from '@/components/layout/RoleSwitcher'
 import { useLang, LANG_LABELS, Lang } from '@/lib/context/LanguageContext'
 import { useCurrency } from '@/lib/context/CurrencyContext'
@@ -18,13 +18,52 @@ const CURRENCY_LABELS: Record<Currency, string> = {
   USDT: '₮', UAH: '₴', CNY: '¥', AED: 'د.إ', TRY: '₺',
 }
 
+type Availability = 'open' | 'busy' | 'vacation'
+const AVAILABILITY: Record<Availability, { label: string; dot: string; bg: string; border: string }> = {
+  open:     { label: 'Available',   dot: '#27a644', bg: 'rgba(39,166,68,0.06)',   border: 'rgba(39,166,68,0.25)'    },
+  busy:     { label: 'Busy',        dot: '#f59e0b', bg: 'rgba(245,158,11,0.06)',  border: 'rgba(245,158,11,0.25)'   },
+  vacation: { label: 'On vacation', dot: '#8a8f98', bg: 'rgba(138,143,152,0.06)', border: 'rgba(138,143,152,0.25)'  },
+}
+
+interface Props {
+  /** If true, show the Availability section in the sheet (freelancers only). */
+  isFreelancer?: boolean
+  /** Current availability for initial UI state. */
+  initialAvailability?: Availability
+}
+
 /** Own-profile only: gear button pinned to cover top-right → opens settings bottom sheet. */
-export default function ProfileOwnerActions() {
+export default function ProfileOwnerActions({ isFreelancer, initialAvailability }: Props = {}) {
   const [open, setOpen] = useState(false)
   const router = useRouter()
   const { lang, setLang } = useLang()
   const { currency, setCurrency } = useCurrency()
   const { theme, setTheme } = useTheme()
+  const [availability, setAvailability] = useState<Availability>(initialAvailability ?? 'open')
+  const [availSaving, setAvailSaving] = useState(false)
+
+  const saveAvailability = useCallback(async (next: Availability) => {
+    if (next === availability || availSaving) return
+    const prev = availability
+    setAvailability(next)
+    setAvailSaving(true)
+    try {
+      const supabase = createClient()
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const db = supabase as any
+      const { error } = await db
+        .from('freelancer_profiles')
+        .update({ availability_status: next })
+        .eq('user_id', user.id)
+      if (error) setAvailability(prev)
+    } catch {
+      setAvailability(prev)
+    } finally {
+      setAvailSaving(false)
+    }
+  }, [availability, availSaving])
 
   const signOut = useCallback(async () => {
     const supabase = createClient()
@@ -108,6 +147,36 @@ export default function ProfileOwnerActions() {
                   <X style={{ width: 16, height: 16 }} />
                 </button>
               </div>
+
+              {isFreelancer && (
+                <Section label="Status">
+                  <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                    {(Object.entries(AVAILABILITY) as [Availability, typeof AVAILABILITY['open']][]).map(([key, cfg]) => {
+                      const active = availability === key
+                      return (
+                        <button
+                          key={key}
+                          onClick={() => saveAvailability(key)}
+                          disabled={availSaving}
+                          style={{
+                            padding: '9px 14px', borderRadius: 10,
+                            fontSize: 13, fontWeight: 600,
+                            background: active ? cfg.bg : 'var(--fh-surface-2)',
+                            border: active ? `1px solid ${cfg.border}` : '1px solid transparent',
+                            color: active ? cfg.dot : 'var(--fh-t3)',
+                            display: 'inline-flex', alignItems: 'center', gap: 6,
+                            cursor: availSaving ? 'not-allowed' : 'pointer',
+                            opacity: availSaving ? 0.6 : 1,
+                          }}
+                        >
+                          <Circle style={{ width: 8, height: 8, fill: cfg.dot, color: cfg.dot }} />
+                          {cfg.label}
+                        </button>
+                      )
+                    })}
+                  </div>
+                </Section>
+              )}
 
               <Section label="Mode">
                 <RoleSwitcher variant="mobile" />

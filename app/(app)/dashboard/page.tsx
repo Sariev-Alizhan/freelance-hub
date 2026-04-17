@@ -3,26 +3,20 @@ import Link from 'next/link'
 import { useState } from 'react'
 import {
   Briefcase, ArrowRight, Sparkles, LogIn,
-  Heart, MessageSquare, TrendingUp,
+  Heart, MessageSquare, TrendingUp, ExternalLink,
 } from 'lucide-react'
 import { useUser } from '@/lib/hooks/useUser'
 import { useFavorites } from '@/lib/hooks/useFavorites'
 import { useDashboardData } from '@/lib/hooks/useDashboardData'
-import {
-  SkeletonStats, SkeletonProfileHeader, SkeletonDashboardOrder,
-} from '@/components/ui/Skeleton'
+import { SkeletonDashboardOrder } from '@/components/ui/Skeleton'
 import PortfolioManager from '@/components/dashboard/PortfolioManager'
 import SavedSearchesWidget from '@/components/dashboard/SavedSearchesWidget'
 import ReferralWidget from '@/components/dashboard/ReferralWidget'
 import TelegramWidget from '@/components/dashboard/TelegramWidget'
 import AnalyticsTab from '@/components/dashboard/AnalyticsTab'
 import FavoritesTab from '@/components/dashboard/FavoritesTab'
-import ProfileHeader from '@/components/dashboard/ProfileHeader'
-import AvailabilityToggle from '@/components/dashboard/AvailabilityToggle'
-import StatsGrid from '@/components/dashboard/StatsGrid'
 import ResponsesList from '@/components/dashboard/ResponsesList'
 import OrdersList from '@/components/dashboard/OrdersList'
-import CompletionCard from '@/components/dashboard/CompletionCard'
 
 type DashboardTab = 'freelancer' | 'client' | 'favorites' | 'portfolio' | 'analytics'
 
@@ -32,17 +26,18 @@ export default function DashboardPage() {
   const [tab, setTab] = useState<DashboardTab>('freelancer')
 
   const {
-    profile, fp, availability,
+    profile, fp,
     myOrders, myResponses, analytics,
-    profileLoading, ordersLoading, avatarUploading, availSaving, withdrawing,
-    uploadAvatar, saveAvailability, withdrawResponse,
+    ordersLoading, withdrawing,
+    withdrawResponse,
   } = useDashboardData({ user, tab })
 
   if (loading) {
     return (
-      <div className="page-shell page-shell--wide space-y-8">
-        <SkeletonProfileHeader />
-        <SkeletonStats />
+      <div className="page-shell page-shell--wide">
+        <div className="space-y-3">
+          {[0,1,2].map(i => <SkeletonDashboardOrder key={i} />)}
+        </div>
       </div>
     )
   }
@@ -69,33 +64,31 @@ export default function DashboardPage() {
     )
   }
 
-  const avatarUrl = profile?.avatar_url || user.user_metadata?.avatar_url || null
-  const completionItems = [
-    { label: 'Account created',  done: true },
-    { label: 'Profile photo',    done: !!avatarUrl },
-    { label: 'Name & bio',       done: !!(profile?.full_name && profile?.bio) },
-    { label: 'Specialization',   done: !!fp?.title },
-    { label: 'Skills',           done: (fp?.skills?.length ?? 0) >= 2 },
-  ]
-  const completionPct = Math.round((completionItems.filter(i => i.done).length / completionItems.length) * 100)
-
   return (
     <div className="page-shell page-shell--wide">
-      {profileLoading ? <SkeletonProfileHeader /> : (
-        <ProfileHeader
-          profile={profile}
-          fp={fp}
-          user={user}
-          avatarUploading={avatarUploading}
-          onUploadAvatar={uploadAvatar}
-        />
-      )}
-
-      {!profileLoading && fp && (
-        <AvailabilityToggle value={availability} saving={availSaving} onChange={saveAvailability} />
-      )}
-
-      {profileLoading ? <SkeletonStats /> : <StatsGrid fp={fp} />}
+      <div className="mb-5 sm:mb-6">
+        <h1 style={{
+          fontSize: 'clamp(20px, 3.5vw, 28px)', fontWeight: 510,
+          letterSpacing: '-0.03em', color: 'var(--fh-t1)', marginBottom: 2,
+        }}>
+          Operations
+        </h1>
+        <p style={{ fontSize: 13, color: 'var(--fh-t3)', marginBottom: 10 }}>
+          Responses, orders, portfolio and analytics — all for your account.
+        </p>
+        {profile?.username && (
+          <Link href={`/u/${profile.username}`}
+            className="inline-flex items-center gap-1.5 transition-all active:scale-[0.97]"
+            style={{
+              padding: '7px 12px', borderRadius: 8,
+              background: 'var(--fh-primary-muted)', border: '1px solid var(--fh-primary)',
+              fontSize: 12, fontWeight: 600, color: 'var(--fh-primary)',
+            }}>
+            <ExternalLink className="h-3.5 w-3.5" />
+            View my public profile
+          </Link>
+        )}
+      </div>
 
       <div className="flex gap-2 mb-6 border-b border-subtle overflow-x-auto">
         {(['freelancer', 'client', 'portfolio', 'favorites', ...(fp && analytics ? ['analytics'] : [])] as const).map((t) => (
@@ -180,8 +173,6 @@ export default function DashboardPage() {
 
           {profile?.username && <ReferralWidget username={profile.username} />}
           {fp && <TelegramWidget />}
-
-          <CompletionCard loading={profileLoading} items={completionItems} pct={completionPct} />
         </div>
       </div>
     </div>
