@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
@@ -23,7 +23,8 @@ import {
 } from '@/lib/hooks/useMessengerRealtime'
 import { useReactions } from '@/lib/hooks/useReactions'
 import { useAttachment } from '@/lib/hooks/useAttachment'
-import type { OtherUser, Conversation, Message } from './types'
+import { useConversationsData } from '@/lib/hooks/useConversationsData'
+import type { Message } from './types'
 import { formatTime, formatDate, isSameDay, humanSize } from './utils'
 import Avatar from './Avatar'
 import AttachmentBubble from './AttachmentBubble'
@@ -38,21 +39,32 @@ export default function MessengerPage() {
   const searchParams = useSearchParams()
   const openUserId = searchParams.get('open')
 
-  const [conversations, setConversations] = useState<Conversation[]>([])
-  const [activeId,      setActiveId]       = useState<string | null>(null)
-  const [messages,      setMessages]       = useState<Message[]>([])
-  const [text,          setText]           = useState('')
-  const [search,        setSearch]         = useState('')
-  const [convsLoading,  setConvsLoading]   = useState(true)
-  const [msgsLoading,   setMsgsLoading]    = useState(false)
-  const [sending,       setSending]        = useState(false)
-  const [showList,      setShowList]       = useState(true)
+  const [text,     setText]    = useState('')
+  const [search,   setSearch]  = useState('')
+  const [sending,  setSending] = useState(false)
+  const [showList, setShowList] = useState(true)
 
   // Reply-to
   const [replyTo, setReplyTo] = useState<{ id: string; text: string; name: string } | null>(null)
 
   // ── Message reactions ─────────────────────────────────────────────────────
   const { reactions, loadReactions, toggleReaction } = useReactions(user?.id)
+
+  // ── Conversations + messages data layer ───────────────────────────────────
+  const {
+    conversations, setConversations,
+    activeId, setActiveId,
+    activeIdRef,
+    messages, setMessages,
+    convsLoading, msgsLoading,
+    loadConversations,
+  } = useConversationsData({
+    userId: user?.id,
+    openUserId,
+    onAutoOpenedConversation: () => setShowList(false),
+    onMessagesLoaded: loadReactions,
+  })
+
   const [hoveredMsgId, setHoveredMsgId] = useState<string | null>(null)
   const [reactionPickerMsgId, setReactionPickerMsgId] = useState<string | null>(null)
   const [actionSheetMsgId,    setActionSheetMsgId]    = useState<string | null>(null)
@@ -72,7 +84,6 @@ export default function MessengerPage() {
 
   const msgsContainerRef = useRef<HTMLDivElement>(null)
   const inputRef         = useRef<HTMLTextAreaElement>(null)
-  const activeIdRef      = useRef<string | null>(null)
   const MAX_MSG_LEN      = 4000
 
   const activeConv = conversations.find(c => c.id === activeId) ?? null
@@ -98,111 +109,6 @@ export default function MessengerPage() {
     document.addEventListener('mousedown', onDown)
     return () => document.removeEventListener('mousedown', onDown)
   }, [reactionPickerMsgId])
-
-  useEffect(() => { activeIdRef.current = activeId }, [activeId])
-
-  // ── Load conversations ────────────────────────────────────────────────────
-
-  const loadConversations = useCallback(async () => {
-    if (!user) return
-    setConvsLoading(true)
-    try {
-      const { data } = await db
-        .from('conversations')
-        .select(`
-          id, participant_1, participant_2, last_message, last_message_at,
-          p1:profiles!conversations_participant_1_fkey(id, full_name, avatar_url, username, is_verified),
-          p2:profiles!conversations_participant_2_fkey(id, full_name, avatar_url, username, is_verified)
-        `)
-        .or(`participant_1.eq.${user.id},participant_2.eq.${user.id}`)
-        .order('last_message_at', { ascending: false })
-
-      if (data) {
-        const ids = data.map((c: { id: string }) => c.id)
-        const { data: unreadData } = await db
-          .from('messages')
-          .select('conversation_id')
-          .in('conversation_id', ids)
-          .neq('sender_id', user.id)
-          .eq('is_read', false)
-
-        const unreadMap: Record<string, number> = {}
-        for (const row of (unreadData ?? [])) {
-          unreadMap[row.conversation_id] = (unreadMap[row.conversation_id] ?? 0) + 1
-        }
-
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const convs: Conversation[] = data.map((c: any) => {
-          const isP1 = c.participant_1 === user.id
-          const otherRaw = isP1 ? c.p2 : c.p1
-          const other: OtherUser = Array.isArray(otherRaw) ? otherRaw[0] : otherRaw
-          return {
-            id: c.id,
-            participant_1: c.participant_1,
-            participant_2: c.participant_2,
-            last_message: c.last_message,
-            last_message_at: c.last_message_at,
-            other_user: other ?? { id: '', full_name: 'User', avatar_url: null },
-            unread: unreadMap[c.id] ?? 0,
-          }
-        })
-        setConversations(convs)
-      }
-    } finally {
-      setConvsLoading(false)
-    }
-  }, [user])
-
-  useEffect(() => { loadConversations() }, [loadConversations])
-
-  // ── Auto-open ?open=userId ────────────────────────────────────────────────
-
-  useEffect(() => {
-    if (!openUserId || !user || convsLoading) return
-    const existing = conversations.find(c => c.other_user.id === openUserId)
-    if (existing) { setActiveId(existing.id); setShowList(false); return }
-
-    async function createAndOpen() {
-      const [p1, p2] = [user!.id, openUserId!].sort()
-      const { data: found } = await db.from('conversations').select('id').eq('participant_1', p1).eq('participant_2', p2).maybeSingle()
-      if (found) { setActiveId(found.id); setShowList(false); await loadConversations(); return }
-      const { data: created, error } = await db.from('conversations').insert({ participant_1: p1, participant_2: p2 }).select('id').single()
-      if (error) return // failed to create conversation — user stays on list
-      if (created) { await loadConversations(); setActiveId(created.id); setShowList(false) }
-    }
-    createAndOpen()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [openUserId, user, convsLoading])
-
-  // ── Load messages ─────────────────────────────────────────────────────────
-
-  useEffect(() => {
-    if (!activeId) return
-    setMsgsLoading(true)
-    setMessages([])
-    loadReactions([])
-    db.from('messages').select('*').eq('conversation_id', activeId).order('created_at', { ascending: true })
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      .then(({ data }: any) => {
-        if (data) {
-          setMessages(data)
-          loadReactions(data.map((m: Message) => m.id))
-        }
-        setMsgsLoading(false)
-      })
-    if (user) {
-      // Supabase query builder is lazy — must .then() to actually fire the UPDATE.
-      // Without this, the realtime UPDATE never arrives at useUnreadMessages and
-      // the bell/message badge stays red after leaving the chat.
-      db.from('messages')
-        .update({ is_read: true })
-        .eq('conversation_id', activeId)
-        .neq('sender_id', user.id)
-        .eq('is_read', false)
-        .then(() => {})
-      setConversations(prev => prev.map(c => c.id === activeId ? { ...c, unread: 0 } : c))
-    }
-  }, [activeId])
 
   // ── Realtime (per-conversation channel, inbox, global presence) ─────────
 
