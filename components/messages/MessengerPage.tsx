@@ -1,12 +1,11 @@
 'use client'
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import Image from 'next/image'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import {
   Send, Search, ArrowLeft, MessageSquare, LogIn,
-  CheckCheck, Check, Loader2, Paperclip, X, FileText, Download, BadgeCheck, CornerUpLeft, Plus,
+  CheckCheck, Check, Loader2, Paperclip, X, FileText, BadgeCheck, CornerUpLeft, Plus,
 } from 'lucide-react'
 import EmojiPickerPopover, { FH_STICKER_SET } from './EmojiPickerPopover'
 import MessageActionsSheet, { QUICK_REACTIONS as QUICK_REACTIONS_6 } from './MessageActionsSheet'
@@ -16,136 +15,12 @@ import emojiData from '@emoji-mart/data'
 const InlineEmojiPicker = dynamic(() => import('@emoji-mart/react'), { ssr: false })
 import { createClient } from '@/lib/supabase/client'
 import { useUser } from '@/lib/hooks/useUser'
+import { useVisualViewport } from '@/lib/hooks/useVisualViewport'
 import { RealtimeChannel } from '@supabase/supabase-js'
-
-// ── Types ────────────────────────────────────────────────────────────────────
-
-interface OtherUser {
-  id: string
-  full_name: string | null
-  avatar_url: string | null
-  username: string | null
-  is_verified?: boolean | null
-}
-
-interface Conversation {
-  id: string
-  participant_1: string
-  participant_2: string
-  last_message: string | null
-  last_message_at: string | null
-  other_user: OtherUser
-  unread: number
-}
-
-interface Message {
-  id: string
-  conversation_id: string
-  sender_id: string
-  text: string
-  is_read: boolean
-  created_at: string
-  attachment_url?: string | null
-  attachment_type?: 'image' | 'file' | null
-  attachment_name?: string | null
-  reply_to_id?:   string | null
-  reply_to_text?: string | null
-  reply_to_name?: string | null
-}
-
-// ── Helpers ───────────────────────────────────────────────────────────────────
-
-function formatTime(iso: string) {
-  return new Date(iso).toLocaleTimeString('ru', { hour: '2-digit', minute: '2-digit' })
-}
-
-function formatDate(iso: string) {
-  const d = new Date(iso)
-  const today = new Date()
-  const yesterday = new Date(today)
-  yesterday.setDate(today.getDate() - 1)
-  if (d.toDateString() === today.toDateString()) return 'Today'
-  if (d.toDateString() === yesterday.toDateString()) return 'Yesterday'
-  return d.toLocaleDateString('en-US', { day: 'numeric', month: 'long' })
-}
-
-function isSameDay(a: string, b: string) {
-  return new Date(a).toDateString() === new Date(b).toDateString()
-}
-
-function humanSize(bytes: number) {
-  if (bytes < 1024) return `${bytes} B`
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`
-  return `${(bytes / 1024 / 1024).toFixed(1)} MB`
-}
-
-// ── Avatar ────────────────────────────────────────────────────────────────────
-
-function Avatar({ user, size = 40 }: { user: OtherUser; size?: number }) {
-  if (user.avatar_url) {
-    return (
-      <Image
-        src={user.avatar_url}
-        alt={user.full_name || 'User'}
-        width={size} height={size}
-        className="rounded-full object-cover flex-shrink-0"
-        style={{ width: size, height: size }}
-        unoptimized
-      />
-    )
-  }
-  const initials = (user.full_name || '?').split(' ').map((w: string) => w[0]).slice(0, 2).join('').toUpperCase()
-  return (
-    <div
-      className="rounded-full flex items-center justify-center flex-shrink-0 font-semibold text-white"
-      style={{ width: size, height: size, fontSize: size * 0.38, background: 'var(--fh-primary)' }}
-    >
-      {initials}
-    </div>
-  )
-}
-
-// ── AttachmentBubble ──────────────────────────────────────────────────────────
-
-function AttachmentBubble({ msg, isMine }: { msg: Message; isMine: boolean }) {
-  if (!msg.attachment_url) return null
-
-  if (msg.attachment_type === 'image') {
-    return (
-      <a href={msg.attachment_url} target="_blank" rel="noopener noreferrer" className="block mt-1">
-        <Image
-          src={msg.attachment_url}
-          alt={msg.attachment_name || 'image'}
-          width={220} height={160}
-          className="rounded-2xl object-cover"
-          style={{ maxHeight: 180, width: 'auto' }}
-          unoptimized
-        />
-      </a>
-    )
-  }
-
-  return (
-    <a
-      href={msg.attachment_url}
-      target="_blank"
-      rel="noopener noreferrer"
-      download={msg.attachment_name}
-      className="mt-1 flex items-center gap-2 px-3 py-2 rounded-2xl"
-      style={{
-        background: isMine ? 'rgba(255,255,255,0.15)' : 'var(--fh-surface-2)',
-        maxWidth: 220,
-        textDecoration: 'none',
-      }}
-    >
-      <FileText className="h-4 w-4 flex-shrink-0" style={{ color: isMine ? '#fff' : 'var(--fh-t3)' }} />
-      <span className="flex-1 min-w-0 truncate" style={{ fontSize: 12, color: isMine ? '#fff' : 'var(--fh-t2)', fontWeight: 510 }}>
-        {msg.attachment_name || 'File'}
-      </span>
-      <Download className="h-3.5 w-3.5 flex-shrink-0" style={{ color: isMine ? 'rgba(255,255,255,0.6)' : 'var(--fh-t4)' }} />
-    </a>
-  )
-}
+import type { OtherUser, Conversation, Message, ReactionMap } from './types'
+import { formatTime, formatDate, isSameDay, humanSize } from './utils'
+import Avatar from './Avatar'
+import AttachmentBubble from './AttachmentBubble'
 
 // ── Main ─────────────────────────────────────────────────────────────────────
 
@@ -178,7 +53,6 @@ export default function MessengerPage() {
 
   // ── Message reactions ─────────────────────────────────────────────────────
   // { messageId: { emoji: { count, mine } } }
-  type ReactionMap = Record<string, Record<string, { count: number; mine: boolean }>>
   const [reactions,    setReactions]    = useState<ReactionMap>({})
   const [hoveredMsgId, setHoveredMsgId] = useState<string | null>(null)
   const [reactionPickerMsgId, setReactionPickerMsgId] = useState<string | null>(null)
@@ -200,29 +74,7 @@ export default function MessengerPage() {
 
   const activeConv = conversations.find(c => c.id === activeId) ?? null
 
-  // iOS Safari doesn't shrink 100dvh when the soft keyboard opens — the
-  // compose bar stays at the original viewport bottom and gets covered.
-  // Mirror window.visualViewport.height into --fh-vvh so .messenger-height
-  // can lock to the *actually visible* area. No scrollIntoView needed —
-  // the container resizes itself, compose stays flush at the keyboard top.
-  const handleInputFocus = useCallback(() => {}, [])
-
-  useEffect(() => {
-    const vv = window.visualViewport
-    if (!vv) return
-    const root = document.documentElement
-    const update = () => {
-      root.style.setProperty('--fh-vvh', `${vv.height}px`)
-    }
-    update()
-    vv.addEventListener('resize', update)
-    vv.addEventListener('scroll', update)
-    return () => {
-      vv.removeEventListener('resize', update)
-      vv.removeEventListener('scroll', update)
-      root.style.removeProperty('--fh-vvh')
-    }
-  }, [])
+  useVisualViewport()
 
   // When a chat is open on mobile, flag html so BottomNav hides
   useEffect(() => {
@@ -1283,7 +1135,7 @@ export default function MessengerPage() {
                     display: 'block',
                     transition: 'border-color 0.15s',
                   }}
-                  onFocus={e => { e.currentTarget.style.borderColor = 'var(--fh-primary)'; handleInputFocus() }}
+                  onFocus={e => { e.currentTarget.style.borderColor = 'var(--fh-primary)' }}
                   onBlur={e => { e.currentTarget.style.borderColor = 'var(--fh-border)' }}
                 />
                 {text.length > MAX_MSG_LEN * 0.85 && (
