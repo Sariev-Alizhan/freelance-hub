@@ -3,7 +3,7 @@ import { useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Settings, LogOut, Sun, Moon, Pencil, X, Circle } from 'lucide-react'
+import { Settings, LogOut, Sun, Moon, Pencil, X, Circle, LayoutDashboard } from 'lucide-react'
 import RoleSwitcher from '@/components/layout/RoleSwitcher'
 import { useLang, LANG_LABELS, Lang } from '@/lib/context/LanguageContext'
 import { useCurrency } from '@/lib/context/CurrencyContext'
@@ -103,6 +103,23 @@ export default function ProfileOwnerActions({ isFreelancer, initialAvailability 
         }}
       >
         <Pencil style={{ width: 15, height: 15 }} strokeWidth={1.8} />
+      </Link>
+
+      <Link
+        href="/dashboard"
+        aria-label="Operations"
+        style={{
+          position: 'absolute', top: 12, right: 100, zIndex: 2,
+          height: 36, borderRadius: 10, padding: '0 12px',
+          background: 'rgba(0,0,0,0.32)', backdropFilter: 'blur(12px)',
+          border: '1px solid rgba(255,255,255,0.18)', color: '#fff',
+          display: 'flex', alignItems: 'center', gap: 6,
+          textDecoration: 'none', fontSize: 12, fontWeight: 600,
+          letterSpacing: '-0.01em',
+        }}
+      >
+        <LayoutDashboard style={{ width: 14, height: 14 }} strokeWidth={2} />
+        Operations
       </Link>
 
       <AnimatePresence>

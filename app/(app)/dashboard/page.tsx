@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { useState } from 'react'
 import {
   Briefcase, ArrowRight, Sparkles, LogIn,
-  Heart, MessageSquare, TrendingUp, ExternalLink,
+  Heart, MessageSquare, TrendingUp,
 } from 'lucide-react'
 import { useUser } from '@/lib/hooks/useUser'
 import { useFavorites } from '@/lib/hooks/useFavorites'
@@ -73,21 +73,9 @@ export default function DashboardPage() {
         }}>
           Operations
         </h1>
-        <p style={{ fontSize: 13, color: 'var(--fh-t3)', marginBottom: 10 }}>
+        <p style={{ fontSize: 13, color: 'var(--fh-t3)' }}>
           Responses, orders, portfolio and analytics — all for your account.
         </p>
-        {profile?.username && (
-          <Link href={`/u/${profile.username}`}
-            className="inline-flex items-center gap-1.5 transition-all active:scale-[0.97]"
-            style={{
-              padding: '7px 12px', borderRadius: 8,
-              background: 'var(--fh-primary-muted)', border: '1px solid var(--fh-primary)',
-              fontSize: 12, fontWeight: 600, color: 'var(--fh-primary)',
-            }}>
-            <ExternalLink className="h-3.5 w-3.5" />
-            View my public profile
-          </Link>
-        )}
       </div>
 
       <div className="flex gap-2 mb-6 border-b border-subtle overflow-x-auto">
