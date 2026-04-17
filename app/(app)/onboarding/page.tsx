@@ -39,7 +39,7 @@ export default function OnboardingPage() {
         body: JSON.stringify({ role, fullName: name.trim(), location: location.trim() || null }),
       })
 
-      router.push(role === 'freelancer' ? '/dashboard?onboarding=1' : '/orders?onboarding=1')
+      router.push('/feed?onboarding=1')
     } finally {
       setSaving(false)
     }

@@ -9,8 +9,8 @@ export async function GET(request: Request & { cookies?: { getAll(): { name: str
   const url    = new URL(request.url)
   const code   = url.searchParams.get('code')
   // Validate `next` to prevent open-redirect: must be a relative path starting with /
-  const rawNext = url.searchParams.get('next') ?? '/dashboard'
-  const next    = /^\/[a-zA-Z0-9/_\-?=&#]*$/.test(rawNext) ? rawNext : '/dashboard'
+  const rawNext = url.searchParams.get('next') ?? '/feed'
+  const next    = /^\/[a-zA-Z0-9/_\-?=&#]*$/.test(rawNext) ? rawNext : '/feed'
 
   if (!code) {
     return NextResponse.redirect(`${SITE_URL}/auth/login?error=auth_failed`)
