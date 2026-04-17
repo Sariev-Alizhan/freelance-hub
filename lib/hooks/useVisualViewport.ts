@@ -1,14 +1,11 @@
 import { useEffect } from 'react'
 
 /**
- * Mirrors `window.visualViewport` into two CSS custom properties:
- *   --fh-vvh      → current visible viewport height
- *   --fh-kb-offset → keyboard height (0 when the soft keyboard is down)
- *
- * With `viewport interactiveWidget: 'overlays-content'`, iOS Safari leaves
- * `100dvh` at the full window height when the soft keyboard opens. We pin
- * the compose bar above the keyboard using `--fh-kb-offset`, and pad the
- * messages list by the same amount so the latest message stays visible.
+ * iOS Safari keeps 100dvh at the original viewport height when the soft
+ * keyboard opens — so a flush-to-bottom compose bar ends up covered by the
+ * keyboard. This hook mirrors `window.visualViewport.height` into the CSS
+ * custom property `--fh-vvh` so layouts can lock to the *actually visible*
+ * area (`height: var(--fh-vvh, 100dvh)`).
  */
 export function useVisualViewport() {
   useEffect(() => {
@@ -16,9 +13,7 @@ export function useVisualViewport() {
     if (!vv) return
     const root = document.documentElement
     const update = () => {
-      const kb = Math.max(0, window.innerHeight - vv.height - vv.offsetTop)
       root.style.setProperty('--fh-vvh', `${vv.height}px`)
-      root.style.setProperty('--fh-kb-offset', `${kb}px`)
     }
     update()
     vv.addEventListener('resize', update)
@@ -27,7 +22,6 @@ export function useVisualViewport() {
       vv.removeEventListener('resize', update)
       vv.removeEventListener('scroll', update)
       root.style.removeProperty('--fh-vvh')
-      root.style.removeProperty('--fh-kb-offset')
     }
   }, [])
 }

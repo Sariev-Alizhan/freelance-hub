@@ -52,9 +52,8 @@ export default function MessagesList(props: {
     if (dist < 200 || messages.length <= 20) el.scrollTop = el.scrollHeight
   }, [messages])
 
-  // When the soft keyboard opens/closes, keep the latest message in view
-  // (the compose bar rides up via translate, so scroll position must shift
-  // to match the increased bottom padding).
+  // When the visible viewport resizes (soft keyboard opens/closes), keep the
+  // latest message in view by re-pinning to the bottom if the user was near it.
   useEffect(() => {
     const el = msgsContainerRef.current
     if (!el) return
@@ -82,11 +81,7 @@ export default function MessagesList(props: {
     <div
       ref={msgsContainerRef}
       className="flex-1 overflow-y-auto"
-      style={{
-        padding: '16px 16px 8px',
-        paddingBottom: 'calc(8px + var(--fh-kb-offset, 0px))',
-        transition: 'padding-bottom 0.15s ease',
-      }}
+      style={{ padding: '16px 16px 8px' }}
     >
       {msgsLoading ? (
         <div className="flex items-center justify-center h-full">

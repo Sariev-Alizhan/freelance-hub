@@ -500,12 +500,12 @@
 }
 
 /* Messenger fills full viewport on desktop (no header), minus header + safe-area on mobile.
-   With viewport `interactiveWidget: overlays-content`, 100dvh stays at the full
-   window height when the soft keyboard opens — the keyboard overlays the chat
-   without resizing the layout. ComposeBar rides up via `--fh-kb-offset`. */
-.messenger-height { height: 100dvh; }
+   --fh-vvh tracks `window.visualViewport.height` so the container shrinks to the
+   visible area when the iOS soft keyboard opens. ComposeBar at the bottom of the
+   flex column lands flush against the keyboard (no Safari chrome in between). */
+.messenger-height { height: var(--fh-vvh, 100dvh); }
 @media (max-width: 767px) {
-  .messenger-height { height: calc(100dvh - 52px - env(safe-area-inset-top, 0px)); }
+  .messenger-height { height: calc(var(--fh-vvh, 100dvh) - 52px - env(safe-area-inset-top, 0px)); }
 }
 
 /* Lock page scroll entirely when viewing the messenger — the messenger
