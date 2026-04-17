@@ -73,7 +73,7 @@ export default function PremiumSuccessPage() {
             }}
           >
             <Sparkles className="h-4 w-4" />
-            Go to Dashboard
+            Go to Operations
           </Link>
           <Link
             href="/orders"
@@ -94,7 +94,7 @@ export default function PremiumSuccessPage() {
         </div>
 
         <p style={{ fontSize: '12px', color: 'var(--fh-t4)', marginTop: '20px' }}>
-          Receipt sent to your email · Cancel anytime from dashboard
+          Receipt sent to your email · Cancel anytime from operations
         </p>
       </div>
     </div>

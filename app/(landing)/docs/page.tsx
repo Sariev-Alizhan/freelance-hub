@@ -11,7 +11,7 @@ const SECTIONS = [
     items: [
       { title: 'Creating an account', desc: 'Register as a freelancer or client via Google, GitHub, or email. Choose your role during onboarding.' },
       { title: 'Setting up your profile', desc: 'Add a photo, bio, location, skills, and portfolio. Freelancers should complete all fields to appear in search.' },
-      { title: 'Dashboard overview', desc: 'Your personal hub: active orders, responses, analytics, portfolio management, and account settings.' },
+      { title: 'Operations overview', desc: 'Your personal hub: active orders, responses, analytics, portfolio management, and account settings.' },
       { title: 'Verification & Premium', desc: 'Verified badge is granted by admins after profile review. Premium unlocks unlimited responses and priority listing.' },
     ],
   },

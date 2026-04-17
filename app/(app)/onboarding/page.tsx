@@ -389,7 +389,7 @@ export default function OnboardingPage() {
                 onMouseLeave={e => { e.currentTarget.style.background = '#5e6ad2' }}
               >
                 {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
-                {role === 'freelancer' ? 'Go to Dashboard' : 'Start Hiring'} <ArrowRight className="h-4 w-4" />
+                {role === 'freelancer' ? 'Go to Operations' : 'Start Hiring'} <ArrowRight className="h-4 w-4" />
               </button>
             </div>
           )}

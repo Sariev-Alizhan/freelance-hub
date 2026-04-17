@@ -422,7 +422,7 @@ export default function SecuritySettingsPage() {
           onMouseEnter={e => { e.currentTarget.style.color = 'var(--fh-t2)' }}
           onMouseLeave={e => { e.currentTarget.style.color = 'var(--fh-t4)' }}
         >
-          <ArrowLeft className="h-3.5 w-3.5" /> Личный кабинет
+          <ArrowLeft className="h-3.5 w-3.5" /> Операции
         </Link>
       </div>
 

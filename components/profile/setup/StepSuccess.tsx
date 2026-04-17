@@ -35,7 +35,7 @@ export default function StepSuccess() {
           onClick={() => router.push('/dashboard')}
           className="px-6 py-3 rounded-xl border border-subtle font-semibold hover:bg-subtle transition-colors"
         >
-          My dashboard
+          My operations
         </button>
       </div>
     </motion.div>

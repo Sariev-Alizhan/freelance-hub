@@ -50,7 +50,7 @@ export default function DashboardPage() {
         </div>
         <div className="text-center">
           <h1 className="text-2xl font-bold mb-2">Sign in to your account</h1>
-          <p className="text-muted-foreground">You need to be signed in to access your dashboard</p>
+          <p className="text-muted-foreground">You need to be signed in to access your operations</p>
         </div>
         <div className="flex gap-3">
           <Link href="/auth/login" className="px-6 py-3 rounded-xl bg-primary text-white font-semibold hover:bg-primary/90 transition-colors">

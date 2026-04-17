@@ -8,7 +8,7 @@ type LangKey = 'ru' | 'kz' | 'en'
 const PLATFORM = [
   { href: '/orders',      ru: 'Найти заказ',   kz: 'Тапсырыс',       en: 'Browse Orders'  },
   { href: '/freelancers', ru: 'Фрилансеры',    kz: 'Фрилансерлер',   en: 'Freelancers'    },
-  { href: '/dashboard',   ru: 'Кабинет',       kz: 'Кабинет',        en: 'Dashboard'      },
+  { href: '/dashboard',   ru: 'Операции',      kz: 'Операциялар',    en: 'Operations'     },
   { href: '/premium',     ru: 'Premium',        kz: 'Premium',         en: 'Premium'        },
   { href: '/updates',     ru: 'Обновления',    kz: 'Жаңартулар',     en: 'Updates'        },
   { href: '/vote',        ru: 'Голосование',   kz: 'Дауыс',          en: 'Vote'           },

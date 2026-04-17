@@ -16,7 +16,7 @@ import { useUnreadNotifications } from '@/lib/hooks/useUnreadNotifications'
 import { useUnreadMessages } from '@/lib/hooks/useUnreadMessages'
 
 const QUICK_LINKS = [
-  { href: '/dashboard',            icon: LayoutDashboard, label: 'Dashboard'  },
+  { href: '/dashboard',            icon: LayoutDashboard, label: 'Operations' },
   { href: '/ai-search',            icon: Search,          label: 'AI Search'  },
   { href: '/ai-assistant',         icon: Brain,           label: 'AI Chat'    },
   { href: '/freelancers',          icon: Users,           label: 'People'     },

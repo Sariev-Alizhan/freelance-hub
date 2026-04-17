@@ -33,7 +33,7 @@ export async function POST(req: Request) {
       if (codeExpired) {
         await sendTelegramMessage(chatId,
           '⏰ <b>Ссылка устарела.</b>\n\nСгенерируй новую в личном кабинете FreelanceHub.',
-          [[{ text: '🔑 Личный кабинет', url: `${SITE_URL}/dashboard` }]],
+          [[{ text: '🔑 Операции', url: `${SITE_URL}/dashboard` }]],
         )
         return Response.json({ ok: true })
       }
@@ -59,7 +59,7 @@ export async function POST(req: Request) {
       } else {
         await sendTelegramMessage(chatId,
           '❌ <b>Неверная или устаревшая ссылка.</b>\n\nСгенерируй новую в личном кабинете.',
-          [[{ text: '🔑 Личный кабинет', url: `${SITE_URL}/dashboard` }]],
+          [[{ text: '🔑 Операции', url: `${SITE_URL}/dashboard` }]],
         )
       }
       return Response.json({ ok: true })
@@ -153,7 +153,7 @@ export async function POST(req: Request) {
         await sendTelegramMessage(chatId,
           `✅ <b>Подключён как ${name}</b>\n\nТвой Telegram привязан к FreelanceHub. Уведомления активны.`,
           [
-            [{ text: '🏠 Личный кабинет', url: `${SITE_URL}/dashboard` }],
+            [{ text: '🏠 Операции', url: `${SITE_URL}/dashboard` }],
             [{ text: '🔍 Заказы', url: `${SITE_URL}/orders` }],
           ],
         )
