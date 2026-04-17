@@ -1,10 +1,19 @@
 'use client'
 import { useState, useMemo, useEffect, useCallback, useRef } from 'react'
 import { useSearchParams, useRouter, usePathname } from 'next/navigation'
-import { Search, Sparkles, X, Loader2, ChevronDown, SlidersHorizontal } from 'lucide-react'
+import {
+  Search, Sparkles, X, Loader2, ChevronDown, SlidersHorizontal,
+  Code2, Palette, BarChart2, Target, PenLine, Video, Bot, Brain, Blocks,
+} from 'lucide-react'
 import FreelancerCard from '@/components/freelancers/FreelancerCard'
+import FeaturedRow from '@/components/freelancers/FeaturedRow'
 import { CATEGORIES } from '@/lib/mock'
 import { Freelancer, CategorySlug, AvailabilityStatus } from '@/lib/types'
+
+// CATEGORIES.icon references Figma (not in lucide-react) — alias to Palette.
+const CATEGORY_ICONS: Record<string, React.ComponentType<{ className?: string; style?: React.CSSProperties }>> = {
+  Code2, Figma: Palette, BarChart2, Target, PenLine, Video, Bot, Brain, Blocks, Sparkles,
+}
 
 interface Filters {
   priceMin: string
@@ -62,6 +71,14 @@ export default function FreelancersClient({ realFreelancers = [], defaultCategor
   function handleSort(s: 'rating' | 'price' | 'orders') { setSortBy(s); setPage(1) }
 
   const allFreelancers = useMemo(() => realFreelancers, [realFreelancers])
+
+  const categoryCounts = useMemo<Record<string, number>>(() => {
+    const counts: Record<string, number> = { all: allFreelancers.length }
+    for (const f of allFreelancers) counts[f.category] = (counts[f.category] ?? 0) + 1
+    return counts
+  }, [allFreelancers])
+
+  const noSearchActive = !search && category === 'all' && !aiMode
 
   const activeFiltersCount = [
     filters.priceMin !== '', filters.priceMax !== '',
@@ -304,27 +321,51 @@ export default function FreelancersClient({ realFreelancers = [], defaultCategor
         </div>
       )}
 
-      {/* ── Category tabs — horizontal scroll on mobile ──────── */}
+      {/* ── Featured row (top picks) — only on default view ─── */}
+      {noSearchActive && !showFilters && activeFiltersCount === 0 && (
+        <FeaturedRow freelancers={allFreelancers} />
+      )}
+
+      {/* ── Category tabs with icons + counts ─────────────────── */}
       {!(aiMode && aiResults) && (
         <div className="overflow-x-auto scrollbar-none -mx-4 px-4 sm:mx-0 sm:px-0 mb-5 sm:mb-8">
           <div className="flex gap-1.5" style={{ width: 'max-content', paddingBottom: 4 }}>
-            {[{ slug: 'all' as const, label: 'All' }, ...CATEGORIES].map((cat) => {
+            {[{ slug: 'all' as const, label: 'All', icon: 'Sparkles', color: 'var(--fh-primary)' }, ...CATEGORIES].map((cat) => {
               const active = category === cat.slug
+              const Icon = CATEGORY_ICONS[cat.icon]
+              const count = categoryCounts[cat.slug] ?? 0
               return (
                 <button
                   key={cat.slug}
                   onClick={() => handleCategory(cat.slug)}
-                  className="flex-shrink-0 transition-all active:scale-[0.97]"
+                  className="flex-shrink-0 transition-all active:scale-[0.97] inline-flex items-center gap-1.5"
                   style={{
-                    padding: '6px 14px', borderRadius: '99px', fontSize: '13px',
-                    fontWeight: active ? 600 : 500,
+                    padding: '6px 12px 6px 10px', borderRadius: '99px', fontSize: '13px',
+                    fontWeight: active ? 600 : 510,
                     background: active ? 'var(--fh-primary)' : 'var(--fh-surface-2)',
                     border: active ? '1px solid transparent' : '1px solid var(--fh-border)',
                     color: active ? '#fff' : 'var(--fh-t3)',
                     whiteSpace: 'nowrap',
                   }}
                 >
+                  {Icon && (
+                    <Icon style={{
+                      width: 13, height: 13,
+                      color: active ? '#fff' : (cat.slug === 'all' ? 'var(--fh-t4)' : cat.color),
+                    }} />
+                  )}
                   {cat.label}
+                  {count > 0 && (
+                    <span style={{
+                      marginLeft: 1, padding: '1px 6px', borderRadius: 999,
+                      background: active ? 'rgba(255,255,255,0.22)' : 'var(--fh-surface)',
+                      fontSize: 10, fontWeight: 700,
+                      color: active ? '#fff' : 'var(--fh-t4)',
+                      lineHeight: 1.4,
+                    }}>
+                      {count}
+                    </span>
+                  )}
                 </button>
               )
             })}
