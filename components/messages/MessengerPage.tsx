@@ -21,7 +21,8 @@ import {
   useOnlinePresence,
   useInboxNotifications,
 } from '@/lib/hooks/useMessengerRealtime'
-import type { OtherUser, Conversation, Message, ReactionMap } from './types'
+import { useReactions } from '@/lib/hooks/useReactions'
+import type { OtherUser, Conversation, Message } from './types'
 import { formatTime, formatDate, isSameDay, humanSize } from './utils'
 import Avatar from './Avatar'
 import AttachmentBubble from './AttachmentBubble'
@@ -50,8 +51,7 @@ export default function MessengerPage() {
   const [replyTo, setReplyTo] = useState<{ id: string; text: string; name: string } | null>(null)
 
   // ── Message reactions ─────────────────────────────────────────────────────
-  // { messageId: { emoji: { count, mine } } }
-  const [reactions,    setReactions]    = useState<ReactionMap>({})
+  const { reactions, loadReactions, toggleReaction } = useReactions(user?.id)
   const [hoveredMsgId, setHoveredMsgId] = useState<string | null>(null)
   const [reactionPickerMsgId, setReactionPickerMsgId] = useState<string | null>(null)
   const [actionSheetMsgId,    setActionSheetMsgId]    = useState<string | null>(null)
@@ -174,7 +174,7 @@ export default function MessengerPage() {
     if (!activeId) return
     setMsgsLoading(true)
     setMessages([])
-    setReactions({})
+    loadReactions([])
     db.from('messages').select('*').eq('conversation_id', activeId).order('created_at', { ascending: true })
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .then(({ data }: any) => {
@@ -275,57 +275,6 @@ export default function MessengerPage() {
       setMessages(prev => prev.filter(m => m.id !== optimistic.id))
     } finally {
       setSending(false)
-    }
-  }
-
-  // ── Load reactions for a batch of message IDs ────────────────────────────
-  const loadReactions = useCallback(async (msgIds: string[]) => {
-    if (!msgIds.length) return
-    const { data } = await db
-      .from('message_reactions')
-      .select('message_id, emoji, user_id')
-      .in('message_id', msgIds)
-    const map: ReactionMap = {}
-    for (const r of (data ?? [])) {
-      if (!map[r.message_id]) map[r.message_id] = {}
-      if (!map[r.message_id][r.emoji]) map[r.message_id][r.emoji] = { count: 0, mine: false }
-      map[r.message_id][r.emoji].count++
-      if (r.user_id === user?.id) map[r.message_id][r.emoji].mine = true
-    }
-    setReactions(map)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user?.id])
-
-  // ── Toggle a reaction (optimistic) ────────────────────────────────────────
-  async function toggleReaction(messageId: string, emoji: string) {
-    if (!user) return
-    const cur = reactions[messageId]?.[emoji]
-    const isMine = cur?.mine ?? false
-
-    // Optimistic update
-    setReactions(prev => {
-      const msgR = { ...(prev[messageId] ?? {}) }
-      if (isMine) {
-        const newCount = (msgR[emoji]?.count ?? 1) - 1
-        if (newCount <= 0) {
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          const { [emoji]: _removed, ...rest } = msgR
-          return { ...prev, [messageId]: rest }
-        }
-        return { ...prev, [messageId]: { ...msgR, [emoji]: { count: newCount, mine: false } } }
-      }
-      return { ...prev, [messageId]: { ...msgR, [emoji]: { count: (msgR[emoji]?.count ?? 0) + 1, mine: true } } }
-    })
-
-    if (isMine) {
-      await db.from('message_reactions')
-        .delete()
-        .eq('message_id', messageId)
-        .eq('user_id', user.id)
-        .eq('emoji', emoji)
-    } else {
-      await db.from('message_reactions')
-        .upsert({ message_id: messageId, user_id: user.id, emoji })
     }
   }
 
