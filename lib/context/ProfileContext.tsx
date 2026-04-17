@@ -23,10 +23,11 @@ const ProfileContext = createContext<ProfileContextValue>({
 
 export function ProfileProvider({ children }: { children: React.ReactNode }) {
   const { user } = useUser()
+  const userId = user?.id
   const [profile, setProfile] = useState<ProfileSnapshot | null>(null)
 
   const fetchProfile = useCallback(async () => {
-    if (!user?.id) {
+    if (!userId) {
       setProfile(null)
       return
     }
@@ -34,13 +35,13 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
     const { data } = await supabase
       .from('profiles')
       .select('avatar_url, full_name, username, role')
-      .eq('id', user.id)
+      .eq('id', userId)
       .single()
     if (data) {
       const d = data as { avatar_url: string | null; full_name: string | null; username: string | null; role: 'client' | 'freelancer' }
       setProfile({ ...d, is_freelancer: d.role === 'freelancer' })
     }
-  }, [user?.id])
+  }, [userId])
 
   // Re-fetch whenever auth user changes (login / logout / navigation)
   useEffect(() => {

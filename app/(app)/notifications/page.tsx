@@ -147,6 +147,7 @@ function NotifRow({ notif, onRead, onDelete }: {
 
 export default function NotificationsPage() {
   const { user } = useUser()
+  const userId = user?.id
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [loading, setLoading] = useState(true)
   const [activeFilter, setActiveFilter] = useState<FilterTab>('all')
@@ -166,17 +167,17 @@ export default function NotificationsPage() {
   }, [notifications, activeFilter])
 
   const load = useCallback(async () => {
-    if (!user?.id) { setLoading(false); return }
+    if (!userId) { setLoading(false); return }
     setLoading(true)
     const { data } = await db
       .from('notifications')
       .select('*')
-      .eq('user_id', user.id)
+      .eq('user_id', userId)
       .order('created_at', { ascending: false })
       .limit(60)
     setNotifications(data ?? [])
     setLoading(false)
-  }, [user?.id, db])
+  }, [userId, db])
 
   useEffect(() => { load() }, [load])
 
@@ -185,30 +186,30 @@ export default function NotificationsPage() {
   // glance at what's new; the DB flip makes next-visit state correct and clears
   // the header bell badge.
   useEffect(() => {
-    if (!user?.id) return
+    if (!userId) return
     if (loading) return
     if (unreadCount === 0) return
     db.from('notifications')
       .update({ is_read: true })
-      .eq('user_id', user.id)
+      .eq('user_id', userId)
       .eq('is_read', false)
-  }, [user?.id, loading, unreadCount, db])
+  }, [userId, loading, unreadCount, db])
 
   // Realtime: append new notifications live
   useEffect(() => {
-    if (!user?.id) return
+    if (!userId) return
     let channel: RealtimeChannel | null = null
     channel = supabase
-      .channel(`notifs-page:${user.id}:${Date.now()}`)
+      .channel(`notifs-page:${userId}:${Date.now()}`)
       .on('postgres_changes', {
         event: 'INSERT', schema: 'public', table: 'notifications',
-        filter: `user_id=eq.${user.id}`,
+        filter: `user_id=eq.${userId}`,
       }, (payload: { new: Notification }) => {
         setNotifications(prev => [payload.new, ...prev])
       })
       .subscribe()
     return () => { if (channel) supabase.removeChannel(channel) }
-  }, [user?.id, supabase])
+  }, [userId, supabase])
 
   function markRead(id: string) {
     setNotifications(prev => prev.map(n => n.id === id ? { ...n, is_read: true } : n))

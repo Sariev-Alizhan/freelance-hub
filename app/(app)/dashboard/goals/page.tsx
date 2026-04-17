@@ -461,6 +461,7 @@ function AddBlockModal({ date, onClose, onSave }: {
 // ── Main Page ─────────────────────────────────────────────────────────────
 export default function GoalsPage() {
   const { user }     = useUser()
+  const userId       = user?.id
   const params           = useSearchParams()
   const presetGoal       = params.get('preset') ?? undefined
   const presetPeriod     = params.get('period') ?? undefined
@@ -478,14 +479,14 @@ export default function GoalsPage() {
   const [tab, setTab]             = useState<'goals' | 'calendar'>('goals')
 
   const load = useCallback(async () => {
-    if (!user?.id) { setLoading(false); return }
+    if (!userId) { setLoading(false); return }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const db = createClient() as any
     const [goalsRes, progressRes, blocksRes, premiumRes] = await Promise.all([
-      db.from('freelancer_goals').select('*').eq('user_id', user.id).eq('is_active', true).order('created_at', { ascending: false }),
-      db.from('goal_progress').select('goal_id, amount_earned, orders_completed, hours_logged').eq('user_id', user.id),
-      db.from('freelancer_schedule').select('*').eq('user_id', user.id).gte('date', weekDates(weekOffset - 1)[0]).lte('date', weekDates(weekOffset + 1)[6]),
-      db.from('freelancer_profiles').select('is_premium').eq('user_id', user.id).single(),
+      db.from('freelancer_goals').select('*').eq('user_id', userId).eq('is_active', true).order('created_at', { ascending: false }),
+      db.from('goal_progress').select('goal_id, amount_earned, orders_completed, hours_logged').eq('user_id', userId),
+      db.from('freelancer_schedule').select('*').eq('user_id', userId).gte('date', weekDates(weekOffset - 1)[0]).lte('date', weekDates(weekOffset + 1)[6]),
+      db.from('freelancer_profiles').select('is_premium').eq('user_id', userId).single(),
     ])
 
     if (premiumRes.data?.is_premium) setIsPremium(true)
@@ -501,7 +502,7 @@ export default function GoalsPage() {
       setGoals(goalsRes.data.map((g: Goal) => ({ ...g, progress: progressMap[g.id] ?? 0 })))
     }
     setLoading(false)
-  }, [user?.id, weekOffset])
+  }, [userId, weekOffset])
 
   useEffect(() => { load() }, [load])
 
