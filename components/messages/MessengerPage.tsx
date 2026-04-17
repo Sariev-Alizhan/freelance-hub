@@ -1097,34 +1097,35 @@ export default function MessengerPage() {
                               </div>
                             )}
 
-                            {/* Reaction pills — Instagram-style compact bubble overlapping the message */}
+                            {/* Reaction pills — circular bubble under the message */}
                             {hasReactions && (
                               <div
-                                className={`flex flex-wrap gap-0.5 ${isMine ? 'justify-end' : 'justify-start'}`}
-                                style={{ marginTop: -8, marginLeft: isMine ? 0 : 6, marginRight: isMine ? 6 : 0 }}
+                                className={`flex flex-wrap gap-1 ${isMine ? 'justify-end' : 'justify-start'}`}
+                                style={{ marginTop: -6, marginLeft: isMine ? 0 : 10, marginRight: isMine ? 10 : 0 }}
                               >
                                 {Object.entries(msgReactions).map(([emoji, { count, mine }]) => (
                                   <button
                                     key={emoji}
                                     onClick={() => toggleReaction(msg.id, emoji)}
                                     style={{
-                                      display: 'flex', alignItems: 'center', gap: 2,
-                                      padding: count > 1 ? '1px 6px 1px 4px' : 0,
-                                      minHeight: 18,
-                                      minWidth: 18,
+                                      display: 'inline-flex', alignItems: 'center',
+                                      gap: count > 1 ? 3 : 0,
+                                      padding: count > 1 ? '0 7px 0 5px' : 0,
+                                      height: 24,
+                                      minWidth: 24,
                                       justifyContent: 'center',
                                       borderRadius: 999,
-                                      fontSize: 10,
                                       border: `1px solid ${mine ? 'var(--fh-primary)' : 'var(--fh-border)'}`,
-                                      background: 'var(--fh-surface)',
+                                      background: mine ? 'var(--fh-primary-muted)' : 'var(--fh-surface-2)',
                                       cursor: 'pointer',
                                       fontWeight: 600,
                                       color: mine ? 'var(--fh-primary)' : 'var(--fh-t2)',
                                       lineHeight: 1,
+                                      boxShadow: '0 1px 2px rgba(0,0,0,0.06)',
                                     }}
                                   >
-                                    <span style={{ fontSize: 11, lineHeight: 1 }}>{emoji}</span>
-                                    {count > 1 && <span>{count}</span>}
+                                    <span style={{ fontSize: 13, lineHeight: 1 }}>{emoji}</span>
+                                    {count > 1 && <span style={{ fontSize: 11 }}>{count}</span>}
                                   </button>
                                 ))}
                               </div>

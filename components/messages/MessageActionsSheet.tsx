@@ -248,13 +248,24 @@ function FullEmojiSheet({ isDark, onEmoji, onClose }: FullProps) {
         <div style={{ width: 40, height: 4, borderRadius: 2, background: 'var(--fh-t4)', opacity: 0.35 }} />
       </div>
 
-      {/* Quick reactions row — "Your Reactions" */}
+      {/* "Your reactions" label */}
       <div
         style={{
-          padding: '6px 12px 10px',
+          padding: '0 16px 4px',
+          fontSize: 11, fontWeight: 600, letterSpacing: '0.04em',
+          color: 'var(--fh-t4)', textTransform: 'uppercase',
+          flexShrink: 0,
+        }}
+      >
+        Your reactions
+      </div>
+
+      {/* Quick reactions row */}
+      <div
+        style={{
+          padding: '4px 10px 10px',
           display: 'flex', alignItems: 'center',
           gap: 4, flexShrink: 0,
-          overflowX: 'auto',
         }}
       >
         {QUICK_REACTIONS.map(e => (
@@ -262,11 +273,15 @@ function FullEmojiSheet({ isDark, onEmoji, onClose }: FullProps) {
             key={e}
             onClick={() => onEmoji(e)}
             style={{
-              flex: 1, minWidth: 44, height: 44,
+              flex: 1, minWidth: 0, height: 44,
               background: 'transparent', border: 'none', cursor: 'pointer',
               fontSize: 28, lineHeight: 1, padding: 4,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
+              borderRadius: 12,
+              transition: 'background 0.12s',
             }}
+            onTouchStart={e => { (e.currentTarget as HTMLElement).style.background = 'var(--fh-surface-2)' }}
+            onTouchEnd={e => { (e.currentTarget as HTMLElement).style.background = 'transparent' }}
           >
             {e}
           </button>
@@ -275,8 +290,8 @@ function FullEmojiSheet({ isDark, onEmoji, onClose }: FullProps) {
 
       <div style={{ height: 1, background: 'var(--fh-sep)', flexShrink: 0 }} />
 
-      {/* Full emoji-mart picker (has built-in search + categories) */}
-      <div style={{ flex: 1, minHeight: 0, display: 'flex' }}>
+      {/* Full emoji-mart picker — must be block with explicit width for dynamicWidth to work */}
+      <div style={{ flex: 1, minHeight: 0, width: '100%', position: 'relative' }}>
         <EmojiMartPicker
           data={data}
           onEmojiSelect={(e: { native: string }) => onEmoji(e.native)}
@@ -286,7 +301,7 @@ function FullEmojiSheet({ isDark, onEmoji, onClose }: FullProps) {
           navPosition="bottom"
           searchPosition="sticky"
           dynamicWidth={true}
-          emojiSize={26}
+          emojiSize={24}
           emojiButtonSize={40}
           maxFrequentRows={2}
         />

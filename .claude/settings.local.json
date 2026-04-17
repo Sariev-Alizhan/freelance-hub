@@ -30,7 +30,8 @@
       "Bash(find /c/Users/Элит/Desktop/frilance/app -name \"*page.tsx\" -exec sh -c 'echo \"=== {} ===\"; head -5 \"$1\"' _ {} \\\\;)",
       "Bash(npm uninstall:*)",
       "Bash(echo \"EXIT:$?\")",
-      "WebFetch(domain:docs.lemonsqueezy.com)"
+      "WebFetch(domain:docs.lemonsqueezy.com)",
+      "Bash(npx next *)"
     ]
   }
 }

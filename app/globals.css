@@ -679,11 +679,16 @@ body.messenger-locked {
   min-width: 0;
 }
 
-/* Let emoji-mart's web component fill its flex container in the full-sheet */
+/* Let emoji-mart's web component fill its flex container in the full-sheet.
+   Key: explicit display:block + width 100% + height 100%. Avoid flex:1 on the
+   web component itself — it conflicts with emoji-mart's internal sizing. */
 em-emoji-picker {
+  display: block !important;
   width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0;
+  height: 100%;
   min-height: 0;
-  flex: 1;
 }
 
 /* Hide mobile bottom nav while a messenger chat is open */

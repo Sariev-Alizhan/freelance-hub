@@ -19,8 +19,9 @@ export async function GET(request: Request & { cookies?: { getAll(): { name: str
   // ── Build the redirect response FIRST, then set cookies ON IT ────────────
   // Critical: cookies() from next/headers does NOT propagate to a new NextResponse
   // object. We must use response.cookies.set() directly so the auth tokens
-  // survive the redirect to /dashboard.
-  const redirectResponse = NextResponse.redirect(`${SITE_URL}${next}`)
+  // survive the redirect to /welcome (which then bounces to /dashboard).
+  const welcomeUrl = `${SITE_URL}/welcome?next=${encodeURIComponent(next)}`
+  const redirectResponse = NextResponse.redirect(welcomeUrl)
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!.trim(),
@@ -92,9 +93,11 @@ export async function GET(request: Request & { cookies?: { getAll(): { name: str
       }).catch(() => {})
     }
 
-    // New user with no name at all → onboarding
+    // New user with no name at all → welcome then onboarding
     if (!profile?.full_name && !metaName) {
-      const onboardingResponse = NextResponse.redirect(`${SITE_URL}/onboarding`)
+      const onboardingResponse = NextResponse.redirect(
+        `${SITE_URL}/welcome?next=${encodeURIComponent('/onboarding')}`
+      )
       // Copy auth cookies to the onboarding redirect too
       redirectResponse.cookies.getAll().forEach(c => {
         onboardingResponse.cookies.set(c.name, c.value, {
