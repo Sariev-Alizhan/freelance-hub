@@ -207,6 +207,14 @@ export default function MessengerPage() {
     }, 300)
   }, [])
 
+  // When a chat is open on mobile, flag html so BottomNav hides
+  useEffect(() => {
+    const el = document.documentElement
+    if (!showList) el.setAttribute('data-chat-open', 'true')
+    else el.removeAttribute('data-chat-open')
+    return () => el.removeAttribute('data-chat-open')
+  }, [showList])
+
   // Click-outside to close the inline "+" reaction picker (desktop)
   useEffect(() => {
     if (!reactionPickerMsgId) return
@@ -652,7 +660,7 @@ export default function MessengerPage() {
         </div>
 
         {/* Conversation items */}
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto messenger-convs-scroll">
           {convsLoading ? (
             <div className="flex items-center justify-center py-12">
               <Loader2 className="h-5 w-5 animate-spin" style={{ color: 'var(--fh-t4)' }} />

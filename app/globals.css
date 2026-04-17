@@ -685,3 +685,14 @@ em-emoji-picker {
   min-height: 0;
   flex: 1;
 }
+
+/* Hide mobile bottom nav while a messenger chat is open */
+html[data-chat-open="true"] .bottom-nav { display: none !important; }
+
+/* On mobile, the conversation list should leave room for the bottom nav
+   when the chat is NOT open (i.e. the list view is visible). */
+@media (max-width: 767px) {
+  html:not([data-chat-open="true"]) .messenger-convs-scroll {
+    padding-bottom: calc(52px + env(safe-area-inset-bottom, 0px));
+  }
+}

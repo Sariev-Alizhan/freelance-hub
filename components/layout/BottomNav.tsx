@@ -59,7 +59,7 @@ export default function BottomNav() {
   const unreadNotifs = useUnreadNotifications()
   const unreadMsgs = useUnreadMessages()
 
-  const hidden = pathname.startsWith('/auth') || pathname.startsWith('/messages')
+  const hidden = pathname.startsWith('/auth')
   if (hidden) return null
 
   const avatarUrl   = profile?.avatar_url || user?.user_metadata?.avatar_url
@@ -83,7 +83,7 @@ export default function BottomNav() {
     <>
       {/* ── Bottom navigation bar ─────────────────────────────────── */}
       <nav
-        className="md:hidden fixed bottom-0 left-0 right-0 z-40"
+        className="bottom-nav md:hidden fixed bottom-0 left-0 right-0 z-40"
         style={{
           background: 'var(--fh-nav-bg, var(--fh-header-bg))',
           borderTop: '0.5px solid var(--fh-sep)',
