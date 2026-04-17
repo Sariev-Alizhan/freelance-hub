@@ -48,7 +48,7 @@ export default function PageProgress() {
     }
     document.addEventListener('click', onLinkClick, true)
     return () => document.removeEventListener('click', onLinkClick, true)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+   
   }, [pathname])
 
   useEffect(() => {

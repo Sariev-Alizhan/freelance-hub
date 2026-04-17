@@ -349,7 +349,7 @@ export default function MessengerPage() {
           setMessages(prev => prev.map(m => m.id === updated.id ? { ...m, is_read: updated.is_read } : m))
         })
       // Presence — typing + online
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+       
       .on('presence', { event: 'sync' }, () => {
         const state = channel.presenceState() as Record<string, { userId: string; typing: boolean }[]>
         const others = Object.values(state).flat().filter(p => p.userId !== user.id)

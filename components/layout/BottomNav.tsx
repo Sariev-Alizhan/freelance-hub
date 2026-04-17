@@ -59,12 +59,6 @@ export default function BottomNav() {
   const unreadNotifs = useUnreadNotifications()
   const unreadMsgs = useUnreadMessages()
 
-  const hidden = pathname.startsWith('/auth')
-  if (hidden) return null
-
-  const avatarUrl   = profile?.avatar_url || user?.user_metadata?.avatar_url
-  const displayName = profile?.full_name || user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Аккаунт'
-
   const signOut = useCallback(async () => {
     const supabase = createClient()
     await supabase.auth.signOut()
@@ -78,6 +72,12 @@ export default function BottomNav() {
     if (tab.matchPrefix === '/feed') return pathname === '/feed' || pathname === '/'
     return !!tab.matchPrefix && pathname.startsWith(tab.matchPrefix)
   }, [pathname])
+
+  const hidden = pathname.startsWith('/auth')
+  if (hidden) return null
+
+  const avatarUrl   = profile?.avatar_url || user?.user_metadata?.avatar_url
+  const displayName = profile?.full_name || user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Аккаунт'
 
   return (
     <>

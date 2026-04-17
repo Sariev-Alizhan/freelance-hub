@@ -76,7 +76,7 @@ function placeBlock(grid: Grid, block: Block, row: number, col: number): Grid {
 }
 
 function clearLines(grid: Grid): { grid: Grid; cleared: number } {
-  let ng = grid.map(r => [...r])
+  const ng = grid.map(r => [...r])
   let cleared = 0
 
   // Full rows
