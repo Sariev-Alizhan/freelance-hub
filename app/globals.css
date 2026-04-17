@@ -533,6 +533,10 @@ body.messenger-locked {
 :root { --feed-sticky-top: 0px; }
 @media (max-width: 767px) { :root { --feed-sticky-top: 52px; } }
 
+/* Mobile-only sticky action bar on profile (shown above bottom nav) */
+.profile-sticky-actions { display: none; }
+@media (max-width: 767px) { .profile-sticky-actions { display: flex; } }
+
 /* Typing indicator animated dots */
 .typing-dots { display: inline-flex; align-items: center; gap: 3px; margin-right: 2px; }
 .typing-dots span {
