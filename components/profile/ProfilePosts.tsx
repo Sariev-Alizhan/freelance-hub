@@ -1,6 +1,10 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { FileText } from 'lucide-react'
+import { useUser } from '@/lib/hooks/useUser'
+import { useProfile } from '@/lib/context/ProfileContext'
+import ComposePost from '@/components/feed/ComposePost'
+import type { UserPost } from '@/components/feed/types'
 
 interface Post {
   id: string
@@ -17,9 +21,11 @@ function timeAgo(iso: string) {
   return `${Math.floor(s / 86400)}d ago`
 }
 
-export default function ProfilePosts({ userId }: { userId: string }) {
+export default function ProfilePosts({ userId, isOwner }: { userId: string; isOwner?: boolean }) {
   const [posts,   setPosts]   = useState<Post[]>([])
   const [loading, setLoading] = useState(true)
+  const { user }    = useUser()
+  const { profile } = useProfile()
 
   useEffect(() => {
     fetch(`/api/feed/posts?user_id=${userId}&limit=20`)
@@ -28,14 +34,11 @@ export default function ProfilePosts({ userId }: { userId: string }) {
       .catch(() => setLoading(false))
   }, [userId])
 
-  if (loading) return (
-    <div className="space-y-3 mt-4">
-      {[0, 1, 2].map(i => (
-        <div key={i} className="animate-pulse rounded-2xl h-24"
-          style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border)' }} />
-      ))}
-    </div>
-  )
+  function prependPost(p: UserPost) {
+    setPosts(prev => [{
+      id: p.id, content: p.content, tags: p.tags ?? [], created_at: p.created_at,
+    }, ...prev])
+  }
 
   return (
     <div style={{
@@ -44,10 +47,25 @@ export default function ProfilePosts({ userId }: { userId: string }) {
     }}>
       <h2 style={{ fontSize: 14, fontWeight: 590, color: 'var(--fh-t1)', marginBottom: 14 }}>Posts</h2>
 
-      {posts.length === 0 ? (
+      {isOwner && user && (
+        <div style={{ marginBottom: 14 }}>
+          <ComposePost user={user} profile={profile} onPost={prependPost} />
+        </div>
+      )}
+
+      {loading ? (
+        <div className="space-y-3">
+          {[0, 1, 2].map(i => (
+            <div key={i} className="animate-pulse rounded-xl h-20"
+              style={{ background: 'var(--fh-surface-2)', border: '1px solid var(--fh-sep)' }} />
+          ))}
+        </div>
+      ) : posts.length === 0 ? (
         <div className="flex flex-col items-center py-8 gap-2 text-center">
           <FileText className="h-7 w-7" style={{ color: 'var(--fh-t4)', opacity: 0.3 }} />
-          <p style={{ fontSize: 13, color: 'var(--fh-t4)' }}>No posts yet</p>
+          <p style={{ fontSize: 13, color: 'var(--fh-t4)' }}>
+            {isOwner ? 'Share your first post above' : 'No posts yet'}
+          </p>
         </div>
       ) : (
         <div className="space-y-3">

@@ -12,7 +12,6 @@ import PostCard from '@/components/feed/PostCard'
 import UpdateCard from '@/components/feed/UpdateCard'
 import ReleaseCard from '@/components/feed/ReleaseCard'
 import EditorCard from '@/components/feed/EditorCard'
-import ComposePost from '@/components/feed/ComposePost'
 
 export default function FeedPage() {
   const { user } = useUser()
@@ -23,7 +22,7 @@ export default function FeedPage() {
 
   const {
     loading, refreshing, load,
-    handleReact, handleNewPost, handleDeletePost,
+    handleReact, handleDeletePost,
     getR, feedItems,
   } = useFeedData({ user, query })
 
@@ -56,7 +55,6 @@ export default function FeedPage() {
           </div>
         </div>
         {!query && <div style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border)', borderRadius: 18, padding: '4px 12px', marginBottom: 12, overflow: 'hidden' }}><StoriesBar currentUserId={user?.id} /></div>}
-        {!query && <ComposePost user={user} profile={profile} onPost={handleNewPost} />}
         {loading ? <div className="space-y-3">{[...Array(6)].map((_, i) => <div key={i} className="rounded-2xl animate-pulse" style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border)', height: 140 }} />)}</div> : feedItems.length === 0 ? <div className="flex flex-col items-center justify-center py-20 gap-3 text-center"><Search className="h-8 w-8" style={{ color: 'var(--fh-t4)', opacity: 0.3 }} /><p style={{ fontSize: 14, color: 'var(--fh-t4)' }}>Ничего не найдено</p><button onClick={() => { setSearch(''); setQuery('') }} style={{ fontSize: 13, color: 'var(--fh-primary)', background: 'none', border: 'none', cursor: 'pointer' }}>Очистить</button></div> : <div className="space-y-3">{feedItems.map((item) => { if (item.kind === 'update') return <UpdateCard key="update" reactions={getR(`update-v${CURRENT_RELEASE.version}`)} onReact={handleReact} user={user} profile={profile} />; if (item.kind === 'release') return <ReleaseCard key={`rel-${item.data.version}`} release={item.data} reactions={getR(`rel-${item.data.version}`)} onReact={handleReact} user={user} profile={profile} />; if (item.kind === 'editor') return <EditorCard key={`ed-${item.data.id}`} post={item.data} reactions={getR(`ed-${item.data.id}`)} onReact={handleReact} user={user} profile={profile} />; if (item.kind === 'post') return <PostCard key={item.data.id} post={item.data} reactions={getR(item.data.id)} onReact={handleReact} user={user} profile={profile} onDelete={handleDeletePost} />; return <NewsCard key={item.data.id} item={item.data} reactions={getR(item.data.id)} onReact={handleReact} user={user} profile={profile} /> })}</div>}
         <div className="h-8" />
       </div>
@@ -78,8 +76,6 @@ export default function FeedPage() {
             </div>
           </div>
         )}
-
-        {!query && <ComposePost user={user} profile={profile} onPost={handleNewPost} mobile />}
 
         {loading ? (
           <div>

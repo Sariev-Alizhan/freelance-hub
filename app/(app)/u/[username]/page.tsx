@@ -367,7 +367,7 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
           )}
 
           {/* User posts */}
-          <ProfilePosts userId={p.userId} />
+          <ProfilePosts userId={p.userId} isOwner={isOwnProfile} />
         </div>
 
         {/* ── Sidebar ──────────────────────────────────────────── */}
