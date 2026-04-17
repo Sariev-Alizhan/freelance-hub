@@ -10,7 +10,7 @@ import { createClient } from '@/lib/supabase/server'
 import { CATEGORIES } from '@/lib/mock/categories'
 import PriceDisplay from '@/components/shared/PriceDisplay'
 import ReviewsSection from '@/components/shared/ReviewsSection'
-import ShareProfileButton from '@/components/shared/ShareProfileButton'
+import ShareProfileSheet from '@/components/profile/ShareProfileSheet'
 import { PortfolioItem } from '@/lib/types'
 import ProfileViewLogger from '@/components/shared/ProfileViewLogger'
 import FollowButton from '@/components/profile/FollowButton'
@@ -20,6 +20,8 @@ import ProfileStats from '@/components/profile/ProfileStats'
 import ProfileTabs from '@/components/profile/ProfileTabs'
 import ProfileStickyActions from '@/components/profile/ProfileStickyActions'
 import ProfileOwnerActions from '@/components/profile/ProfileOwnerActions'
+import ProfileBadges from '@/components/profile/ProfileBadges'
+import ProfileHighlights from '@/components/profile/ProfileHighlights'
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.freelance-hub.kz'
 
@@ -175,9 +177,14 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
   const isOwnProfile = user?.id === p.userId
 
   // Follower/following counts (public, no auth required)
-  const [{ count: followersCount }, { count: followingCount }] = await Promise.all([
+  const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
+  const [{ count: followersCount }, { count: followingCount }, { count: viewsWeek }] = await Promise.all([
     db.from('follows').select('follower',  { count: 'exact', head: true }).eq('following', p.userId),
     db.from('follows').select('following', { count: 'exact', head: true }).eq('follower',  p.userId),
+    p.isFreelancer
+      ? db.from('profile_views').select('id', { count: 'exact', head: true })
+          .eq('freelancer_id', p.userId).gte('created_at', sevenDaysAgo)
+      : Promise.resolve({ count: 0 }),
   ])
 
   const category = p.category ? CATEGORIES.find(c => c.slug === p.category) : null
@@ -249,7 +256,7 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
       )}
 
       <div style={{ padding: 16, borderRadius: 12, background: 'var(--fh-surface)', border: '1px solid var(--fh-border-2)' }}>
-        <ShareProfileButton url={profileUrl} username={p.username} />
+        <ShareProfileSheet url={profileUrl} username={p.username} />
       </div>
     </div>
   )
@@ -344,8 +351,24 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
           completedOrders={p.completedOrders}
           rating={p.rating}
           reviewsCount={p.reviewsCount}
+          viewsWeek={viewsWeek ?? 0}
           isFreelancer={p.isFreelancer}
         />
+
+        <ProfileBadges
+          isVerified={p.isVerified}
+          isPremium={p.isPremium}
+          rating={p.rating}
+          reviewsCount={p.reviewsCount}
+          completedOrders={p.completedOrders}
+          responseTime={p.responseTime}
+          availability={p.availability}
+          isFreelancer={p.isFreelancer}
+        />
+
+        {p.portfolio && p.portfolio.length > 0 && (
+          <ProfileHighlights items={p.portfolio} />
+        )}
 
         {/* Inline desktop action bar — only for other users (own sees gear/pencil on cover) */}
         {!isOwnProfile && (

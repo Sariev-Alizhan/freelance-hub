@@ -7,6 +7,7 @@ export interface ProfileStatsProps {
   completedOrders?: number
   rating?:         number
   reviewsCount?:   number
+  viewsWeek?:      number
   isFreelancer:    boolean
 }
 
@@ -27,6 +28,9 @@ export default function ProfileStats(p: ProfileStatsProps) {
       value: (p.reviewsCount ?? 0) > 0 ? (p.rating?.toFixed(1) ?? '—') : '—',
       label: 'rating',
     })
+  }
+  if (typeof p.viewsWeek === 'number' && p.viewsWeek > 0) {
+    stats.push({ value: p.viewsWeek, label: 'views / 7d' })
   }
 
   return (
