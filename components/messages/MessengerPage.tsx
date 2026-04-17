@@ -22,6 +22,7 @@ import {
   useInboxNotifications,
 } from '@/lib/hooks/useMessengerRealtime'
 import { useReactions } from '@/lib/hooks/useReactions'
+import { useAttachment } from '@/lib/hooks/useAttachment'
 import type { OtherUser, Conversation, Message } from './types'
 import { formatTime, formatDate, isSameDay, humanSize } from './utils'
 import Avatar from './Avatar'
@@ -59,13 +60,18 @@ export default function MessengerPage() {
   const QUICK_REACTIONS = useMemo(() => QUICK_REACTIONS_6, [])
   const longPressTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  const [attachment,     setAttachment]    = useState<File | null>(null)
-  const [attachPreview,  setAttachPreview] = useState<string | null>(null)
-  const [uploadProgress, setUploadProgress] = useState<number | null>(null)
+  const {
+    attachment,
+    attachPreview,
+    uploadProgress,
+    fileInputRef,
+    handleFileSelect,
+    clearAttachment,
+    uploadAttachment,
+  } = useAttachment()
 
   const msgsContainerRef = useRef<HTMLDivElement>(null)
   const inputRef         = useRef<HTMLTextAreaElement>(null)
-  const fileInputRef     = useRef<HTMLInputElement>(null)
   const activeIdRef      = useRef<string | null>(null)
   const MAX_MSG_LEN      = 4000
 
@@ -223,24 +229,6 @@ export default function MessengerPage() {
     if (dist < 200 || messages.length <= 20) el.scrollTop = el.scrollHeight
   }, [messages])
 
-  // ── File attachment ───────────────────────────────────────────────────────
-
-  function handleFileSelect(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0]
-    if (!file) return
-    setAttachment(file)
-    if (file.type.startsWith('image/')) {
-      const reader = new FileReader()
-      reader.onload = ev => setAttachPreview(ev.target?.result as string)
-      reader.readAsDataURL(file)
-    } else {
-      setAttachPreview(null)
-    }
-    e.target.value = ''
-  }
-
-  function clearAttachment() { setAttachment(null); setAttachPreview(null); setUploadProgress(null) }
-
   // ── Emoji / sticker helpers ────────────────────────────────────────────────
 
   function insertEmoji(emoji: string) {
@@ -294,23 +282,10 @@ export default function MessengerPage() {
     setReplyTo(null)
     setSending(true)
 
-    let attachmentUrl: string | null = null
-    let attachmentType: 'image' | 'file' | null = null
-    let attachmentName: string | null = null
-
-    if (attachment) {
-      setUploadProgress(0)
-      const path = `${user.id}/${Date.now()}_${attachment.name}`
-      const { data: upData, error: upErr } = await supabase.storage.from('chat-attachments').upload(path, attachment, { upsert: false })
-      if (!upErr && upData) {
-        const { data: urlData } = supabase.storage.from('chat-attachments').getPublicUrl(path)
-        attachmentUrl = urlData.publicUrl
-        attachmentType = attachment.type.startsWith('image/') ? 'image' : 'file'
-        attachmentName = attachment.name
-      }
-      setUploadProgress(null)
-      clearAttachment()
-    }
+    const uploaded = attachment ? await uploadAttachment(user.id) : null
+    const attachmentUrl  = uploaded?.url  ?? null
+    const attachmentType = uploaded?.type ?? null
+    const attachmentName = uploaded?.name ?? null
 
     const optimistic: Message = {
       id: crypto.randomUUID(), conversation_id: activeId, sender_id: user.id,
