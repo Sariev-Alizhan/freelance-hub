@@ -48,5 +48,9 @@ obsidian/**/.obsidian/graph.json
 obsidian/**/.obsidian/cache
 obsidian/**/.obsidian/appearance.json
 obsidian/**/.trash/
+
+# supabase CLI — local project link state (personal, не коммитим)
+supabase/.temp/
+supabase/.branches/
 # Added by code-review-graph
 .code-review-graph/
