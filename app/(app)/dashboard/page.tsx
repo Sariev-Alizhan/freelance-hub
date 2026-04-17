@@ -6,7 +6,7 @@ import {
   Briefcase, Star, DollarSign, Clock, CheckCircle,
   ArrowRight, Sparkles, User, LogIn, MapPin,
   Tag, Edit3, Zap, MessageSquare, Heart, ChevronRight,
-  Circle, Eye, Crown, ShieldCheck, TrendingUp, Share2,
+  Circle, Eye, TrendingUp, Share2,
   Loader2, X, Camera,
 } from 'lucide-react'
 import { useUser } from '@/lib/hooks/useUser'
@@ -21,154 +21,14 @@ import JobMatchWidget from '@/components/dashboard/JobMatchWidget'
 import SavedSearchesWidget from '@/components/dashboard/SavedSearchesWidget'
 import ReferralWidget from '@/components/dashboard/ReferralWidget'
 import TelegramWidget from '@/components/dashboard/TelegramWidget'
-
-// ── Types ──────────────────────────────────────────────────
-interface Profile {
-  full_name: string | null
-  avatar_url: string | null
-  bio: string | null
-  location: string | null
-  role: string
-  username: string | null
-}
-
-type AvailabilityStatus = 'open' | 'busy' | 'vacation'
-
-const AVAILABILITY_CONFIG: Record<AvailabilityStatus, { label: string; dot: string; border: string; bg: string }> = {
-  open:     { label: 'Available',   dot: '#27a644', border: 'rgba(39,166,68,0.25)',    bg: 'rgba(39,166,68,0.06)'    },
-  busy:     { label: 'Busy',        dot: '#f59e0b', border: 'rgba(245,158,11,0.25)',   bg: 'rgba(245,158,11,0.06)'   },
-  vacation: { label: 'On vacation', dot: '#8a8f98', border: 'rgba(138,143,152,0.25)',  bg: 'rgba(138,143,152,0.06)'  },
-}
-
-interface FreelancerProfile {
-  title: string; category: string; skills: string[]
-  price_from: number; price_to: number | null
-  level: string; rating: number; reviews_count: number; completed_orders: number
-  availability_status?: AvailabilityStatus
-}
-
-interface MyOrder {
-  id: string; title: string; status: string
-  budget_min: number; budget_max: number
-  responses_count: number; created_at: string; category: string
-}
-
-interface MyResponse {
-  id: string; proposed_price: number | null; created_at: string
-  status: 'pending' | 'accepted' | 'rejected'
-  message: string | null
-  order: { id: string; title: string; status: string; budget_min: number; budget_max: number }
-}
-
-// ── Helpers ────────────────────────────────────────────────
-const LEVEL_LABELS: Record<string, string> = {
-  new: '🌱 Newcomer', junior: '⚡ Junior', middle: '🔥 Middle', senior: '💎 Senior', top: '👑 Top'
-}
-
-const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
-  open:        { label: 'Open',        color: 'text-green-400',  bg: 'bg-green-500/10'  },
-  in_progress: { label: 'In progress', color: 'text-blue-400',   bg: 'bg-blue-500/10'   },
-  completed:   { label: 'Completed',   color: 'text-muted-foreground', bg: 'bg-subtle'  },
-  cancelled:   { label: 'Cancelled',   color: 'text-red-400',    bg: 'bg-red-500/10'    },
-}
-
-// ── Analytics tab content ─────────────────────────────────
-function AnalyticsTab({ analytics }: {
-  analytics: {
-    views7: number; views30: number; responsesThisMonth: number
-    responseLimit: number | null; isPremium: boolean; isVerified: boolean
-    verificationRequested: boolean
-    viewsByDay: { day: string; count: number }[]
-  } | null
-}) {
-  if (!analytics) return <div className="py-16 text-center text-muted-foreground text-sm">Loading analytics…</div>
-
-  const data = analytics.viewsByDay ?? []
-  const max = Math.max(...data.map(d => d.count), 1)
-  const W = 300; const H = 60; const gap = data.length > 1 ? W / (data.length - 1) : W
-  const pts = data.map((d, i) => `${i * gap},${H - (d.count / max) * H}`)
-  const area = data.length > 1
-    ? `M${pts.join(' L')} L${(data.length - 1) * gap},${H} L0,${H} Z`
-    : ''
-
-  return (
-    <div className="space-y-5">
-      {/* Stat tiles */}
-      <div className="grid grid-cols-3 gap-3">
-        {[
-          { label: 'Views (7d)',  value: analytics.views7,              icon: Eye },
-          { label: 'Views (30d)', value: analytics.views30,             icon: Eye },
-          { label: 'Responses',   value: analytics.responsesThisMonth,  icon: Zap },
-        ].map(({ label, value, icon: Icon }) => (
-          <div key={label} className="rounded-xl p-4" style={{ background: 'var(--fh-skill-bg)', border: '1px solid var(--fh-border-2)' }}>
-            <div className="flex items-center gap-1.5 mb-2">
-              <Icon className="h-3.5 w-3.5 text-muted-foreground" />
-              <span className="text-xs text-muted-foreground">{label}</span>
-            </div>
-            <div className="text-2xl font-bold">{value}</div>
-          </div>
-        ))}
-      </div>
-
-      {/* Sparkline */}
-      {data.length > 1 && (
-        <div className="rounded-xl p-4" style={{ background: 'var(--fh-skill-bg)', border: '1px solid var(--fh-border-2)' }}>
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-xs text-muted-foreground">Profile views — last {data.length} days</span>
-            <span className="text-xs font-semibold" style={{ color: 'var(--fh-primary)' }}>
-              {data.reduce((s, d) => s + d.count, 0)} total
-            </span>
-          </div>
-          <svg viewBox={`0 0 ${W} ${H}`} className="w-full" style={{ height: '60px', overflow: 'visible' }}>
-            <defs>
-              <linearGradient id="sparkGrad2" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="var(--fh-primary)" stopOpacity="0.3" />
-                <stop offset="100%" stopColor="var(--fh-primary)" stopOpacity="0" />
-              </linearGradient>
-            </defs>
-            {area && <path d={area} fill="url(#sparkGrad2)" />}
-            <polyline points={pts.join(' ')} fill="none" stroke="var(--fh-primary)" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
-            {data.map((d, i) => d.count > 0 && (
-              <circle key={i} cx={i * gap} cy={H - (d.count / max) * H} r="3" fill="var(--fh-primary)" />
-            ))}
-          </svg>
-          <div className="flex justify-between mt-1">
-            <span className="text-xs text-muted-foreground opacity-50">{data[0]?.day?.slice(5)}</span>
-            <span className="text-xs text-muted-foreground opacity-50">{data[data.length - 1]?.day?.slice(5)}</span>
-          </div>
-        </div>
-      )}
-
-      {/* Response limit */}
-      {analytics.responseLimit !== null && (
-        <div className="rounded-xl p-4" style={{ background: 'var(--fh-skill-bg)', border: '1px solid var(--fh-border-2)' }}>
-          <div className="flex justify-between text-xs text-muted-foreground mb-2">
-            <span>Monthly response limit</span>
-            <span className="font-semibold">{analytics.responsesThisMonth} / {analytics.responseLimit}</span>
-          </div>
-          <div className="h-2 rounded-full overflow-hidden" style={{ background: 'var(--fh-border-2)' }}>
-            <div
-              className="h-full rounded-full transition-all"
-              style={{
-                width: `${Math.min(100, (analytics.responsesThisMonth / analytics.responseLimit) * 100)}%`,
-                background: analytics.responsesThisMonth >= analytics.responseLimit ? '#ef4444' : 'var(--fh-primary)',
-              }}
-            />
-          </div>
-          {!analytics.isPremium && (
-            <div className="mt-3 flex items-center justify-between">
-              <p className="text-xs text-muted-foreground">Premium removes the limit.</p>
-              <Link href="/premium" className="text-xs font-semibold px-3 py-1.5 rounded-lg"
-                style={{ background: 'var(--fh-primary-muted)', color: 'var(--fh-primary)', border: '1px solid var(--fh-primary)' }}>
-                <Crown className="h-3 w-3 inline mr-1" />Upgrade
-              </Link>
-            </div>
-          )}
-        </div>
-      )}
-    </div>
-  )
-}
+import AnalyticsTab from '@/components/dashboard/AnalyticsTab'
+import FavoritesTab from '@/components/dashboard/FavoritesTab'
+import EmptyState from '@/components/dashboard/EmptyState'
+import {
+  AVAILABILITY_CONFIG, LEVEL_LABELS, STATUS_CONFIG,
+  type AvailabilityStatus, type DashboardAnalytics,
+  type FreelancerProfile, type MyOrder, type MyResponse, type Profile,
+} from '@/components/dashboard/types'
 
 export default function DashboardPage() {
   const { user, loading } = useUser()
@@ -185,14 +45,7 @@ export default function DashboardPage() {
   const [profileLoading, setProfileLoading] = useState(true)
   const [ordersLoading, setOrdersLoading] = useState(false)
 
-  // Analytics
-  const [analytics, setAnalytics] = useState<{
-    views7: number; views30: number; responsesThisMonth: number
-    responseLimit: number | null; isPremium: boolean; isVerified: boolean
-    verificationRequested: boolean
-    viewsByDay: { day: string; count: number }[]
-  } | null>(null)
-  const [verifyLoading, setVerifyLoading] = useState(false)
+  const [analytics, setAnalytics] = useState<DashboardAnalytics | null>(null)
   const [avatarUploading, setAvatarUploading] = useState(false)
   const avatarInputRef = useRef<HTMLInputElement>(null)
 
@@ -300,16 +153,6 @@ export default function DashboardPage() {
       }
     } finally {
       setWithdrawing(null)
-    }
-  }
-
-  async function requestVerification() {
-    setVerifyLoading(true)
-    try {
-      await fetch('/api/profile/verify-request', { method: 'POST' })
-      setAnalytics(prev => prev ? { ...prev, verificationRequested: true } : prev)
-    } finally {
-      setVerifyLoading(false)
     }
   }
 
@@ -804,154 +647,6 @@ export default function DashboardPage() {
           )}
         </div>
       </div>
-    </div>
-  )
-}
-
-function EmptyState({ emoji, title, sub, href, cta }: {
-  emoji: string; title: string; sub: string; href: string; cta: string
-}) {
-  return (
-    <div className="rounded-xl border border-dashed border-subtle p-10 text-center">
-      <div className="text-4xl mb-3">{emoji}</div>
-      <p className="text-sm font-medium mb-1">{title}</p>
-      <p className="text-xs text-muted-foreground mb-4">{sub}</p>
-      <Link href={href} className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-primary/10 text-primary text-sm font-medium hover:bg-primary/20 transition-colors">
-        {cta} <ChevronRight className="h-3.5 w-3.5" />
-      </Link>
-    </div>
-  )
-}
-
-interface FavoriteItem {
-  id: string
-  target_type: 'order' | 'freelancer'
-  target_id: string
-}
-
-interface FavOrder      { id: string; title: string; budget_min: number; budget_max: number }
-interface FavFreelancer { id: string; name: string; avatar: string; title: string; rating: number }
-
-function FavoritesTab({ favorites }: { favorites: FavoriteItem[] }) {
-  const [favOrders,      setFavOrders]      = useState<FavOrder[]>([])
-  const [favFreelancers, setFavFreelancers] = useState<FavFreelancer[]>([])
-  const [loading,        setLoading]        = useState(false)
-
-  useEffect(() => {
-    const orderIds      = favorites.filter((f) => f.target_type === 'order').map((f) => f.target_id)
-    const freelancerIds = favorites.filter((f) => f.target_type === 'freelancer').map((f) => f.target_id)
-    if (orderIds.length === 0 && freelancerIds.length === 0) return
-
-    setLoading(true)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const db = createClient() as any
-
-    const queries: Promise<void>[] = []
-
-    if (orderIds.length > 0) {
-      queries.push(
-        db.from('orders')
-          .select('id,title,budget_min,budget_max')
-          .in('id', orderIds)
-          .then(({ data }: { data: FavOrder[] | null }) => { if (data) setFavOrders(data) })
-      )
-    }
-
-    if (freelancerIds.length > 0) {
-      queries.push(
-        db.from('freelancer_profiles')
-          .select('user_id,title,rating,profiles!inner(full_name,avatar_url)')
-          .in('user_id', freelancerIds)
-          .then(({ data }: { data: any[] | null }) => {
-            if (!data) return
-            setFavFreelancers(data.map((fp: any) => {
-              const name   = fp.profiles?.full_name || 'User'
-              const avatar = fp.profiles?.avatar_url ||
-                `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(name)}&backgroundColor=4338CA&textColor=ffffff`
-              return { id: fp.user_id, name, avatar, title: fp.title, rating: fp.rating ?? 0 }
-            }))
-          })
-      )
-    }
-
-    Promise.all(queries).finally(() => setLoading(false))
-  }, [favorites])
-
-  if (favorites.length === 0) {
-    return (
-      <EmptyState
-        emoji="❤️"
-        title="Saved list is empty"
-        sub="Click ❤️ on an order or freelancer card to save it"
-        href="/orders"
-        cta="Browse orders"
-      />
-    )
-  }
-
-  if (loading) {
-    return <div className="py-8 text-center text-sm" style={{ color: '#8a8f98' }}>Loading saved items…</div>
-  }
-
-  return (
-    <div className="space-y-6">
-      {/* Saved orders */}
-      {favOrders.length > 0 && (
-        <div>
-          <h3 className="text-sm font-semibold text-muted-foreground mb-3 flex items-center gap-2">
-            <Briefcase className="h-3.5 w-3.5" /> Orders ({favOrders.length})
-          </h3>
-          <div className="space-y-2">
-            {favOrders.map((order) => (
-              <Link
-                key={order.id}
-                href={`/orders/${order.id}`}
-                className="flex items-center gap-4 p-4 rounded-xl border border-subtle bg-card hover:bg-subtle transition-colors group"
-              >
-                <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                  <Briefcase className="h-4 w-4 text-primary" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold truncate group-hover:text-primary transition-colors">{order.title}</p>
-                  <p className="text-xs text-muted-foreground mt-0.5">
-                    ${order.budget_min.toLocaleString()}–${order.budget_max.toLocaleString()}
-                  </p>
-                </div>
-                <ChevronRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
-              </Link>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Saved freelancers */}
-      {favFreelancers.length > 0 && (
-        <div>
-          <h3 className="text-sm font-semibold text-muted-foreground mb-3 flex items-center gap-2">
-            <User className="h-3.5 w-3.5" /> Freelancers ({favFreelancers.length})
-          </h3>
-          <div className="space-y-2">
-            {favFreelancers.map((fl) => (
-              <Link
-                key={fl.id}
-                href={`/freelancers/${fl.id}`}
-                className="flex items-center gap-4 p-4 rounded-xl border border-subtle bg-card hover:bg-subtle transition-colors group"
-              >
-                <Image src={fl.avatar} alt={fl.name} width={36} height={36} className="rounded-xl object-cover flex-shrink-0" unoptimized />
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold truncate group-hover:text-primary transition-colors">{fl.name}</p>
-                  <p className="text-xs text-muted-foreground mt-0.5 truncate">{fl.title}</p>
-                </div>
-                <div className="flex items-center gap-1 text-xs text-primary flex-shrink-0">
-                  <Star className="h-3 w-3 fill-current" />
-                  {fl.rating}
-                </div>
-                <ChevronRight className="h-4 w-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" />
-              </Link>
-            ))}
-          </div>
-        </div>
-      )}
     </div>
   )
 }
