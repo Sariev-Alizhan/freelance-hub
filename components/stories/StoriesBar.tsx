@@ -169,7 +169,6 @@ export default function StoriesBar({ currentUserId, isDark }: Props) {
           initialGroupIdx={openGroup}
           viewedIds={viewedIds}
           currentUserId={currentUserId}
-          isDark={isDark}
           onView={ids => markViewed(ids)}
           onClose={() => setOpenGroup(null)}
         />

@@ -11,21 +11,21 @@ interface Props {
   initialGroupIdx: number
   viewedIds: Set<string>
   currentUserId?: string
-  isDark: boolean
   onView: (ids: string[]) => void
   onClose: () => void
 }
 
 export default function StoryViewer({
-  groups, initialGroupIdx, viewedIds, currentUserId, isDark, onView, onClose,
+  groups, initialGroupIdx, viewedIds, currentUserId, onView, onClose,
 }: Props) {
   const [groupIdx, setGroupIdx] = useState(initialGroupIdx)
   const [storyIdx, setStoryIdx] = useState(0)
   const [progress, setProgress] = useState(0)   // 0..1
   const [paused,   setPaused]   = useState(false)
+  const [now,      setNow]      = useState<number | null>(null)
 
   const timerRef    = useRef<ReturnType<typeof setInterval> | null>(null)
-  const startedAt   = useRef(Date.now())
+  const startedAt   = useRef(0)
   const pausedMs    = useRef(0)
   const pauseStarted = useRef(0)
 
@@ -33,8 +33,9 @@ export default function StoryViewer({
   const story: StoryItem | undefined = group?.stories[storyIdx]
   const isOwn = group?.is_own && currentUserId === group.user_id
 
-  // ── mark viewed ────────────────────────────────────────────────────────────
+  // ── mark viewed + refresh "time ago" ────────────────────────────────────
   useEffect(() => {
+    setNow(Date.now())
     if (!story) return
     if (!viewedIds.has(story.id)) {
       onView([story.id])
@@ -90,19 +91,8 @@ export default function StoryViewer({
     }
   }, [paused])
 
-  // ── keyboard ───────────────────────────────────────────────────────────────
-  useEffect(() => {
-    function onKey(e: KeyboardEvent) {
-      if (e.key === 'Escape')      onClose()
-      if (e.key === 'ArrowRight')  goNext()
-      if (e.key === 'ArrowLeft')   goPrev()
-    }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [groupIdx, storyIdx]) // eslint-disable-line react-hooks/exhaustive-deps
-
   // ── navigation ─────────────────────────────────────────────────────────────
-  function goNext() {
+  const goNext = useCallback(() => {
     const g = groups[groupIdx]
     if (!g) return
     if (storyIdx + 1 < g.stories.length) {
@@ -114,9 +104,9 @@ export default function StoryViewer({
       onClose()
     }
     setProgress(0)
-  }
+  }, [groupIdx, groups, storyIdx, onClose])
 
-  function goPrev() {
+  const goPrev = useCallback(() => {
     if (storyIdx > 0) {
       setStoryIdx(s => s - 1)
     } else if (groupIdx > 0) {
@@ -125,7 +115,18 @@ export default function StoryViewer({
       setStoryIdx(prevLen - 1)
     }
     setProgress(0)
-  }
+  }, [groupIdx, groups, storyIdx])
+
+  // ── keyboard ───────────────────────────────────────────────────────────────
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (e.key === 'Escape')      onClose()
+      if (e.key === 'ArrowRight')  goNext()
+      if (e.key === 'ArrowLeft')   goPrev()
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [onClose, goNext, goPrev])
 
   async function deleteStory() {
     if (!story) return
@@ -143,7 +144,8 @@ export default function StoryViewer({
     setPaused(false)
     const dx = e.changedTouches[0].clientX - touchX.current
     if (Math.abs(dx) > 50) {
-      dx < 0 ? goNext() : goPrev()
+      if (dx < 0) goNext()
+      else goPrev()
     }
   }
 
@@ -155,7 +157,8 @@ export default function StoryViewer({
     : { background: story.bg_color ?? '#5e6ad2' }
 
   const timeAgo = (() => {
-    const diff = Date.now() - new Date(story.created_at).getTime()
+    if (now === null) return ''
+    const diff = now - new Date(story.created_at).getTime()
     const m = Math.floor(diff / 60000)
     if (m < 60)  return `${m}м назад`
     const h = Math.floor(m / 60)
