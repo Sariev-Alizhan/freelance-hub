@@ -41,3 +41,9 @@ yarn-error.log*
 next-env.d.ts
 
 .vercel
+
+# obsidian vault — только UI state, notes коммитим
+vault/.obsidian/workspace*.json
+vault/.obsidian/cache
+vault/.obsidian/appearance.json
+vault/.trash/
