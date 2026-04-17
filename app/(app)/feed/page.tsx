@@ -1,43 +1,20 @@
 'use client'
 import { useState, useEffect, useCallback, useRef, useMemo } from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
 import {
-  Search, ThumbsUp, Bookmark, Share2,
-  MessageCircle, RefreshCw, Send, X, CheckCircle2,
+  Search, RefreshCw, X, CheckCircle2,
   ArrowUp, ExternalLink, Plus, Hash, BadgeCheck,
 } from 'lucide-react'
-// RefreshCw kept for the pull-to-refresh indicator only
 import { CURRENT_RELEASE } from '@/lib/company-report'
 import { FEED_RELEASES, EDITOR_POSTS, type FeedRelease, type EditorPost } from '@/lib/feed-content'
 import { useProfile } from '@/lib/context/ProfileContext'
 import { useUser } from '@/lib/hooks/useUser'
 import { useToastHelpers } from '@/lib/context/ToastContext'
 import StoriesBar from '@/components/stories/StoriesBar'
-
-// ── Types ─────────────────────────────────────────────────────────────────────
-
-interface NewsItem {
-  id: string
-  title: string
-  url: string | null
-  author: string
-  points: number
-  num_comments: number
-  created_at: string
-  source: string
-  source_label: string
-  hn_url: string
-}
-
-interface UserPost {
-  id: string
-  content: string
-  tags: string[]
-  created_at: string
-  user_id: string
-  profiles: { full_name: string | null; avatar_url: string | null; username: string | null; is_verified?: boolean | null } | null
-}
+import UserAvatar from '@/components/feed/UserAvatar'
+import CardShell from '@/components/feed/CardShell'
+import { timeAgo, SRC_COLOR, SRC_BG } from '@/components/feed/utils'
+import type { NewsItem, UserPost, Reactions } from '@/components/feed/types'
 
 type FeedItem =
   | { kind: 'news';    data: NewsItem }
@@ -45,228 +22,6 @@ type FeedItem =
   | { kind: 'update' }
   | { kind: 'release'; data: FeedRelease }
   | { kind: 'editor';  data: EditorPost  }
-
-interface Reactions {
-  likes: number; dislikes: number; saves: number; reposts: number; mine: string[]
-}
-
-interface Comment {
-  id: string; content: string; created_at: string; user_id: string
-  profiles: { full_name: string | null; avatar_url: string | null; username: string | null } | null
-}
-
-// ── Constants ─────────────────────────────────────────────────────────────────
-
-const SRC_COLOR: Record<string, string> = {
-  hn: '#f97316', reddit_ai: '#ff4500', reddit_ml: 'var(--fh-primary)', reddit_llama: '#27a644',
-}
-const SRC_BG: Record<string, string> = {
-  hn: 'rgba(249,115,22,0.1)', reddit_ai: 'rgba(255,69,0,0.1)',
-  reddit_ml: 'var(--fh-primary-muted)', reddit_llama: 'rgba(39,166,68,0.1)',
-}
-
-// ── Helpers ───────────────────────────────────────────────────────────────────
-
-function timeAgo(iso: string) {
-  const s = (Date.now() - new Date(iso).getTime()) / 1000
-  if (s < 60) return 'just now'
-  if (s < 3600) return `${Math.floor(s / 60)}m`
-  if (s < 86400) return `${Math.floor(s / 3600)}h`
-  return `${Math.floor(s / 86400)}d`
-}
-
-function UserAvatar({ url, name, size = 32 }: { url?: string | null; name?: string | null; size?: number }) {
-  if (url) return <Image src={url} alt={name ?? ''} width={size} height={size} className="rounded-full object-cover flex-shrink-0" style={{ width: size, height: size }} unoptimized />
-  return (
-    <div className="rounded-full flex items-center justify-center flex-shrink-0 text-white font-semibold"
-      style={{ width: size, height: size, fontSize: size * 0.38, background: 'var(--fh-primary)', flexShrink: 0 }}>
-      {(name ?? '?')[0]?.toUpperCase()}
-    </div>
-  )
-}
-
-// ── CommentThread ─────────────────────────────────────────────────────────────
-
-function CommentThread({ itemId, user, profile, open }: {
-  itemId: string; user: { id: string } | null
-  profile: { avatar_url: string | null; full_name: string | null } | null; open: boolean
-}) {
-  const [comments, setComments] = useState<Comment[]>([])
-  const [loading, setLoading] = useState(false)
-  const [text, setText] = useState('')
-  const [posting, setPosting] = useState(false)
-  const [loaded, setLoaded] = useState(false)
-
-  const load = useCallback(async () => {
-    if (loaded) return
-    setLoading(true)
-    const res = await fetch(`/api/feed/comments?item_id=${encodeURIComponent(itemId)}`)
-    const data = await res.json()
-    setComments(data.comments ?? [])
-    setLoading(false); setLoaded(true)
-  }, [itemId, loaded])
-
-  useEffect(() => { if (open) load() }, [open, load])
-
-  async function submit() {
-    if (!text.trim() || posting || !user) return
-    setPosting(true)
-    const res = await fetch('/api/feed/comments', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ item_id: itemId, content: text.trim() }),
-    })
-    const data = await res.json()
-    if (data.comment) { setComments(p => [...p, data.comment]); setText('') }
-    setPosting(false)
-  }
-
-  if (!open) return null
-
-  return (
-    <div style={{ borderTop: '1px solid var(--fh-sep)', background: 'var(--fh-surface-2)', borderRadius: '0 0 16px 16px' }}>
-      {user && (
-        <div className="flex items-center gap-2 px-4 pt-3 pb-2">
-          <UserAvatar url={profile?.avatar_url} name={profile?.full_name} size={26} />
-          <div className="flex-1 flex gap-2">
-            <input
-              value={text} onChange={e => setText(e.target.value)}
-              onKeyDown={e => { if (e.key === 'Enter') submit() }}
-              placeholder="Write a comment…"
-              className="flex-1 rounded-full px-3 py-1.5 text-[13px] outline-none"
-              style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border)', color: 'var(--fh-t1)', fontFamily: 'inherit' }}
-            />
-            <button onClick={submit} disabled={!text.trim() || posting}
-              className="h-7 w-7 rounded-full flex items-center justify-center flex-shrink-0"
-              style={{ background: text.trim() ? 'var(--fh-primary)' : 'var(--fh-border)', color: '#fff', border: 'none', cursor: 'pointer' }}>
-              <Send className="h-3 w-3" />
-            </button>
-          </div>
-        </div>
-      )}
-      <div className="px-4 pb-3 space-y-2">
-        {loading ? <p className="text-center text-[11px] py-2" style={{ color: 'var(--fh-t4)' }}>Loading…</p>
-          : comments.length === 0 ? <p className="text-center text-[11px] py-2" style={{ color: 'var(--fh-t4)' }}>No comments yet</p>
-          : comments.map(c => (
-            <div key={c.id} className="flex gap-2">
-              <UserAvatar url={c.profiles?.avatar_url} name={c.profiles?.full_name} size={24} />
-              <div className="flex-1 rounded-xl px-3 py-1.5" style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border)' }}>
-                <span style={{ fontSize: 11, fontWeight: 590, color: 'var(--fh-t1)' }}>{c.profiles?.full_name ?? 'User'}</span>
-                <span style={{ fontSize: 11, color: 'var(--fh-t4)', marginLeft: 6 }}>{timeAgo(c.created_at)}</span>
-                <p style={{ fontSize: 12, color: 'var(--fh-t2)', lineHeight: 1.4, marginTop: 2 }}>{c.content}</p>
-              </div>
-              {user?.id === c.user_id && (
-                <button onClick={async () => {
-                  await fetch(`/api/feed/comments?id=${c.id}`, { method: 'DELETE' })
-                  setComments(p => p.filter(x => x.id !== c.id))
-                }} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--fh-t4)', padding: 2, alignSelf: 'start', marginTop: 4 }}>
-                  <X className="h-3 w-3" />
-                </button>
-              )}
-            </div>
-          ))}
-      </div>
-    </div>
-  )
-}
-
-// ── ActionBar ─────────────────────────────────────────────────────────────────
-
-function ActionBar({ itemId, reactions, onReact, commentsOpen, onToggleComments, user }: {
-  itemId: string; reactions: Reactions; onReact: (a: string) => void
-  commentsOpen: boolean; onToggleComments: () => void; user: { id: string } | null
-}) {
-  const liked = reactions.mine.includes('like')
-  const disliked = reactions.mine.includes('dislike')
-  const saved = reactions.mine.includes('save')
-
-  const Btn = ({ active, color, icon, count, onClick }: { active: boolean; color: string; icon: React.ReactNode; count?: number; onClick: () => void }) => (
-    <button onClick={onClick}
-      className="flex items-center gap-1 px-2 py-1 rounded-lg transition-colors text-[12px] font-semibold"
-      style={{ background: active ? `${color}15` : 'transparent', color: active ? color : 'var(--fh-t4)', border: 'none', cursor: user ? 'pointer' : 'default' }}
-      onMouseEnter={e => { if (!active) (e.currentTarget as HTMLElement).style.background = 'var(--fh-surface-2)' }}
-      onMouseLeave={e => { if (!active) (e.currentTarget as HTMLElement).style.background = 'transparent' }}
-    >
-      {icon}{count !== undefined && count > 0 && <span>{count}</span>}
-    </button>
-  )
-
-  // Reactions summary line (likes count above actions, like LinkedIn)
-  const totalLikes = reactions.likes
-  return (
-    <div>
-      {/* Reactions count row */}
-      {(totalLikes > 0 || reactions.reposts > 0) && (
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '6px 16px', borderTop: '0.5px solid var(--fh-sep)' }}>
-          {totalLikes > 0 && (
-            <span style={{ fontSize: 12, color: 'var(--fh-t4)' }}>
-              👍 {totalLikes}
-            </span>
-          )}
-          {reactions.reposts > 0 && (
-            <span style={{ fontSize: 12, color: 'var(--fh-t4)', marginLeft: 'auto' }}>
-              {reactions.reposts} reposts
-            </span>
-          )}
-        </div>
-      )}
-      {/* Action buttons — LinkedIn style with labels */}
-      <div style={{ display: 'flex', alignItems: 'center', borderTop: '0.5px solid var(--fh-sep)', padding: '2px 4px' }}>
-        <button onClick={() => onReact('like')}
-          style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5, padding: '8px 4px', background: 'none', border: 'none', cursor: user ? 'pointer' : 'default', borderRadius: 8, color: liked ? '#27a644' : 'var(--fh-t4)', fontWeight: liked ? 700 : 500, fontSize: 13, transition: 'background 0.12s' }}
-          onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'var(--fh-surface-2)' }}
-          onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'none' }}>
-          <ThumbsUp style={{ width: 16, height: 16 }} />
-          <span>Like</span>
-        </button>
-        <button onClick={onToggleComments}
-          style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5, padding: '8px 4px', background: 'none', border: 'none', cursor: 'pointer', borderRadius: 8, color: commentsOpen ? 'var(--fh-primary)' : 'var(--fh-t4)', fontWeight: commentsOpen ? 700 : 500, fontSize: 13, transition: 'background 0.12s' }}
-          onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'var(--fh-surface-2)' }}
-          onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'none' }}>
-          <MessageCircle style={{ width: 16, height: 16 }} />
-          <span>Comment</span>
-        </button>
-        <button onClick={() => onReact('repost')}
-          style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5, padding: '8px 4px', background: 'none', border: 'none', cursor: 'pointer', borderRadius: 8, color: 'var(--fh-t4)', fontWeight: 500, fontSize: 13, transition: 'background 0.12s' }}
-          onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'var(--fh-surface-2)' }}
-          onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'none' }}>
-          <Share2 style={{ width: 16, height: 16 }} />
-          <span>Share</span>
-        </button>
-        <button onClick={() => onReact('save')}
-          style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5, padding: '8px 4px', background: 'none', border: 'none', cursor: 'pointer', borderRadius: 8, color: saved ? '#f59e0b' : 'var(--fh-t4)', fontWeight: saved ? 700 : 500, fontSize: 13, transition: 'background 0.12s' }}
-          onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'var(--fh-surface-2)' }}
-          onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'none' }}>
-          <Bookmark style={{ width: 16, height: 16 }} />
-          <span>Save</span>
-        </button>
-      </div>
-    </div>
-  )
-}
-
-// ── Card shell (Instagram-style: no border, thin separator) ──────────────────
-
-function CardShell({ children, itemId, reactions, onReact, user, profile }: {
-  children: React.ReactNode; itemId: string; reactions: Reactions
-  onReact: (id: string, action: string) => void
-  user: { id: string } | null; profile: { avatar_url: string | null; full_name: string | null } | null
-}) {
-  const [commentsOpen, setCommentsOpen] = useState(false)
-  return (
-    <div
-      className="sm:rounded-2xl sm:border overflow-hidden"
-      style={{
-        background: 'var(--fh-surface)',
-        borderBottom: '0.5px solid var(--fh-sep)',
-      }}
-    >
-      <div style={{ padding: '14px 16px 0' }}>{children}</div>
-      <ActionBar itemId={itemId} reactions={reactions} onReact={a => onReact(itemId, a)}
-        commentsOpen={commentsOpen} onToggleComments={() => setCommentsOpen(o => !o)} user={user} />
-      <CommentThread itemId={itemId} user={user} profile={profile} open={commentsOpen} />
-    </div>
-  )
-}
 
 // ── News card ─────────────────────────────────────────────────────────────────
 
