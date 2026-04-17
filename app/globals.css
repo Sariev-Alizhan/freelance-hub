@@ -678,3 +678,10 @@ body.messenger-locked {
   max-width: 100%;
   min-width: 0;
 }
+
+/* Let emoji-mart's web component fill its flex container in the full-sheet */
+em-emoji-picker {
+  width: 100% !important;
+  min-height: 0;
+  flex: 1;
+}
