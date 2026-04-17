@@ -499,10 +499,12 @@
   }
 }
 
-/* Messenger fills full viewport on desktop (no header), minus header + safe-area on mobile */
-.messenger-height { height: 100dvh; }
+/* Messenger fills full viewport on desktop (no header), minus header + safe-area on mobile.
+   --fh-vvh is set by MessengerPage from window.visualViewport.height so the container
+   shrinks when the iOS soft keyboard opens (100dvh doesn't on iOS Safari). */
+.messenger-height { height: var(--fh-vvh, 100dvh); }
 @media (max-width: 767px) {
-  .messenger-height { height: calc(100dvh - 52px - env(safe-area-inset-top, 0px)); }
+  .messenger-height { height: calc(var(--fh-vvh, 100dvh) - 52px - env(safe-area-inset-top, 0px)); }
 }
 
 /* Lock page scroll entirely when viewing the messenger — the messenger

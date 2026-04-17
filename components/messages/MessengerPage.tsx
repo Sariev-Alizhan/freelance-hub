@@ -200,11 +200,28 @@ export default function MessengerPage() {
 
   const activeConv = conversations.find(c => c.id === activeId) ?? null
 
-  // Scroll textarea into view when keyboard opens on mobile
-  const handleInputFocus = useCallback(() => {
-    setTimeout(() => {
-      inputRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
-    }, 300)
+  // iOS Safari doesn't shrink 100dvh when the soft keyboard opens — the
+  // compose bar stays at the original viewport bottom and gets covered.
+  // Mirror window.visualViewport.height into --fh-vvh so .messenger-height
+  // can lock to the *actually visible* area. No scrollIntoView needed —
+  // the container resizes itself, compose stays flush at the keyboard top.
+  const handleInputFocus = useCallback(() => {}, [])
+
+  useEffect(() => {
+    const vv = window.visualViewport
+    if (!vv) return
+    const root = document.documentElement
+    const update = () => {
+      root.style.setProperty('--fh-vvh', `${vv.height}px`)
+    }
+    update()
+    vv.addEventListener('resize', update)
+    vv.addEventListener('scroll', update)
+    return () => {
+      vv.removeEventListener('resize', update)
+      vv.removeEventListener('scroll', update)
+      root.style.removeProperty('--fh-vvh')
+    }
   }, [])
 
   // When a chat is open on mobile, flag html so BottomNav hides
@@ -1199,7 +1216,10 @@ export default function MessengerPage() {
               className="flex items-end gap-2 px-3 flex-shrink-0"
               style={{
                 paddingTop: 10,
-                paddingBottom: 12,
+                // safe-area-inset-bottom collapses to 0 when the keyboard is up,
+                // so the compose hugs the keyboard top without wasted space, and
+                // sits above the home-indicator bar when the keyboard is down.
+                paddingBottom: 'calc(12px + env(safe-area-inset-bottom, 0px))',
                 borderTop: '1px solid var(--fh-sep)',
                 background: 'var(--fh-surface)',
               }}
