@@ -16,7 +16,11 @@ const InlineEmojiPicker = dynamic(() => import('@emoji-mart/react'), { ssr: fals
 import { createClient } from '@/lib/supabase/client'
 import { useUser } from '@/lib/hooks/useUser'
 import { useVisualViewport } from '@/lib/hooks/useVisualViewport'
-import { RealtimeChannel } from '@supabase/supabase-js'
+import {
+  useActiveConversationChannel,
+  useOnlinePresence,
+  useInboxNotifications,
+} from '@/lib/hooks/useMessengerRealtime'
 import type { OtherUser, Conversation, Message, ReactionMap } from './types'
 import { formatTime, formatDate, isSameDay, humanSize } from './utils'
 import Avatar from './Avatar'
@@ -45,12 +49,6 @@ export default function MessengerPage() {
   // Reply-to
   const [replyTo, setReplyTo] = useState<{ id: string; text: string; name: string } | null>(null)
 
-  // Typing indicator + online presence
-  const [isOtherTyping,  setIsOtherTyping]  = useState(false)
-  const [isOtherOnline,  setIsOtherOnline]  = useState(false)
-  const [onlineUserIds,  setOnlineUserIds]  = useState<Set<string>>(new Set())
-  const typingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-
   // ── Message reactions ─────────────────────────────────────────────────────
   // { messageId: { emoji: { count, mine } } }
   const [reactions,    setReactions]    = useState<ReactionMap>({})
@@ -66,7 +64,6 @@ export default function MessengerPage() {
   const [uploadProgress, setUploadProgress] = useState<number | null>(null)
 
   const msgsContainerRef = useRef<HTMLDivElement>(null)
-  const channelRef       = useRef<RealtimeChannel | null>(null)
   const inputRef         = useRef<HTMLTextAreaElement>(null)
   const fileInputRef     = useRef<HTMLInputElement>(null)
   const activeIdRef      = useRef<string | null>(null)
@@ -201,96 +198,21 @@ export default function MessengerPage() {
     }
   }, [activeId])
 
-  // ── Realtime per-conversation (messages + presence) ──────────────────────
+  // ── Realtime (per-conversation channel, inbox, global presence) ─────────
 
-  useEffect(() => {
-    if (!activeId || !user) return
-    if (channelRef.current) supabase.removeChannel(channelRef.current)
-    setIsOtherTyping(false)
-    setIsOtherOnline(false)
-
-    const channel = supabase.channel(`msgs:${activeId}`, { config: { presence: { key: user.id } } })
-      // DB changes
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages', filter: `conversation_id=eq.${activeId}` },
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (payload: any) => {
-          const newMsg = payload.new as Message
-          setMessages(prev => prev.some(m => m.id === newMsg.id) ? prev : [...prev, newMsg])
-          setConversations(prev => prev.map(c => c.id === activeId ? { ...c, last_message: newMsg.text || (newMsg.attachment_name ?? '📎'), last_message_at: newMsg.created_at } : c))
-          if (newMsg.sender_id !== user.id) db.from('messages').update({ is_read: true }).eq('id', newMsg.id).then(() => {})
-        })
-      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'messages', filter: `conversation_id=eq.${activeId}` },
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        (payload: any) => {
-          const updated = payload.new as Message
-          setMessages(prev => prev.map(m => m.id === updated.id ? { ...m, is_read: updated.is_read } : m))
-        })
-      // Presence — typing + online
-       
-      .on('presence', { event: 'sync' }, () => {
-        const state = channel.presenceState() as Record<string, { userId: string; typing: boolean }[]>
-        const others = Object.values(state).flat().filter(p => p.userId !== user.id)
-        setIsOtherOnline(others.length > 0)
-        setIsOtherTyping(others.some(p => p.typing))
-      })
-      .subscribe(async (status) => {
-        if (status === 'SUBSCRIBED') {
-          await channel.track({ userId: user.id, typing: false })
-        }
-      })
-
-    channelRef.current = channel
-    return () => { supabase.removeChannel(channel) }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeId, user?.id])
-
-  // ── Global online presence (who's currently in the app) ──────────────────
-
-  useEffect(() => {
-    if (!user) return
-    const ch = supabase.channel('online:global', { config: { presence: { key: user.id } } })
-      .on('presence', { event: 'sync' }, () => {
-        const state = ch.presenceState() as Record<string, { userId: string }[]>
-        const ids = new Set(Object.values(state).flat().map(p => p.userId))
-        setOnlineUserIds(ids)
-      })
-      .subscribe(async (status) => {
-        if (status === 'SUBSCRIBED') await ch.track({ userId: user.id })
-      })
-    return () => { supabase.removeChannel(ch) }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user?.id])
-
-  // ── Broadcast typing state ────────────────────────────────────────────────
-
-  function broadcastTyping() {
-    if (!channelRef.current) return
-    channelRef.current.track({ userId: user?.id, typing: true })
-    if (typingTimerRef.current) clearTimeout(typingTimerRef.current)
-    typingTimerRef.current = setTimeout(() => {
-      channelRef.current?.track({ userId: user?.id, typing: false })
-    }, 2500)
-  }
-
-  // ── Realtime global inbox ─────────────────────────────────────────────────
-
-  useEffect(() => {
-    if (!user) return
-    const channel = supabase.channel(`inbox:${user.id}`)
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, (payload: any) => {
-        const msg = payload.new as Message
-        if (msg.sender_id === user.id) return
-        if (msg.conversation_id === activeIdRef.current) return
-        setConversations(prev => {
-          if (!prev.some(c => c.id === msg.conversation_id)) { loadConversations(); return prev }
-          return [...prev.map(c => c.id === msg.conversation_id ? { ...c, unread: c.unread + 1, last_message: msg.text || '📎', last_message_at: msg.created_at } : c)]
-            .sort((a, b) => (b.last_message_at ? new Date(b.last_message_at).getTime() : 0) - (a.last_message_at ? new Date(a.last_message_at).getTime() : 0))
-        })
-      }).subscribe()
-    return () => { supabase.removeChannel(channel) }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user])
+  const { isOtherTyping, isOtherOnline, broadcastTyping } = useActiveConversationChannel({
+    userId: user?.id,
+    activeId,
+    setMessages,
+    setConversations,
+  })
+  const onlineUserIds = useOnlinePresence(user?.id)
+  useInboxNotifications({
+    userId: user?.id,
+    activeIdRef,
+    setConversations,
+    refetchConversations: loadConversations,
+  })
 
   // ── Auto-scroll ───────────────────────────────────────────────────────────
 
