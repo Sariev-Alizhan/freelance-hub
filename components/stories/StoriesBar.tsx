@@ -30,10 +30,9 @@ export type StoryGroup = {
 
 interface Props {
   currentUserId?: string
-  isDark: boolean
 }
 
-export default function StoriesBar({ currentUserId, isDark }: Props) {
+export default function StoriesBar({ currentUserId }: Props) {
   const [groups, setGroups]         = useState<StoryGroup[]>([])
   const [viewedIds, setViewedIds]   = useState<Set<string>>(new Set())
   const [openGroup, setOpenGroup]   = useState<number | null>(null)   // index in groups
@@ -177,7 +176,6 @@ export default function StoriesBar({ currentUserId, isDark }: Props) {
       {/* Create Story Modal */}
       {showCreate && (
         <CreateStoryModal
-          isDark={isDark}
           onClose={() => setShowCreate(false)}
           onCreate={afterCreate}
         />

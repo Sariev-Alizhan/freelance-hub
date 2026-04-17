@@ -5,8 +5,8 @@ import { usePathname, useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Home, Briefcase, Plus, User,
-  X, Settings, BarChart3, Target, Calculator,
-  Search, Zap, Bot, FileText, LogOut,
+  Settings, BarChart3,
+  Search, Zap, FileText, LogOut,
   LayoutDashboard, Brain, Star, Users, MessageSquare,
 } from 'lucide-react'
 import { useState, useCallback } from 'react'
@@ -402,26 +402,3 @@ function SheetSection({ label, children }: { label: string; children: React.Reac
   )
 }
 
-// ── Single row item ───────────────────────────────────────────────────────────
-function SheetRow({ href, icon, label, onClick }: { href: string; icon: React.ReactNode; label: string; onClick?: () => void }) {
-  return (
-    <Link
-      href={href}
-      onClick={onClick}
-      style={{
-        display: 'flex', alignItems: 'center', gap: 14,
-        padding: '13px 0',
-        borderTop: '0.5px solid var(--fh-sep)',
-        textDecoration: 'none',
-      }}
-    >
-      <div style={{ width: 36, height: 36, borderRadius: 10, background: 'var(--fh-surface-2)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-        {icon}
-      </div>
-      <span style={{ flex: 1, fontSize: 16, color: 'var(--fh-t1)', fontWeight: 400, letterSpacing: '-0.01em' }}>
-        {label}
-      </span>
-      <span style={{ color: 'var(--fh-t4)', fontSize: 18, lineHeight: 1 }}>›</span>
-    </Link>
-  )
-}

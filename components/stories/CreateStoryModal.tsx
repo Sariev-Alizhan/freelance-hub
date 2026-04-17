@@ -12,12 +12,11 @@ const BG_COLORS = [
 type Tab = 'text' | 'image'
 
 interface Props {
-  isDark: boolean
   onClose: () => void
   onCreate: () => void
 }
 
-export default function CreateStoryModal({ isDark, onClose, onCreate }: Props) {
+export default function CreateStoryModal({ onClose, onCreate }: Props) {
   const [tab,    setTab]    = useState<Tab>('text')
   const [text,   setText]   = useState('')
   const [color,  setColor]  = useState(BG_COLORS[0])

@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import {
   Home, Briefcase, Users, MessageSquare, Sparkles, Zap, Bot,
   FileText, Tag, BarChart3, Target, Calculator, Settings,
-  LogOut, User, Bell, ChevronRight, Plus, Shield, Sun, Moon,
+  LogOut, User, ChevronRight, Plus, Shield, Sun, Moon,
 } from 'lucide-react'
 import Logo from '@/components/ui/Logo'
 import NotificationBell from '@/components/layout/NotificationBell'
