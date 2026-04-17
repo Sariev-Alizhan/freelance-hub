@@ -319,7 +319,15 @@ export default function MessengerPage() {
         setMsgsLoading(false)
       })
     if (user) {
-      db.from('messages').update({ is_read: true }).eq('conversation_id', activeId).neq('sender_id', user.id).eq('is_read', false)
+      // Supabase query builder is lazy — must .then() to actually fire the UPDATE.
+      // Without this, the realtime UPDATE never arrives at useUnreadMessages and
+      // the bell/message badge stays red after leaving the chat.
+      db.from('messages')
+        .update({ is_read: true })
+        .eq('conversation_id', activeId)
+        .neq('sender_id', user.id)
+        .eq('is_read', false)
+        .then(() => {})
       setConversations(prev => prev.map(c => c.id === activeId ? { ...c, unread: 0 } : c))
     }
   }, [activeId])
@@ -340,7 +348,7 @@ export default function MessengerPage() {
           const newMsg = payload.new as Message
           setMessages(prev => prev.some(m => m.id === newMsg.id) ? prev : [...prev, newMsg])
           setConversations(prev => prev.map(c => c.id === activeId ? { ...c, last_message: newMsg.text || (newMsg.attachment_name ?? '📎'), last_message_at: newMsg.created_at } : c))
-          if (newMsg.sender_id !== user.id) db.from('messages').update({ is_read: true }).eq('id', newMsg.id)
+          if (newMsg.sender_id !== user.id) db.from('messages').update({ is_read: true }).eq('id', newMsg.id).then(() => {})
         })
       .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'messages', filter: `conversation_id=eq.${activeId}` },
         // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -189,10 +189,12 @@ export default function NotificationsPage() {
     if (!userId) return
     if (loading) return
     if (unreadCount === 0) return
+    // Supabase query builder is lazy — must terminate with .then() to fire.
     db.from('notifications')
       .update({ is_read: true })
       .eq('user_id', userId)
       .eq('is_read', false)
+      .then(() => {})
   }, [userId, loading, unreadCount, db])
 
   // Realtime: append new notifications live
@@ -213,12 +215,12 @@ export default function NotificationsPage() {
 
   function markRead(id: string) {
     setNotifications(prev => prev.map(n => n.id === id ? { ...n, is_read: true } : n))
-    db.from('notifications').update({ is_read: true }).eq('id', id)
+    db.from('notifications').update({ is_read: true }).eq('id', id).then(() => {})
   }
 
   function deleteNotif(id: string) {
     setNotifications(prev => prev.filter(n => n.id !== id))
-    db.from('notifications').delete().eq('id', id)
+    db.from('notifications').delete().eq('id', id).then(() => {})
   }
 
   async function clearAll() {
