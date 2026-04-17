@@ -508,14 +508,19 @@
   .messenger-height { height: calc(var(--fh-vvh, 100dvh) - 52px - env(safe-area-inset-top, 0px)); }
 }
 
-/* Lock page scroll entirely when viewing the messenger — the messenger
-   manages its own internal scroll, and any page-level scroll just creates
-   dead space below the composer. */
+/* Lock page scroll entirely when viewing the messenger. Bind html+body
+   height to --fh-vvh (visualViewport.height) — Telegram's pattern. iOS
+   Safari ignores `interactive-widget`, so if html/body stay at 100dvh,
+   the area between `main` and the keyboard fills with Safari's URL chip
+   + autofill toolbar. Shrinking body itself eliminates that gap. */
 html.messenger-locked,
 body.messenger-locked {
   overflow: hidden;
-  height: 100dvh;
+  height: var(--fh-vvh, 100dvh);
   overscroll-behavior: none;
+  position: fixed;
+  inset: 0;
+  width: 100%;
 }
 
 /* Conversation list: full-width on mobile, fixed sidebar on desktop */
