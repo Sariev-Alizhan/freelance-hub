@@ -1,12 +1,12 @@
 'use client'
 import Link from 'next/link'
 import Image from 'next/image'
-import { usePathname, useRouter } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Home, Briefcase, Plus, User,
   Settings, BarChart3,
-  Search, Zap, FileText, LogOut,
+  Search, Zap, FileText,
   LayoutDashboard, Brain, Star, Users, MessageSquare,
 } from 'lucide-react'
 import { useState, useCallback } from 'react'
@@ -14,18 +14,6 @@ import { useUser } from '@/lib/hooks/useUser'
 import { useProfile } from '@/lib/context/ProfileContext'
 import { useUnreadNotifications } from '@/lib/hooks/useUnreadNotifications'
 import { useUnreadMessages } from '@/lib/hooks/useUnreadMessages'
-import { useLang, LANG_LABELS, Lang } from '@/lib/context/LanguageContext'
-import { useCurrency } from '@/lib/context/CurrencyContext'
-import { Currency } from '@/lib/types'
-import { createClient } from '@/lib/supabase/client'
-import RoleSwitcher from '@/components/layout/RoleSwitcher'
-
-const LANGS: Lang[] = ['en', 'ru', 'kz']
-const CURRENCIES: Currency[] = ['KZT', 'RUB', 'USD', 'EUR', 'USDT']
-const CURRENCY_LABELS: Record<Currency, string> = {
-  KZT: '₸', RUB: '₽', USD: '$', EUR: '€', GBP: '£',
-  USDT: '₮', UAH: '₴', CNY: '¥', AED: 'د.إ', TRY: '₺',
-}
 
 const QUICK_LINKS = [
   { href: '/dashboard',            icon: LayoutDashboard, label: 'Dashboard'  },
@@ -50,22 +38,11 @@ const TABS = [
 
 export default function BottomNav() {
   const pathname = usePathname()
-  const router   = useRouter()
   const { user } = useUser()
   const { profile } = useProfile()
-  const { lang, setLang, t } = useLang()
-  const { currency, setCurrency } = useCurrency()
   const [sheetOpen, setSheetOpen] = useState(false)
   const unreadNotifs = useUnreadNotifications()
   const unreadMsgs = useUnreadMessages()
-
-  const signOut = useCallback(async () => {
-    const supabase = createClient()
-    await supabase.auth.signOut()
-    setSheetOpen(false)
-    router.push('/')
-    router.refresh()
-  }, [router])
 
   const isActive = useCallback((tab: typeof TABS[0]) => {
     if (tab.isCenter || tab.isProfile) return false
@@ -250,7 +227,7 @@ export default function BottomNav() {
                 {user ? (
                   <div style={{ padding: '8px 16px 16px' }}>
                     <Link
-                      href="/dashboard"
+                      href={profile?.username ? `/u/${profile.username}` : '/dashboard'}
                       onClick={() => setSheetOpen(false)}
                       style={{
                         display: 'flex', alignItems: 'center', gap: 12,
@@ -272,7 +249,7 @@ export default function BottomNav() {
                           {displayName}
                         </div>
                         <div style={{ fontSize: 12, color: 'var(--fh-t4)', marginTop: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                          {user.email}
+                          {profile?.username ? `View profile` : user.email}
                         </div>
                       </div>
                       <div style={{ width: 28, height: 28, borderRadius: '50%', background: 'var(--fh-surface-3)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
@@ -291,13 +268,6 @@ export default function BottomNav() {
                       Get Started
                     </Link>
                   </div>
-                )}
-
-                {/* ── Role switcher ─────────────────────────────── */}
-                {user && (
-                  <SheetSection label="Mode">
-                    <RoleSwitcher variant="mobile" />
-                  </SheetSection>
                 )}
 
                 {/* ── Quick links — 3-column icon grid ─────────── */}
@@ -330,55 +300,15 @@ export default function BottomNav() {
                   </div>
                 </SheetSection>
 
-                {/* ── Language ─────────────────────────────────── */}
-                <SheetSection label="Language">
-                  <div style={{ display: 'flex', gap: 8, padding: '4px 0' }}>
-                    {LANGS.map(l => (
-                      <button key={l} onClick={() => setLang(l)} style={{
-                        flex: 1, padding: '10px 0', borderRadius: 10, fontSize: 14, fontWeight: 600,
-                        border: 'none', cursor: 'pointer',
-                        background: lang === l ? 'var(--fh-primary)' : 'var(--fh-surface-2)',
-                        color: lang === l ? '#fff' : 'var(--fh-t3)',
-                      }}>
-                        {LANG_LABELS[l]}
-                      </button>
-                    ))}
-                  </div>
-                </SheetSection>
-
-                {/* ── Currency ─────────────────────────────────── */}
-                <SheetSection label="Currency">
-                  <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', padding: '4px 0' }}>
-                    {CURRENCIES.map(c => (
-                      <button key={c} onClick={() => setCurrency(c)} style={{
-                        padding: '9px 14px', borderRadius: 10, fontSize: 14, fontWeight: 600,
-                        border: 'none', cursor: 'pointer',
-                        background: currency === c ? 'var(--fh-primary)' : 'var(--fh-surface-2)',
-                        color: currency === c ? '#fff' : 'var(--fh-t3)',
-                      }}>
-                        {CURRENCY_LABELS[c]}
-                      </button>
-                    ))}
-                  </div>
-                </SheetSection>
-
-                {/* ── Sign Out ─────────────────────────────────── */}
                 {user && (
-                <SheetSection label="Account">
-                  <button
-                    onClick={signOut}
-                    style={{
-                      width: '100%', display: 'flex', alignItems: 'center', gap: 14,
-                      padding: '14px 0', background: 'none', border: 'none',
-                      cursor: 'pointer',
-                    }}
-                  >
-                    <div style={{ width: 36, height: 36, borderRadius: 10, background: 'rgba(229,72,77,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <LogOut style={{ width: 18, height: 18, color: '#e5484d' }} />
-                    </div>
-                    <span style={{ fontSize: 16, color: '#e5484d', fontWeight: 500 }}>Sign Out</span>
-                  </button>
-                </SheetSection>
+                  <div style={{
+                    borderTop: '0.5px solid var(--fh-sep)',
+                    padding: '12px 16px 16px', marginTop: 4,
+                  }}>
+                    <p style={{ fontSize: 12, color: 'var(--fh-t4)', lineHeight: 1.5 }}>
+                      Mode, language, currency, theme and sign-out live on your profile now — tap the ⚙ on the cover.
+                    </p>
+                  </div>
                 )}
 
               </div>

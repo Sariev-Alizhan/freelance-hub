@@ -19,6 +19,7 @@ import ProfileHero from '@/components/profile/ProfileHero'
 import ProfileStats from '@/components/profile/ProfileStats'
 import ProfileTabs from '@/components/profile/ProfileTabs'
 import ProfileStickyActions from '@/components/profile/ProfileStickyActions'
+import ProfileOwnerActions from '@/components/profile/ProfileOwnerActions'
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.freelance-hub.kz'
 
@@ -182,6 +183,18 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
   const category = p.category ? CATEGORIES.find(c => c.slug === p.category) : null
   const profileUrl = `${SITE_URL}/u/${username}`
 
+  // Completion % for own profile only — drives avatar ring
+  let completionPct = 0
+  if (isOwnProfile) {
+    const items = [
+      !!p.avatar && !p.avatar.includes('dicebear'),
+      !!p.bio,
+      !!p.location && p.location !== 'CIS',
+      ...(p.isFreelancer ? [!!p.title, (p.skills?.length ?? 0) >= 2] : []),
+    ]
+    completionPct = Math.round((items.filter(Boolean).length / items.length) * 100)
+  }
+
   const aboutPanel = (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
       {p.isFreelancer && (p.priceFrom ?? 0) > 0 && (
@@ -319,6 +332,9 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
           rating={p.rating}
           reviewsCount={p.reviewsCount}
           isFreelancer={p.isFreelancer}
+          completionPct={completionPct}
+          completionHref={isOwnProfile ? '/profile/setup' : undefined}
+          ownerActions={isOwnProfile ? <ProfileOwnerActions /> : undefined}
         />
 
         <ProfileStats
@@ -331,8 +347,8 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
           isFreelancer={p.isFreelancer}
         />
 
-        {/* Inline desktop action bar (hidden on mobile — sticky bar used there) */}
-        {!isOwnProfile ? (
+        {/* Inline desktop action bar — only for other users (own sees gear/pencil on cover) */}
+        {!isOwnProfile && (
           <div className="hidden md:flex" style={{ gap: 8 }}>
             <Link href={`/messages?open=${p.userId}`} style={{
               flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
@@ -351,15 +367,6 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
               <Briefcase className="h-4 w-4" /> Hire
             </Link>
           </div>
-        ) : (
-          <Link href="/profile/setup" style={{
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            padding: '11px 16px', borderRadius: 8,
-            background: 'var(--fh-surface-2)', border: '1px solid var(--fh-border-2)',
-            color: 'var(--fh-t2)', fontSize: 13, fontWeight: 510, textDecoration: 'none',
-          }}>
-            Edit profile
-          </Link>
         )}
 
         <ProfileTabs tabs={tabs} panels={panels} defaultTab="posts" />

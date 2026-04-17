@@ -1,4 +1,6 @@
 import Image from 'next/image'
+import Link from 'next/link'
+import { ReactNode } from 'react'
 import { MapPin, CheckCircle, Crown, Circle } from 'lucide-react'
 import RatingStars from '@/components/shared/RatingStars'
 
@@ -25,23 +27,33 @@ function coverGradient(seed: string): string {
 }
 
 export interface ProfileHeroProps {
-  username:      string
-  name:          string
-  avatar:        string
-  bio:           string
-  location:      string
-  isVerified?:   boolean
-  isPremium?:    boolean
-  level?:        string
-  title?:        string
-  availability?: string
-  rating?:       number
-  reviewsCount?: number
-  isFreelancer:  boolean
+  username:       string
+  name:           string
+  avatar:         string
+  bio:            string
+  location:       string
+  isVerified?:    boolean
+  isPremium?:     boolean
+  level?:         string
+  title?:         string
+  availability?:  string
+  rating?:        number
+  reviewsCount?:  number
+  isFreelancer:   boolean
+  /** Own-profile only — renders gear/pencil actions in cover top-right. */
+  ownerActions?:  ReactNode
+  /** 0-100. When > 0, renders a completion ring around the avatar. */
+  completionPct?: number
+  /** Route for completion nudge CTA (e.g. "/profile/setup"). */
+  completionHref?: string
 }
 
 export default function ProfileHero(p: ProfileHeroProps) {
   const av = AVAILABILITY[p.availability ?? 'open']
+  const pct = Math.max(0, Math.min(100, p.completionPct ?? 0))
+  const showRing = pct > 0 && pct < 100
+  const ringColor = pct < 50 ? '#f59e0b' : pct < 80 ? '#5e6ad2' : '#27a644'
+
   return (
     <div style={{
       borderRadius: 16, overflow: 'hidden',
@@ -51,18 +63,58 @@ export default function ProfileHero(p: ProfileHeroProps) {
       <div style={{
         height: 140, background: coverGradient(p.username),
         position: 'relative',
-      }} />
+      }}>
+        {p.ownerActions}
+      </div>
 
       {/* Avatar overlapping + meta */}
       <div style={{ padding: '0 20px 20px', marginTop: -56, position: 'relative' }}>
-        <div style={{
-          width: 112, height: 112, borderRadius: 22,
-          border: '4px solid var(--fh-surface)',
-          overflow: 'hidden', position: 'relative', marginBottom: 12,
-          boxShadow: '0 8px 24px rgba(0,0,0,0.35)',
-        }}>
-          <Image src={p.avatar} alt={p.name} width={112} height={112} style={{ objectFit: 'cover' }} unoptimized />
+        <div style={{ position: 'relative', width: 112, height: 112, marginBottom: 12 }}>
+          {showRing && (
+            <div style={{
+              position: 'absolute', inset: -4,
+              borderRadius: 26, padding: 3,
+              background: `conic-gradient(${ringColor} ${pct * 3.6}deg, var(--fh-border-2) 0)`,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}>
+              <div style={{
+                width: '100%', height: '100%', borderRadius: 22,
+                background: 'var(--fh-surface)',
+              }} />
+            </div>
+          )}
+          <div style={{
+            position: 'absolute', inset: 0,
+            borderRadius: 22,
+            border: '4px solid var(--fh-surface)',
+            overflow: 'hidden',
+            boxShadow: '0 8px 24px rgba(0,0,0,0.35)',
+          }}>
+            <Image src={p.avatar} alt={p.name} width={112} height={112} style={{ objectFit: 'cover' }} unoptimized />
+          </div>
+          {showRing && (
+            <div style={{
+              position: 'absolute', right: -4, bottom: -4,
+              width: 32, height: 20, borderRadius: 10,
+              background: ringColor, color: '#fff',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              fontSize: 10, fontWeight: 700,
+              border: '2px solid var(--fh-surface)',
+            }}>
+              {pct}%
+            </div>
+          )}
         </div>
+
+        {showRing && p.completionHref && (
+          <Link href={p.completionHref} style={{
+            display: 'inline-flex', alignItems: 'center', gap: 6,
+            fontSize: 12, color: ringColor, fontWeight: 600,
+            textDecoration: 'none', marginBottom: 10,
+          }}>
+            Complete your profile →
+          </Link>
+        )}
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 4 }}>
           <h1 style={{ fontSize: 24, fontWeight: 590, color: 'var(--fh-t1)', letterSpacing: '-0.03em' }}>
