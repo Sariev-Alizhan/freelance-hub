@@ -6,9 +6,14 @@ import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import {
   Send, Search, ArrowLeft, MessageSquare, LogIn,
-  CheckCheck, Check, Loader2, Paperclip, X, FileText, Download, BadgeCheck, CornerUpLeft,
+  CheckCheck, Check, Loader2, Paperclip, X, FileText, Download, BadgeCheck, CornerUpLeft, Plus,
 } from 'lucide-react'
 import EmojiPickerPopover, { FH_STICKER_SET } from './EmojiPickerPopover'
+import MessageActionsSheet, { QUICK_REACTIONS as QUICK_REACTIONS_6 } from './MessageActionsSheet'
+import dynamic from 'next/dynamic'
+import emojiData from '@emoji-mart/data'
+
+const InlineEmojiPicker = dynamic(() => import('@emoji-mart/react'), { ssr: false })
 import { createClient } from '@/lib/supabase/client'
 import { useUser } from '@/lib/hooks/useUser'
 import { RealtimeChannel } from '@supabase/supabase-js'
@@ -176,7 +181,11 @@ export default function MessengerPage() {
   type ReactionMap = Record<string, Record<string, { count: number; mine: boolean }>>
   const [reactions,    setReactions]    = useState<ReactionMap>({})
   const [hoveredMsgId, setHoveredMsgId] = useState<string | null>(null)
-  const QUICK_REACTIONS = useMemo(() => ['👍', '❤️', '😂', '😮', '😢', '🔥', '💜', '✅'], [])
+  const [reactionPickerMsgId, setReactionPickerMsgId] = useState<string | null>(null)
+  const [actionSheetMsgId,    setActionSheetMsgId]    = useState<string | null>(null)
+  const [hiddenMsgIds,        setHiddenMsgIds]        = useState<Set<string>>(new Set())
+  const QUICK_REACTIONS = useMemo(() => QUICK_REACTIONS_6, [])
+  const longPressTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const [attachment,     setAttachment]    = useState<File | null>(null)
   const [attachPreview,  setAttachPreview] = useState<string | null>(null)
@@ -197,6 +206,18 @@ export default function MessengerPage() {
       inputRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
     }, 300)
   }, [])
+
+  // Click-outside to close the inline "+" reaction picker (desktop)
+  useEffect(() => {
+    if (!reactionPickerMsgId) return
+    const onDown = (e: MouseEvent) => {
+      const t = e.target as HTMLElement | null
+      if (t && t.closest('[data-reaction-picker], em-emoji-picker')) return
+      setReactionPickerMsgId(null)
+    }
+    document.addEventListener('mousedown', onDown)
+    return () => document.removeEventListener('mousedown', onDown)
+  }, [reactionPickerMsgId])
 
   useEffect(() => { activeIdRef.current = activeId }, [activeId])
 
@@ -816,10 +837,10 @@ export default function MessengerPage() {
                 </div>
               ) : (
                 <AnimatePresence initial={false}>
-                  {messages.map((msg, idx) => {
+                  {messages.filter(m => !hiddenMsgIds.has(m.id)).map((msg, idx, arr) => {
                     const isMine = msg.sender_id === user.id
-                    const prevMsg = messages[idx - 1]
-                    const nextMsg = messages[idx + 1]
+                    const prevMsg = arr[idx - 1]
+                    const nextMsg = arr[idx + 1]
                     const showDate = !prevMsg || !isSameDay(prevMsg.created_at, msg.created_at)
                     const gap = prevMsg && (new Date(msg.created_at).getTime() - new Date(prevMsg.created_at).getTime()) < 5 * 60 * 1000
                     const sameAsPrev = prevMsg && prevMsg.sender_id === msg.sender_id && !showDate && gap
@@ -846,6 +867,22 @@ export default function MessengerPage() {
                         style={{ marginTop: sameAsPrev ? 2 : 12, position: 'relative' }}
                         onMouseEnter={() => setHoveredMsgId(msg.id)}
                         onMouseLeave={() => setHoveredMsgId(null)}
+                        onTouchStart={() => {
+                          if (longPressTimerRef.current) clearTimeout(longPressTimerRef.current)
+                          longPressTimerRef.current = setTimeout(() => {
+                            if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+                              try { navigator.vibrate?.(8) } catch {}
+                            }
+                            setActionSheetMsgId(msg.id)
+                          }, 450)
+                        }}
+                        onTouchEnd={() => {
+                          if (longPressTimerRef.current) { clearTimeout(longPressTimerRef.current); longPressTimerRef.current = null }
+                        }}
+                        onTouchMove={() => {
+                          if (longPressTimerRef.current) { clearTimeout(longPressTimerRef.current); longPressTimerRef.current = null }
+                        }}
+                        onContextMenu={e => { e.preventDefault() }}
                       >
                         {/* Date divider */}
                         {showDate && (
@@ -858,10 +895,12 @@ export default function MessengerPage() {
                           </div>
                         )}
 
-                        {/* ── Hover reaction bar ───────────────────────── */}
-                        {hoveredMsgId === msg.id && (
+                        {/* ── Hover reaction bar (desktop) ────────────────── */}
+                        {(hoveredMsgId === msg.id || reactionPickerMsgId === msg.id) && (
                           <div
-                            className={`flex items-center gap-1 mb-1 ${isMine ? 'justify-end pr-10' : 'justify-start pl-10'}`}
+                            data-reaction-picker="true"
+                            className={`hidden md:flex items-center gap-1 mb-1 ${isMine ? 'justify-end pr-10' : 'justify-start pl-10'}`}
+                            style={{ position: 'relative' }}
                           >
                             <div
                               className="flex items-center gap-0.5 px-2 py-1 rounded-full"
@@ -887,6 +926,19 @@ export default function MessengerPage() {
                                   {emoji}
                                 </button>
                               ))}
+                              <button
+                                onClick={() => setReactionPickerMsgId(prev => prev === msg.id ? null : msg.id)}
+                                title="More reactions"
+                                style={{
+                                  background: reactionPickerMsgId === msg.id ? 'var(--fh-primary-muted)' : 'transparent',
+                                  border: 'none', cursor: 'pointer', borderRadius: 6,
+                                  padding: '3px 4px', color: reactionPickerMsgId === msg.id ? 'var(--fh-primary)' : 'var(--fh-t3)',
+                                  display: 'flex', alignItems: 'center',
+                                  transition: 'color 0.15s, background 0.15s',
+                                }}
+                              >
+                                <Plus className="h-4 w-4" />
+                              </button>
                               {/* Separator + Reply */}
                               <div style={{ width: 1, height: 18, background: 'var(--fh-sep)', margin: '0 2px' }} />
                               <button
@@ -911,6 +963,39 @@ export default function MessengerPage() {
                                 <CornerUpLeft className="h-3.5 w-3.5" />
                               </button>
                             </div>
+
+                            {/* Inline emoji-mart picker for desktop "+" */}
+                            {reactionPickerMsgId === msg.id && (
+                              <div
+                                onClick={e => e.stopPropagation()}
+                                style={{
+                                  position: 'absolute', top: 'calc(100% + 4px)',
+                                  [isMine ? 'right' : 'left']: '10%',
+                                  zIndex: 50,
+                                  borderRadius: 14, overflow: 'hidden',
+                                  boxShadow: '0 8px 32px rgba(0,0,0,0.22)',
+                                  border: '1px solid var(--fh-border-2)',
+                                  background: 'var(--fh-surface)',
+                                }}
+                              >
+                                <InlineEmojiPicker
+                                  data={emojiData}
+                                  onEmojiSelect={(e: { native: string }) => {
+                                    toggleReaction(msg.id, e.native)
+                                    setReactionPickerMsgId(null)
+                                    setHoveredMsgId(null)
+                                  }}
+                                  theme={isDark ? 'dark' : 'light'}
+                                  previewPosition="none"
+                                  skinTonePosition="none"
+                                  navPosition="bottom"
+                                  perLine={8}
+                                  emojiSize={20}
+                                  emojiButtonSize={32}
+                                  maxFrequentRows={2}
+                                />
+                              </div>
+                            )}
                           </div>
                         )}
 
@@ -1218,6 +1303,39 @@ export default function MessengerPage() {
           </div>
         )}
       </div>
+
+      {/* Mobile long-press action sheet */}
+      {(() => {
+        const sheetMsg = actionSheetMsgId ? messages.find(m => m.id === actionSheetMsgId) : null
+        const sheetIsMine = sheetMsg?.sender_id === user?.id
+        const sheetSenderName = sheetIsMine ? 'You' : (activeConv?.other_user.full_name ?? 'User')
+        return (
+          <MessageActionsSheet
+            open={!!sheetMsg}
+            onClose={() => setActionSheetMsgId(null)}
+            isDark={isDark}
+            onReact={emoji => sheetMsg && toggleReaction(sheetMsg.id, emoji)}
+            onReply={() => {
+              if (!sheetMsg) return
+              setReplyTo({ id: sheetMsg.id, text: sheetMsg.text || '📎 Attachment', name: sheetSenderName })
+              inputRef.current?.focus()
+            }}
+            onForward={() => alert('Forward — coming soon')}
+            onCopy={() => {
+              if (sheetMsg?.text && typeof navigator !== 'undefined' && navigator.clipboard) {
+                navigator.clipboard.writeText(sheetMsg.text).catch(() => {})
+              }
+            }}
+            onDelete={() => {
+              if (sheetMsg) setHiddenMsgIds(prev => new Set(prev).add(sheetMsg.id))
+            }}
+            onReport={() => alert('Report — coming soon')}
+            onTranslate={() => alert('Translate — coming soon')}
+            onPin={() => alert('Pin — coming soon')}
+            onAddSticker={() => { inputRef.current?.blur(); alert('Tap the 😊 button in the composer to add a sticker') }}
+          />
+        )
+      })()}
     </div>
   )
 }
