@@ -106,7 +106,7 @@ export default function ProfileHero(p: ProfileHeroProps) {
           )}
         </div>
 
-        {showRing && p.completionHref && (
+        {pct < 100 && p.completionHref && (
           <Link href={p.completionHref} style={{
             display: 'inline-flex', alignItems: 'center', gap: 6,
             fontSize: 12, color: ringColor, fontWeight: 600,

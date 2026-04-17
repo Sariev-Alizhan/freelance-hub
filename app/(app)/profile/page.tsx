@@ -2,7 +2,9 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 
 /** Resolver: `/profile` → current user's public profile at `/u/[username]`.
- *  Signed-out → login. No username yet → profile setup. */
+ *  If the user has no username yet (legacy accounts), auto-generate one
+ *  from their id and persist it, so they land on their profile — which
+ *  renders a "Complete profile" CTA when fields are missing. */
 export default async function MyProfileRedirect() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -17,6 +19,11 @@ export default async function MyProfileRedirect() {
     .eq('id', user.id)
     .maybeSingle()
 
-  if (!data?.username) redirect('/profile/setup')
-  redirect(`/u/${data.username}`)
+  let username = data?.username
+  if (!username) {
+    username = `user_${user.id.replace(/-/g, '').slice(0, 10)}`
+    await db.from('profiles').upsert({ id: user.id, username }, { onConflict: 'id' })
+  }
+
+  redirect(`/u/${username}`)
 }
