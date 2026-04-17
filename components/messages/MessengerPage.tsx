@@ -314,25 +314,34 @@ export default function MessengerPage() {
               }}
             />
 
-            <ComposeBar
-              text={text}
-              setText={setText}
-              sending={sending}
-              replyTo={replyTo}
-              onClearReply={() => setReplyTo(null)}
-              attachment={attachment}
-              attachPreview={attachPreview}
-              uploadProgress={uploadProgress}
-              clearAttachment={clearAttachment}
-              fileInputRef={fileInputRef}
-              handleFileSelect={handleFileSelect}
-              inputRef={inputRef}
-              broadcastTyping={broadcastTyping}
-              insertEmoji={insertEmoji}
-              sendSticker={sendSticker}
-              sendMessage={sendMessage}
-              isDark={isDark}
-            />
+            <div
+              className="flex-shrink-0"
+              style={{
+                transform: 'translateY(calc(-1 * var(--fh-kb-offset, 0px)))',
+                transition: 'transform 0.15s ease',
+                willChange: 'transform',
+              }}
+            >
+              <ComposeBar
+                text={text}
+                setText={setText}
+                sending={sending}
+                replyTo={replyTo}
+                onClearReply={() => setReplyTo(null)}
+                attachment={attachment}
+                attachPreview={attachPreview}
+                uploadProgress={uploadProgress}
+                clearAttachment={clearAttachment}
+                fileInputRef={fileInputRef}
+                handleFileSelect={handleFileSelect}
+                inputRef={inputRef}
+                broadcastTyping={broadcastTyping}
+                insertEmoji={insertEmoji}
+                sendSticker={sendSticker}
+                sendMessage={sendMessage}
+                isDark={isDark}
+              />
+            </div>
           </>
         ) : (
           /* Empty state */

@@ -64,7 +64,7 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   viewportFit: 'cover',
-  interactiveWidget: 'resizes-content',
+  interactiveWidget: 'overlays-content',
 }
 
 // Anti-FOUC: apply theme BEFORE first paint.

@@ -52,6 +52,20 @@ export default function MessagesList(props: {
     if (dist < 200 || messages.length <= 20) el.scrollTop = el.scrollHeight
   }, [messages])
 
+  // When the soft keyboard opens/closes, keep the latest message in view
+  // (the compose bar rides up via translate, so scroll position must shift
+  // to match the increased bottom padding).
+  useEffect(() => {
+    const el = msgsContainerRef.current
+    if (!el) return
+    const obs = new ResizeObserver(() => {
+      const dist = el.scrollHeight - el.scrollTop - el.clientHeight
+      if (dist < 400) el.scrollTop = el.scrollHeight
+    })
+    obs.observe(el)
+    return () => obs.disconnect()
+  }, [])
+
   // Click-outside closes the inline "+" reaction picker (desktop)
   useEffect(() => {
     if (!reactionPickerMsgId) return
@@ -68,7 +82,11 @@ export default function MessagesList(props: {
     <div
       ref={msgsContainerRef}
       className="flex-1 overflow-y-auto"
-      style={{ padding: '16px 16px 8px' }}
+      style={{
+        padding: '16px 16px 8px',
+        paddingBottom: 'calc(8px + var(--fh-kb-offset, 0px))',
+        transition: 'padding-bottom 0.15s ease',
+      }}
     >
       {msgsLoading ? (
         <div className="flex items-center justify-center h-full">
