@@ -499,10 +499,20 @@
   }
 }
 
-/* Messenger fills full viewport on desktop (no header), minus header on mobile */
+/* Messenger fills full viewport on desktop (no header), minus header + safe-area on mobile */
 .messenger-height { height: 100dvh; }
 @media (max-width: 767px) {
-  .messenger-height { height: calc(100dvh - 52px); }
+  .messenger-height { height: calc(100dvh - 52px - env(safe-area-inset-top, 0px)); }
+}
+
+/* Lock page scroll entirely when viewing the messenger — the messenger
+   manages its own internal scroll, and any page-level scroll just creates
+   dead space below the composer. */
+html.messenger-locked,
+body.messenger-locked {
+  overflow: hidden;
+  height: 100dvh;
+  overscroll-behavior: none;
 }
 
 /* Conversation list: full-width on mobile, fixed sidebar on desktop */
