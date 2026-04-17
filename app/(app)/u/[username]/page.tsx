@@ -14,7 +14,7 @@ import ReviewsSection from '@/components/shared/ReviewsSection'
 import ShareProfileButton from '@/components/shared/ShareProfileButton'
 import { PortfolioItem } from '@/lib/types'
 import ProfileViewLogger from '@/components/shared/ProfileViewLogger'
-import FriendButton from '@/components/profile/FriendButton'
+import FollowButton from '@/components/profile/FollowButton'
 import ProfilePosts from '@/components/profile/ProfilePosts'
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.freelance-hub.kz'
@@ -178,8 +178,16 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
   if (!p) notFound()
 
   const supabase = await createClient()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const db = supabase as any
   const { data: { user } } = await supabase.auth.getUser()
   const isOwnProfile = user?.id === p.userId
+
+  // Follower/following counts (public, no auth required)
+  const [{ count: followersCount }, { count: followingCount }] = await Promise.all([
+    db.from('follows').select('follower',  { count: 'exact', head: true }).eq('following', p.userId),
+    db.from('follows').select('following', { count: 'exact', head: true }).eq('follower',  p.userId),
+  ])
 
   const category = p.category ? CATEGORIES.find(c => c.slug === p.category) : null
   const av = AVAILABILITY[(p.availability as keyof typeof AVAILABILITY) ?? 'open']
@@ -266,6 +274,20 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
                   ) : null}
                 </div>
               </div>
+            </div>
+
+            {/* Followers / Following */}
+            <div style={{ display: 'flex', gap: '20px', marginBottom: '14px' }}>
+              <Link href={`/u/${p.username}/followers`}
+                style={{ fontSize: '13px', color: 'var(--fh-t3)', textDecoration: 'none' }}>
+                <span style={{ fontWeight: 590, color: 'var(--fh-t1)' }}>{followersCount ?? 0}</span>
+                <span style={{ marginLeft: 4 }}>followers</span>
+              </Link>
+              <Link href={`/u/${p.username}/following`}
+                style={{ fontSize: '13px', color: 'var(--fh-t3)', textDecoration: 'none' }}>
+                <span style={{ fontWeight: 590, color: 'var(--fh-t1)' }}>{followingCount ?? 0}</span>
+                <span style={{ marginLeft: 4 }}>following</span>
+              </Link>
             </div>
 
             {/* Bio */}
@@ -429,7 +451,7 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
                 >
                   <MessageCircle className="h-4 w-4" /> Send message
                 </Link>
-                <FriendButton targetUserId={p.userId} />
+                <FollowButton targetUserId={p.userId} />
                 <Link
                   href="/orders/new"
                   style={{
