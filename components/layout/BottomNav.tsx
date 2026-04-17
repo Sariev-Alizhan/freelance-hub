@@ -227,7 +227,7 @@ export default function BottomNav() {
                 {user ? (
                   <div style={{ padding: '8px 16px 16px' }}>
                     <Link
-                      href={profile?.username ? `/u/${profile.username}` : '/dashboard'}
+                      href="/profile"
                       onClick={() => setSheetOpen(false)}
                       style={{
                         display: 'flex', alignItems: 'center', gap: 12,

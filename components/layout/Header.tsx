@@ -79,7 +79,7 @@ export default function Header() {
         <div style={{ display: 'flex', alignItems: 'center', height: 52, padding: '0 12px', gap: 10 }}>
 
           {/* Left: small avatar → public profile (falls back to operations) */}
-          <Link href={profile?.username ? `/u/${profile.username}` : '/dashboard'} style={{ flexShrink: 0, textDecoration: 'none' }}>
+          <Link href="/profile" style={{ flexShrink: 0, textDecoration: 'none' }}>
             {avatarUrl ? (
               <Image
                 src={avatarUrl} alt="" width={34} height={34}

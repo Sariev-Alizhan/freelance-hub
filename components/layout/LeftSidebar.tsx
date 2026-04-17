@@ -351,7 +351,7 @@ export default function LeftSidebar() {
         {/* Profile / Auth */}
         {user ? (
           <Link
-            href={profile?.username ? `/u/${profile.username}` : '/dashboard'}
+            href="/profile"
             style={{
               display: 'flex',
               alignItems: 'center',
