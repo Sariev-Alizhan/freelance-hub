@@ -1,5 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react'
+import { usePathname } from 'next/navigation'
 import { X, ArrowRight, ArrowLeft, Sparkles, Search, Bot, MessageCircle, CreditCard } from 'lucide-react'
 import { useLang } from '@/lib/context/LanguageContext'
 
@@ -89,14 +90,30 @@ const STEPS: Step[] = [
   },
 ]
 
+// Tour content targets logged-in users (links to /dashboard, /messages, /agents).
+// Don't show it on the landing page or auth flows — it blocks the register form
+// and wouldn't be actionable for anonymous visitors anyway.
+function shouldSkipTour(pathname: string | null): boolean {
+  if (!pathname) return false
+  if (pathname === '/') return true
+  if (pathname.startsWith('/auth')) return true
+  if (pathname === '/terms' || pathname === '/privacy') return true
+  return false
+}
+
 export default function OnboardingGuide() {
   const { lang } = useLang()
+  const pathname = usePathname()
   const [visible, setVisible] = useState(false)
   const [step, setStep] = useState(0)
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
     setMounted(true)
+    if (shouldSkipTour(pathname)) {
+      setVisible(false)
+      return
+    }
     try {
       const done = localStorage.getItem(STORAGE_KEY)
       if (!done) {
@@ -104,7 +121,7 @@ export default function OnboardingGuide() {
         return () => clearTimeout(t)
       }
     } catch {}
-  }, [])
+  }, [pathname])
 
   function dismiss() {
     try { localStorage.setItem(STORAGE_KEY, '1') } catch {}
