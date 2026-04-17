@@ -505,6 +505,12 @@
   .messenger-height { height: calc(100dvh - 52px); }
 }
 
+/* Conversation list: full-width on mobile, fixed sidebar on desktop */
+.messenger-sidebar { width: 100%; }
+@media (min-width: 768px) {
+  .messenger-sidebar { width: clamp(260px, 30vw, 360px); }
+}
+
 /* Feed sticky search bar: 0 on desktop (no top header), 52px on mobile */
 :root { --feed-sticky-top: 0px; }
 @media (max-width: 767px) { :root { --feed-sticky-top: 52px; } }

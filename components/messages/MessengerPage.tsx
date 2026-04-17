@@ -594,9 +594,8 @@ export default function MessengerPage() {
 
       {/* ── Sidebar: Conversation List ────────────────────────────────────── */}
       <div
-        className={`flex flex-col flex-shrink-0 ${showList ? 'flex' : 'hidden md:flex'}`}
+        className={`messenger-sidebar flex flex-col flex-shrink-0 ${showList ? 'flex' : 'hidden md:flex'}`}
         style={{
-          width: 'clamp(260px, 30vw, 360px)',
           borderRight: '1px solid var(--fh-sep)',
           background: 'var(--fh-surface)',
         }}
