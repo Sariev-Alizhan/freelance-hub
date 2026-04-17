@@ -2,7 +2,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import {
-  Briefcase, Code2, User, MapPin, Sparkles,
+  Briefcase, Code2, User, MapPin, Sparkles, Cake,
   ArrowRight, CheckCircle, Loader2,
 } from 'lucide-react'
 import Logo from '@/components/ui/Logo'
@@ -10,8 +10,12 @@ import { createClient } from '@/lib/supabase/client'
 
 type Role = 'client' | 'freelancer'
 
-const STEPS_CLIENT   = ['role', 'name', 'done'] as const
-const STEPS_FREELANCER = ['role', 'name', 'goal', 'done'] as const
+const STEPS_CLIENT     = ['role', 'birth', 'name', 'done'] as const
+const STEPS_FREELANCER = ['role', 'birth', 'name', 'goal', 'done'] as const
+
+const CURRENT_YEAR = new Date().getFullYear()
+const MIN_BIRTH_YEAR = CURRENT_YEAR - 100
+const MAX_BIRTH_YEAR = CURRENT_YEAR - 18  // strict 18+
 
 export default function OnboardingPage() {
   const router = useRouter()
@@ -19,6 +23,7 @@ export default function OnboardingPage() {
 
   const [role, setRole]       = useState<Role>('client')
   const [step, setStep]       = useState(0)
+  const [birthYear, setBirthYear] = useState('')
   const [name, setName]       = useState('')
   const [location, setLocation] = useState('')
   const [goal, setGoal]       = useState('')
@@ -27,17 +32,35 @@ export default function OnboardingPage() {
   const steps = role === 'freelancer' ? STEPS_FREELANCER : STEPS_CLIENT
   const currentStep = steps[step]
 
+  const parsedYear = Number(birthYear)
+  const birthYearValid =
+    Number.isInteger(parsedYear) &&
+    parsedYear >= MIN_BIRTH_YEAR &&
+    parsedYear <= MAX_BIRTH_YEAR
+  const birthYearShowError = birthYear.length === 4 && !birthYearValid
+
   async function finish() {
     setSaving(true)
     try {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) { router.push('/auth/login'); return }
 
-      await fetch('/api/onboarding/setup', {
+      const res = await fetch('/api/onboarding/setup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ role, fullName: name.trim(), location: location.trim() || null }),
+        body: JSON.stringify({
+          role,
+          fullName: name.trim(),
+          location: location.trim() || null,
+          birthYear: parsedYear,
+        }),
       })
+
+      if (!res.ok) {
+        const { error } = await res.json().catch(() => ({ error: 'Setup failed' }))
+        alert(error || 'Setup failed')
+        return
+      }
 
       router.push('/feed?onboarding=1')
     } finally {
@@ -119,6 +142,70 @@ export default function OnboardingPage() {
                 className="w-full flex items-center justify-center gap-2 transition-all"
                 style={{ padding: '11px', borderRadius: '8px', background: '#5e6ad2', color: '#fff', fontSize: '14px', fontWeight: 590, letterSpacing: '-0.01em' }}
                 onMouseEnter={e => { e.currentTarget.style.background = '#828fff' }}
+                onMouseLeave={e => { e.currentTarget.style.background = '#5e6ad2' }}
+              >
+                Continue <ArrowRight className="h-4 w-4" />
+              </button>
+            </div>
+          )}
+
+          {/* Step: birth year (18+ gate) */}
+          {currentStep === 'birth' && (
+            <div>
+              <h2 style={{ fontSize: '22px', fontWeight: 650, color: 'var(--fh-t1)', letterSpacing: '-0.03em', marginBottom: '8px' }}>
+                В каком году вы родились?
+              </h2>
+              <p style={{ fontSize: '13px', color: 'var(--fh-t4)', marginBottom: '20px', lineHeight: 1.6 }}>
+                FreelanceHub — платформа для совершеннолетних. Регистрация с 18+.
+              </p>
+              <div className="relative mb-3">
+                <Cake className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 pointer-events-none" style={{ color: 'var(--fh-t4)' }} />
+                <input
+                  autoFocus
+                  inputMode="numeric"
+                  pattern="\d*"
+                  maxLength={4}
+                  value={birthYear}
+                  onChange={e => setBirthYear(e.target.value.replace(/\D/g, '').slice(0, 4))}
+                  onKeyDown={e => { if (e.key === 'Enter' && birthYearValid) next() }}
+                  placeholder={`Например, ${MAX_BIRTH_YEAR - 5}`}
+                  style={{
+                    width: '100%',
+                    paddingLeft: '36px',
+                    paddingRight: '12px',
+                    paddingTop: '10px',
+                    paddingBottom: '10px',
+                    borderRadius: '8px',
+                    background: 'var(--fh-surface-2)',
+                    border: birthYearShowError
+                      ? '1px solid rgba(239,68,68,0.5)'
+                      : '1px solid var(--fh-border)',
+                    color: 'var(--fh-t1)',
+                    fontSize: '15px',
+                    outline: 'none',
+                    letterSpacing: '0.04em',
+                  }}
+                  onFocus={e => {
+                    if (!birthYearShowError) e.currentTarget.style.borderColor = 'rgba(113,112,255,0.5)'
+                  }}
+                  onBlur={e => {
+                    if (!birthYearShowError) e.currentTarget.style.borderColor = 'var(--fh-border)'
+                  }}
+                />
+              </div>
+              {birthYearShowError && (
+                <p style={{ fontSize: '12px', color: '#ef4444', marginBottom: '16px', lineHeight: 1.5 }}>
+                  {parsedYear > MAX_BIRTH_YEAR
+                    ? `Извините, регистрация только для пользователей 18 лет и старше.`
+                    : `Введите корректный год рождения (${MIN_BIRTH_YEAR}–${MAX_BIRTH_YEAR}).`}
+                </p>
+              )}
+              <button
+                onClick={next}
+                disabled={!birthYearValid}
+                className="w-full flex items-center justify-center gap-2 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                style={{ padding: '11px', borderRadius: '8px', background: '#5e6ad2', color: '#fff', fontSize: '14px', fontWeight: 590, letterSpacing: '-0.01em' }}
+                onMouseEnter={e => { if (birthYearValid) e.currentTarget.style.background = '#828fff' }}
                 onMouseLeave={e => { e.currentTarget.style.background = '#5e6ad2' }}
               >
                 Continue <ArrowRight className="h-4 w-4" />

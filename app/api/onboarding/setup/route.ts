@@ -7,16 +7,28 @@ export async function POST(req: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const { role, fullName, location } = await req.json()
+  const { role, fullName, location, birthYear } = await req.json()
   if (!fullName || !['client', 'freelancer'].includes(role)) {
     return NextResponse.json({ error: 'Invalid payload' }, { status: 400 })
+  }
+
+  // 18+ age gate — platform is adults only per Terms.
+  const currentYear = new Date().getFullYear()
+  const minYear     = 1900
+  const maxYear     = currentYear - 18
+  const by          = Number(birthYear)
+  if (!Number.isInteger(by) || by < minYear || by > maxYear) {
+    return NextResponse.json(
+      { error: 'You must be at least 18 years old to use FreelanceHub.' },
+      { status: 400 }
+    )
   }
 
   const admin = createAdminClient()
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const db = admin as any
 
-  // Update profile with name, location, and role
+  // Update profile with name, location, role, and birth year
   const { error: profileErr } = await db
     .from('profiles')
     .upsert({
@@ -24,6 +36,7 @@ export async function POST(req: NextRequest) {
       full_name: fullName,
       location: location ?? null,
       role,
+      birth_year: by,
     })
 
   if (profileErr) {

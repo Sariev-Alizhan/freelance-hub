@@ -81,9 +81,14 @@ export default function RegisterPage() {
   const [loading, setLoading]     = useState<string | null>(null)
   const [role, setRole]           = useState<UserRole>('client')
   const [authError, setAuthError] = useState<string | null>(null)
+  const [ageConfirmed, setAgeConfirmed] = useState(false)
   const supabase = createClient()
 
   async function signUp(provider: Provider) {
+    if (!ageConfirmed) {
+      setAuthError('Подтвердите, что вам 18 лет или больше.')
+      return
+    }
     setAuthError(null)
     setLoading(provider)
     const { error } = await supabase.auth.signInWithOAuth({
@@ -177,6 +182,32 @@ export default function RegisterPage() {
             </div>
           </div>
 
+          {/* 18+ age gate */}
+          <label style={{
+            display: 'flex', alignItems: 'flex-start', gap: '10px',
+            padding: '10px 12px', borderRadius: '10px',
+            background: ageConfirmed ? 'rgba(113,112,255,0.08)' : 'var(--fh-surface-2)',
+            border: ageConfirmed ? '1px solid rgba(113,112,255,0.35)' : '1px solid var(--fh-border)',
+            cursor: 'pointer',
+            transition: 'background 0.15s, border-color 0.15s',
+          }}>
+            <input
+              type="checkbox"
+              checked={ageConfirmed}
+              onChange={e => setAgeConfirmed(e.target.checked)}
+              style={{
+                marginTop: '2px',
+                width: '16px', height: '16px',
+                accentColor: '#7170ff',
+                flexShrink: 0,
+                cursor: 'pointer',
+              }}
+            />
+            <span style={{ fontSize: '12px', color: 'var(--fh-t2)', lineHeight: 1.5 }}>
+              Мне исполнилось <strong style={{ color: 'var(--fh-t1)' }}>18 лет</strong>. FreelanceHub — платформа только для совершеннолетних.
+            </span>
+          </label>
+
           {/* Divider */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <div style={{ flex: 1, height: '1px', background: 'var(--fh-sep)' }} />
@@ -185,7 +216,7 @@ export default function RegisterPage() {
           </div>
 
           {/* OAuth buttons */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', opacity: ageConfirmed ? 1 : 0.5, pointerEvents: ageConfirmed ? 'auto' : 'none' }}>
             <OAuthBtn provider="google" label="Продолжить с Google" icon={<GoogleIcon />}
               bg="#ffffff" color="#1f1f1f" border="1px solid #dadce0" loading={loading} onClick={signUp} />
 

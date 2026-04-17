@@ -16,8 +16,8 @@ const SECTIONS = [
     body: `FreelanceHub is an online marketplace that connects clients who need freelance services with independent professionals ("freelancers"). The Platform provides tools for posting orders, submitting proposals, communicating, and completing transactions. FreelanceHub itself is not a party to any agreement between clients and freelancers.`,
   },
   {
-    title: '3. User Accounts',
-    body: `You must create an account to use most features. You are responsible for maintaining the confidentiality of your credentials and for all activities that occur under your account. You must provide accurate, current, and complete information during registration and keep it up to date. Accounts are personal and may not be transferred to another person.`,
+    title: '3. User Accounts & Eligibility',
+    body: `FreelanceHub is an adults-only platform. You must be at least 18 years of age to register or use the Platform in any capacity (client, freelancer, or otherwise). During registration you are required to confirm your age and provide your year of birth, which is validated server-side. Accounts found to belong to minors will be terminated without notice. You are responsible for maintaining the confidentiality of your credentials and for all activities that occur under your account. You must provide accurate, current, and complete information during registration and keep it up to date. Accounts are personal and may not be transferred to another person.`,
   },
   {
     title: '4. Freelancer Obligations',
@@ -102,7 +102,7 @@ export default function TermsPage() {
           Terms of Service
         </h1>
         <p style={{ fontSize: '14px', color: 'var(--fh-t4)', fontWeight: 400 }}>
-          Last updated: April 15, 2026 · Effective immediately for new users
+          Last updated: April 17, 2026 · Effective immediately for new users
         </p>
       </div>
 
@@ -113,7 +113,8 @@ export default function TermsPage() {
       >
         <p style={{ fontSize: '13px', color: 'var(--fh-t3)', lineHeight: 1.7 }}>
           These Terms govern your use of FreelanceHub — a freelance marketplace for the CIS region.
-          Please read them carefully. By using our platform you agree to these terms.
+          Please read them carefully. By using our platform you agree to these terms.{' '}
+          <strong style={{ color: 'var(--fh-t1)' }}>The Platform is restricted to users aged 18 and above.</strong>{' '}
           If you have questions, reach out via{' '}
           <a
             href="https://t.me/zhanmate"

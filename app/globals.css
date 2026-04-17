@@ -701,3 +701,15 @@ html[data-chat-open="true"] .bottom-nav { display: none !important; }
     padding-bottom: calc(52px + env(safe-area-inset-bottom, 0px));
   }
 }
+
+/* iOS Safari auto-zooms any input/textarea/select whose font-size is < 16px.
+   Force 16px on mobile to keep the viewport static when the keyboard opens.
+   The visual size is preserved via scale transform where the design calls for
+   smaller text — this rule only affects the computed font-size iOS reads. */
+@media (max-width: 767px) {
+  input,
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+}
