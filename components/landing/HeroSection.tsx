@@ -4,9 +4,9 @@ import { motion } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
 
 const STATS = [
-  { val: '0%',   label: 'Commission' },
-  { val: '∞',    label: 'Countries'  },
-  { val: 'Free', label: 'Forever'    },
+  { val: '0%',     label: 'Commission' },
+  { val: 'Global', label: 'Reach'      },
+  { val: 'Free',   label: 'Forever'    },
 ]
 
 export default function HeroSection() {

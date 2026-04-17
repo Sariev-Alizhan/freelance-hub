@@ -153,10 +153,12 @@ export default function AgentsSection() {
               </div>
 
               <div className="flex items-center justify-between mt-3 pt-3" style={{ borderTop: '1px solid var(--fh-sep)' }}>
-                <span style={{ fontSize: '14px', fontWeight: 700, color: 'var(--fh-t1)' }}>
-                  ${agent.pricePerTask}<span style={{ fontSize: '11px', fontWeight: 400, color: 'var(--fh-t4)' }}> / task</span>
+                <span style={{ fontSize: '12px', color: 'var(--fh-t4)', fontWeight: 510 }}>
+                  {lang === 'ru' ? 'AI-ассистент' : 'AI assistant'}
                 </span>
-                <span style={{ fontSize: '11px', color: '#27a644', fontWeight: 510 }}>● Available</span>
+                <span style={{ fontSize: '11px', color: '#27a644', fontWeight: 510 }}>
+                  ● {lang === 'ru' ? 'Доступен' : 'Available'}
+                </span>
               </div>
             </Link>
           ))}
