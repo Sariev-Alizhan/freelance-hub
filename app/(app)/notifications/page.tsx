@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Bell, BellOff, MessageSquare, UserCheck, Briefcase,
-  CheckCheck, X, Trash2,
+  CheckCheck, X, Trash2, UserPlus,
 } from 'lucide-react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
@@ -13,7 +13,7 @@ import { RealtimeChannel } from '@supabase/supabase-js'
 
 interface Notification {
   id: string
-  type: 'new_response' | 'new_message' | 'order_accepted' | 'order_completed'
+  type: 'new_response' | 'new_message' | 'order_accepted' | 'order_completed' | 'new_follower'
   title: string
   body: string | null
   link: string | null
@@ -22,13 +22,14 @@ interface Notification {
 }
 
 const TYPE_CONFIG: Record<string, { icon: React.ElementType; color: string; bgColor: string; label: string; filter: string }> = {
-  new_response:    { icon: UserCheck,     color: '#3b82f6', bgColor: 'rgba(59,130,246,0.1)',  label: 'New response',  filter: 'orders'   },
+  new_response:    { icon: UserCheck,     color: '#3b82f6', bgColor: 'rgba(59,130,246,0.1)',  label: 'New response',  filter: 'orders'    },
   new_message:     { icon: MessageSquare, color: 'var(--fh-primary)', bgColor: 'var(--fh-primary-muted)', label: 'Message', filter: 'messages' },
-  order_accepted:  { icon: CheckCheck,    color: '#27a644', bgColor: 'rgba(39,166,68,0.1)',   label: 'Order accepted', filter: 'orders'  },
-  order_completed: { icon: Briefcase,     color: '#f59e0b', bgColor: 'rgba(245,158,11,0.1)',  label: 'Order done',    filter: 'orders'   },
+  order_accepted:  { icon: CheckCheck,    color: '#27a644', bgColor: 'rgba(39,166,68,0.1)',   label: 'Order accepted', filter: 'orders'   },
+  order_completed: { icon: Briefcase,     color: '#f59e0b', bgColor: 'rgba(245,158,11,0.1)',  label: 'Order done',     filter: 'orders'   },
+  new_follower:    { icon: UserPlus,      color: '#a855f7', bgColor: 'rgba(168,85,247,0.1)',  label: 'New follower',   filter: 'social'   },
 }
 
-type FilterTab = 'all' | 'orders' | 'messages'
+type FilterTab = 'all' | 'orders' | 'messages' | 'social'
 
 function timeAgo(iso: string) {
   const s = (Date.now() - new Date(iso).getTime()) / 1000
@@ -281,6 +282,7 @@ export default function NotificationsPage() {
             { id: 'all',      label: 'All' },
             { id: 'orders',   label: 'Orders' },
             { id: 'messages', label: 'Messages' },
+            { id: 'social',   label: 'Social' },
           ] as { id: FilterTab; label: string }[]).map(f => (
             <button
               key={f.id}

@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Bell, MessageSquare, UserCheck, Briefcase, CheckCheck, X, BellOff } from 'lucide-react'
+import { Bell, MessageSquare, UserCheck, Briefcase, CheckCheck, X, BellOff, UserPlus } from 'lucide-react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { useUser } from '@/lib/hooks/useUser'
@@ -11,7 +11,7 @@ import { usePushNotifications } from '@/lib/hooks/usePushNotifications'
 
 interface Notification {
   id: string
-  type: 'new_response' | 'new_message' | 'order_accepted' | 'order_completed'
+  type: 'new_response' | 'new_message' | 'order_accepted' | 'order_completed' | 'new_follower'
   title: string
   body: string | null
   link: string | null
@@ -20,10 +20,11 @@ interface Notification {
 }
 
 const TYPE_CONFIG = {
-  new_response: { icon: UserCheck,  color: 'text-blue-400',   bg: 'bg-blue-500/10'   },
-  new_message:  { icon: MessageSquare, color: 'text-primary', bg: 'bg-primary/10'    },
-  order_accepted:{ icon: CheckCheck, color: 'text-green-400', bg: 'bg-green-500/10'  },
-  order_completed:{ icon: Briefcase, color: 'text-amber-400', bg: 'bg-amber-500/10'  },
+  new_response:    { icon: UserCheck,     color: 'text-blue-400',   bg: 'bg-blue-500/10'   },
+  new_message:     { icon: MessageSquare, color: 'text-primary',    bg: 'bg-primary/10'    },
+  order_accepted:  { icon: CheckCheck,    color: 'text-green-400',  bg: 'bg-green-500/10'  },
+  order_completed: { icon: Briefcase,     color: 'text-amber-400',  bg: 'bg-amber-500/10'  },
+  new_follower:    { icon: UserPlus,      color: 'text-purple-400', bg: 'bg-purple-500/10' },
 }
 
 function timeAgo(iso: string) {
