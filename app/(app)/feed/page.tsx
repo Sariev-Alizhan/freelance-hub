@@ -9,6 +9,7 @@ import {
 } from 'lucide-react'
 // RefreshCw kept for the pull-to-refresh indicator only
 import { CURRENT_RELEASE } from '@/lib/company-report'
+import { FEED_RELEASES, EDITOR_POSTS, type FeedRelease, type EditorPost } from '@/lib/feed-content'
 import { useProfile } from '@/lib/context/ProfileContext'
 import { useUser } from '@/lib/hooks/useUser'
 import { useToastHelpers } from '@/lib/context/ToastContext'
@@ -39,9 +40,11 @@ interface UserPost {
 }
 
 type FeedItem =
-  | { kind: 'news';   data: NewsItem }
-  | { kind: 'post';   data: UserPost }
+  | { kind: 'news';    data: NewsItem }
+  | { kind: 'post';    data: UserPost }
   | { kind: 'update' }
+  | { kind: 'release'; data: FeedRelease }
+  | { kind: 'editor';  data: EditorPost  }
 
 interface Reactions {
   likes: number; dislikes: number; saves: number; reposts: number; mine: string[]
@@ -417,6 +420,104 @@ function UpdateCard({ reactions, onReact, user, profile }: {
   )
 }
 
+// ── Release card (compact, one per recent release) ──────────────────────────
+
+function ReleaseCard({ release, reactions, onReact, user, profile }: {
+  release: FeedRelease; reactions: Reactions
+  onReact: (id: string, action: string) => void
+  user: { id: string } | null; profile: { avatar_url: string | null; full_name: string | null } | null
+}) {
+  const itemId = `rel-${release.version}`
+  return (
+    <CardShell itemId={itemId} reactions={reactions} onReact={onReact} user={user} profile={profile}>
+      <div className="flex items-center gap-2 mb-2">
+        <div className="h-7 w-7 rounded-lg flex items-center justify-center text-base flex-shrink-0"
+          style={{ background: 'var(--fh-primary-muted)', border: '1px solid rgba(113,112,255,0.2)' }}>
+          {release.emoji}
+        </div>
+        <div className="min-w-0">
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] font-bold px-1.5 py-0.5 rounded"
+              style={{ background: 'var(--fh-primary-muted)', color: 'var(--fh-primary)' }}>
+              v{release.version}
+            </span>
+            <span style={{ fontSize: 11, color: 'var(--fh-t4)' }}>
+              {new Date(release.date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' })}
+            </span>
+          </div>
+          <p style={{ fontSize: 14, fontWeight: 590, color: 'var(--fh-t1)', letterSpacing: '-0.02em', marginTop: 2 }} className="truncate">
+            {release.title}
+          </p>
+        </div>
+      </div>
+      <p style={{ fontSize: 13, color: 'var(--fh-t2)', lineHeight: 1.55, marginBottom: 8 }}>
+        {release.summary}
+      </p>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginBottom: 2 }}>
+        {release.highlights.map((h, i) => (
+          <div key={i} style={{ fontSize: 12, color: 'var(--fh-t3)', lineHeight: 1.5 }}>{h}</div>
+        ))}
+      </div>
+    </CardShell>
+  )
+}
+
+// ── Editor post card ─────────────────────────────────────────────────────────
+
+function EditorCard({ post, reactions, onReact, user, profile }: {
+  post: EditorPost; reactions: Reactions
+  onReact: (id: string, action: string) => void
+  user: { id: string } | null; profile: { avatar_url: string | null; full_name: string | null } | null
+}) {
+  const itemId = `ed-${post.id}`
+  return (
+    <CardShell itemId={itemId} reactions={reactions} onReact={onReact} user={user} profile={profile}>
+      <div className="flex items-center gap-2 mb-2">
+        <div className="h-7 w-7 rounded-lg flex items-center justify-center text-base flex-shrink-0"
+          style={{ background: 'var(--fh-surface-2)', border: '1px solid var(--fh-border)' }}>
+          {post.emoji}
+        </div>
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-2">
+            <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--fh-t1)', letterSpacing: '-0.01em' }} className="truncate">
+              {post.author}
+            </span>
+            <BadgeCheck style={{ width: 13, height: 13, color: 'var(--fh-primary)', flexShrink: 0 }} />
+          </div>
+          <div className="flex items-center gap-1.5 mt-0.5">
+            <span className="text-[10px] font-bold px-1.5 py-0.5 rounded" style={{
+              background: `${post.tagColor}22`, color: post.tagColor,
+            }}>
+              {post.tag}
+            </span>
+            <span style={{ fontSize: 11, color: 'var(--fh-t4)' }}>·</span>
+            <span style={{ fontSize: 11, color: 'var(--fh-t4)' }}>
+              {new Date(post.date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' })}
+            </span>
+          </div>
+        </div>
+      </div>
+      <p style={{ fontSize: 15, fontWeight: 590, color: 'var(--fh-t1)', letterSpacing: '-0.02em', marginBottom: 6, lineHeight: 1.3 }}>
+        {post.title}
+      </p>
+      <p style={{ fontSize: 13, color: 'var(--fh-t2)', lineHeight: 1.6, marginBottom: 8 }}>
+        {post.body}
+      </p>
+      {post.tags.length > 0 && (
+        <div className="flex flex-wrap gap-1.5 mb-1">
+          {post.tags.map(t => (
+            <span key={t} style={{
+              fontSize: 11, color: 'var(--fh-primary)', fontWeight: 510,
+            }}>
+              #{t}
+            </span>
+          ))}
+        </div>
+      )}
+    </CardShell>
+  )
+}
+
 // ── Compose post ──────────────────────────────────────────────────────────────
 
 function ComposePost({ user, profile, onPost, mobile }: {
@@ -570,10 +671,6 @@ export default function FeedPage() {
   const { profile } = useProfile()
   const { success: toastOk, error: toastErr, info: toastInfo } = useToastHelpers()
 
-  const isDark = typeof document !== 'undefined'
-    ? document.documentElement.classList.contains('dark')
-    : false
-
   const [news,       setNews]       = useState<NewsItem[]>([])
   const [userPosts,  setUserPosts]  = useState<UserPost[]>([])
   const [reactions,  setReactions]  = useState<Record<string, Reactions>>({})
@@ -693,21 +790,40 @@ export default function FeedPage() {
 
     const items: FeedItem[] = []
 
-    // Platform update first (pinned, no search filter)
-    if (!q) items.push({ kind: 'update' })
+    // Pinned content on top when there's no active search:
+    // 1. Current release deep-dive card
+    // 2. First editor post (welcome)
+    // 3. Top recent release
+    // Remaining releases + editor posts are interleaved further down.
+    if (!q) {
+      items.push({ kind: 'update' })
+      if (EDITOR_POSTS[0]) items.push({ kind: 'editor',  data: EDITOR_POSTS[0] })
+      if (FEED_RELEASES[0]) items.push({ kind: 'release', data: FEED_RELEASES[0] })
+    }
 
-    // Interleave: 1 post every 5 news items
+    // Build a pool of remaining curated cards to interleave.
+    const curated: FeedItem[] = q ? [] : [
+      ...FEED_RELEASES.slice(1).map(r => ({ kind: 'release' as const, data: r })),
+      ...EDITOR_POSTS.slice(1).map(p => ({ kind: 'editor'  as const, data: p })),
+    ]
+
+    // Interleave: 1 user post every ~5 news items, 1 curated card every ~4.
     let pi = 0
     let ni = 0
+    let ci = 0
     let pos = 0
 
-    while (ni < filteredNews.length || pi < filteredPosts.length) {
-      if (pos % 6 === 0 && pi < filteredPosts.length) {
+    while (ni < filteredNews.length || pi < filteredPosts.length || ci < curated.length) {
+      if (pos > 0 && pos % 4 === 0 && ci < curated.length) {
+        items.push(curated[ci++])
+      } else if (pos % 6 === 0 && pi < filteredPosts.length) {
         items.push({ kind: 'post', data: filteredPosts[pi++] })
       } else if (ni < filteredNews.length) {
         items.push({ kind: 'news', data: filteredNews[ni++] })
       } else if (pi < filteredPosts.length) {
         items.push({ kind: 'post', data: filteredPosts[pi++] })
+      } else if (ci < curated.length) {
+        items.push(curated[ci++])
       }
       pos++
     }
@@ -741,7 +857,7 @@ export default function FeedPage() {
         </div>
         {!query && <div style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border)', borderRadius: 18, padding: '4px 12px', marginBottom: 12, overflow: 'hidden' }}><StoriesBar currentUserId={user?.id} /></div>}
         {!query && <ComposePost user={user} profile={profile} onPost={handleNewPost} />}
-        {loading ? <div className="space-y-3">{[...Array(6)].map((_, i) => <div key={i} className="rounded-2xl animate-pulse" style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border)', height: 140 }} />)}</div> : feedItems.length === 0 ? <div className="flex flex-col items-center justify-center py-20 gap-3 text-center"><Search className="h-8 w-8" style={{ color: 'var(--fh-t4)', opacity: 0.3 }} /><p style={{ fontSize: 14, color: 'var(--fh-t4)' }}>Ничего не найдено</p><button onClick={() => { setSearch(''); setQuery('') }} style={{ fontSize: 13, color: 'var(--fh-primary)', background: 'none', border: 'none', cursor: 'pointer' }}>Очистить</button></div> : <div className="space-y-3">{feedItems.map((item) => { if (item.kind === 'update') return <UpdateCard key="update" reactions={getR(`update-v${CURRENT_RELEASE.version}`)} onReact={handleReact} user={user} profile={profile} />; if (item.kind === 'post') return <PostCard key={item.data.id} post={item.data} reactions={getR(item.data.id)} onReact={handleReact} user={user} profile={profile} onDelete={handleDeletePost} />; return <NewsCard key={item.data.id} item={item.data} reactions={getR(item.data.id)} onReact={handleReact} user={user} profile={profile} /> })}</div>}
+        {loading ? <div className="space-y-3">{[...Array(6)].map((_, i) => <div key={i} className="rounded-2xl animate-pulse" style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border)', height: 140 }} />)}</div> : feedItems.length === 0 ? <div className="flex flex-col items-center justify-center py-20 gap-3 text-center"><Search className="h-8 w-8" style={{ color: 'var(--fh-t4)', opacity: 0.3 }} /><p style={{ fontSize: 14, color: 'var(--fh-t4)' }}>Ничего не найдено</p><button onClick={() => { setSearch(''); setQuery('') }} style={{ fontSize: 13, color: 'var(--fh-primary)', background: 'none', border: 'none', cursor: 'pointer' }}>Очистить</button></div> : <div className="space-y-3">{feedItems.map((item) => { if (item.kind === 'update') return <UpdateCard key="update" reactions={getR(`update-v${CURRENT_RELEASE.version}`)} onReact={handleReact} user={user} profile={profile} />; if (item.kind === 'release') return <ReleaseCard key={`rel-${item.data.version}`} release={item.data} reactions={getR(`rel-${item.data.version}`)} onReact={handleReact} user={user} profile={profile} />; if (item.kind === 'editor') return <EditorCard key={`ed-${item.data.id}`} post={item.data} reactions={getR(`ed-${item.data.id}`)} onReact={handleReact} user={user} profile={profile} />; if (item.kind === 'post') return <PostCard key={item.data.id} post={item.data} reactions={getR(item.data.id)} onReact={handleReact} user={user} profile={profile} onDelete={handleDeletePost} />; return <NewsCard key={item.data.id} item={item.data} reactions={getR(item.data.id)} onReact={handleReact} user={user} profile={profile} /> })}</div>}
         <div className="h-8" />
       </div>
 
@@ -791,8 +907,10 @@ export default function FeedPage() {
         ) : (
           <div>
             {feedItems.map((item) => {
-              if (item.kind === 'update') return <UpdateCard key="update" reactions={getR(`update-v${CURRENT_RELEASE.version}`)} onReact={handleReact} user={user} profile={profile} />
-              if (item.kind === 'post')   return <PostCard   key={item.data.id} post={item.data} reactions={getR(item.data.id)} onReact={handleReact} user={user} profile={profile} onDelete={handleDeletePost} />
+              if (item.kind === 'update')  return <UpdateCard  key="update" reactions={getR(`update-v${CURRENT_RELEASE.version}`)} onReact={handleReact} user={user} profile={profile} />
+              if (item.kind === 'release') return <ReleaseCard key={`rel-${item.data.version}`} release={item.data} reactions={getR(`rel-${item.data.version}`)} onReact={handleReact} user={user} profile={profile} />
+              if (item.kind === 'editor')  return <EditorCard  key={`ed-${item.data.id}`} post={item.data} reactions={getR(`ed-${item.data.id}`)} onReact={handleReact} user={user} profile={profile} />
+              if (item.kind === 'post')    return <PostCard    key={item.data.id} post={item.data} reactions={getR(item.data.id)} onReact={handleReact} user={user} profile={profile} onDelete={handleDeletePost} />
               return <NewsCard key={item.data.id} item={item.data} reactions={getR(item.data.id)} onReact={handleReact} user={user} profile={profile} />
             })}
           </div>
