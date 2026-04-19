@@ -6,7 +6,8 @@ import { useUser } from '@/lib/hooks/useUser'
 import { useCurrency } from '@/lib/context/CurrencyContext'
 import { convertFromUSD, convertToUSD, CURRENCY_SYMBOLS } from '@/lib/utils/currency'
 import type { Currency } from '@/lib/types'
-import { TYPE_LABELS, TYPE_ICONS, PERIOD_LABELS, type Goal } from './types'
+import { useLang } from '@/lib/context/LanguageContext'
+import { TYPE_ICONS, type Goal } from './types'
 
 export default function CreateGoalModal({
   onClose, onCreated, presetGoal, presetPeriod, presetCategory, presetCurrency,
@@ -20,6 +21,10 @@ export default function CreateGoalModal({
 }) {
   const { user }  = useUser()
   const { currency, rates } = useCurrency()
+  const { t } = useLang()
+  const td = t.dashboardPage
+  const TYPE_LABELS = { income: td.typeIncome, orders: td.typeOrders, hours: td.typeHours } as const
+  const PERIOD_LABELS = { week: td.periodWeek, month: td.periodMonth, custom: td.periodCustom } as const
 
   function calcDefaultTarget() {
     if (presetGoal) {
@@ -72,25 +77,25 @@ export default function CreateGoalModal({
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
       <div className="w-full max-w-md rounded-2xl border border-subtle bg-card p-6 space-y-5">
         <div className="flex items-center justify-between">
-          <h2 className="font-bold">Новая цель</h2>
-          <button onClick={onClose} className="text-muted-foreground hover:text-foreground" aria-label="Close">
+          <h2 className="font-bold">{td.newGoal}</h2>
+          <button onClick={onClose} className="text-muted-foreground hover:text-foreground" aria-label={td.closeAria}>
             <X className="h-5 w-5" />
           </button>
         </div>
 
         <div>
-          <label className="text-xs font-medium text-muted-foreground mb-2 block">Тип цели</label>
+          <label className="text-xs font-medium text-muted-foreground mb-2 block">{td.goalType}</label>
           <div className="grid grid-cols-3 gap-2">
-            {(['income', 'orders', 'hours'] as Goal['type'][]).map(t => (
+            {(['income', 'orders', 'hours'] as Goal['type'][]).map(tk => (
               <button
-                key={t}
-                onClick={() => setType(t)}
+                key={tk}
+                onClick={() => setType(tk)}
                 className={`py-2.5 rounded-xl text-xs font-medium border transition-colors flex flex-col items-center gap-1 ${
-                  type === t ? 'bg-primary text-white border-primary' : 'border-subtle text-muted-foreground hover:border-primary/30'
+                  type === tk ? 'bg-primary text-white border-primary' : 'border-subtle text-muted-foreground hover:border-primary/30'
                 }`}
               >
-                {TYPE_ICONS[t]}
-                {TYPE_LABELS[t]}
+                {TYPE_ICONS[tk]}
+                {TYPE_LABELS[tk]}
               </button>
             ))}
           </div>
@@ -98,7 +103,7 @@ export default function CreateGoalModal({
 
         <div>
           <label className="text-xs font-medium text-muted-foreground mb-2 block">
-            {type === 'income' ? `Сумма (${CURRENCY_SYMBOLS[currency as Currency] ?? '$'})` : type === 'orders' ? 'Кол-во заказов' : 'Кол-во часов'}
+            {type === 'income' ? `${td.amountLabel} (${CURRENCY_SYMBOLS[currency as Currency] ?? '$'})` : type === 'orders' ? td.ordersLabel : td.hoursLabel}
           </label>
           <input
             type="number"
@@ -110,7 +115,7 @@ export default function CreateGoalModal({
         </div>
 
         <div>
-          <label className="text-xs font-medium text-muted-foreground mb-2 block">Период</label>
+          <label className="text-xs font-medium text-muted-foreground mb-2 block">{td.period}</label>
           <div className="flex gap-2">
             {(['week', 'month'] as Goal['period_type'][]).map(p => (
               <button
@@ -127,10 +132,10 @@ export default function CreateGoalModal({
         </div>
 
         <div>
-          <label className="text-xs font-medium text-muted-foreground mb-2 block">Название (необязательно)</label>
+          <label className="text-xs font-medium text-muted-foreground mb-2 block">{td.titleOptional}</label>
           <input
             type="text"
-            placeholder='Например: "На MacBook Pro"'
+            placeholder={td.titlePlaceholder}
             value={title}
             onChange={e => setTitle(e.target.value)}
             className="w-full px-4 py-2.5 rounded-xl border border-subtle bg-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
@@ -143,7 +148,7 @@ export default function CreateGoalModal({
           className="w-full py-3 rounded-xl bg-primary text-white font-semibold text-sm hover:bg-primary/90 transition-colors disabled:opacity-40 flex items-center justify-center gap-2"
         >
           {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
-          Создать цель
+          {td.createGoal}
         </button>
       </div>
     </div>

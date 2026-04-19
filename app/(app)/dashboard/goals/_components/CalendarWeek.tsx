@@ -1,6 +1,7 @@
 'use client'
 import { Plus, Trash2 } from 'lucide-react'
-import { DAY_LABELS, isoToday, weekDates, type ScheduleBlock } from './types'
+import { isoToday, weekDates, type ScheduleBlock } from './types'
+import { useLang } from '@/lib/context/LanguageContext'
 
 export default function CalendarWeek({
   weekOffset, blocks, onAddBlock, onDeleteBlock,
@@ -10,12 +11,15 @@ export default function CalendarWeek({
   onAddBlock: (date: string) => void
   onDeleteBlock: (id: string) => void
 }) {
+  const { t } = useLang()
+  const td = t.dashboardPage
+  const DAY_LABELS = [td.dayMon, td.dayTue, td.dayWed, td.dayThu, td.dayFri, td.daySat, td.daySun]
   const dates  = weekDates(weekOffset)
   const today  = isoToday()
 
   return (
     <div className="grid grid-cols-7 gap-1">
-      {DAY_LABELS.map((d, i) => (
+      {DAY_LABELS.map((d: string, i: number) => (
         <div key={d} className={`text-center pb-2 ${dates[i] === today ? 'text-primary' : 'text-muted-foreground'}`}>
           <p className="text-[10px] font-semibold uppercase">{d}</p>
           <p className={`text-sm font-bold ${dates[i] === today ? 'text-primary' : ''}`}>
