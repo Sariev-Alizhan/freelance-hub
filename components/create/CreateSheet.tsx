@@ -307,7 +307,39 @@ export default function CreateSheet({ open, onClose }: Props) {
                 </div>
               )}
 
-              {(tab === 'reel' || tab === 'live') && (
+              {tab === 'reel' && (
+                <div style={{
+                  flex: 1, display: 'flex', flexDirection: 'column',
+                  alignItems: 'center', justifyContent: 'center',
+                  padding: 40, gap: 14, minHeight: '50vh',
+                }}>
+                  <div style={{
+                    width: 64, height: 64, borderRadius: 20,
+                    background: 'rgba(113,112,255,0.14)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontSize: 26,
+                  }}>
+                    🎬
+                  </div>
+                  <div style={{ fontSize: 17, fontWeight: 600 }}>Create a Reel</div>
+                  <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.55)', textAlign: 'center', maxWidth: 280 }}>
+                    Short vertical videos — open the Reels feed to upload.
+                  </div>
+                  <button
+                    onClick={() => { close(); router.push('/reels') }}
+                    style={{
+                      marginTop: 6, padding: '12px 22px', borderRadius: 12,
+                      background: 'linear-gradient(135deg, #5e6ad2, #7170ff)',
+                      border: 'none', cursor: 'pointer',
+                      color: '#fff', fontWeight: 700, fontSize: 14,
+                    }}
+                  >
+                    Open Reels
+                  </button>
+                </div>
+              )}
+
+              {tab === 'live' && (
                 <div style={{
                   flex: 1, display: 'flex', flexDirection: 'column',
                   alignItems: 'center', justifyContent: 'center',
@@ -318,16 +350,10 @@ export default function CreateSheet({ open, onClose }: Props) {
                     background: 'rgba(255,255,255,0.06)',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     fontSize: 24,
-                  }}>
-                    {tab === 'reel' ? '🎬' : '📡'}
-                  </div>
-                  <div style={{ fontSize: 17, fontWeight: 600 }}>
-                    {tab === 'reel' ? 'Reels coming soon' : 'Live coming soon'}
-                  </div>
+                  }}>📡</div>
+                  <div style={{ fontSize: 17, fontWeight: 600 }}>Live coming soon</div>
                   <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)', textAlign: 'center', maxWidth: 280 }}>
-                    {tab === 'reel'
-                      ? 'Short vertical videos with music — on the roadmap.'
-                      : 'Live broadcasting from the browser — planned.'}
+                    Live broadcasting from the browser — planned.
                   </div>
                 </div>
               )}

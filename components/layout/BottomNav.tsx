@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import {
   Home, Briefcase, Plus, User,
   Settings, BarChart3,
-  Search, Zap, FileText,
+  Search, Zap, FileText, Film,
   LayoutDashboard, Brain, Star, Users, MessageSquare,
 } from 'lucide-react'
 import { useState, useCallback } from 'react'
@@ -20,6 +20,7 @@ const QUICK_LINKS = [
   { href: '/ai-search',            icon: Search,          label: 'AI Search'  },
   { href: '/ai-assistant',         icon: Brain,           label: 'AI Chat'    },
   { href: '/freelancers',          icon: Users,           label: 'People'     },
+  { href: '/reels',                icon: Film,            label: 'Reels'      },
   { href: '/contracts',            icon: FileText,        label: 'Contracts'  },
   { href: '/ai-tools',             icon: Zap,             label: 'AI Tools'   },
   { href: '/pricing',              icon: Star,            label: 'Pricing'    },

@@ -29,6 +29,8 @@ import FounderCard from '@/components/freelancers/FounderCard'
 import ProfileExperienceTimeline, { type WorkEntry } from '@/components/profile/ProfileExperienceTimeline'
 import ProfileServices, { type Service as ServiceCard } from '@/components/profile/ProfileServices'
 import ProfileRecommendations, { type Recommendation } from '@/components/profile/ProfileRecommendations'
+import ProfileReels from '@/components/profile/ProfileReels'
+import type { Reel } from '@/components/reels/ReelPlayer'
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.freelance-hub.kz'
 
@@ -221,6 +223,7 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
     { data: serviceRows },
     { data: highlightRows },
     { data: recRows },
+    { data: reelRows },
   ] = await Promise.all([
     db.from('follows').select('follower',  { count: 'exact', head: true }).eq('following', p.userId),
     db.from('follows').select('following', { count: 'exact', head: true }).eq('follower',  p.userId),
@@ -247,6 +250,8 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
       author:author_id ( full_name, username, avatar_url, is_verified )
     `).eq('recipient_id', p.userId).eq('status', 'approved')
       .order('created_at', { ascending: false }),
+    db.from('reels').select('id, user_id, video_url, thumbnail_url, caption, duration_seconds, aspect_ratio, views, created_at')
+      .eq('user_id', p.userId).order('created_at', { ascending: false }).limit(12),
   ])
 
   const experience: WorkEntry[] = (experienceRows ?? []) as WorkEntry[]
@@ -256,6 +261,7 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
     items: [...(h.items ?? [])].sort((a, b) => a.position - b.position),
   }))
   const recommendations: Recommendation[] = (recRows ?? []) as Recommendation[]
+  const reels: Reel[] = ((reelRows ?? []) as Omit<Reel, 'author'>[]).map(r => ({ ...r, author: null }))
 
   // Bucket posts by day for activity heatmap
   const activityCounts: Record<string, number> = {}
@@ -343,6 +349,8 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
           viewerLoggedIn={!!user}
         />
       )}
+
+      <ProfileReels reels={reels} isOwner={isOwnProfile} />
 
       <ProfileRecommendations
         recipientId={p.userId}

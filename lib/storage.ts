@@ -19,7 +19,7 @@ async function sha256Hex(buf: ArrayBuffer): Promise<string> {
 
 export async function uploadMedia(
   file: File,
-  folder: 'posts' | 'stories' | 'avatars' | 'portfolio',
+  folder: 'posts' | 'stories' | 'avatars' | 'portfolio' | 'reels',
 ): Promise<UploadResult | null> {
   const supabase = createClient()
   const buf  = await file.arrayBuffer()
