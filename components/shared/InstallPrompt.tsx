@@ -1,5 +1,6 @@
 'use client'
 import { useState, useEffect, useCallback } from 'react'
+import { usePathname } from 'next/navigation'
 import { X, Download, Share, Plus, MoreVertical, Monitor } from 'lucide-react'
 import Logo from '@/components/ui/Logo'
 
@@ -11,7 +12,11 @@ interface BeforeInstallPromptEvent extends Event {
 }
 
 const DISMISSED_KEY = 'fh-install-dismissed'
-const DISMISSED_TTL = 7 * 24 * 60 * 60 * 1000 // 1 week
+const DISMISSED_TTL = 30 * 24 * 60 * 60 * 1000 // 30 days — don't nag
+
+// Only surface the prompt on landing-style pages where users are browsing,
+// not where they're doing focused work (reading an order, a profile, chat).
+const ALLOWED_PATHS = ['/', '/feed', '/explore', '/dashboard']
 
 function isDismissed() {
   try {
@@ -158,12 +163,17 @@ function MacModal({ onClose }: { onClose: () => void }) {
 
 // ─── Main component ───────────────────────────────────────────────────────────
 export default function InstallPrompt() {
+  const pathname = usePathname()
   const [mode, setMode]           = useState<Mode>(null)
   const [visible, setVisible]     = useState(false)
   const [showModal, setShowModal] = useState(false)
   const [pwaEvent, setPwaEvent]   = useState<BeforeInstallPromptEvent | null>(null)
 
+  const allowed = pathname ? ALLOWED_PATHS.includes(pathname) : false
+
   useEffect(() => {
+    if (!allowed) return
+
     // Android / Chrome / Edge: native install prompt
     const handler = (e: Event) => {
       // Skip preventDefault when we won't show our banner — otherwise Chrome
@@ -172,7 +182,7 @@ export default function InstallPrompt() {
       e.preventDefault()
       setPwaEvent(e as BeforeInstallPromptEvent)
       setMode('pwa')
-      setTimeout(() => setVisible(true), 2500)
+      setTimeout(() => setVisible(true), 12_000)
     }
     window.addEventListener('beforeinstallprompt', handler)
 
@@ -180,11 +190,12 @@ export default function InstallPrompt() {
     const detected = detectMode()
     if (detected) {
       setMode(detected)
-      setTimeout(() => setVisible(true), 3000)
+      setTimeout(() => setVisible(true), 15_000)
     }
 
     return () => window.removeEventListener('beforeinstallprompt', handler)
-  }, [])
+  }, [allowed])
+
 
   const dismiss = useCallback(() => {
     setDismissed()
@@ -202,7 +213,7 @@ export default function InstallPrompt() {
     }
   }, [mode, pwaEvent])
 
-  if (!visible || !mode) return null
+  if (!allowed || !visible || !mode) return null
 
   return (
     <>

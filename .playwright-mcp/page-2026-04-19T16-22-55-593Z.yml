@@ -1,0 +1,98 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - generic [ref=e3]:
+      - link "FreelanceHub" [ref=e4] [cursor=pointer]:
+        - /url: /
+        - img [ref=e6]
+        - generic [ref=e13]: FreelanceHub
+      - generic [ref=e14]:
+        - button "Переключить тему" [ref=e15] [cursor=pointer]:
+          - img [ref=e16]
+        - link "Sign In" [ref=e22] [cursor=pointer]:
+          - /url: /auth/login
+        - link "Get Started" [ref=e23] [cursor=pointer]:
+          - /url: /auth/register
+  - main [ref=e24]:
+    - generic [ref=e26]:
+      - link "Back to freelancers" [ref=e27] [cursor=pointer]:
+        - /url: /freelancers
+        - img [ref=e28]
+        - text: Back to freelancers
+      - generic [ref=e30]:
+        - generic [ref=e33]:
+          - img "Alizhan Sariyev" [ref=e36]
+          - generic [ref=e37]:
+            - heading "Alizhan Sariyev" [level=1] [ref=e38]
+            - img [ref=e39]
+            - generic [ref=e42]:
+              - img [ref=e43]
+              - text: Premium
+            - generic [ref=e45]: TOP
+          - paragraph [ref=e46]: "@user_17d11166f8 · Deputy of CEO"
+          - generic [ref=e47]:
+            - generic [ref=e48]:
+              - img [ref=e49]
+              - text: Astana
+            - generic [ref=e52]:
+              - img [ref=e53]
+              - text: Available for work
+          - paragraph [ref=e55]: "Руковожу разработкой на уровне заместителя CEO: выстраиваю процессы, формирую команды и перевожу бизнес-задачи в техническую стратегию. Работаю на стыке продукта, инженерии и бизнеса — принимаю решения, которые влияют на архитектуру продукта и темп роста компании. Мой фокус — масштабирование команд и систем без потери скорости и качества."
+        - generic [ref=e56]:
+          - link "0 followers" [ref=e57] [cursor=pointer]:
+            - /url: /u/user_17d11166f8/followers
+            - generic [ref=e58]:
+              - generic [ref=e59]: "0"
+              - generic [ref=e60]: followers
+          - link "0 following" [ref=e61] [cursor=pointer]:
+            - /url: /u/user_17d11166f8/following
+            - generic [ref=e62]:
+              - generic [ref=e63]: "0"
+              - generic [ref=e64]: following
+          - generic [ref=e66]:
+            - generic [ref=e67]: "0"
+            - generic [ref=e68]: orders
+          - generic [ref=e70]:
+            - generic [ref=e71]: —
+            - generic [ref=e72]: rating
+        - generic [ref=e73]:
+          - generic [ref=e74]:
+            - img [ref=e75]
+            - text: Verified
+          - generic [ref=e78]:
+            - img [ref=e79]
+            - text: Premium
+          - generic [ref=e81]:
+            - img [ref=e82]
+            - text: Open to work
+        - generic [ref=e85]:
+          - generic [ref=e86]:
+            - button "Posts" [ref=e87] [cursor=pointer]
+            - button "About" [ref=e88] [cursor=pointer]
+            - button "Portfolio0" [ref=e89] [cursor=pointer]
+            - button "Reviews0" [ref=e90] [cursor=pointer]
+          - heading "Posts" [level=2] [ref=e93]
+      - generic [ref=e98]:
+        - link "Message" [ref=e99] [cursor=pointer]:
+          - /url: /messages?open=17d11166-f8b7-41e7-b0de-09b84874c1e0
+          - img [ref=e100]
+          - text: Message
+        - link "Post a job" [ref=e103] [cursor=pointer]:
+          - /url: /orders/new
+          - img [ref=e104]
+  - navigation [ref=e107]:
+    - generic [ref=e108]:
+      - link [ref=e109] [cursor=pointer]:
+        - /url: /feed
+        - img [ref=e111]
+      - link [ref=e114] [cursor=pointer]:
+        - /url: /orders
+        - img [ref=e116]
+      - link "Создать заказ" [ref=e120] [cursor=pointer]:
+        - /url: /auth/login
+        - img [ref=e122]
+      - link [ref=e123] [cursor=pointer]:
+        - /url: /auth/login
+        - img [ref=e125]
+      - button [ref=e127] [cursor=pointer]:
+        - img [ref=e130]
+  - alert [ref=e133]

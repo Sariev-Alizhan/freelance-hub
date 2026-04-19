@@ -1,0 +1,57 @@
+- generic [active] [ref=e1]:
+  - complementary [ref=e2]:
+    - link "FreelanceHub" [ref=e3] [cursor=pointer]:
+      - /url: /
+      - img [ref=e5]
+      - generic: FreelanceHub
+    - generic [ref=e12]:
+      - link "Home" [ref=e13] [cursor=pointer]:
+        - /url: /feed
+        - img [ref=e15]
+        - generic: Home
+      - link "Orders" [ref=e18] [cursor=pointer]:
+        - /url: /orders
+        - img [ref=e20]
+        - generic: Orders
+      - link "Freelancers" [ref=e23] [cursor=pointer]:
+        - /url: /freelancers
+        - img [ref=e25]
+        - generic: Freelancers
+      - link "Messages" [ref=e30] [cursor=pointer]:
+        - /url: /messages
+        - img [ref=e32]
+        - generic: Messages
+      - link "AI Search" [ref=e34] [cursor=pointer]:
+        - /url: /ai-search
+        - img [ref=e36]
+        - generic: AI Search
+      - link "Post a Job" [ref=e39] [cursor=pointer]:
+        - /url: /orders/new
+        - img [ref=e42]
+        - generic: Post a Job
+    - generic [ref=e45]:
+      - button "Переключить тему" [ref=e46] [cursor=pointer]:
+        - img [ref=e47]
+        - generic [ref=e53]: Light mode
+      - link [ref=e54] [cursor=pointer]:
+        - /url: /auth/login
+        - img [ref=e55]
+  - main [ref=e58]:
+    - generic [ref=e63]:
+      - img [ref=e64]
+      - textbox "Search posts, news, topics…" [ref=e67]
+  - contentinfo [ref=e97]:
+    - generic [ref=e98]:
+      - generic [ref=e101]: © 2025 FreelanceHub · SITS
+      - generic [ref=e102]:
+        - link "About" [ref=e103] [cursor=pointer]:
+          - /url: /about
+        - link "Terms" [ref=e104] [cursor=pointer]:
+          - /url: /terms
+        - link "Privacy" [ref=e105] [cursor=pointer]:
+          - /url: /privacy
+        - link "Updates" [ref=e106] [cursor=pointer]:
+          - /url: /updates
+  - button "Check for updates" [ref=e107] [cursor=pointer]:
+    - img [ref=e108]
+  - alert [ref=e113]

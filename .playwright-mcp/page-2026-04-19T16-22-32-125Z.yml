@@ -1,0 +1,32 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - generic [ref=e3]:
+      - link "FreelanceHub" [ref=e4] [cursor=pointer]:
+        - /url: /
+        - img [ref=e6]
+        - generic [ref=e13]: FreelanceHub
+      - generic [ref=e14]:
+        - button "Переключить тему" [ref=e15] [cursor=pointer]:
+          - img [ref=e16]
+        - link "Sign In" [ref=e22] [cursor=pointer]:
+          - /url: /auth/login
+        - link "Get Started" [ref=e23] [cursor=pointer]:
+          - /url: /auth/register
+  - main [ref=e24]
+  - navigation [ref=e167]:
+    - generic [ref=e168]:
+      - link [ref=e169] [cursor=pointer]:
+        - /url: /feed
+        - img [ref=e171]
+      - link [ref=e174] [cursor=pointer]:
+        - /url: /orders
+        - img [ref=e176]
+      - link "Создать заказ" [ref=e180] [cursor=pointer]:
+        - /url: /auth/login
+        - img [ref=e182]
+      - link [ref=e183] [cursor=pointer]:
+        - /url: /auth/login
+        - img [ref=e185]
+      - button [ref=e187] [cursor=pointer]:
+        - img [ref=e190]
+  - alert [ref=e193]
