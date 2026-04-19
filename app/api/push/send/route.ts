@@ -9,13 +9,26 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient as createServiceClient } from '@supabase/supabase-js'
 import webpush from 'web-push'
 
-webpush.setVapidDetails(
-  `mailto:${process.env.VAPID_EMAIL ?? 'admin@freelance-hub.kz'}`,
-  process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!,
-  process.env.VAPID_PRIVATE_KEY!
-)
+// Lazy-init: setVapidDetails throws when keys aren't set, which would break
+// `next build` page-data collection on environments that don't use push.
+let vapidReady: boolean | null = null
+function ensureVapid(): boolean {
+  if (vapidReady !== null) return vapidReady
+  const pub  = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY
+  const priv = process.env.VAPID_PRIVATE_KEY
+  if (!pub || !priv) { vapidReady = false; return false }
+  webpush.setVapidDetails(
+    `mailto:${process.env.VAPID_EMAIL ?? 'admin@freelance-hub.kz'}`,
+    pub,
+    priv,
+  )
+  vapidReady = true
+  return true
+}
 
 export async function POST(req: NextRequest) {
+  if (!ensureVapid()) return NextResponse.json({ error: 'Push not configured' }, { status: 503 })
+
   const secret = process.env.PUSH_INTERNAL_SECRET
   if (!secret) return NextResponse.json({ error: 'Not configured' }, { status: 503 })
 
