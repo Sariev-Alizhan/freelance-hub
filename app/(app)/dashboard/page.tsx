@@ -1,6 +1,7 @@
 'use client'
 import Link from 'next/link'
 import { useState } from 'react'
+import { useSearchParams } from 'next/navigation'
 import {
   Briefcase, ArrowRight, Sparkles, LogIn,
   Heart, MessageSquare, TrendingUp,
@@ -20,10 +21,16 @@ import OrdersList from '@/components/dashboard/OrdersList'
 
 type DashboardTab = 'freelancer' | 'client' | 'favorites' | 'portfolio' | 'analytics'
 
+const TABS = ['freelancer', 'client', 'favorites', 'portfolio', 'analytics'] as const
+
 export default function DashboardPage() {
   const { user, loading } = useUser()
   const { favorites } = useFavorites()
-  const [tab, setTab] = useState<DashboardTab>('freelancer')
+  const searchParams = useSearchParams()
+  const initial = searchParams.get('tab')
+  const [tab, setTab] = useState<DashboardTab>(
+    (TABS as readonly string[]).includes(initial ?? '') ? (initial as DashboardTab) : 'freelancer'
+  )
 
   const {
     profile, fp,
