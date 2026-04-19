@@ -96,7 +96,7 @@ export default function CreateReelModal({ onClose, onCreate }: Props) {
           display: 'flex', alignItems: 'center',
           padding: '16px 20px', borderBottom: '1px solid var(--fh-sep)',
         }}>
-          <Film size={18} style={{ color: '#7170ff', marginRight: 8 }} />
+          <Film size={18} style={{ color: 'var(--fh-primary)', marginRight: 8 }} />
           <span style={{ fontWeight: 700, fontSize: 16, color: 'var(--fh-t1)' }}>
             Создать Reel
           </span>
@@ -220,7 +220,7 @@ export default function CreateReelModal({ onClose, onCreate }: Props) {
               style={{
                 marginTop: 'auto',
                 padding: '12px', borderRadius: 12,
-                background: 'linear-gradient(135deg, #5e6ad2, #7170ff)',
+                background: 'var(--fh-primary)',
                 border: 'none', cursor: busy || !videoUrl ? 'default' : 'pointer',
                 color: '#fff', fontWeight: 700, fontSize: 14,
                 display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,

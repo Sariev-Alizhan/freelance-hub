@@ -53,7 +53,7 @@ export default function SingleReelPage({ params }: { params: Promise<{ id: strin
           color: '#fff', textAlign: 'center', padding: 24,
         }}>
           <div style={{ fontSize: 16, fontWeight: 700 }}>{error}</div>
-          <Link href="/reels" style={{ color: '#7170ff', fontSize: 14 }}>
+          <Link href="/reels" style={{ color: 'var(--fh-primary)', fontSize: 14 }}>
             К ленте Reels
           </Link>
         </div>

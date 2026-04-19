@@ -31,10 +31,10 @@ export default function ProfileFeaturedWork({ items, isOwner }: Props) {
         }}>
           <div style={{
             width: 30, height: 30, borderRadius: 8,
-            background: 'linear-gradient(135deg, rgba(94,106,210,0.18), rgba(168,85,247,0.18))',
+            background: 'var(--fh-primary-muted)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}>
-            <Sparkles size={15} style={{ color: '#7170ff' }} />
+            <Sparkles size={15} style={{ color: 'var(--fh-primary)' }} />
           </div>
           <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--fh-t1)' }}>
             Featured work
@@ -47,7 +47,7 @@ export default function ProfileFeaturedWork({ items, isOwner }: Props) {
           href="/dashboard?tab=portfolio"
           style={{
             display: 'inline-flex', alignItems: 'center', gap: 6,
-            fontSize: 13, fontWeight: 600, color: '#7170ff',
+            fontSize: 13, fontWeight: 600, color: 'var(--fh-primary)',
             textDecoration: 'none',
           }}
         >
@@ -60,7 +60,7 @@ export default function ProfileFeaturedWork({ items, isOwner }: Props) {
   return (
     <div style={{
       borderRadius: 14, padding: '18px 20px 20px',
-      background: 'linear-gradient(180deg, rgba(94,106,210,0.06) 0%, transparent 60%), var(--fh-surface)',
+      background: 'linear-gradient(180deg, var(--fh-primary-muted) 0%, transparent 60%), var(--fh-surface)',
       border: '1px solid var(--fh-border-2)',
     }}>
       <div style={{
@@ -68,9 +68,9 @@ export default function ProfileFeaturedWork({ items, isOwner }: Props) {
       }}>
         <div style={{
           width: 28, height: 28, borderRadius: 8,
-          background: 'linear-gradient(135deg, #5e6ad2, #a855f7)',
+          background: 'var(--fh-primary)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          boxShadow: '0 4px 10px rgba(94,106,210,0.35)',
+          boxShadow: '0 4px 10px var(--fh-primary-muted)',
         }}>
           <Sparkles size={14} style={{ color: '#fff' }} />
         </div>
@@ -183,7 +183,7 @@ export default function ProfileFeaturedWork({ items, isOwner }: Props) {
                 {item.category && (
                   <div style={{
                     marginTop: 'auto', paddingTop: 4,
-                    fontSize: 10, fontWeight: 600, color: '#7170ff',
+                    fontSize: 10, fontWeight: 600, color: 'var(--fh-primary)',
                     letterSpacing: '0.03em', textTransform: 'uppercase',
                   }}>
                     {item.category}

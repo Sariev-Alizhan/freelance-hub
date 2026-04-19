@@ -315,7 +315,7 @@ export default function CreateSheet({ open, onClose }: Props) {
                 }}>
                   <div style={{
                     width: 64, height: 64, borderRadius: 20,
-                    background: 'rgba(113,112,255,0.14)',
+                    background: 'var(--fh-primary-muted)',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     fontSize: 26,
                   }}>
@@ -329,7 +329,7 @@ export default function CreateSheet({ open, onClose }: Props) {
                     onClick={() => { close(); router.push('/reels') }}
                     style={{
                       marginTop: 6, padding: '12px 22px', borderRadius: 12,
-                      background: 'linear-gradient(135deg, #5e6ad2, #7170ff)',
+                      background: 'var(--fh-primary)',
                       border: 'none', cursor: 'pointer',
                       color: '#fff', fontWeight: 700, fontSize: 14,
                     }}

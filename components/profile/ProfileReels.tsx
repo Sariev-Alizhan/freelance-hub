@@ -47,7 +47,7 @@ export default function ProfileReels({ reels, isOwner }: Props) {
           <Link
             href="/reels"
             style={{
-              fontSize: 13, color: '#7170ff', fontWeight: 600,
+              fontSize: 13, color: 'var(--fh-primary)', fontWeight: 600,
               textDecoration: 'none',
             }}
           >
@@ -123,7 +123,7 @@ export default function ProfileReels({ reels, isOwner }: Props) {
           <Link
             href={`/reels`}
             style={{
-              fontSize: 13, color: '#7170ff', fontWeight: 600,
+              fontSize: 13, color: 'var(--fh-primary)', fontWeight: 600,
               textDecoration: 'none',
             }}
           >

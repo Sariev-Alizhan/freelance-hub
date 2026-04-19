@@ -164,9 +164,9 @@ export default function PortfolioManager({ freelancerId }: { freelancerId: strin
         <div>
           <h2 className="font-semibold" style={{ color: 'var(--fh-t1)' }}>Portfolio</h2>
           <p style={{ fontSize: '12px', color: 'var(--fh-t4)', marginTop: '2px', display: 'flex', alignItems: 'center', gap: 6 }}>
-            <Sparkles className="h-3 w-3" style={{ color: '#7170ff' }} />
+            <Sparkles className="h-3 w-3" style={{ color: 'var(--fh-primary)' }} />
             Tap the star to pin up to {MAX_FEATURED} featured projects — they appear at the top of your profile.
-            <span style={{ fontWeight: 600, color: featuredCount > 0 ? '#7170ff' : 'var(--fh-t4)' }}>
+            <span style={{ fontWeight: 600, color: featuredCount > 0 ? 'var(--fh-primary)' : 'var(--fh-t4)' }}>
               {featuredCount}/{MAX_FEATURED}
             </span>
           </p>
@@ -389,7 +389,7 @@ export default function PortfolioManager({ freelancerId }: { freelancerId: strin
               key={item.id}
               style={{
                 borderRadius: '10px', overflow: 'hidden',
-                border: item.is_featured ? '1.5px solid #7170ff' : '1px solid var(--fh-border)',
+                border: item.is_featured ? '1.5px solid var(--fh-primary)' : '1px solid var(--fh-border)',
                 background: 'var(--fh-surface)', position: 'relative',
               }}
             >
@@ -416,7 +416,7 @@ export default function PortfolioManager({ freelancerId }: { freelancerId: strin
                   title={item.is_featured ? 'Unpin from featured' : 'Pin as featured'}
                   style={{
                     position: 'absolute', top: '6px', left: '6px',
-                    background: item.is_featured ? '#7170ff' : 'rgba(0,0,0,0.55)',
+                    background: item.is_featured ? 'var(--fh-primary)' : 'rgba(0,0,0,0.55)',
                     backdropFilter: 'blur(6px)',
                     border: 'none', borderRadius: '6px',
                     padding: '5px', cursor: 'pointer',

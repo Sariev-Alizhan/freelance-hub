@@ -97,7 +97,7 @@ export default function ReelsFeedPage() {
                 onClick={() => setCreating(true)}
                 style={{
                   marginTop: 8, padding: '12px 20px', borderRadius: 12,
-                  background: 'linear-gradient(135deg, #5e6ad2, #7170ff)',
+                  background: 'var(--fh-primary)',
                   border: 'none', cursor: 'pointer',
                   color: '#fff', fontWeight: 700, fontSize: 14,
                 }}
@@ -140,7 +140,7 @@ export default function ReelsFeedPage() {
           style={{
             position: 'absolute', top: 12, left: 12, zIndex: 5,
             width: 42, height: 42, borderRadius: '50%',
-            background: 'linear-gradient(135deg, #5e6ad2, #7170ff)',
+            background: 'var(--fh-primary)',
             border: 'none', cursor: 'pointer', color: '#fff',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             boxShadow: '0 4px 14px rgba(94,106,210,0.4)',

@@ -200,7 +200,7 @@ export default function ReelPlayer({ reel, active, muted, onToggleMute, viewerLo
             {name}
           </span>
           {reel.author?.is_verified && (
-            <CheckCircle2 size={14} style={{ color: '#5e6ad2', fill: '#5e6ad2' }} />
+            <CheckCircle2 size={14} style={{ color: 'var(--fh-primary)', fill: 'var(--fh-primary)' }} />
           )}
         </Link>
 
