@@ -4,6 +4,8 @@ import { useRouter } from 'next/navigation'
 import type { User as SupabaseUser } from '@supabase/supabase-js'
 import { useToastHelpers } from '@/lib/context/ToastContext'
 import type { FormData, PriceAdvice } from '@/components/orders/create/types'
+import { track } from '@vercel/analytics'
+import { posthog } from '@/components/providers/PostHogProvider'
 
 /**
  * Owns state, validation, AI helpers (description / voice / price),
@@ -191,6 +193,19 @@ export function useCreateOrder(user: SupabaseUser | null) {
       setCreatedOrderId(json.id)
       setStep(4)
       success('Order published!', 'Specialists can already see your order')
+
+      track('order_created', {
+        category: form.category,
+        budget_min: parseInt(form.budgetMin) || 0,
+        budget_max: parseInt(form.budgetMax) || 0,
+        is_urgent: form.isUrgent,
+      })
+      posthog.capture?.('order_created', {
+        category: form.category,
+        budget_min: parseInt(form.budgetMin) || 0,
+        budget_max: parseInt(form.budgetMax) || 0,
+        is_urgent: form.isUrgent,
+      })
 
       fetch('/api/orders/notify', {
         method:  'POST',
