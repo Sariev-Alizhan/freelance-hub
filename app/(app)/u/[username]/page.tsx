@@ -250,7 +250,7 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
       ? db.from('profile_views').select('id', { count: 'exact', head: true })
           .eq('freelancer_id', p.userId).gte('created_at', sevenDaysAgo)
       : Promise.resolve({ count: 0 }),
-    db.from('feed_posts').select('created_at').eq('author_id', p.userId).gte('created_at', oneYearAgo),
+    db.from('feed_posts').select('created_at').eq('user_id', p.userId).gte('created_at', oneYearAgo),
     db.from('work_experience')
       .select('id, company, position, description, start_date, end_date, is_current, location')
       .eq('user_id', p.userId).order('start_date', { ascending: false }),
