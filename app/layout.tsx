@@ -12,8 +12,6 @@ import { ProfileProvider } from '@/lib/context/ProfileContext'
 import Toaster from '@/components/ui/Toaster'
 import MotionProvider from '@/components/providers/MotionProvider'
 import DeferredUI from '@/components/providers/DeferredUI'
-import PostHogProvider from '@/components/providers/PostHogProvider'
-import { Suspense } from 'react'
 
 const inter = Inter({
   subsets: ['latin', 'cyrillic'],
@@ -112,25 +110,21 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <link rel="manifest" href="/manifest.json" />
       </head>
       <body className={`${inter.variable} font-sans antialiased min-h-screen flex flex-col`}>
-        <Suspense fallback={null}>
-          <PostHogProvider>
-            <MotionProvider>
-            <ThemeProvider>
-              <LanguageProvider>
-              <ToastProvider>
-                <CurrencyProvider>
-                  <ProfileProvider>
-                    {children}
-                    <Toaster />
-                    <DeferredUI />
-                  </ProfileProvider>
-                </CurrencyProvider>
-              </ToastProvider>
-              </LanguageProvider>
-            </ThemeProvider>
-            </MotionProvider>
-          </PostHogProvider>
-        </Suspense>
+        <MotionProvider>
+        <ThemeProvider>
+          <LanguageProvider>
+          <ToastProvider>
+            <CurrencyProvider>
+              <ProfileProvider>
+                {children}
+                <Toaster />
+                <DeferredUI />
+              </ProfileProvider>
+            </CurrencyProvider>
+          </ToastProvider>
+          </LanguageProvider>
+        </ThemeProvider>
+        </MotionProvider>
         <Analytics />
         <SpeedInsights />
       </body>

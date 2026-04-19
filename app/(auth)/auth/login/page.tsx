@@ -7,7 +7,6 @@ import { createClient } from '@/lib/supabase/client'
 import { useLang } from '@/lib/context/LanguageContext'
 import OAuthButton, { type OAuthProvider } from '@/components/auth/OAuthButton'
 import { track } from '@vercel/analytics'
-import { posthog } from '@/components/providers/PostHogProvider'
 
 type Provider = OAuthProvider
 
@@ -25,7 +24,6 @@ export default function LoginPage() {
     setAuthError(null)
     setLoading(provider)
     track('auth_attempt', { provider, flow: 'login' })
-    posthog.capture?.('auth_attempt', { provider, flow: 'login' })
     const { error } = await supabase.auth.signInWithOAuth({
       provider,
       options: { redirectTo: `${window.location.origin}/auth/callback` },
@@ -43,7 +41,6 @@ export default function LoginPage() {
     setAuthError(null)
     setLoading('email')
     track('auth_attempt', { provider: 'email', flow: 'login' })
-    posthog.capture?.('auth_attempt', { provider: 'email', flow: 'login' })
     const { error } = await supabase.auth.signInWithOtp({
       email: email.trim(),
       options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
@@ -53,7 +50,6 @@ export default function LoginPage() {
     else {
       setSent(true)
       track('auth_otp_sent', { email_domain: email.trim().split('@')[1] })
-      posthog.capture?.('auth_otp_sent', { email_domain: email.trim().split('@')[1] })
     }
   }
 

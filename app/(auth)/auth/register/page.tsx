@@ -8,7 +8,6 @@ import { useLang } from '@/lib/context/LanguageContext'
 import { UserRole } from '@/lib/supabase/types'
 import OAuthButton, { type OAuthProvider } from '@/components/auth/OAuthButton'
 import { track } from '@vercel/analytics'
-import { posthog } from '@/components/providers/PostHogProvider'
 
 type Provider = OAuthProvider
 
@@ -30,7 +29,6 @@ export default function RegisterPage() {
     setAuthError(null)
     setLoading(provider)
     track('signup_attempt', { provider, role })
-    posthog.capture?.('signup_attempt', { provider, role })
     const { error } = await supabase.auth.signInWithOAuth({
       provider,
       options: {

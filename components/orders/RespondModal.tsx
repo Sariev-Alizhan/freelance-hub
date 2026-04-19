@@ -9,7 +9,6 @@ import { useUser } from '@/lib/hooks/useUser'
 import { useRouter } from 'next/navigation'
 import { useToastHelpers } from '@/lib/context/ToastContext'
 import { track } from '@vercel/analytics'
-import { posthog } from '@/components/providers/PostHogProvider'
 
 interface Props {
   orderId: string
@@ -136,7 +135,6 @@ export default function RespondModal({
       setStep('success')
       success('Application sent!', 'The client will be notified')
       track('application_sent', { order_id: orderId, has_price: !!price })
-      posthog.capture?.('application_sent', { order_id: orderId, has_price: !!price })
     } catch (e) {
       const msg = e instanceof Error ? e.message : 'Please try again'
       toastError('Failed to send', msg)
