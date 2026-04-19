@@ -57,24 +57,24 @@ export default function OrderPreviewCard({ orderId, isMine }: {
   orderId: string
   isMine: boolean
 }) {
-  const [order, setOrder] = useState<Order | null>(() => cache.get(orderId) ?? null)
-  const [loading, setLoading] = useState(!cache.has(orderId))
+  const cached = cache.get(orderId)
+  const hasCached = cache.has(orderId)
+  const [fetched, setFetched] = useState<{ id: string; order: Order | null } | null>(null)
 
   useEffect(() => {
-    if (cache.has(orderId)) {
-      setOrder(cache.get(orderId) ?? null)
-      setLoading(false)
-      return
-    }
+    if (hasCached) return
     let live = true
-    setLoading(true)
     loadOrder(orderId).then(o => {
       if (!live) return
-      setOrder(o)
-      setLoading(false)
+      setFetched({ id: orderId, order: o })
     })
     return () => { live = false }
-  }, [orderId])
+  }, [orderId, hasCached])
+
+  const order = hasCached
+    ? (cached ?? null)
+    : (fetched && fetched.id === orderId ? fetched.order : null)
+  const loading = !hasCached && !(fetched && fetched.id === orderId)
 
   if (loading) {
     return (

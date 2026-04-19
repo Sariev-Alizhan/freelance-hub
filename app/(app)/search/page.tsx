@@ -59,13 +59,15 @@ export default function SearchPage() {
   const [loading, setLoading] = useState(false)
 
   // Debounced fetch
-  useEffect(() => {
-    const query = q.trim()
-    if (query.length < 2) { setData(null); return }
+  const query = q.trim()
+  const shortQuery = query.length < 2
 
-    setLoading(true)
+  useEffect(() => {
+    if (shortQuery) return
+
     const ctrl = new AbortController()
     const t = setTimeout(() => {
+      setLoading(true)
       const qs = new URLSearchParams({ q: query, type: tab })
       fetch(`/api/search?${qs.toString()}`, { signal: ctrl.signal })
         .then(r => r.ok ? r.json() : null)
@@ -75,7 +77,7 @@ export default function SearchPage() {
     }, 220)
 
     return () => { ctrl.abort(); clearTimeout(t) }
-  }, [q, tab])
+  }, [query, tab, shortQuery])
 
   // Sync URL on blur/change (don't spam history)
   useEffect(() => {
@@ -135,7 +137,7 @@ export default function SearchPage() {
         ))}
       </div>
 
-      {q.trim().length < 2 ? (
+      {shortQuery ? (
         <EmptyPrompt />
       ) : loading && !data ? (
         <div className="text-center py-12 text-sm text-muted-foreground">Ищу…</div>

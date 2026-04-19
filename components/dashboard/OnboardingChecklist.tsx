@@ -68,13 +68,12 @@ const DISMISS_KEY = 'fh.onboarding.dismissed'
 
 export default function OnboardingChecklist() {
   const [data, setData] = useState<Data | null>(null)
-  const [dismissed, setDismissed] = useState(false)
+  const [dismissed, setDismissed] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return false
+    try { return localStorage.getItem(DISMISS_KEY) === '1' } catch { return false }
+  })
 
   useEffect(() => {
-    try {
-      if (localStorage.getItem(DISMISS_KEY) === '1') setDismissed(true)
-    } catch {}
-
     fetch('/api/profile/onboarding')
       .then(r => r.ok ? r.json() : null)
       .then(d => { if (d) setData(d) })
