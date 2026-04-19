@@ -1,14 +1,15 @@
 'use client'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { User, Sliders, Bell, Eye, Shield } from 'lucide-react'
+import { User, Sliders, Bell, Eye, Shield, Fingerprint } from 'lucide-react'
 
 const NAV = [
-  { href: '/settings',               label: 'Account',       icon: User    },
-  { href: '/settings/preferences',   label: 'Preferences',   icon: Sliders },
-  { href: '/settings/notifications', label: 'Notifications', icon: Bell    },
-  { href: '/settings/privacy',       label: 'Privacy',       icon: Eye     },
-  { href: '/settings/security',      label: 'Security',      icon: Shield  },
+  { href: '/settings',               label: 'Account',       icon: User        },
+  { href: '/settings/identity',      label: 'Identity',      icon: Fingerprint },
+  { href: '/settings/preferences',   label: 'Preferences',   icon: Sliders     },
+  { href: '/settings/notifications', label: 'Notifications', icon: Bell        },
+  { href: '/settings/privacy',       label: 'Privacy',       icon: Eye         },
+  { href: '/settings/security',      label: 'Security',      icon: Shield      },
 ]
 
 export function SettingsSidebar() {
