@@ -91,8 +91,8 @@ export default function Header() {
             <Plus style={{ width: 20, height: 20 }} strokeWidth={2.2} />
           </button>
 
-          {/* Center: search bar — tappable, goes to /orders */}
-          <Link href="/orders" style={{ flex: 1, minWidth: 0, textDecoration: 'none' }}>
+          {/* Center: search bar — tappable, goes to /search */}
+          <Link href="/search" style={{ flex: 1, minWidth: 0, textDecoration: 'none' }}>
             <div style={{
               height: 36, borderRadius: 18,
               background: 'var(--fh-surface-2)',
@@ -102,7 +102,7 @@ export default function Header() {
             }}>
               <Search style={{ width: 15, height: 15, color: 'var(--fh-t4)', flexShrink: 0 }} />
               <span style={{ fontSize: 14, color: 'var(--fh-t4)', letterSpacing: '-0.01em', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', minWidth: 0 }}>
-                Search orders, people…
+                Заказы, люди, услуги, Reels…
               </span>
             </div>
           </Link>
