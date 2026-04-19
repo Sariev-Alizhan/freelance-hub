@@ -5,6 +5,7 @@ import { BadgeCheck, X } from 'lucide-react'
 import CardShell from './CardShell'
 import UserAvatar from './UserAvatar'
 import { timeAgo } from './utils'
+import { useLang } from '@/lib/context/LanguageContext'
 import type { FeedProfile, FeedUser, Reactions, UserPost } from './types'
 
 export default function PostCard({ post, reactions, onReact, user, profile, onDelete }: {
@@ -15,6 +16,8 @@ export default function PostCard({ post, reactions, onReact, user, profile, onDe
   profile: FeedProfile
   onDelete: (id: string) => void
 }) {
+  const { t } = useLang()
+  const fc = t.feedCard
   const [expanded, setExpanded] = useState(false)
   const isLong = post.content.length > 220
   const displayContent = expanded || !isLong ? post.content : post.content.slice(0, 220) + '…'
@@ -29,7 +32,7 @@ export default function PostCard({ post, reactions, onReact, user, profile, onDe
           <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
             <Link href={post.profiles?.username ? `/u/${post.profiles.username}` : '#'}
               style={{ fontSize: 14, fontWeight: 700, color: 'var(--fh-t1)', textDecoration: 'none', letterSpacing: '-0.01em' }}>
-              {post.profiles?.full_name ?? post.profiles?.username ?? 'User'}
+              {post.profiles?.full_name ?? post.profiles?.username ?? fc.userFallback}
             </Link>
             {post.profiles?.is_verified && (
               <BadgeCheck className="h-3.5 w-3.5 flex-shrink-0" style={{ color: 'var(--fh-primary)' }} />
@@ -49,7 +52,7 @@ export default function PostCard({ post, reactions, onReact, user, profile, onDe
       </p>
       {isLong && (
         <button onClick={() => setExpanded(o => !o)} style={{ fontSize: 13, color: 'var(--fh-primary)', background: 'none', border: 'none', cursor: 'pointer', padding: 0, marginBottom: 8, fontWeight: 500 }}>
-          {expanded ? 'Show less' : '…more'}
+          {expanded ? fc.showLess : fc.showMore}
         </button>
       )}
 

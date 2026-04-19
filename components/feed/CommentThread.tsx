@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { Send, X } from 'lucide-react'
 import UserAvatar from './UserAvatar'
 import { timeAgo } from './utils'
+import { useLang } from '@/lib/context/LanguageContext'
 import type { Comment, FeedProfile, FeedUser } from './types'
 
 /**
@@ -16,6 +17,8 @@ export default function CommentThread({ itemId, user, profile, open }: {
   profile: FeedProfile
   open: boolean
 }) {
+  const { t } = useLang()
+  const fc = t.feedCard
   const [comments, setComments] = useState<Comment[]>([])
   const [loading, setLoading] = useState(false)
   const [text, setText] = useState('')
@@ -57,7 +60,7 @@ export default function CommentThread({ itemId, user, profile, open }: {
             <input
               value={text} onChange={e => setText(e.target.value)}
               onKeyDown={e => { if (e.key === 'Enter') submit() }}
-              placeholder="Write a comment…"
+              placeholder={fc.writeComment}
               className="flex-1 rounded-full px-3 py-1.5 text-[13px] outline-none"
               style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border)', color: 'var(--fh-t1)', fontFamily: 'inherit' }}
             />
@@ -70,13 +73,13 @@ export default function CommentThread({ itemId, user, profile, open }: {
         </div>
       )}
       <div className="px-4 pb-3 space-y-2">
-        {loading ? <p className="text-center text-[11px] py-2" style={{ color: 'var(--fh-t4)' }}>Loading…</p>
-          : comments.length === 0 ? <p className="text-center text-[11px] py-2" style={{ color: 'var(--fh-t4)' }}>No comments yet</p>
+        {loading ? <p className="text-center text-[11px] py-2" style={{ color: 'var(--fh-t4)' }}>{fc.loading}</p>
+          : comments.length === 0 ? <p className="text-center text-[11px] py-2" style={{ color: 'var(--fh-t4)' }}>{fc.noComments}</p>
           : comments.map(c => (
             <div key={c.id} className="flex gap-2">
               <UserAvatar url={c.profiles?.avatar_url} name={c.profiles?.full_name} size={24} />
               <div className="flex-1 rounded-xl px-3 py-1.5" style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border)' }}>
-                <span style={{ fontSize: 11, fontWeight: 590, color: 'var(--fh-t1)' }}>{c.profiles?.full_name ?? 'User'}</span>
+                <span style={{ fontSize: 11, fontWeight: 590, color: 'var(--fh-t1)' }}>{c.profiles?.full_name ?? fc.userFallback}</span>
                 <span style={{ fontSize: 11, color: 'var(--fh-t4)', marginLeft: 6 }}>{timeAgo(c.created_at)}</span>
                 <p style={{ fontSize: 12, color: 'var(--fh-t2)', lineHeight: 1.4, marginTop: 2 }}>{c.content}</p>
               </div>

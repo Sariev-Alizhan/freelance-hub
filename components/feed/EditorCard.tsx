@@ -1,6 +1,7 @@
 'use client'
 import { BadgeCheck } from 'lucide-react'
 import CardShell from './CardShell'
+import { useLang } from '@/lib/context/LanguageContext'
 import type { EditorPost } from '@/lib/feed-content'
 import type { FeedProfile, FeedUser, Reactions } from './types'
 
@@ -11,6 +12,8 @@ export default function EditorCard({ post, reactions, onReact, user, profile }: 
   user: FeedUser
   profile: FeedProfile
 }) {
+  const { lang } = useLang()
+  const locale = lang === 'ru' ? 'ru-RU' : lang === 'kz' ? 'kk-KZ' : 'en-US'
   const itemId = `ed-${post.id}`
   return (
     <CardShell itemId={itemId} reactions={reactions} onReact={onReact} user={user} profile={profile}>
@@ -34,7 +37,7 @@ export default function EditorCard({ post, reactions, onReact, user, profile }: 
             </span>
             <span style={{ fontSize: 11, color: 'var(--fh-t4)' }}>·</span>
             <span style={{ fontSize: 11, color: 'var(--fh-t4)' }}>
-              {new Date(post.date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' })}
+              {new Date(post.date).toLocaleDateString(locale, { day: 'numeric', month: 'long' })}
             </span>
           </div>
         </div>

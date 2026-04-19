@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { CheckCircle2 } from 'lucide-react'
 import CardShell from './CardShell'
 import { CURRENT_RELEASE } from '@/lib/company-report'
+import { useLang } from '@/lib/context/LanguageContext'
 import type { FeedProfile, FeedUser, Reactions } from './types'
 
 export default function UpdateCard({ reactions, onReact, user, profile }: {
@@ -11,6 +12,9 @@ export default function UpdateCard({ reactions, onReact, user, profile }: {
   user: FeedUser
   profile: FeedProfile
 }) {
+  const { t, lang } = useLang()
+  const fc = t.feedCard
+  const locale = lang === 'ru' ? 'ru-RU' : lang === 'kz' ? 'kk-KZ' : 'en-US'
   const rel = CURRENT_RELEASE
   const itemId = `update-v${rel.version}`
   const allShipped = rel.reports.flatMap(d => d.done.map(item => ({ emoji: d.emoji, item }))).slice(0, 8)
@@ -29,19 +33,19 @@ export default function UpdateCard({ reactions, onReact, user, profile }: {
               v{rel.version}
             </span>
             <span style={{ fontSize: 11, color: 'var(--fh-t4)' }}>
-              {new Date(rel.date).toLocaleDateString('en-US', { day: 'numeric', month: 'long' })}
+              {new Date(rel.date).toLocaleDateString(locale, { day: 'numeric', month: 'long' })}
             </span>
           </div>
           <p style={{ fontSize: 14, fontWeight: 590, color: 'var(--fh-t1)', letterSpacing: '-0.02em', marginTop: 2 }}>{rel.title}</p>
         </div>
         <Link href="/updates" style={{ marginLeft: 'auto', fontSize: 11, color: 'var(--fh-primary)', textDecoration: 'none', flexShrink: 0 }}>
-          All updates →
+          {fc.allUpdates}
         </Link>
       </div>
       <div className="flex items-center gap-1 mb-2">
         <CheckCircle2 className="h-3 w-3 text-green-400" />
         <span style={{ fontSize: 10, fontWeight: 700, color: '#27a644', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-          Just shipped · {allShipped.length} features
+          {fc.justShipped} · {allShipped.length} {fc.featuresLabel}
         </span>
       </div>
       <div className="grid grid-cols-2 gap-1 mb-2">

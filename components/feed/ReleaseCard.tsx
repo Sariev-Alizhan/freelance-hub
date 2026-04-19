@@ -1,5 +1,6 @@
 'use client'
 import CardShell from './CardShell'
+import { useLang } from '@/lib/context/LanguageContext'
 import type { FeedRelease } from '@/lib/feed-content'
 import type { FeedProfile, FeedUser, Reactions } from './types'
 
@@ -10,6 +11,8 @@ export default function ReleaseCard({ release, reactions, onReact, user, profile
   user: FeedUser
   profile: FeedProfile
 }) {
+  const { lang } = useLang()
+  const locale = lang === 'ru' ? 'ru-RU' : lang === 'kz' ? 'kk-KZ' : 'en-US'
   const itemId = `rel-${release.version}`
   return (
     <CardShell itemId={itemId} reactions={reactions} onReact={onReact} user={user} profile={profile}>
@@ -25,7 +28,7 @@ export default function ReleaseCard({ release, reactions, onReact, user, profile
               v{release.version}
             </span>
             <span style={{ fontSize: 11, color: 'var(--fh-t4)' }}>
-              {new Date(release.date).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' })}
+              {new Date(release.date).toLocaleDateString(locale, { day: 'numeric', month: 'long' })}
             </span>
           </div>
           <p style={{ fontSize: 14, fontWeight: 590, color: 'var(--fh-t1)', letterSpacing: '-0.02em', marginTop: 2 }} className="truncate">
