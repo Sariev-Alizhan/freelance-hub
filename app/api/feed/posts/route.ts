@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { broadcastCreateNote } from '@/lib/federation-delivery'
 
 export const dynamic = 'force-dynamic'
 
@@ -77,6 +78,18 @@ export async function POST(req: NextRequest) {
     .select('id, full_name, avatar_url, username, is_verified')
     .eq('id', user.id)
     .single()
+
+  // Fan out to federated followers. Fire-and-forget — slow remote inboxes
+  // must not block the POST response.
+  if (profile?.username) {
+    broadcastCreateNote({
+      localUserId:   user.id,
+      localUsername: profile.username,
+      postId:        post.id,
+      content:       post.content,
+      publishedAt:   post.created_at,
+    }).catch(() => { /* delivery failures logged in Phase 3.1 retry worker */ })
+  }
 
   return NextResponse.json({ post: { ...post, profiles: profile ?? null } })
 }
