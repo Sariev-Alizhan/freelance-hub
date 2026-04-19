@@ -89,13 +89,16 @@ export async function verifyHttpSignature(params: {
   verifier.update(signingString, 'utf8')
   const ok = verifier.verify(publicKeyPem, signatureB64, 'base64')
 
-  if (!ok) return {
-    ok: false,
-    reason: `verify-failed | keys=${Object.keys(headers).filter(k => k.includes('date') || k.includes('forward') || k.includes('vercel')).join(',')}`,
-  }
+  if (!ok) return { ok: false, reason: 'signature verification failed' }
 
   return { ok: true, actorKeyId: keyId, actorUrl: keyId.split('#')[0] }
 }
+
+// Known limitation: Vercel's edge rewrites the request Date header to the
+// current receive time. When a remote signer includes `date` in their signed
+// headers (Mastodon always does), this server recomputes the signing string
+// with Vercel's date, not theirs, so verification fails. Outbound delivery
+// is unaffected. Full inbound federation works on non-Vercel infra (Phase 5).
 
 // ─── Sign outbound ─────────────────────────────────────────────────────────
 export function signRequest(params: {
