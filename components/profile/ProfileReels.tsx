@@ -2,6 +2,7 @@
 import Link from 'next/link'
 import { Film, Play, Eye } from 'lucide-react'
 import type { Reel } from '@/components/reels/ReelPlayer'
+import { useLang } from '@/lib/context/LanguageContext'
 
 interface Props {
   reels:   Reel[]
@@ -9,6 +10,8 @@ interface Props {
 }
 
 export default function ProfileReels({ reels, isOwner }: Props) {
+  const { t } = useLang()
+  const tn = t.mobileNav
   if (reels.length === 0 && !isOwner) return null
 
   return (
@@ -22,7 +25,7 @@ export default function ProfileReels({ reels, isOwner }: Props) {
       }}>
         <Film size={15} style={{ color: 'var(--fh-t3)' }} />
         <h2 style={{ fontSize: 14, fontWeight: 590, color: 'var(--fh-t1)' }}>
-          Reels
+          {tn.video}
         </h2>
         {reels.length > 0 && (
           <span style={{
@@ -42,7 +45,7 @@ export default function ProfileReels({ reels, isOwner }: Props) {
         }}>
           <Film style={{ width: 28, height: 28, color: 'var(--fh-t4)', opacity: 0.3 }} />
           <p style={{ fontSize: 13, color: 'var(--fh-t4)' }}>
-            Поделитесь коротким видео на Reels
+            {tn.videoHint}
           </p>
           <Link
             href="/reels"
@@ -51,7 +54,7 @@ export default function ProfileReels({ reels, isOwner }: Props) {
               textDecoration: 'none',
             }}
           >
-            Создать Reel →
+            {tn.openVideo} →
           </Link>
         </div>
       ) : (

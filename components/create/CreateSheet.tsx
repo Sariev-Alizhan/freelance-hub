@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, ImagePlus, Loader2, Hash, Briefcase, Users, Search, ArrowRight } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
+import { useLang } from '@/lib/context/LanguageContext'
 
 type Tab = 'post' | 'story' | 'work' | 'reel' | 'live'
 
@@ -28,6 +29,8 @@ export default function CreateSheet({ open, onClose }: Props) {
   const [publishing, setPublishing] = useState(false)
   const fileRef = useRef<HTMLInputElement>(null)
   const router = useRouter()
+  const { t } = useLang()
+  const tn = t.mobileNav
 
   const reset = useCallback(() => {
     setCaption(''); setImgUrl(null); setUploading(false); setPublishing(false)
@@ -321,9 +324,9 @@ export default function CreateSheet({ open, onClose }: Props) {
                   }}>
                     🎬
                   </div>
-                  <div style={{ fontSize: 17, fontWeight: 600 }}>Create a Reel</div>
+                  <div style={{ fontSize: 17, fontWeight: 600 }}>{tn.video}</div>
                   <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.55)', textAlign: 'center', maxWidth: 280 }}>
-                    Short vertical videos — open the Reels feed to upload.
+                    {tn.videoShort}
                   </div>
                   <button
                     onClick={() => { close(); router.push('/reels') }}
@@ -334,7 +337,7 @@ export default function CreateSheet({ open, onClose }: Props) {
                       color: '#fff', fontWeight: 700, fontSize: 14,
                     }}
                   >
-                    Open Reels
+                    {tn.openVideo}
                   </button>
                 </div>
               )}

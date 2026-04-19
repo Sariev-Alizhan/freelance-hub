@@ -4,10 +4,13 @@ import Link from 'next/link'
 import { ArrowLeft, Loader2 } from 'lucide-react'
 import { useUser } from '@/lib/hooks/useUser'
 import ReelPlayer, { type Reel } from '@/components/reels/ReelPlayer'
+import { useLang } from '@/lib/context/LanguageContext'
 
 export default function SingleReelPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
   const { user } = useUser()
+  const { t } = useLang()
+  const tn = t.mobileNav
   const [reel,  setReel]  = useState<Reel | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [muted, setMuted] = useState(true)
@@ -34,7 +37,7 @@ export default function SingleReelPage({ params }: { params: Promise<{ id: strin
     }}>
       <Link
         href="/reels"
-        aria-label="Back to reels"
+        aria-label={tn.videoBack}
         style={{
           position: 'absolute', top: 12, left: 12, zIndex: 5,
           width: 36, height: 36, borderRadius: '50%',
@@ -54,7 +57,7 @@ export default function SingleReelPage({ params }: { params: Promise<{ id: strin
         }}>
           <div style={{ fontSize: 16, fontWeight: 700 }}>{error}</div>
           <Link href="/reels" style={{ color: 'var(--fh-primary)', fontSize: 14 }}>
-            К ленте Reels
+            {tn.videoBack}
           </Link>
         </div>
       ) : !reel ? (

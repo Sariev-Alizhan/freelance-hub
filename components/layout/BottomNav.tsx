@@ -1,10 +1,10 @@
 'use client'
 import Link from 'next/link'
 import Image from 'next/image'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
-  Home, Briefcase, Plus, User,
+  Home, Briefcase, Plus, User, LogOut,
   Settings, BarChart3,
   Search, Zap, FileText, Film, Sparkles,
   LayoutDashboard, Brain, Star, Users, MessageSquare,
@@ -14,25 +14,19 @@ import { useUser } from '@/lib/hooks/useUser'
 import { useProfile } from '@/lib/context/ProfileContext'
 import { useUnreadNotifications } from '@/lib/hooks/useUnreadNotifications'
 import { useUnreadMessages } from '@/lib/hooks/useUnreadMessages'
+import { useLang } from '@/lib/context/LanguageContext'
+import { createClient } from '@/lib/supabase/client'
+import RoleSwitcher from '@/components/layout/RoleSwitcher'
 
-const QUICK_LINKS = [
-  { href: '/dashboard',            icon: LayoutDashboard, label: 'Operations' },
-  { href: '/explore',              icon: Sparkles,        label: 'Explore'    },
-  { href: '/ai-search',            icon: Search,          label: 'AI Search'  },
-  { href: '/ai-assistant',         icon: Brain,           label: 'AI Chat'    },
-  { href: '/freelancers',          icon: Users,           label: 'People'     },
-  { href: '/reels',                icon: Film,            label: 'Reels'      },
-  { href: '/contracts',            icon: FileText,        label: 'Contracts'  },
-  { href: '/ai-tools',             icon: Zap,             label: 'AI Tools'   },
-  { href: '/pricing',              icon: Star,            label: 'Pricing'    },
-  { href: '/dashboard/analytics',  icon: BarChart3,       label: 'Analytics'  },
-  { href: '/settings',             icon: Settings,        label: 'Settings'   },
-]
-
-// ── Tab definition ────────────────────────────────────────────────────────────
+// ── Tab definition — Feed | Video | Create (+) | Messages | Profile ──────────
+//
+// Orders is reachable from the Navigate grid inside the profile sheet, from
+// the feed, and from the desktop sidebar. Making Video a primary tab matches
+// how people actually browse on mobile (Instagram/TikTok pattern) while
+// keeping Create and Messages one tap away.
 const TABS = [
   { id: 'feed',          href: '/feed',          icon: Home,         matchPrefix: '/feed'          },
-  { id: 'orders',        href: '/orders',        icon: Briefcase,    matchPrefix: '/orders'        },
+  { id: 'video',         href: '/reels',         icon: Film,         matchPrefix: '/reels'         },
   { id: 'create',        href: '/orders/new',    icon: Plus,         isCenter: true                },
   { id: 'messages',      href: '/messages',      icon: MessageSquare,matchPrefix: '/messages'      },
   { id: 'profile',       href: null,             icon: User,         isProfile: true               },
@@ -40,11 +34,28 @@ const TABS = [
 
 export default function BottomNav() {
   const pathname = usePathname()
+  const router = useRouter()
   const { user } = useUser()
   const { profile } = useProfile()
   const [sheetOpen, setSheetOpen] = useState(false)
   const unreadNotifs = useUnreadNotifications()
   const unreadMsgs = useUnreadMessages()
+  const { t } = useLang()
+  const tn = t.mobileNav
+
+  const QUICK_LINKS: { href: string; icon: typeof LayoutDashboard; label: string }[] = [
+    { href: '/dashboard',            icon: LayoutDashboard, label: t.auth.dashboard },
+    { href: '/orders',               icon: Briefcase,       label: t.nav.orders     },
+    { href: '/explore',              icon: Sparkles,        label: 'Explore'        },
+    { href: '/ai-search',            icon: Search,          label: 'AI Search'      },
+    { href: '/ai-assistant',         icon: Brain,           label: 'AI Chat'        },
+    { href: '/freelancers',          icon: Users,           label: t.nav.freelancers},
+    { href: '/contracts',            icon: FileText,        label: t.nav.contracts  },
+    { href: '/ai-tools',             icon: Zap,             label: 'AI Tools'       },
+    { href: '/pricing',              icon: Star,            label: t.nav.pricing    },
+    { href: '/dashboard/analytics',  icon: BarChart3,       label: t.auth.analytics },
+    { href: '/settings',             icon: Settings,        label: t.auth.settings  },
+  ]
 
   const isActive = useCallback((tab: typeof TABS[0]) => {
     if (tab.isCenter || tab.isProfile) return false
@@ -56,7 +67,15 @@ export default function BottomNav() {
   if (hidden) return null
 
   const avatarUrl   = profile?.avatar_url || user?.user_metadata?.avatar_url
-  const displayName = profile?.full_name || user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'Аккаунт'
+  const displayName = profile?.full_name || user?.user_metadata?.full_name || user?.email?.split('@')[0] || tn.profile
+
+  async function signOut() {
+    const supabase = createClient()
+    await supabase.auth.signOut()
+    setSheetOpen(false)
+    router.push('/')
+    router.refresh()
+  }
 
   return (
     <>
@@ -84,7 +103,7 @@ export default function BottomNav() {
                 <div key={tab.id} className="flex-1 flex items-center justify-center">
                   <Link
                     href={user ? tab.href! : '/auth/login'}
-                    aria-label="Создать заказ"
+                    aria-label={tn.create}
                   >
                     <div
                       style={{
@@ -109,6 +128,7 @@ export default function BottomNav() {
                   onClick={() => setSheetOpen(true)}
                   className="flex-1 flex items-center justify-center"
                   style={{ height: '100%', background: 'none', border: 'none', cursor: 'pointer' }}
+                  aria-label={tn.profile}
                 >
                   <div className="transition-transform duration-100 active:scale-[0.85]" style={{ position: 'relative' }}>
                     {unreadNotifs > 0 && (
@@ -154,17 +174,16 @@ export default function BottomNav() {
                 href={href}
                 className="flex-1 flex items-center justify-center"
                 style={{ height: '100%' }}
+                aria-label={tn[tab.id as 'feed' | 'video' | 'messages']}
               >
                 <div className="transition-transform duration-100 active:scale-[0.82]" style={{ position: 'relative' }}>
                   <Icon
                     style={{
                       width: 24, height: 24,
                       color: active ? 'var(--fh-t1)' : 'var(--fh-t4)',
-                      // Filled vs outlined — simulate fill with stroke weight
                       strokeWidth: active ? 2.5 : 1.8,
                       transition: 'color 0.15s, stroke-width 0.15s',
                     }}
-                    // Instagram pattern: filled icon when active
                     fill={active ? 'currentColor' : 'none'}
                   />
                   {badge > 0 && (
@@ -251,7 +270,7 @@ export default function BottomNav() {
                           {displayName}
                         </div>
                         <div style={{ fontSize: 12, color: 'var(--fh-t4)', marginTop: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                          {profile?.username ? `View profile` : user.email}
+                          {profile?.username ? tn.viewProfile : user.email}
                         </div>
                       </div>
                       <div style={{ width: 28, height: 28, borderRadius: '50%', background: 'var(--fh-surface-3)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
@@ -263,17 +282,26 @@ export default function BottomNav() {
                   <div style={{ display: 'flex', gap: 10, padding: '8px 16px 16px' }}>
                     <Link href="/auth/login" onClick={() => setSheetOpen(false)}
                       style={{ flex: 1, padding: '14px', borderRadius: 12, textAlign: 'center', fontSize: 15, fontWeight: 600, color: 'var(--fh-t2)', background: 'var(--fh-surface-2)', border: '1px solid var(--fh-border)', textDecoration: 'none' }}>
-                      Sign In
+                      {tn.signIn}
                     </Link>
                     <Link href="/auth/register" onClick={() => setSheetOpen(false)}
                       style={{ flex: 1, padding: '14px', borderRadius: 12, textAlign: 'center', fontSize: 15, fontWeight: 600, color: '#fff', background: 'var(--fh-primary)', textDecoration: 'none' }}>
-                      Get Started
+                      {tn.getStarted}
                     </Link>
                   </div>
                 )}
 
+                {/* ── Mode switcher (client/freelancer) ───────────── */}
+                {user && profile && (
+                  <SheetSection label={tn.mode}>
+                    <div style={{ paddingTop: 4 }}>
+                      <RoleSwitcher variant="mobile" />
+                    </div>
+                  </SheetSection>
+                )}
+
                 {/* ── Quick links — 3-column icon grid ─────────── */}
-                <SheetSection label="Navigate">
+                <SheetSection label={tn.navigate}>
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8, paddingTop: 8 }}>
                     {QUICK_LINKS.map(item => {
                       const Icon = item.icon
@@ -302,14 +330,28 @@ export default function BottomNav() {
                   </div>
                 </SheetSection>
 
+                {/* ── Sign out ─────────────────────────────────── */}
                 {user && (
                   <div style={{
                     borderTop: '0.5px solid var(--fh-sep)',
-                    padding: '12px 16px 16px', marginTop: 4,
+                    padding: '8px 16px 16px', marginTop: 4,
                   }}>
-                    <p style={{ fontSize: 12, color: 'var(--fh-t4)', lineHeight: 1.5 }}>
-                      Mode, language, currency, theme and sign-out live on your profile now — tap the ⚙ on the cover.
-                    </p>
+                    <button
+                      onClick={signOut}
+                      style={{
+                        width: '100%', display: 'flex', alignItems: 'center', gap: 14,
+                        padding: '14px 0', background: 'none', border: 'none', cursor: 'pointer',
+                      }}
+                    >
+                      <div style={{
+                        width: 36, height: 36, borderRadius: 10,
+                        background: 'rgba(229,72,77,0.08)',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      }}>
+                        <LogOut style={{ width: 18, height: 18, color: '#e5484d' }} />
+                      </div>
+                      <span style={{ fontSize: 15, color: '#e5484d', fontWeight: 600 }}>{tn.signOut}</span>
+                    </button>
                   </div>
                 )}
 
@@ -333,4 +375,3 @@ function SheetSection({ label, children }: { label: string; children: React.Reac
     </div>
   )
 }
-

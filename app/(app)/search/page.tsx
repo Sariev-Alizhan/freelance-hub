@@ -44,7 +44,7 @@ const TABS: { key: Tab; label: string; icon: typeof Search }[] = [
   { key: 'orders', label: 'Заказы', icon: Briefcase },
   { key: 'people', label: 'Люди', icon: User },
   { key: 'services', label: 'Услуги', icon: Package },
-  { key: 'reels', label: 'Reels', icon: Film },
+  { key: 'reels', label: 'Видео', icon: Film },
 ]
 
 export default function SearchPage() {
@@ -106,7 +106,7 @@ export default function SearchPage() {
             autoFocus
             value={q}
             onChange={e => setQ(e.target.value)}
-            placeholder="Поиск заказов, людей, услуг, Reels…"
+            placeholder="Поиск заказов, людей, услуг, видео…"
             className="flex-1 bg-transparent outline-none text-sm"
             style={{ color: 'var(--fh-t1)' }}
           />

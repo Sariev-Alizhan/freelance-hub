@@ -7,11 +7,13 @@ import { useUser } from '@/lib/hooks/useUser'
 import { usePathname } from 'next/navigation'
 import { useUnreadNotifications } from '@/lib/hooks/useUnreadNotifications'
 import { useTheme } from '@/lib/context/ThemeContext'
+import { useLang } from '@/lib/context/LanguageContext'
 import CreateSheet from '@/components/create/CreateSheet'
 
 export default function Header() {
   const { user } = useUser()
   const pathname = usePathname()
+  const { t } = useLang()
 
   const isLanding = pathname === '/' && !user
   const [scrolled, setScrolled] = useState(false)
@@ -50,7 +52,7 @@ export default function Header() {
             padding: '7px 16px', borderRadius: 8, fontSize: 13, fontWeight: 600,
             color: '#fff', background: 'var(--fh-primary)', textDecoration: 'none',
           }}>
-            Sign In
+            {t.auth.login}
           </Link>
         </div>
       </header>
@@ -102,7 +104,7 @@ export default function Header() {
             }}>
               <Search style={{ width: 15, height: 15, color: 'var(--fh-t4)', flexShrink: 0 }} />
               <span style={{ fontSize: 14, color: 'var(--fh-t4)', letterSpacing: '-0.01em', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', minWidth: 0 }}>
-                Заказы, люди, услуги, Reels…
+                {t.mobileNav.searchPlaceholder}
               </span>
             </div>
           </Link>
@@ -178,14 +180,14 @@ export default function Header() {
             border: '1px solid var(--fh-border)', textDecoration: 'none',
             whiteSpace: 'nowrap',
           }}>
-            Sign In
+            {t.auth.login}
           </Link>
           <Link href="/auth/register" style={{
             padding: '8px 12px', borderRadius: 99, fontSize: 13, fontWeight: 600,
             color: '#fff', background: 'var(--fh-primary)', textDecoration: 'none',
             whiteSpace: 'nowrap',
           }}>
-            Get Started
+            {t.auth.register}
           </Link>
         </div>
       </div>

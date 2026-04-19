@@ -4,9 +4,12 @@ import { Plus, Loader2 } from 'lucide-react'
 import { useUser } from '@/lib/hooks/useUser'
 import ReelPlayer, { type Reel } from '@/components/reels/ReelPlayer'
 import CreateReelModal from '@/components/reels/CreateReelModal'
+import { useLang } from '@/lib/context/LanguageContext'
 
 export default function ReelsFeedPage() {
   const { user } = useUser()
+  const { t } = useLang()
+  const tn = t.mobileNav
   const [reels,    setReels]    = useState<Reel[]>([])
   const [loading,  setLoading]  = useState(true)
   const [done,     setDone]     = useState(false)
@@ -88,9 +91,9 @@ export default function ReelsFeedPage() {
             alignItems: 'center', justifyContent: 'center', gap: 12,
             color: '#fff', textAlign: 'center', padding: 24,
           }}>
-            <div style={{ fontSize: 18, fontWeight: 700 }}>Нет Reels</div>
+            <div style={{ fontSize: 18, fontWeight: 700 }}>{tn.videoEmpty}</div>
             <div style={{ fontSize: 14, color: 'rgba(255,255,255,0.7)' }}>
-              Станьте первым — загрузите короткое видео
+              {tn.videoHint}
             </div>
             {user && (
               <button
@@ -102,7 +105,7 @@ export default function ReelsFeedPage() {
                   color: '#fff', fontWeight: 700, fontSize: 14,
                 }}
               >
-                Создать Reel
+                {tn.openVideo}
               </button>
             )}
           </div>
@@ -136,7 +139,7 @@ export default function ReelsFeedPage() {
       {user && reels.length > 0 && (
         <button
           onClick={() => setCreating(true)}
-          aria-label="Создать Reel"
+          aria-label={tn.openVideo}
           style={{
             position: 'absolute', top: 12, left: 12, zIndex: 5,
             width: 42, height: 42, borderRadius: '50%',

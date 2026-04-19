@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   description: 'Короткие видео, услуги и посты от фрилансеров СНГ. Найдите специалиста или закажите работу за минуты.',
   openGraph: {
     title: 'FreelanceHub Explore',
-    description: 'Trending Reels, услуги и посты от фрилансеров СНГ',
+    description: 'Трендовые видео, услуги и посты от фрилансеров СНГ',
     type: 'website',
   },
 }
@@ -118,7 +118,7 @@ export default async function ExplorePage() {
           Лучшее в FreelanceHub сегодня
         </h1>
         <p className="text-sm sm:text-base text-muted-foreground max-w-2xl mb-5">
-          Reels, услуги и посты от фрилансеров СНГ. Найдите специалиста, закажите работу или вдохновитесь.
+          Видео, услуги и посты от фрилансеров СНГ. Найдите специалиста, закажите работу или вдохновитесь.
         </p>
         <div className="flex flex-wrap gap-2">
           <Link
@@ -138,7 +138,7 @@ export default async function ExplorePage() {
       </section>
 
       {reels.length > 0 && (
-        <SectionHeader icon={Film} title="Трендовые Reels" href="/reels" />
+        <SectionHeader icon={Film} title="Трендовые видео" href="/reels" />
       )}
       {reels.length > 0 && (
         <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2 mb-10">
