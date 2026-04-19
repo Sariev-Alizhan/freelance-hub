@@ -14,6 +14,11 @@ export async function POST() {
     const refCode = cookieStore.get('ref')?.value
     if (!refCode) return Response.json({ skipped: true })
 
+    // Sanitize: only allow safe identifier chars to avoid PostgREST `or=` filter injection.
+    if (!/^[a-zA-Z0-9_-]{1,40}$/.test(refCode)) {
+      return Response.json({ skipped: true })
+    }
+
     const admin = createAdminClient()
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const db = admin as any

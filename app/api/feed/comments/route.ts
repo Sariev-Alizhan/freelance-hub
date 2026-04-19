@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { applyRateLimit, isValidUUID } from '@/lib/security'
 
 export const dynamic = 'force-dynamic'
 
@@ -9,7 +10,7 @@ export async function GET(req: NextRequest) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const db = supabase as any
   const item_id = req.nextUrl.searchParams.get('item_id')
-  if (!item_id) return NextResponse.json({ comments: [] })
+  if (!isValidUUID(item_id)) return NextResponse.json({ comments: [] })
 
   // Step 1: fetch comments without profile join
   const { data: comments, error } = await db
@@ -42,6 +43,9 @@ export async function GET(req: NextRequest) {
 
 // POST /api/feed/comments  body: { item_id, content }
 export async function POST(req: NextRequest) {
+  const rl = applyRateLimit(req, 'feed:comments:create', { limit: 20, windowMs: 60_000 })
+  if (rl) return rl
+
   const supabase = await createClient()
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const db = supabase as any
@@ -51,7 +55,7 @@ export async function POST(req: NextRequest) {
   let item_id: string, content: string
   try { ({ item_id, content } = await req.json()) } catch { return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 }) }
   const trimmed = (content ?? '').trim()
-  if (!item_id || !trimmed || trimmed.length > 1000) {
+  if (!isValidUUID(item_id) || !trimmed || trimmed.length > 1000) {
     return NextResponse.json({ error: 'Invalid request' }, { status: 400 })
   }
 
@@ -82,7 +86,7 @@ export async function DELETE(req: NextRequest) {
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const id = req.nextUrl.searchParams.get('id')
-  if (!id) return NextResponse.json({ error: 'Missing id' }, { status: 400 })
+  if (!isValidUUID(id)) return NextResponse.json({ error: 'Invalid id' }, { status: 400 })
 
   await db.from('feed_comments').delete().eq('id', id).eq('user_id', user.id)
   return NextResponse.json({ ok: true })

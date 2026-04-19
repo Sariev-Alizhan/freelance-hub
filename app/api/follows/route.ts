@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { applyRateLimit, isValidUUID } from '@/lib/security'
 
 export const dynamic = 'force-dynamic'
 
@@ -15,9 +16,10 @@ export async function GET(req: NextRequest) {
   const db = supabase as any
   const { data: { user } } = await supabase.auth.getUser()
 
-  const sp       = req.nextUrl.searchParams
-  const targetId = sp.get('user_id')
-  const list     = sp.get('list')
+  const sp          = req.nextUrl.searchParams
+  const rawTargetId = sp.get('user_id')
+  const targetId    = isValidUUID(rawTargetId) ? rawTargetId : null
+  const list        = sp.get('list')
 
   // Followers of X
   if (targetId && list === 'followers') {
@@ -85,6 +87,9 @@ export async function GET(req: NextRequest) {
 
 // POST /api/follows  body: { user_id }
 export async function POST(req: NextRequest) {
+  const rl = applyRateLimit(req, 'follows:create', { limit: 30, windowMs: 60_000 })
+  if (rl) return rl
+
   const supabase = await createClient()
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const db = supabase as any
@@ -92,7 +97,7 @@ export async function POST(req: NextRequest) {
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { user_id } = await req.json() as { user_id: string }
-  if (!user_id || user_id === user.id) {
+  if (!isValidUUID(user_id) || user_id === user.id) {
     return NextResponse.json({ error: 'Invalid' }, { status: 400 })
   }
 
@@ -133,7 +138,7 @@ export async function DELETE(req: NextRequest) {
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const targetId = req.nextUrl.searchParams.get('user_id')
-  if (!targetId) return NextResponse.json({ error: 'Missing user_id' }, { status: 400 })
+  if (!isValidUUID(targetId)) return NextResponse.json({ error: 'Invalid user_id' }, { status: 400 })
 
   await db.from('follows').delete()
     .eq('follower', user.id).eq('following', targetId)

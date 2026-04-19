@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { applyRateLimit, isValidUUID } from '@/lib/security'
 
 export const dynamic = 'force-dynamic'
 
@@ -47,6 +48,9 @@ export async function GET(req: NextRequest) {
 // POST /api/feed/react  body: { item_id, action }
 // Toggles the reaction on/off
 export async function POST(req: NextRequest) {
+  const rl = applyRateLimit(req, 'feed:react', { limit: 60, windowMs: 60_000 })
+  if (rl) return rl
+
   const supabase = await createClient()
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const db = supabase as any
@@ -55,7 +59,7 @@ export async function POST(req: NextRequest) {
 
   let item_id: string, action: string
   try { ({ item_id, action } = await req.json()) } catch { return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 }) }
-  if (!item_id || !['like', 'dislike', 'save', 'repost'].includes(action)) {
+  if (!isValidUUID(item_id) || !['like', 'dislike', 'save', 'repost'].includes(action)) {
     return NextResponse.json({ error: 'Invalid request' }, { status: 400 })
   }
 

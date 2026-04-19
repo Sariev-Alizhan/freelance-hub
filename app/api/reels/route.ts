@@ -1,6 +1,7 @@
 // Reels — list (global or by user) + create.
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { applyRateLimit, isValidUUID } from '@/lib/security'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -21,7 +22,7 @@ export async function GET(req: NextRequest) {
     .order('created_at', { ascending: false })
     .limit(limit)
 
-  if (userId) q = q.eq('user_id', userId)
+  if (userId && isValidUUID(userId)) q = q.eq('user_id', userId)
   if (before) q = q.lt('created_at', before)
 
   const { data: reels, error } = await q
@@ -49,6 +50,9 @@ export async function GET(req: NextRequest) {
 // POST /api/reels
 // Body: { video_url, thumbnail_url?, caption?, duration_seconds?, aspect_ratio? }
 export async function POST(req: NextRequest) {
+  const rl = applyRateLimit(req, 'reels:create', { limit: 10, windowMs: 60_000 })
+  if (rl) return rl
+
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
@@ -63,8 +67,13 @@ export async function POST(req: NextRequest) {
   try { body = await req.json() } catch { return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 }) }
 
   const videoUrl = (body.video_url ?? '').trim()
-  if (!videoUrl || !videoUrl.startsWith('http')) {
-    return NextResponse.json({ error: 'video_url required' }, { status: 400 })
+  // Require https to block javascript:, data:, http:// exfil vectors.
+  if (!videoUrl || !/^https:\/\//i.test(videoUrl) || videoUrl.length > 2048) {
+    return NextResponse.json({ error: 'video_url required (https URL)' }, { status: 400 })
+  }
+  const thumbUrl = (body.thumbnail_url ?? '').trim()
+  if (thumbUrl && (!/^https:\/\//i.test(thumbUrl) || thumbUrl.length > 2048)) {
+    return NextResponse.json({ error: 'thumbnail_url must be https' }, { status: 400 })
   }
   const caption = (body.caption ?? '').trim()
   if (caption.length > 500) return NextResponse.json({ error: 'caption too long' }, { status: 400 })
@@ -87,7 +96,7 @@ export async function POST(req: NextRequest) {
     .insert({
       user_id:          user.id,
       video_url:        videoUrl,
-      thumbnail_url:    body.thumbnail_url ?? null,
+      thumbnail_url:    thumbUrl || null,
       caption:          caption || null,
       duration_seconds: Number.isFinite(dur) ? Math.round(dur) : null,
       aspect_ratio:     Number.isFinite(ar)  ? ar               : null,

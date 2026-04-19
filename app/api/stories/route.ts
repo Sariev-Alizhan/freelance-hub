@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { applyRateLimit } from '@/lib/security'
 
 type StoryRow = {
   id: string
@@ -90,6 +91,9 @@ export async function GET() {
 
 // POST /api/stories — create a new story
 export async function POST(req: NextRequest) {
+  const rl = applyRateLimit(req, 'stories:create', { limit: 10, windowMs: 60_000 })
+  if (rl) return rl
+
   const supabase = await createClient()
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const db = supabase as any
@@ -101,13 +105,25 @@ export async function POST(req: NextRequest) {
   try { body = await req.json() } catch { return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 }) }
   const { type, content, bg_color, media_url } = body
 
-  if (!type || (type === 'text' && !content)) {
+  if (type !== 'text' && type !== 'image') {
+    return NextResponse.json({ error: 'Invalid type' }, { status: 400 })
+  }
+  if (type === 'text' && !content) {
     return NextResponse.json({ error: 'content required for text stories' }, { status: 400 })
+  }
+  // media_url must be https URL if provided (prevents javascript:, data: schemes).
+  if (media_url !== undefined && media_url !== null) {
+    if (typeof media_url !== 'string' || !/^https:\/\//i.test(media_url) || media_url.length > 2048) {
+      return NextResponse.json({ error: 'Invalid media_url' }, { status: 400 })
+    }
+  }
+  if (type === 'image' && !media_url) {
+    return NextResponse.json({ error: 'media_url required for image stories' }, { status: 400 })
   }
 
   const { data, error } = await db.from('stories').insert({
     user_id: user.id,
-    type: type ?? 'text',
+    type,
     content: content ?? null,
     bg_color: bg_color ?? '#5e6ad2',
     media_url: media_url ?? null,

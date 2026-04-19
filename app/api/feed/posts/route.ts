@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { broadcastCreateNote } from '@/lib/federation-delivery'
+import { applyRateLimit, isValidUUID } from '@/lib/security'
 
 export const dynamic = 'force-dynamic'
 
@@ -20,8 +21,12 @@ export async function GET(req: NextRequest) {
     .order('created_at', { ascending: false })
     .limit(limit)
 
-  if (search) q = q.ilike('content', `%${search}%`)
-  if (userId) q = q.eq('user_id', userId)
+  if (search) {
+    // Escape LIKE wildcards so user-supplied `%`/`_` can't widen the pattern.
+    const safe = search.replace(/[\\%_]/g, m => `\\${m}`).slice(0, 100)
+    q = q.ilike('content', `%${safe}%`)
+  }
+  if (userId && isValidUUID(userId)) q = q.eq('user_id', userId)
 
   const { data: posts, error } = await q
   if (error || !posts?.length) return NextResponse.json({ posts: [] })
@@ -48,6 +53,9 @@ export async function GET(req: NextRequest) {
 
 // POST /api/feed/posts  body: { content, tags? }
 export async function POST(req: NextRequest) {
+  const rl = applyRateLimit(req, 'feed:posts:create', { limit: 10, windowMs: 60_000 })
+  if (rl) return rl
+
   const supabase = await createClient()
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const db = supabase as any
@@ -103,7 +111,7 @@ export async function DELETE(req: NextRequest) {
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const id = req.nextUrl.searchParams.get('id')
-  if (!id) return NextResponse.json({ error: 'Missing id' }, { status: 400 })
+  if (!isValidUUID(id)) return NextResponse.json({ error: 'Invalid id' }, { status: 400 })
 
   await db.from('feed_posts').delete().eq('id', id).eq('user_id', user.id)
   return NextResponse.json({ ok: true })

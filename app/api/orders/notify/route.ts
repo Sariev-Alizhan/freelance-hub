@@ -1,5 +1,7 @@
+import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
 import { sendTelegramMessage } from '@/lib/telegram'
+import { applyRateLimit, isValidUUID } from '@/lib/security'
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.freelance-hub.kz'
 
@@ -8,25 +10,32 @@ const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.freelance-hub.
 // Finds freelancers with matching category + Telegram connected, sends DMs.
 export async function POST(req: Request) {
   try {
+    // Auth + low rate limit — this fan-outs Telegram DMs to up to 100 users.
+    const rl = applyRateLimit(req, 'orders:notify', { limit: 5, windowMs: 60_000 })
+    if (rl) return rl
+
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 })
+
     const { orderId } = await req.json()
-    if (!orderId) return Response.json({ error: 'Missing orderId' }, { status: 400 })
+    if (!isValidUUID(orderId)) return Response.json({ error: 'Invalid orderId' }, { status: 400 })
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const db = createAdminClient() as any
 
-    // Fetch the new order
+    // Fetch the new order — must belong to the caller.
     const { data: order } = await db
       .from('orders')
-      .select('id, title, category, budget_min, budget_max, deadline, skills')
+      .select('id, client_id, title, category, budget_min, budget_max, deadline, skills')
       .eq('id', orderId)
       .single()
 
     if (!order) return Response.json({ error: 'Order not found' }, { status: 404 })
+    if (order.client_id !== user.id) {
+      return Response.json({ error: 'Forbidden' }, { status: 403 })
+    }
 
-    // Find freelancers:
-    //   - Have Telegram connected
-    //   - Their freelancer_profile.category matches the order category
-    // Limit 100 to avoid spamming on launch
     const { data: rows } = await db
       .from('profiles')
       .select('telegram_chat_id, freelancer_profiles!inner(category)')
@@ -47,7 +56,6 @@ export async function POST(req: Request) {
       `⏰ Deadline: ${order.deadline}\n\n` +
       `<a href="${SITE_URL}/orders/${order.id}">View & apply →</a>`
 
-    // Fire-and-forget all sends
     let sent = 0
     for (const row of rows) {
       if (row.telegram_chat_id) {

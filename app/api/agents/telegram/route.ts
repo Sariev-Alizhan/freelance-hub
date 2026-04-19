@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextRequest } from 'next/server'
+import { applyRateLimit } from '@/lib/security'
 
 // GET — получить Telegram настройки
 export async function GET() {
@@ -38,6 +39,13 @@ export async function POST(req: NextRequest) {
 
 // POST /api/agents/telegram/test — отправить тестовое сообщение
 export async function PUT(req: NextRequest) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 })
+
+  const rl = applyRateLimit(req, 'agents:telegram:test', { limit: 5, windowMs: 60_000 })
+  if (rl) return rl
+
   const { bot_token, channel_id } = await req.json()
   if (!bot_token || !channel_id) return Response.json({ error: 'bot_token and channel_id required' }, { status: 400 })
 

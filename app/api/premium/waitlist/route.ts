@@ -1,5 +1,8 @@
 import { createClient } from '@/lib/supabase/server'
 import { createAdminClient } from '@/lib/supabase/admin'
+import { applyRateLimit } from '@/lib/security'
+
+const ALLOWED_PLANS = new Set(['monthly', 'yearly', 'lifetime'])
 
 /**
  * POST /api/premium/waitlist
@@ -7,20 +10,25 @@ import { createAdminClient } from '@/lib/supabase/admin'
  * When payments are enabled, this will be replaced by Kaspi Pay / Stripe checkout.
  */
 export async function POST(request: Request) {
+  const rl = applyRateLimit(request, 'premium:waitlist', { limit: 5, windowMs: 60_000 })
+  if (rl) return rl
+
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { plan } = await request.json()
+  const safePlan = typeof plan === 'string' && ALLOWED_PLANS.has(plan) ? plan : 'monthly'
 
   try {
     const admin = createAdminClient()
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const db = admin as any
 
     // Upsert into premium_waitlist (table created below)
     await db.from('premium_waitlist').upsert({
       user_id:    user.id,
-      plan:       plan ?? 'monthly',
+      plan:       safePlan,
       created_at: new Date().toISOString(),
     }, { onConflict: 'user_id' })
 
