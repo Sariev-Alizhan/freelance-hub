@@ -6,6 +6,7 @@ import {
   Briefcase, Clock, Star, Target, Lightbulb, Rocket,
   Loader2, RefreshCw, ArrowRight,
 } from 'lucide-react'
+import { useLang } from '@/lib/context/LanguageContext'
 
 interface FormData {
   specialization: string
@@ -25,70 +26,16 @@ interface ResumeResult {
   level: string
 }
 
-const STEPS = [
-  {
-    id: 'specialization',
-    icon: Briefcase,
-    label: 'Specialization',
-    question: 'What do you specialize in?',
-    placeholder: 'e.g. React & Node.js full-stack development, UI/UX design for mobile apps, Python data analysis...',
-    hint: 'Be specific — mention technologies, industries, or niches you focus on.',
-    required: true,
-  },
-  {
-    id: 'experience',
-    icon: Clock,
-    label: 'Experience',
-    question: 'How many years have you been doing this professionally?',
-    placeholder: 'e.g. 4 years, since 2019, 6 months...',
-    hint: 'Include any relevant freelance, full-time, or volunteer experience.',
-    required: true,
-  },
-  {
-    id: 'projects',
-    icon: Star,
-    label: 'Projects',
-    question: 'Tell us about 1-2 projects you are proud of.',
-    placeholder: 'e.g. Built an e-commerce platform for 50k users, designed a brand identity for a fintech startup...',
-    hint: 'Mention the problem, what you built, and the result if possible.',
-    required: false,
-  },
-  {
-    id: 'achievements',
-    icon: Target,
-    label: 'Achievements',
-    question: 'What results or achievements stand out?',
-    placeholder: 'e.g. Reduced load time by 3×, delivered 30+ projects on time, 5-star rating on Upwork...',
-    hint: 'Numbers and specifics make your profile 2× more compelling.',
-    required: false,
-  },
-  {
-    id: 'strengths',
-    icon: Lightbulb,
-    label: 'Strengths',
-    question: 'What are your strongest soft skills?',
-    placeholder: 'e.g. Clear communication, fast iterations, attention to detail, proactive with deadlines...',
-    hint: 'Think about what clients always thank you for.',
-    required: false,
-  },
-  {
-    id: 'goals',
-    icon: Rocket,
-    label: 'Goals',
-    question: 'What kind of projects do you want to attract?',
-    placeholder: 'e.g. Long-term SaaS products, brand design for startups, data science for healthcare...',
-    hint: 'This helps the AI tailor your profile to attract the right clients.',
-    required: false,
-  },
-]
+type StepKeyPrefix = 'rsSpec' | 'rsExp' | 'rsProj' | 'rsAch' | 'rsStr' | 'rsGoal'
 
-const LEVEL_LABELS: Record<string, string> = {
-  new: 'Newcomer',
-  junior: 'Junior',
-  middle: 'Middle',
-  senior: 'Senior',
-  top: 'Top Expert',
-}
+const STEPS: { id: keyof FormData; icon: React.ElementType; keyPrefix: StepKeyPrefix; required: boolean }[] = [
+  { id: 'specialization', icon: Briefcase,  keyPrefix: 'rsSpec', required: true  },
+  { id: 'experience',     icon: Clock,      keyPrefix: 'rsExp',  required: true  },
+  { id: 'projects',       icon: Star,       keyPrefix: 'rsProj', required: false },
+  { id: 'achievements',   icon: Target,     keyPrefix: 'rsAch',  required: false },
+  { id: 'strengths',      icon: Lightbulb,  keyPrefix: 'rsStr',  required: false },
+  { id: 'goals',          icon: Rocket,     keyPrefix: 'rsGoal', required: false },
+]
 
 const LEVEL_COLORS: Record<string, string> = {
   new: '#8a8f98',
@@ -100,6 +47,15 @@ const LEVEL_COLORS: Record<string, string> = {
 
 export default function AIResumePage() {
   const router = useRouter()
+  const { t } = useLang()
+  const td = t.aiPage
+  const LEVEL_LABELS: Record<string, string> = {
+    new:    td.lvlNew,
+    junior: td.lvlJunior,
+    middle: td.lvlMiddle,
+    senior: td.lvlSenior,
+    top:    td.lvlTop,
+  }
   const [step, setStep] = useState(0)
   const [form, setForm] = useState<FormData>({
     specialization: '',
@@ -117,8 +73,12 @@ export default function AIResumePage() {
 
   const currentStep = STEPS[step]
   const progress = ((step) / STEPS.length) * 100
-  const value = form[currentStep.id as keyof FormData]
+  const value = form[currentStep.id]
   const canProceed = !currentStep.required || value.trim().length > 0
+  const stepLabel:       string = td[`${currentStep.keyPrefix}Label` as const]
+  const stepQuestion:    string = td[`${currentStep.keyPrefix}Q`     as const]
+  const stepPlaceholder: string = td[`${currentStep.keyPrefix}Ph`    as const]
+  const stepHint:        string = td[`${currentStep.keyPrefix}Hint`  as const]
 
   function handleNext() {
     if (step < STEPS.length - 1) {
@@ -138,10 +98,10 @@ export default function AIResumePage() {
         body: JSON.stringify(form),
       })
       const data = await res.json()
-      if (!res.ok || !data.result) throw new Error(data.error || 'Generation failed')
+      if (!res.ok || !data.result) throw new Error(data.error || td.resumeErrGenFailed)
       setResult(data.result)
     } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : 'Something went wrong')
+      setError(e instanceof Error ? e.message : td.resumeErrGeneric)
     } finally {
       setGenerating(false)
     }
@@ -166,7 +126,7 @@ export default function AIResumePage() {
       setApplied(true)
       setTimeout(() => router.push('/dashboard'), 1800)
     } catch {
-      setError('Failed to apply — please try again')
+      setError(td.resumeErrApply)
     } finally {
       setApplying(false)
     }
@@ -186,10 +146,10 @@ export default function AIResumePage() {
               <Sparkles className="h-6 w-6" style={{ color: '#7170ff' }} />
             </div>
             <h1 style={{ fontSize: 'clamp(22px,3.5vw,30px)', fontWeight: 510, letterSpacing: '-0.04em', color: 'var(--fh-t1)', marginBottom: '6px' }}>
-              Your AI Resume
+              {td.resumeResultTitle}
             </h1>
             <p style={{ fontSize: '14px', color: 'var(--fh-t3)' }}>
-              Review, edit in dashboard, or regenerate
+              {td.resumeResultSub}
             </p>
           </div>
 
@@ -220,7 +180,7 @@ export default function AIResumePage() {
             {/* Bio */}
             <div style={{ marginBottom: '20px' }}>
               <p style={{ fontSize: '11px', fontWeight: 590, color: 'var(--fh-t4)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '6px' }}>
-                Bio
+                {td.resumeBioLabel}
               </p>
               <p style={{ fontSize: '14px', color: 'var(--fh-t2)', lineHeight: 1.65 }}>
                 {result.bio}
@@ -230,7 +190,7 @@ export default function AIResumePage() {
             {/* Skills */}
             <div style={{ marginBottom: '20px' }}>
               <p style={{ fontSize: '11px', fontWeight: 590, color: 'var(--fh-t4)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '8px' }}>
-                Skills
+                {td.resumeSkillsLabel}
               </p>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
                 {result.skills.map(skill => (
@@ -251,11 +211,11 @@ export default function AIResumePage() {
             {/* Rate */}
             <div>
               <p style={{ fontSize: '11px', fontWeight: 590, color: 'var(--fh-t4)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '6px' }}>
-                Suggested Rate
+                {td.resumeRateLabel}
               </p>
               <p style={{ fontSize: '20px', fontWeight: 590, color: 'var(--fh-t1)', letterSpacing: '-0.03em' }}>
                 ${result.rateMin}–${result.rateMax}
-                <span style={{ fontSize: '13px', fontWeight: 400, color: 'var(--fh-t4)', marginLeft: '4px' }}>/hour</span>
+                <span style={{ fontSize: '13px', fontWeight: 400, color: 'var(--fh-t4)', marginLeft: '4px' }}>{td.resumePerHour}</span>
               </p>
             </div>
           </div>
@@ -277,10 +237,10 @@ export default function AIResumePage() {
               }}
             >
               {applying
-                ? <><Loader2 className="h-4 w-4 animate-spin" /> Applying…</>
+                ? <><Loader2 className="h-4 w-4 animate-spin" /> {td.resumeApplying}</>
                 : applied
-                ? <><Check className="h-4 w-4" /> Applied! Redirecting…</>
-                : <><ArrowRight className="h-4 w-4" /> Apply to profile</>
+                ? <><Check className="h-4 w-4" /> {td.resumeApplied}</>
+                : <><ArrowRight className="h-4 w-4" /> {td.resumeApplyBtn}</>
               }
             </button>
 
@@ -293,7 +253,7 @@ export default function AIResumePage() {
                 color: 'var(--fh-t3)', fontSize: '14px', fontWeight: 510, cursor: 'pointer',
               }}
             >
-              <RefreshCw className="h-4 w-4" /> Regenerate
+              <RefreshCw className="h-4 w-4" /> {td.resumeRegenBtn}
             </button>
           </div>
 
@@ -317,10 +277,10 @@ export default function AIResumePage() {
             <Sparkles className="h-7 w-7 animate-pulse" style={{ color: '#7170ff' }} />
           </div>
           <h2 style={{ fontSize: '20px', fontWeight: 510, color: 'var(--fh-t1)', marginBottom: '8px', letterSpacing: '-0.03em' }}>
-            Building your resume…
+            {td.resumeBuildTitle}
           </h2>
           <p style={{ fontSize: '14px', color: 'var(--fh-t3)' }}>
-            Claude is analyzing your answers
+            {td.resumeBuildSub}
           </p>
           <div style={{ marginTop: '24px', display: 'flex', gap: '6px', justifyContent: 'center' }}>
             {[0, 1, 2].map(i => (
@@ -356,10 +316,10 @@ export default function AIResumePage() {
             <Sparkles className="h-6 w-6" style={{ color: '#7170ff' }} />
           </div>
           <h1 style={{ fontSize: 'clamp(22px,3.5vw,28px)', fontWeight: 510, letterSpacing: '-0.04em', color: 'var(--fh-t1)', marginBottom: '6px' }}>
-            AI Resume Builder
+            {td.resumeTitle}
           </h1>
           <p style={{ fontSize: '14px', color: 'var(--fh-t3)' }}>
-            Answer 6 quick questions — Claude builds your profile
+            {td.resumeSubtitle}
           </p>
         </div>
 
@@ -367,7 +327,7 @@ export default function AIResumePage() {
         <div style={{ marginBottom: '32px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
             <span style={{ fontSize: '12px', color: 'var(--fh-t4)' }}>
-              Step {step + 1} of {STEPS.length}
+              {td.resumeStepPrefix} {step + 1} {td.resumeStepOf} {STEPS.length}
             </span>
             <span style={{ fontSize: '12px', color: '#7170ff', fontWeight: 590 }}>
               {Math.round(progress)}%
@@ -420,11 +380,11 @@ export default function AIResumePage() {
             </div>
             <div>
               <p style={{ fontSize: '11px', fontWeight: 590, color: 'var(--fh-t4)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '2px' }}>
-                {currentStep.label}
-                {!currentStep.required && <span style={{ marginLeft: '6px', color: 'var(--fh-t4)', fontWeight: 400, textTransform: 'none', letterSpacing: 0 }}>optional</span>}
+                {stepLabel}
+                {!currentStep.required && <span style={{ marginLeft: '6px', color: 'var(--fh-t4)', fontWeight: 400, textTransform: 'none', letterSpacing: 0 }}>{td.resumeOptional}</span>}
               </p>
               <p style={{ fontSize: '16px', fontWeight: 590, color: 'var(--fh-t1)', letterSpacing: '-0.02em', lineHeight: 1.3 }}>
-                {currentStep.question}
+                {stepQuestion}
               </p>
             </div>
           </div>
@@ -432,7 +392,7 @@ export default function AIResumePage() {
           <textarea
             value={value}
             onChange={e => setForm(f => ({ ...f, [currentStep.id]: e.target.value }))}
-            placeholder={currentStep.placeholder}
+            placeholder={stepPlaceholder}
             rows={4}
             autoFocus
             onKeyDown={e => {
@@ -451,7 +411,7 @@ export default function AIResumePage() {
           />
 
           <p style={{ marginTop: '8px', fontSize: '12px', color: 'var(--fh-t4)', lineHeight: 1.5 }}>
-            {currentStep.hint}
+            {stepHint}
           </p>
         </div>
 
@@ -471,7 +431,7 @@ export default function AIResumePage() {
                 color: 'var(--fh-t3)', fontSize: '14px', fontWeight: 510, cursor: 'pointer',
               }}
             >
-              <ChevronLeft className="h-4 w-4" /> Back
+              <ChevronLeft className="h-4 w-4" /> {td.resumeBack}
             </button>
           )}
 
@@ -491,14 +451,14 @@ export default function AIResumePage() {
             }}
           >
             {isLast
-              ? <><Sparkles className="h-4 w-4" /> Generate resume</>
-              : <>Next <ChevronRight className="h-4 w-4" /></>
+              ? <><Sparkles className="h-4 w-4" /> {td.resumeGenBtn}</>
+              : <>{td.resumeNext} <ChevronRight className="h-4 w-4" /></>
             }
           </button>
         </div>
 
         <p style={{ textAlign: 'center', marginTop: '12px', fontSize: '12px', color: 'var(--fh-t4)' }}>
-          Tip: press <kbd style={{ padding: '1px 5px', borderRadius: '4px', border: '1px solid var(--fh-border)', fontSize: '11px' }}>⌘ Enter</kbd> to advance
+          {td.resumeTipPrefix} <kbd style={{ padding: '1px 5px', borderRadius: '4px', border: '1px solid var(--fh-border)', fontSize: '11px' }}>⌘ Enter</kbd> {td.resumeTipSuffix}
         </p>
       </div>
     </div>

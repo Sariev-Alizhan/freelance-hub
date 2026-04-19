@@ -5,6 +5,7 @@ import {
   Search, Sparkles, Loader2, X, Clock,
   ArrowRight, User, Briefcase,
 } from 'lucide-react'
+import { useLang } from '@/lib/context/LanguageContext'
 
 interface SearchResult {
   id: string
@@ -20,23 +21,6 @@ interface EnrichedResult extends SearchResult {
 }
 
 type SearchType = 'freelancers' | 'orders'
-
-const EXAMPLES: Record<SearchType, string[]> = {
-  freelancers: [
-    'React developer who knows TypeScript and Next.js',
-    'Logo designer for a fintech startup, mid-level',
-    'Python data analyst, experienced with dashboards',
-    'Mobile developer, Android + iOS, 3+ years',
-    'SEO copywriter for an e-commerce store',
-  ],
-  orders: [
-    'Build a landing page for a SaaS product',
-    'Urgent Figma prototype for a mobile app',
-    'E-commerce store on Shopify with custom theme',
-    'Write 10 SEO articles about cryptocurrency',
-    'Data analysis and visualization in Python',
-  ],
-}
 
 const STORAGE_KEY = 'fh-ai-search-history'
 const MAX_HISTORY = 6
@@ -75,6 +59,12 @@ export default function AISearchPage() {
   const [showHistory,   setShowHistory]   = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
   const panelRef = useRef<HTMLDivElement>(null)
+  const { t } = useLang()
+  const td = t.aiPage
+  const EXAMPLES: Record<SearchType, string[]> = {
+    freelancers: td.exFreelancers,
+    orders:      td.exOrders,
+  }
 
   useEffect(() => {
     try {
@@ -157,7 +147,7 @@ export default function AISearchPage() {
         }
       }
     } catch {
-      setInterpretation('Search failed — please try again')
+      setInterpretation(td.searchFailed)
     } finally {
       setLoading(false)
     }
@@ -183,7 +173,7 @@ export default function AISearchPage() {
             fontSize: '12px', fontWeight: 590, color: '#7170ff',
           }}>
             <Sparkles className="h-3.5 w-3.5" />
-            Powered by Claude AI
+            {td.searchBadge}
           </div>
 
           <h1 style={{
@@ -192,10 +182,10 @@ export default function AISearchPage() {
             marginBottom: '10px', lineHeight: 1.1,
             fontFeatureSettings: '"cv01", "ss03"',
           }}>
-            Find anything with AI
+            {td.searchTitle}
           </h1>
           <p style={{ fontSize: '15px', color: 'var(--fh-t3)', marginBottom: '28px', lineHeight: 1.5 }}>
-            Describe what you need in plain words — Claude will find the best matches
+            {td.searchSubtitle}
           </p>
 
           {/* Type toggle */}
@@ -204,22 +194,22 @@ export default function AISearchPage() {
             background: 'var(--fh-surface)', border: '1px solid var(--fh-border)',
             borderRadius: '10px', marginBottom: '20px',
           }}>
-            {(['freelancers', 'orders'] as const).map(t => (
+            {(['freelancers', 'orders'] as const).map(tk => (
               <button
-                key={t}
-                onClick={() => { setType(t); setRawResults(null); setEnriched([]) }}
+                key={tk}
+                onClick={() => { setType(tk); setRawResults(null); setEnriched([]) }}
                 style={{
                   display: 'flex', alignItems: 'center', gap: '6px',
                   padding: '7px 18px', borderRadius: '7px',
-                  background: type === t ? '#5e6ad2' : 'transparent',
-                  color: type === t ? '#fff' : 'var(--fh-t3)',
+                  background: type === tk ? '#5e6ad2' : 'transparent',
+                  color: type === tk ? '#fff' : 'var(--fh-t3)',
                   fontSize: '13px', fontWeight: 510, border: 'none', cursor: 'pointer',
                   transition: 'all 0.2s',
                 }}
               >
-                {t === 'freelancers'
-                  ? <><User className="h-3.5 w-3.5" /> Freelancers</>
-                  : <><Briefcase className="h-3.5 w-3.5" /> Projects</>
+                {tk === 'freelancers'
+                  ? <><User className="h-3.5 w-3.5" /> {td.searchTypeFreelancers}</>
+                  : <><Briefcase className="h-3.5 w-3.5" /> {td.searchTypeOrders}</>
                 }
               </button>
             ))}
@@ -248,8 +238,8 @@ export default function AISearchPage() {
                 }}
                 placeholder={
                   type === 'freelancers'
-                    ? 'e.g. "Senior React developer, experienced with SaaS products"'
-                    : 'e.g. "Build a landing page for a mobile app, $500 budget"'
+                    ? td.searchPhFreelancers
+                    : td.searchPhOrders
                 }
                 style={{
                   flex: 1, background: 'transparent', border: 'none', outline: 'none',
@@ -278,7 +268,7 @@ export default function AISearchPage() {
               >
                 {loading
                   ? <Loader2 className="h-4 w-4 animate-spin" />
-                  : <><Sparkles className="h-3.5 w-3.5" /> Search</>
+                  : <><Sparkles className="h-3.5 w-3.5" /> {td.searchBtn}</>
                 }
               </button>
             </div>
@@ -293,7 +283,7 @@ export default function AISearchPage() {
               }}>
                 <div style={{ padding: '8px 12px 4px', display: 'flex', alignItems: 'center', gap: '5px' }}>
                   <Clock className="h-3 w-3" style={{ color: 'var(--fh-t4)' }} />
-                  <span style={{ fontSize: '11px', color: 'var(--fh-t4)', fontWeight: 590 }}>Recent searches</span>
+                  <span style={{ fontSize: '11px', color: 'var(--fh-t4)', fontWeight: 590 }}>{td.searchRecent}</span>
                 </div>
                 {history.map(h => (
                   <div key={h} style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '2px 8px' }}>
@@ -352,7 +342,7 @@ export default function AISearchPage() {
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '24px' }}>
               <Loader2 className="h-4 w-4 animate-spin" style={{ color: '#7170ff' }} />
               <span style={{ fontSize: '13px', color: 'var(--fh-t3)' }}>
-                Claude is analyzing your request…
+                {td.searchAnalyzing}
               </span>
             </div>
             {[...Array(4)].map((_, i) => (
@@ -379,14 +369,14 @@ export default function AISearchPage() {
           <div style={{ marginBottom: '20px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
               <Sparkles className="h-3.5 w-3.5" style={{ color: '#7170ff' }} />
-              <span style={{ fontSize: '12px', color: 'var(--fh-t4)', fontWeight: 590 }}>AI understood your query as:</span>
+              <span style={{ fontSize: '12px', color: 'var(--fh-t4)', fontWeight: 590 }}>{td.searchInterpretedAs}</span>
             </div>
             <p style={{ fontSize: '14px', color: 'var(--fh-t2)', fontStyle: 'italic', paddingLeft: '20px' }}>
               "{interpretation}"
             </p>
             {hasResults && (
               <p style={{ fontSize: '12px', color: 'var(--fh-t4)', marginTop: '6px', paddingLeft: '20px' }}>
-                Found {enriched.length} match{enriched.length !== 1 ? 'es' : ''}
+                {td.searchFoundPrefix} {enriched.length} {enriched.length !== 1 ? td.searchMatchMany : td.searchMatchOne}
               </p>
             )}
           </div>
@@ -403,10 +393,10 @@ export default function AISearchPage() {
               <Search className="h-6 w-6" style={{ color: '#7170ff' }} />
             </div>
             <p style={{ fontSize: '15px', fontWeight: 510, color: 'var(--fh-t1)', marginBottom: '8px', letterSpacing: '-0.02em' }}>
-              No matches found
+              {td.searchNoTitle}
             </p>
             <p style={{ fontSize: '13px', color: 'var(--fh-t3)', marginBottom: '20px' }}>
-              Try a different wording or browse manually
+              {td.searchNoSub}
             </p>
             <Link
               href={type === 'freelancers' ? '/freelancers' : '/orders'}
@@ -417,7 +407,7 @@ export default function AISearchPage() {
                 fontSize: '13px', fontWeight: 510, textDecoration: 'none',
               }}
             >
-              Browse all {type} <ArrowRight className="h-3.5 w-3.5" />
+              {td.searchBrowseAll} {type === 'freelancers' ? td.searchBrowseFreelancers : td.searchBrowseOrders} <ArrowRight className="h-3.5 w-3.5" />
             </Link>
           </div>
         )}
@@ -496,7 +486,7 @@ export default function AISearchPage() {
                 href={type === 'freelancers' ? '/freelancers' : '/orders'}
                 style={{ fontSize: '13px', color: 'var(--fh-t4)', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
               >
-                Browse all {type} <ArrowRight className="h-3 w-3" />
+                {td.searchBrowseAll} {type === 'freelancers' ? td.searchBrowseFreelancers : td.searchBrowseOrders} <ArrowRight className="h-3 w-3" />
               </Link>
             </div>
           </div>

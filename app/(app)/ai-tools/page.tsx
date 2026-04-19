@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react'
 import { Search, ExternalLink, Sparkles, Star, Zap, Code2, PenLine, Image, Video, Music, BarChart3, Globe, Brain } from 'lucide-react'
-import type { Metadata } from 'next'
+import { useLang } from '@/lib/context/LanguageContext'
 
 // ── Tool data ──────────────────────────────────────────────────────────────
 
@@ -73,16 +73,18 @@ const TOOLS: Tool[] = [
   { id: 'albert-ai', name: 'Albert.ai', description: 'Autonomous digital marketing AI. Manages paid ads across channels, self-optimizing.', category: 'marketing', emoji: '📈', tags: ['ads', 'paid-media', 'automation'] },
 ]
 
-const CATEGORIES: { id: Category; label: string; icon: React.ElementType }[] = [
-  { id: 'all',          label: 'All tools',    icon: Sparkles  },
-  { id: 'writing',      label: 'Writing',      icon: PenLine   },
-  { id: 'code',         label: 'Code',         icon: Code2     },
-  { id: 'design',       label: 'Design',       icon: Image     },
-  { id: 'video',        label: 'Video',        icon: Video     },
-  { id: 'audio',        label: 'Audio',        icon: Music     },
-  { id: 'productivity', label: 'Productivity', icon: Zap       },
-  { id: 'research',     label: 'Research',     icon: Brain     },
-  { id: 'marketing',    label: 'Marketing',    icon: BarChart3 },
+type CategoryNameKey = 'catAll' | 'catWriting' | 'catCode' | 'catDesign' | 'catVideo' | 'catAudio' | 'catProductivity' | 'catResearch' | 'catMarketing'
+
+const CATEGORIES: { id: Category; nameKey: CategoryNameKey; icon: React.ElementType }[] = [
+  { id: 'all',          nameKey: 'catAll',          icon: Sparkles  },
+  { id: 'writing',      nameKey: 'catWriting',      icon: PenLine   },
+  { id: 'code',         nameKey: 'catCode',         icon: Code2     },
+  { id: 'design',       nameKey: 'catDesign',       icon: Image     },
+  { id: 'video',        nameKey: 'catVideo',        icon: Video     },
+  { id: 'audio',        nameKey: 'catAudio',        icon: Music     },
+  { id: 'productivity', nameKey: 'catProductivity', icon: Zap       },
+  { id: 'research',     nameKey: 'catResearch',     icon: Brain     },
+  { id: 'marketing',    nameKey: 'catMarketing',    icon: BarChart3 },
 ]
 
 const CATEGORY_COLORS: Record<Exclude<Category, 'all'>, string> = {
@@ -141,6 +143,8 @@ const TOOL_URLS: Record<string, string> = {
 export default function AIToolsPage() {
   const [activeCategory, setActiveCategory] = useState<Category>('all')
   const [query, setQuery] = useState('')
+  const { t } = useLang()
+  const td = t.aiPage
 
   const filtered = useMemo(() => {
     let list = TOOLS
@@ -170,11 +174,11 @@ export default function AIToolsPage() {
       <div className="text-center mb-10">
         <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-sm font-medium text-primary mb-4">
           <Sparkles className="h-4 w-4" />
-          {TOOLS.length} tools curated for freelancers
+          {TOOLS.length} {td.toolsBadgeSuffix}
         </div>
-        <h1 className="text-3xl sm:text-4xl font-bold mb-3">AI Tools Marketplace</h1>
+        <h1 className="text-3xl sm:text-4xl font-bold mb-3">{td.toolsTitle}</h1>
         <p className="text-muted-foreground max-w-xl mx-auto text-sm sm:text-base">
-          The best AI tools for freelancers — writing, coding, design, video, audio, research, and more.
+          {td.toolsSubtitle}
         </p>
       </div>
 
@@ -182,7 +186,7 @@ export default function AIToolsPage() {
       <div className="mb-10">
         <div className="flex items-center gap-2 mb-4">
           <Star className="h-4 w-4 text-amber-400" />
-          <span className="text-sm font-semibold">Featured</span>
+          <span className="text-sm font-semibold">{td.toolsFeatured}</span>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {featured.map(tool => (
@@ -210,7 +214,7 @@ export default function AIToolsPage() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <input
             type="search"
-            placeholder="Search tools..."
+            placeholder={td.toolsSearchPh}
             value={query}
             onChange={e => setQuery(e.target.value)}
             className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-subtle bg-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary/30"
@@ -231,7 +235,7 @@ export default function AIToolsPage() {
                 }`}
               >
                 <Icon className="h-3.5 w-3.5" />
-                {cat.label}
+                {td[cat.nameKey]}
               </button>
             )
           })}
@@ -240,16 +244,16 @@ export default function AIToolsPage() {
 
       {/* Count */}
       <p className="text-xs text-muted-foreground mb-4">
-        {filtered.length} {filtered.length === 1 ? 'tool' : 'tools'}
-        {activeCategory !== 'all' && ` in ${CATEGORIES.find(c => c.id === activeCategory)?.label}`}
-        {query && ` matching "${query}"`}
+        {filtered.length} {filtered.length === 1 ? td.toolsCountOne : td.toolsCountMany}
+        {activeCategory !== 'all' && ` ${td.toolsInCat} ${td[CATEGORIES.find(c => c.id === activeCategory)!.nameKey]}`}
+        {query && ` ${td.toolsMatching} "${query}"`}
       </p>
 
       {/* Grid */}
       {filtered.length === 0 ? (
         <div className="text-center py-20 text-muted-foreground">
           <Brain className="h-8 w-8 mx-auto mb-3 opacity-30" />
-          <p>No tools found</p>
+          <p>{td.toolsNoneFound}</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -269,12 +273,12 @@ export default function AIToolsPage() {
                       <span className="font-semibold text-sm">{tool.name}</span>
                       {tool.free && (
                         <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-green-500/10 text-green-400">
-                          FREE
+                          {td.toolsFreeBadge}
                         </span>
                       )}
                     </div>
                     <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${CATEGORY_COLORS[tool.category]}`}>
-                      {CATEGORIES.find(c => c.id === tool.category)?.label}
+                      {td[CATEGORIES.find(c => c.id === tool.category)!.nameKey]}
                     </span>
                   </div>
                 </div>
@@ -301,16 +305,16 @@ export default function AIToolsPage() {
           <Globe className="h-6 w-6 text-primary" />
         </div>
         <div className="flex-1 text-center sm:text-left">
-          <p className="font-semibold mb-1">Know a tool we missed?</p>
+          <p className="font-semibold mb-1">{td.toolsCtaTitle}</p>
           <p className="text-sm text-muted-foreground">
-            The AI landscape moves fast. Suggest a tool and we&apos;ll review it for inclusion.
+            {td.toolsCtaSub}
           </p>
         </div>
         <a
           href="mailto:support@freelance-hub.kz?subject=AI Tool Suggestion"
           className="px-5 py-2.5 rounded-xl bg-primary text-white text-sm font-semibold hover:bg-primary/90 transition-colors flex-shrink-0"
         >
-          Suggest a tool
+          {td.toolsCtaBtn}
         </a>
       </div>
 
