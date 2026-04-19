@@ -1,5 +1,6 @@
 import { generateText } from 'ai'
 import { createClient } from '@/lib/supabase/server'
+import { rateLimit } from '@/lib/rateLimit'
 
 const SYSTEM = `You are an AI job-matching engine for FreelanceHub platform.
 Given a freelancer's profile and a list of open orders, rank the orders by relevance.
@@ -27,6 +28,14 @@ export async function POST(request: Request) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 })
+
+  const rl = rateLimit(`ai:job-match:${user.id}`, 10, 60_000)
+  if (!rl.success) {
+    return Response.json(
+      { error: 'Too many requests' },
+      { status: 429, headers: { 'Retry-After': String(rl.retryAfter) } }
+    )
+  }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const db = supabase as any

@@ -24,6 +24,9 @@ export async function POST(request: Request) {
   if (typeof freelancerId !== 'string' || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(freelancerId)) {
     return Response.json({ error: 'Invalid freelancerId' }, { status: 400 })
   }
+  if (freelancerId === user.id) {
+    return Response.json({ error: 'Cannot review yourself' }, { status: 400 })
+  }
 
   const reviewer_name =
     user.user_metadata?.full_name ||

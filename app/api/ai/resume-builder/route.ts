@@ -1,5 +1,6 @@
 import { generateText } from 'ai'
 import { createClient } from '@/lib/supabase/server'
+import { rateLimit } from '@/lib/rateLimit'
 
 const SYSTEM = `You are an expert career coach for freelancers. Given a questionnaire, generate a professional freelancer profile.
 
@@ -24,6 +25,14 @@ export async function POST(request: Request) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 })
+
+  const rl = rateLimit(`ai:resume:${user.id}`, 5, 60_000)
+  if (!rl.success) {
+    return Response.json(
+      { error: 'Too many requests' },
+      { status: 429, headers: { 'Retry-After': String(rl.retryAfter) } }
+    )
+  }
 
   const body = await request.json()
   const { specialization, experience, projects, achievements, strengths, goals } = body
