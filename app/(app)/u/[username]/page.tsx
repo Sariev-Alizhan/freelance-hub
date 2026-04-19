@@ -26,6 +26,7 @@ import ProfileActivityHeatmap from '@/components/profile/ProfileActivityHeatmap'
 import SkillsWithEndorsements from '@/components/profile/SkillsWithEndorsements'
 import ProfileProSection from '@/components/freelancers/ProfileProSection'
 import FounderCard from '@/components/freelancers/FounderCard'
+import ProfileExperienceTimeline, { type WorkEntry } from '@/components/profile/ProfileExperienceTimeline'
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.freelance-hub.kz'
 
@@ -214,6 +215,7 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
     { count: followingCount },
     { count: viewsWeek },
     { data: postRows },
+    { data: experienceRows },
   ] = await Promise.all([
     db.from('follows').select('follower',  { count: 'exact', head: true }).eq('following', p.userId),
     db.from('follows').select('following', { count: 'exact', head: true }).eq('follower',  p.userId),
@@ -222,7 +224,12 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
           .eq('freelancer_id', p.userId).gte('created_at', sevenDaysAgo)
       : Promise.resolve({ count: 0 }),
     db.from('feed_posts').select('created_at').eq('author_id', p.userId).gte('created_at', oneYearAgo),
+    db.from('work_experience')
+      .select('id, company, position, description, start_date, end_date, is_current, location')
+      .eq('user_id', p.userId).order('start_date', { ascending: false }),
   ])
+
+  const experience: WorkEntry[] = (experienceRows ?? []) as WorkEntry[]
 
   // Bucket posts by day for activity heatmap
   const activityCounts: Record<string, number> = {}
@@ -302,6 +309,8 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
       )}
 
       <ProfileActivityHeatmap counts={activityCounts} totalCount={totalActivity} />
+
+      <ProfileExperienceTimeline items={experience} isOwnProfile={isOwnProfile} />
 
       {p.isFreelancer && (
         p.headline || p.portfolioWebsite || p.githubUrl || p.linkedinUrl ||

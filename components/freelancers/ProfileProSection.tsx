@@ -2,20 +2,9 @@
 
 import { useState, useEffect } from 'react'
 import {
-  Briefcase, FileText, Globe,
-  Download, ExternalLink, Calendar, MapPin, ChevronDown, ChevronUp, Link2, Code2
+  FileText, Globe,
+  Download, ExternalLink, Link2, Code2,
 } from 'lucide-react'
-
-interface WorkEntry {
-  id:          string
-  company:     string
-  position:    string
-  description: string | null
-  start_date:  string
-  end_date:    string | null
-  is_current:  boolean
-  location:    string | null
-}
 
 interface ProfileDocument {
   id:        string
@@ -41,15 +30,6 @@ interface ProfileProSectionProps {
   twitterUrl?:       string | null
   youtubeUrl?:       string | null
   tiktokUrl?:        string | null
-}
-
-function formatDate(dateStr: string): string {
-  try {
-    const d = new Date(dateStr)
-    return d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
-  } catch {
-    return dateStr
-  }
 }
 
 function formatFileSize(bytes: number | null): string {
@@ -80,22 +60,11 @@ export default function ProfileProSection({
   youtubeUrl,
   tiktokUrl,
 }: ProfileProSectionProps) {
-  const [experience, setExperience] = useState<WorkEntry[]>([])
   const [documents, setDocuments]   = useState<ProfileDocument[]>([])
-  const [loadedExp, setLoadedExp]   = useState(false)
   const [loadedDocs, setLoadedDocs] = useState(false)
-  const [showAllExp, setShowAllExp] = useState(false)
-  const [expandedExp, setExpanded]  = useState<string | null>(null)
 
   useEffect(() => {
-    // Lazy-load experience and documents when user scrolls to this section
     const timer = setTimeout(() => {
-      if (!loadedExp) {
-        fetch(`/api/profile/public/${userId}/experience`)
-          .then(r => r.json())
-          .then(d => { setExperience(d.experience ?? []); setLoadedExp(true) })
-          .catch(() => setLoadedExp(true))
-      }
       if (!loadedDocs) {
         fetch(`/api/profile/public/${userId}/documents`)
           .then(r => r.json())
@@ -104,7 +73,7 @@ export default function ProfileProSection({
       }
     }, 300)
     return () => clearTimeout(timer)
-  }, [userId, loadedExp, loadedDocs])
+  }, [userId, loadedDocs])
 
   const socialLinks = [
     telegramUrl  && { href: telegramUrl,  label: 'Telegram',  color: '#29b6f6', emoji: '✈️' },
@@ -114,15 +83,12 @@ export default function ProfileProSection({
     tiktokUrl    && { href: tiktokUrl,    label: 'TikTok',    color: '#010101', emoji: '🎵' },
   ].filter(Boolean) as { href: string; label: string; color: string; emoji: string }[]
 
-  const hasLinks      = portfolioWebsite || githubUrl || linkedinUrl || socialLinks.length > 0
-  const hasResume     = !!resumeUrl
-  const hasExperience = experience.length > 0
-  const hasDocuments  = documents.length > 0
-
-  const visibleExp = showAllExp ? experience : experience.slice(0, 3)
+  const hasLinks     = portfolioWebsite || githubUrl || linkedinUrl || socialLinks.length > 0
+  const hasResume    = !!resumeUrl
+  const hasDocuments = documents.length > 0
 
   // If nothing to show at all (even after loading), render nothing
-  if (!hasLinks && !hasResume && !headline && loadedExp && !hasExperience && loadedDocs && !hasDocuments) {
+  if (!hasLinks && !hasResume && !headline && loadedDocs && !hasDocuments) {
     return null
   }
 
@@ -241,98 +207,6 @@ export default function ProfileProSection({
             </div>
             <Download size={15} style={{ color: 'var(--fh-t4)', flexShrink: 0 }} />
           </a>
-        </div>
-      )}
-
-      {/* ── Work experience ───────────────────────────────────── */}
-      {hasExperience && (
-        <div>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-            <p style={{ fontSize: 11, fontWeight: 700, color: 'var(--fh-t4)', textTransform: 'uppercase', letterSpacing: '0.06em', margin: 0 }}>
-              Work Experience
-            </p>
-            <span style={{ fontSize: 11, color: 'var(--fh-t4)' }}>{experience.length} positions</span>
-          </div>
-
-          {/* Timeline */}
-          <div style={{ position: 'relative', paddingLeft: 20 }}>
-            {/* Vertical line */}
-            <div style={{
-              position: 'absolute', left: 6, top: 8, bottom: 8,
-              width: 1, background: 'var(--fh-border)',
-            }} />
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-              {visibleExp.map((entry, i) => (
-                <div key={entry.id} style={{ position: 'relative' }}>
-                  {/* Timeline dot */}
-                  <div style={{
-                    position: 'absolute', left: -17, top: 6, width: 8, height: 8,
-                    borderRadius: '50%', border: '2px solid',
-                    borderColor: entry.is_current ? '#7170ff' : 'var(--fh-border)',
-                    background: entry.is_current ? '#7170ff' : 'var(--fh-surface)',
-                  }} />
-
-                  <button
-                    onClick={() => setExpanded(expandedExp === entry.id ? null : entry.id)}
-                    style={{
-                      width: '100%', textAlign: 'left', background: 'none', border: 'none',
-                      cursor: 'pointer', padding: 0,
-                    }}
-                  >
-                    <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8 }}>
-                      <div>
-                        <p style={{ margin: 0, fontSize: 13, fontWeight: 600, color: 'var(--fh-t1)' }}>{entry.position}</p>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 2 }}>
-                          <Briefcase size={11} style={{ color: 'var(--fh-t4)' }} />
-                          <span style={{ fontSize: 12, color: 'var(--fh-t3)' }}>{entry.company}</span>
-                          {entry.location && (
-                            <>
-                              <span style={{ color: 'var(--fh-t4)', fontSize: 10 }}>·</span>
-                              <MapPin size={10} style={{ color: 'var(--fh-t4)' }} />
-                              <span style={{ fontSize: 11, color: 'var(--fh-t4)' }}>{entry.location}</span>
-                            </>
-                          )}
-                        </div>
-                      </div>
-                      <div style={{ flexShrink: 0, textAlign: 'right' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                          <Calendar size={10} style={{ color: 'var(--fh-t4)' }} />
-                          <span style={{ fontSize: 11, color: 'var(--fh-t4)' }}>
-                            {formatDate(entry.start_date)} — {entry.is_current ? 'Present' : (entry.end_date ? formatDate(entry.end_date) : '?')}
-                          </span>
-                        </div>
-                        {entry.is_current && (
-                          <span style={{ fontSize: 10, color: '#7170ff', fontWeight: 600 }}>Current</span>
-                        )}
-                      </div>
-                    </div>
-                  </button>
-
-                  {expandedExp === entry.id && entry.description && (
-                    <p style={{ margin: '8px 0 0', fontSize: 12, color: 'var(--fh-t3)', lineHeight: 1.7 }}>
-                      {entry.description}
-                    </p>
-                  )}
-                </div>
-              ))}
-            </div>
-
-            {experience.length > 3 && (
-              <button
-                onClick={() => setShowAllExp(!showAllExp)}
-                style={{
-                  marginTop: 12, display: 'flex', alignItems: 'center', gap: 4,
-                  fontSize: 12, color: '#7170ff', background: 'none', border: 'none', cursor: 'pointer',
-                }}
-              >
-                {showAllExp
-                  ? <><ChevronUp size={13} /> Show less</>
-                  : <><ChevronDown size={13} /> Show all {experience.length} positions</>
-                }
-              </button>
-            )}
-          </div>
         </div>
       )}
 
