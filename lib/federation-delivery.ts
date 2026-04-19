@@ -1,8 +1,31 @@
 // Outbound ActivityPub delivery: fetch remote actors, send signed activities.
 import { createClient as createServiceClient } from '@supabase/supabase-js'
 import { randomUUID } from 'node:crypto'
+import { request as httpsRequest } from 'node:https'
 import { actorUrl, INSTANCE_ORIGIN } from '@/lib/federation'
 import { signRequest } from '@/lib/http-signatures'
+
+// Node's fetch (undici) overrides the Date header — fatal for HTTP Signatures.
+// Send via raw https.request so the signed headers arrive verbatim.
+function rawPost(url: URL, headers: Record<string, string>, body: string, timeoutMs: number): Promise<{ status: number }> {
+  return new Promise((resolve, reject) => {
+    const req = httpsRequest({
+      method:   'POST',
+      hostname: url.hostname,
+      port:     url.port || 443,
+      path:     url.pathname + url.search,
+      headers:  { ...headers, 'content-length': Buffer.byteLength(body).toString() },
+      timeout:  timeoutMs,
+    }, res => {
+      res.on('data', () => {})
+      res.on('end',  () => resolve({ status: res.statusCode ?? 0 }))
+    })
+    req.on('error',   reject)
+    req.on('timeout', () => { req.destroy(new Error('timeout')) })
+    req.write(body)
+    req.end()
+  })
+}
 
 function admin() {
   return createServiceClient(
@@ -70,13 +93,13 @@ export async function postActivity(params: {
   })
 
   try {
-    const res = await fetch(params.toInboxUrl, {
-      method: 'POST',
-      headers: { ...headers, accept: 'application/activity+json' },
+    const res = await rawPost(
+      url,
+      { ...headers, accept: 'application/activity+json' },
       body,
-      signal: AbortSignal.timeout(15_000),
-    })
-    return { ok: res.ok, status: res.status }
+      15_000,
+    )
+    return { ok: res.status >= 200 && res.status < 300, status: res.status }
   } catch (err) {
     return { ok: false, reason: err instanceof Error ? err.message : 'fetch failed' }
   }
