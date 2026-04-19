@@ -8,10 +8,13 @@ import FavoriteButton from '@/components/shared/FavoriteButton'
 import PromoteModal from '@/components/shared/PromoteModal'
 import { Order } from '@/lib/types'
 import { CATEGORIES } from '@/lib/mock/categories'
+import { useLang } from '@/lib/context/LanguageContext'
 
 interface Props { order: Order; currentUserId?: string }
 
 export default function OrderCard({ order: o, currentUserId }: Props) {
+  const { t } = useLang()
+  const to = t.ordersPage
   const category = CATEGORIES.find((c) => c.slug === o.category)
   const [showPromote, setShowPromote] = useState(false)
   const isOwner = !!currentUserId && currentUserId === o.client.id
@@ -53,7 +56,7 @@ export default function OrderCard({ order: o, currentUserId }: Props) {
                     className="flex items-center gap-1 text-[11px] px-2 py-0.5 rounded"
                     style={{ fontWeight: 590, background: 'rgba(229,72,77,0.1)', color: '#e5484d' }}
                   >
-                    <Zap className="h-3 w-3" /> Urgent
+                    <Zap className="h-3 w-3" /> {to.urgentBadge}
                   </span>
                 )}
                 {o.isPromoted && (
@@ -115,7 +118,7 @@ export default function OrderCard({ order: o, currentUserId }: Props) {
                       <PriceDisplay amountRub={o.budget.max} prefix="" size="sm" />
                     </>
                   ) : (
-                    <span style={{ color: 'var(--fh-t3)', fontWeight: 400, fontSize: '12px' }}>Negotiable</span>
+                    <span style={{ color: 'var(--fh-t3)', fontWeight: 400, fontSize: '12px' }}>{to.negotiable}</span>
                   )}
                 </div>
                 <div className="flex items-center gap-1" style={{ color: 'var(--fh-t4)' }}>

@@ -7,6 +7,7 @@ import OrderCard from '@/components/orders/OrderCard'
 import SaveSearchButton from '@/components/orders/SaveSearchButton'
 import { CATEGORIES } from '@/lib/mock'
 import { CategorySlug, Order } from '@/lib/types'
+import { useLang } from '@/lib/context/LanguageContext'
 
 const PAGE_SIZE = 12
 
@@ -16,6 +17,8 @@ interface Props {
 }
 
 export default function OrdersClient({ realOrders = [], currentUserId }: Props) {
+  const { t } = useLang()
+  const to = t.ordersPage
   const router    = useRouter()
   const pathname  = usePathname()
   const sp        = useSearchParams()
@@ -88,10 +91,10 @@ export default function OrdersClient({ realOrders = [], currentUserId }: Props) 
             fontSize: 'clamp(20px, 3.5vw, 30px)', fontWeight: 510,
             letterSpacing: '-0.04em', color: 'var(--fh-t1)', marginBottom: '4px',
           }}>
-            Orders
+            {to.heading}
           </h1>
           <p style={{ fontSize: '13px', color: 'var(--fh-t3)' }}>
-            Find projects in your field
+            {to.subtitle}
           </p>
         </div>
         <Link
@@ -104,8 +107,8 @@ export default function OrdersClient({ realOrders = [], currentUserId }: Props) 
           }}
         >
           <Plus className="h-4 w-4" />
-          <span className="hidden sm:inline">Post a Job</span>
-          <span className="sm:hidden">New</span>
+          <span className="hidden sm:inline">{to.postJobFull}</span>
+          <span className="sm:hidden">{to.postJobShort}</span>
         </Link>
       </div>
 
@@ -116,7 +119,7 @@ export default function OrdersClient({ realOrders = [], currentUserId }: Props) 
           <input
             value={inputVal}
             onChange={(e) => setInputVal(e.target.value)}
-            placeholder="Search orders..."
+            placeholder={to.searchPlaceholder}
             className="w-full transition-all outline-none"
             style={{
               padding: '10px 14px 10px 36px', borderRadius: '8px',
@@ -138,7 +141,7 @@ export default function OrdersClient({ realOrders = [], currentUserId }: Props) 
           }}
         >
           <Zap className="h-4 w-4" />
-          <span className="hidden sm:inline">Urgent</span>
+          <span className="hidden sm:inline">{to.urgent}</span>
         </button>
         <button
           onClick={() => setShowFilters(v => !v)}
@@ -151,7 +154,7 @@ export default function OrdersClient({ realOrders = [], currentUserId }: Props) 
           }}
         >
           <SlidersHorizontal className="h-4 w-4" />
-          <span className="hidden sm:inline">Filters</span>
+          <span className="hidden sm:inline">{to.filters}</span>
           {activeFiltersCount > 0 && (
             <span style={{
               position: 'absolute', top: -6, right: -6,
@@ -172,17 +175,17 @@ export default function OrdersClient({ realOrders = [], currentUserId }: Props) 
         <div className="mb-4 p-4 rounded-xl flex flex-wrap gap-4 items-end"
           style={{ background: 'var(--fh-surface-2)', border: '1px solid var(--fh-border-2)' }}>
           <div className="flex flex-col gap-1.5">
-            <label style={{ fontSize: '12px', color: 'var(--fh-t4)', fontWeight: 510 }}>Budget, ₸</label>
+            <label style={{ fontSize: '12px', color: 'var(--fh-t4)', fontWeight: 510 }}>{to.budgetLabel}</label>
             <div className="flex items-center gap-2">
               <input
-                type="number" placeholder="from" value={budgetMin}
+                type="number" placeholder={to.from} value={budgetMin}
                 onChange={e => { setBudgetMin(e.target.value); setPage(1) }}
                 className="outline-none"
                 style={{ width: '90px', padding: '8px 10px', borderRadius: '6px', fontSize: '13px', background: 'var(--fh-surface)', border: '1px solid var(--fh-border-2)', color: 'var(--fh-t1)' }}
               />
               <span style={{ color: 'var(--fh-t4)', fontSize: '12px' }}>—</span>
               <input
-                type="number" placeholder="to" value={budgetMax}
+                type="number" placeholder={to.to} value={budgetMax}
                 onChange={e => { setBudgetMax(e.target.value); setPage(1) }}
                 className="outline-none"
                 style={{ width: '90px', padding: '8px 10px', borderRadius: '6px', fontSize: '13px', background: 'var(--fh-surface)', border: '1px solid var(--fh-border-2)', color: 'var(--fh-t1)' }}
@@ -190,13 +193,13 @@ export default function OrdersClient({ realOrders = [], currentUserId }: Props) 
             </div>
           </div>
           <div className="flex flex-col gap-1.5">
-            <label style={{ fontSize: '12px', color: 'var(--fh-t4)', fontWeight: 510 }}>Sort by</label>
+            <label style={{ fontSize: '12px', color: 'var(--fh-t4)', fontWeight: 510 }}>{to.sortBy}</label>
             <div className="flex flex-wrap gap-1.5">
               {([
-                { value: 'newest',      label: 'Newest' },
-                { value: 'budget_desc', label: '↓ Budget' },
-                { value: 'budget_asc',  label: '↑ Budget' },
-                { value: 'responses',   label: 'Fewer responses' },
+                { value: 'newest',      label: to.sortNewest },
+                { value: 'budget_desc', label: to.sortBudgetDesc },
+                { value: 'budget_asc',  label: to.sortBudgetAsc },
+                { value: 'responses',   label: to.sortResponses },
               ] as const).map(opt => (
                 <button key={opt.value} onClick={() => { setSortBy(opt.value); setPage(1) }}
                   style={{
@@ -213,7 +216,7 @@ export default function OrdersClient({ realOrders = [], currentUserId }: Props) 
             <button onClick={() => { setBudgetMin(''); setBudgetMax(''); setSortBy('newest'); setPage(1) }}
               className="flex items-center gap-1"
               style={{ fontSize: '12px', color: 'var(--fh-t4)', marginLeft: 'auto', background: 'none', border: 'none', cursor: 'pointer' }}>
-              <X className="h-3.5 w-3.5" /> Reset
+              <X className="h-3.5 w-3.5" /> {to.reset}
             </button>
           )}
         </div>
@@ -222,7 +225,7 @@ export default function OrdersClient({ realOrders = [], currentUserId }: Props) 
       {/* ── Category tabs — horizontal scroll on mobile ──────── */}
       <div className="overflow-x-auto scrollbar-none -mx-4 px-4 sm:mx-0 sm:px-0 mb-5 sm:mb-8">
         <div className="flex gap-1.5" style={{ width: 'max-content', paddingBottom: 4 }}>
-          {[{ slug: 'all' as const, label: 'All' }, ...CATEGORIES].map((cat) => {
+          {[{ slug: 'all' as const, label: to.all }, ...CATEGORIES].map((cat) => {
             const active = category === cat.slug
             return (
               <button
@@ -246,7 +249,7 @@ export default function OrdersClient({ realOrders = [], currentUserId }: Props) 
 
       {/* ── Count ───────────────────────────────────────────────── */}
       <div className="mb-4" style={{ fontSize: '13px', color: 'var(--fh-t4)' }}>
-        Found: <span style={{ color: 'var(--fh-t1)', fontWeight: 590 }}>{filtered.length}</span> orders
+        {to.foundPrefix} <span style={{ color: 'var(--fh-t1)', fontWeight: 590 }}>{filtered.length}</span> {to.foundSuffix}
       </div>
 
       {/* ── Results ─────────────────────────────────────────────── */}
@@ -258,18 +261,18 @@ export default function OrdersClient({ realOrders = [], currentUserId }: Props) 
           </div>
           <div className="text-center">
             <p style={{ fontSize: '16px', fontWeight: 510, color: 'var(--fh-t1)', marginBottom: '8px', letterSpacing: '-0.02em' }}>
-              {search || urgentOnly || category !== 'all' ? 'Nothing found' : 'No orders yet'}
+              {search || urgentOnly || category !== 'all' ? to.nothingFound : to.noOrdersYet}
             </p>
             <p style={{ fontSize: '14px', color: 'var(--fh-t3)', maxWidth: '320px', lineHeight: 1.6 }}>
               {search || urgentOnly || category !== 'all'
-                ? 'Try changing the filters or clearing the search.'
-                : 'The platform just launched — be the first! Post a job for free.'}
+                ? to.tryChanging
+                : to.justLaunched}
             </p>
           </div>
           {!search && !urgentOnly && category === 'all' && (
             <Link href="/orders/new" className="transition-all active:scale-[0.97]"
               style={{ padding: '10px 24px', borderRadius: '8px', background: 'var(--fh-primary)', color: '#fff', fontSize: '14px', fontWeight: 510 }}>
-              Post a Job — Free
+              {to.postJobFree}
             </Link>
           )}
         </div>
@@ -293,7 +296,7 @@ export default function OrdersClient({ realOrders = [], currentUserId }: Props) 
                 }}
               >
                 <ChevronDown className="h-4 w-4" />
-                Show more ({filtered.length - paginated.length})
+                {to.showMore} ({filtered.length - paginated.length})
               </button>
             </div>
           )}

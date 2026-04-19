@@ -12,10 +12,11 @@ import MilestoneTracker from '@/components/orders/MilestoneTracker'
 import OrderReviewPrompt from '@/components/orders/OrderReviewPrompt'
 import { createClient } from '@/lib/supabase/server'
 import { Order } from '@/lib/types'
+import { getServerT } from '@/lib/i18n/server'
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.freelance-hub.kz'
 
-async function getOrder(id: string): Promise<Order | null> {
+async function getOrder(id: string, clientFallback: string): Promise<Order | null> {
   try {
     const supabase = await createClient()
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -35,7 +36,7 @@ async function getOrder(id: string): Promise<Order | null> {
     if (error || !data) return null
 
     const profile    = data.profiles
-    const clientName = profile?.full_name || profile?.username || 'Client'
+    const clientName = profile?.full_name || profile?.username || clientFallback
     const clientAvatar =
       profile?.avatar_url ||
       `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(clientName)}&backgroundColor=4338CA&textColor=ffffff`
@@ -66,8 +67,9 @@ export async function generateMetadata({
   params: Promise<{ id: string }>
 }): Promise<Metadata> {
   const { id } = await params
-  const order = await getOrder(id)
-  if (!order) return { title: 'Order not found — FreelanceHub' }
+  const t = await getServerT()
+  const order = await getOrder(id, t.ordersPage.clientFallback)
+  if (!order) return { title: t.ordersPage.orderNotFound }
 
   const category = CATEGORIES.find((c) => c.slug === order.category)
   const desc = order.description.slice(0, 155)
@@ -75,7 +77,7 @@ export async function generateMetadata({
   return {
     title: `${order.title} — FreelanceHub`,
     description: desc,
-    openGraph: { title: order.title, description: desc, type: 'website', locale: 'en_US', siteName: 'FreelanceHub' },
+    openGraph: { title: order.title, description: desc, type: 'website', siteName: 'FreelanceHub' },
     twitter: { card: 'summary', title: order.title, description: desc },
     alternates: { canonical: `/orders/${id}` },
     other: {
@@ -103,8 +105,10 @@ export async function generateMetadata({
 export default async function OrderPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const supabase = await createClient()
+  const t = await getServerT()
+  const to = t.ordersPage
   const [order, { data: { user } }] = await Promise.all([
-    getOrder(id),
+    getOrder(id, to.clientFallback),
     supabase.auth.getUser(),
   ])
   if (!order) notFound()
@@ -130,10 +134,10 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
   }
 
   const statusStyle = {
-    open:        { bg: 'rgba(39,166,68,0.08)',           color: '#27a644',        border: '1px solid rgba(39,166,68,0.2)',  label: 'Open'        },
-    in_progress: { bg: 'rgba(59,130,246,0.08)',          color: '#3b82f6',        border: '1px solid rgba(59,130,246,0.2)', label: 'In progress' },
-    completed:   { bg: 'var(--fh-surface-2)',            color: 'var(--fh-t3)',   border: '1px solid var(--fh-border)',     label: 'Completed'   },
-    cancelled:   { bg: 'rgba(229,72,77,0.08)',           color: '#e5484d',        border: '1px solid rgba(229,72,77,0.2)', label: 'Cancelled'   },
+    open:        { bg: 'rgba(39,166,68,0.08)',           color: '#27a644',        border: '1px solid rgba(39,166,68,0.2)',  label: to.statusOpen       },
+    in_progress: { bg: 'rgba(59,130,246,0.08)',          color: '#3b82f6',        border: '1px solid rgba(59,130,246,0.2)', label: to.statusInProgress },
+    completed:   { bg: 'var(--fh-surface-2)',            color: 'var(--fh-t3)',   border: '1px solid var(--fh-border)',     label: to.statusCompleted  },
+    cancelled:   { bg: 'rgba(229,72,77,0.08)',           color: '#e5484d',        border: '1px solid rgba(229,72,77,0.2)', label: to.statusCancelled  },
   }
   const st = statusStyle[order.status] ?? statusStyle.open
 
@@ -145,7 +149,7 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
         style={{ fontSize: '13px', color: 'var(--fh-t4)', fontWeight: 400 }}
         onMouseEnter={undefined}
       >
-        <ArrowLeft className="h-3.5 w-3.5" /> Back to orders
+        <ArrowLeft className="h-3.5 w-3.5" /> {to.backToOrders}
       </Link>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
@@ -176,7 +180,7 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
                   className="flex items-center gap-1 rounded-full"
                   style={{ padding: '3px 12px', fontSize: '12px', fontWeight: 590, background: 'rgba(229,72,77,0.1)', color: '#e5484d' }}
                 >
-                  <Zap className="h-3 w-3" /> Urgent
+                  <Zap className="h-3 w-3" /> {to.urgentBadge}
                 </span>
               )}
               <span
@@ -210,7 +214,7 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
             >
               <div>
                 <div style={{ fontSize: '11px', color: 'var(--fh-t4)', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 510 }}>
-                  Budget
+                  {to.budget}
                 </div>
                 <div style={{ fontSize: '15px', fontWeight: 590, color: 'var(--fh-primary)', letterSpacing: '-0.02em' }}>
                   {order.budget.min > 0 ? (
@@ -219,18 +223,18 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
                       {' — '}
                       <PriceDisplay amountRub={order.budget.max} prefix="" size="md" />
                     </>
-                  ) : 'Negotiable'}
+                  ) : to.negotiable}
                 </div>
               </div>
               <div>
                 <div style={{ fontSize: '11px', color: 'var(--fh-t4)', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 510 }}>
-                  Timeline
+                  {to.timeline}
                 </div>
                 <div style={{ fontSize: '14px', fontWeight: 510, color: 'var(--fh-t1)', letterSpacing: '-0.01em' }}>{order.deadline}</div>
               </div>
               <div>
                 <div style={{ fontSize: '11px', color: 'var(--fh-t4)', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 510 }}>
-                  Responses
+                  {to.responses}
                 </div>
                 <div style={{ fontSize: '14px', fontWeight: 510, color: 'var(--fh-t1)' }}>{order.responsesCount}</div>
               </div>
@@ -244,7 +248,7 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
               style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border-2)' }}
             >
               <h2 style={{ fontSize: '13px', fontWeight: 590, color: 'var(--fh-t1)', marginBottom: '12px', letterSpacing: '-0.01em' }}>
-                Required skills
+                {to.requiredSkills}
               </h2>
               <div className="flex flex-wrap gap-2">
                 {order.skills.map((skill) => (
@@ -325,7 +329,7 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
                     fontWeight: 510,
                   }}
                 >
-                  Message client
+                  {to.messageClient}
                 </Link>
                 <Link
                   href={`/contracts?description=${encodeURIComponent(order.description.slice(0, 300))}&deadline=${encodeURIComponent(order.deadline)}&budget=${order.budget.max}`}
@@ -341,7 +345,7 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
                   }}
                 >
                   <FileText className="h-4 w-4" />
-                  Create contract
+                  {to.createContract}
                 </Link>
 
                 <div
@@ -350,9 +354,9 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
                 >
                   <Shield className="h-4 w-4 flex-shrink-0 mt-0.5" style={{ color: '#27a644' }} />
                   <div>
-                    <p style={{ fontSize: '12px', fontWeight: 590, color: '#27a644', marginBottom: '3px' }}>Safe deal</p>
+                    <p style={{ fontSize: '12px', fontWeight: 590, color: '#27a644', marginBottom: '3px' }}>{to.safeDeal}</p>
                     <p style={{ fontSize: '11px', color: 'var(--fh-t4)', lineHeight: 1.5, fontWeight: 400 }}>
-                      Agree on milestone payments. 30–50% upfront, the rest after delivery.
+                      {to.safeDealDesc}
                     </p>
                   </div>
                 </div>
@@ -369,7 +373,7 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
               </div>
               <div className="flex items-center gap-2" style={{ color: 'var(--fh-t4)' }}>
                 <Users className="h-3.5 w-3.5 flex-shrink-0" />
-                <span style={{ fontSize: '12px', fontWeight: 400 }}>{order.responsesCount} responses</span>
+                <span style={{ fontSize: '12px', fontWeight: 400 }}>{order.responsesCount} {to.responsesCount}</span>
               </div>
             </div>
           </div>
@@ -380,13 +384,13 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
             style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border-2)' }}
           >
             <h3 style={{ fontSize: '12px', fontWeight: 590, color: 'var(--fh-t4)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '12px' }}>
-              About client
+              {to.aboutClient}
             </h3>
             <div className="flex items-center gap-3 mb-3">
               <Image src={order.client.avatar} alt={order.client.name} width={38} height={38} className="rounded-lg" unoptimized />
               <div>
                 <div style={{ fontSize: '13px', fontWeight: 590, color: 'var(--fh-t1)' }}>{order.client.name}</div>
-                <div style={{ fontSize: '11px', color: 'var(--fh-t4)', fontWeight: 400 }}>{order.client.ordersPosted} orders on platform</div>
+                <div style={{ fontSize: '11px', color: 'var(--fh-t4)', fontWeight: 400 }}>{order.client.ordersPosted} {to.clientOrders}</div>
               </div>
             </div>
             {order.client.rating > 0 && <RatingStars rating={order.client.rating} />}

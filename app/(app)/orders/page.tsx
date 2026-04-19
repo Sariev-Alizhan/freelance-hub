@@ -3,27 +3,30 @@ import { Suspense } from 'react'
 import OrdersClient from './OrdersClient'
 import { createClient } from '@/lib/supabase/server'
 import { Order } from '@/lib/types'
+import { getServerT } from '@/lib/i18n/server'
 
-export const metadata: Metadata = {
-  title: 'Orders — FreelanceHub',
-  description:
-    'Find freelance projects in your field. Development, design, marketing, copywriting and more — from clients worldwide.',
-  openGraph: {
-    title: 'Orders — FreelanceHub',
-    description: 'Thousands of freelance projects for specialists worldwide',
-    type: 'website',
-    locale: 'en_US',
-    siteName: 'FreelanceHub',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Orders — FreelanceHub',
-    description: 'Thousands of freelance projects for specialists worldwide',
-  },
-  alternates: { canonical: '/orders' },
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getServerT()
+  const to = t.ordersPage
+  return {
+    title: to.metaTitle,
+    description: to.metaDesc,
+    openGraph: {
+      title: to.metaTitle,
+      description: to.metaShortDesc,
+      type: 'website',
+      siteName: 'FreelanceHub',
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: to.metaTitle,
+      description: to.metaShortDesc,
+    },
+    alternates: { canonical: '/orders' },
+  }
 }
 
-async function fetchRealOrders(): Promise<Order[]> {
+async function fetchRealOrders(clientFallback: string): Promise<Order[]> {
   try {
     const supabase = await createClient()
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -61,7 +64,7 @@ async function fetchRealOrders(): Promise<Order[]> {
 
     return data.map((o: any): Order => {
       const profile = o.profiles
-      const clientName = profile?.full_name || profile?.username || 'Client'
+      const clientName = profile?.full_name || profile?.username || clientFallback
       const clientAvatar =
         profile?.avatar_url ||
         `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(clientName)}&backgroundColor=4338CA&textColor=ffffff`
@@ -99,12 +102,13 @@ async function fetchRealOrders(): Promise<Order[]> {
 
 export default async function OrdersPage() {
   const supabase = await createClient()
+  const t = await getServerT()
   const [realOrders, { data: { user } }] = await Promise.all([
-    fetchRealOrders(),
+    fetchRealOrders(t.ordersPage.clientFallback),
     supabase.auth.getUser(),
   ])
   return (
-    <Suspense fallback={<div className="page-shell page-shell--wide text-center" style={{ color: '#62666d', fontSize: '14px' }}>Loading…</div>}>
+    <Suspense fallback={<div className="page-shell page-shell--wide text-center" style={{ color: '#62666d', fontSize: '14px' }}>{t.ordersPage.loading}</div>}>
       <OrdersClient realOrders={realOrders} currentUserId={user?.id} />
     </Suspense>
   )

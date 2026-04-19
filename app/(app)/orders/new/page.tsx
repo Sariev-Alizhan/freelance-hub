@@ -1,7 +1,10 @@
 import CreateOrderForm from '@/components/orders/CreateOrderForm'
 import { Briefcase } from 'lucide-react'
+import { getServerT } from '@/lib/i18n/server'
 
-export default function NewOrderPage() {
+export default async function NewOrderPage() {
+  const t = await getServerT()
+  const to = t.ordersPage
   return (
     <div className="min-h-[calc(100vh-52px)] py-12 px-4 sm:px-6" style={{ background: 'var(--fh-canvas)' }}>
       <div className="mx-auto max-w-2xl">
@@ -27,10 +30,10 @@ export default function NewOrderPage() {
               fontFeatureSettings: '"cv01", "ss03"',
             }}
           >
-            Post a Job
+            {to.newPageTitle}
           </h1>
           <p style={{ fontSize: '14px', color: '#8a8f98', fontWeight: 400, letterSpacing: '-0.01em' }}>
-            Describe your task — and get responses from top specialists
+            {to.newPageSubtitle}
           </p>
         </div>
         <CreateOrderForm />
