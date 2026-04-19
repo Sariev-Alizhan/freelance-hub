@@ -89,7 +89,10 @@ export async function verifyHttpSignature(params: {
   verifier.update(signingString, 'utf8')
   const ok = verifier.verify(publicKeyPem, signatureB64, 'base64')
 
-  if (!ok) return { ok: false, reason: 'signature verification failed' }
+  if (!ok) return {
+    ok: false,
+    reason: `verify-failed | host=${headers['host']} | date=${headers['date']} | digest=${headers['digest']}`,
+  }
 
   return { ok: true, actorKeyId: keyId, actorUrl: keyId.split('#')[0] }
 }
