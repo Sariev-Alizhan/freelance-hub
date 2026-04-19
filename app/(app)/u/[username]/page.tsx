@@ -7,6 +7,7 @@ import {
   Clock, Globe, ExternalLink, ArrowLeft, Briefcase,
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
+import { getServerT } from '@/lib/i18n/server'
 import { CATEGORIES } from '@/lib/mock/categories'
 import PriceDisplay from '@/components/shared/PriceDisplay'
 import ReviewsSection from '@/components/shared/ReviewsSection'
@@ -74,7 +75,7 @@ interface PageProfile {
   tiktokUrl?: string
 }
 
-async function getProfile(username: string): Promise<PageProfile | null> {
+async function getProfile(username: string, fallbacks: { user: string; cis: string }): Promise<PageProfile | null> {
   try {
     const supabase = await createClient()
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -89,7 +90,7 @@ async function getProfile(username: string): Promise<PageProfile | null> {
 
     if (pErr || !profile) return null
 
-    const name   = profile.full_name || profile.username || 'User'
+    const name   = profile.full_name || profile.username || fallbacks.user
     const avatar = profile.avatar_url ||
       `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(name)}&backgroundColor=4338CA&textColor=ffffff`
 
@@ -99,7 +100,7 @@ async function getProfile(username: string): Promise<PageProfile | null> {
       name,
       avatar,
       bio:         profile.bio || '',
-      location:    profile.location || 'CIS',
+      location:    profile.location || fallbacks.cis,
       isFreelancer: false,
       isVerified:   profile.is_verified ?? false,
     }
@@ -196,12 +197,14 @@ export async function generateMetadata({
   params: Promise<{ username: string }>
 }): Promise<Metadata> {
   const { username } = await params
-  const p = await getProfile(username)
-  if (!p) return { title: 'Profile not found — FreelanceHub' }
+  const t = await getServerT()
+  const tp = t.profilePage
+  const p = await getProfile(username, { user: tp.userFallback, cis: tp.locationFallback })
+  if (!p) return { title: tp.notFound }
 
   const desc = p.isFreelancer
-    ? `${p.name} — ${p.title}. ${p.reviewsCount} reviews, rating ${p.rating} on FreelanceHub.`
-    : `${p.name}'s profile on FreelanceHub.`
+    ? `${p.name} — ${p.title}. ${p.reviewsCount} ${tp.metaDescFreelancer} ${p.rating}.`
+    : `${p.name} — ${tp.metaDescBase}`
 
   return {
     title: `${p.name} (@${p.username}) — FreelanceHub`,
@@ -221,7 +224,9 @@ export async function generateMetadata({
 
 export default async function PublicProfilePage({ params }: { params: Promise<{ username: string }> }) {
   const { username } = await params
-  const p = await getProfile(username)
+  const t = await getServerT()
+  const tp = t.profilePage
+  const p = await getProfile(username, { user: tp.userFallback, cis: tp.locationFallback })
   if (!p) notFound()
 
   const supabase = await createClient()
@@ -310,15 +315,15 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
       {p.isFreelancer && (p.priceFrom ?? 0) > 0 && (
         <div style={{ padding: 16, borderRadius: 12, background: 'var(--fh-surface)', border: '1px solid var(--fh-border-2)' }}>
           <div style={{ fontSize: 11, color: 'var(--fh-t4)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 4 }}>
-            Rate
+            {tp.rate}
           </div>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: 4 }}>
-            <PriceDisplay amountRub={p.priceFrom!} prefix="from " size="lg" className="text-primary" />
+            <PriceDisplay amountRub={p.priceFrom!} prefix={tp.from} size="lg" className="text-primary" />
             {p.priceTo && <>
               <span style={{ color: 'var(--fh-t4)', fontSize: 14 }}>—</span>
               <PriceDisplay amountRub={p.priceTo} prefix="" size="lg" />
             </>}
-            <span style={{ fontSize: 13, color: 'var(--fh-t4)' }}>/hr</span>
+            <span style={{ fontSize: 13, color: 'var(--fh-t4)' }}>{tp.perHour}</span>
           </div>
         </div>
       )}
@@ -327,12 +332,12 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
         <div style={{ padding: 16, borderRadius: 12, background: 'var(--fh-surface)', border: '1px solid var(--fh-border-2)', display: 'flex', flexDirection: 'column', gap: 10 }}>
           {p.responseTime && (
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: 'var(--fh-t3)' }}>
-              <Clock className="h-4 w-4 flex-shrink-0" /> Responds in {p.responseTime}
+              <Clock className="h-4 w-4 flex-shrink-0" /> {tp.respondsIn} {p.responseTime}
             </div>
           )}
           {(p.completedOrders ?? 0) > 0 && (
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: 'var(--fh-t3)' }}>
-              <Package className="h-4 w-4 flex-shrink-0" /> {p.completedOrders} completed orders
+              <Package className="h-4 w-4 flex-shrink-0" /> {p.completedOrders} {tp.completedOrders}
             </div>
           )}
           {category && (
@@ -346,9 +351,9 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
       {p.skills && p.skills.length > 0 && (
         <div style={{ padding: 16, borderRadius: 12, background: 'var(--fh-surface)', border: '1px solid var(--fh-border-2)' }}>
           <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 12 }}>
-            <h2 style={{ fontSize: 14, fontWeight: 590, color: 'var(--fh-t1)' }}>Skills</h2>
+            <h2 style={{ fontSize: 14, fontWeight: 590, color: 'var(--fh-t1)' }}>{tp.skills}</h2>
             {!isOwnProfile && (
-              <span style={{ fontSize: 11, color: 'var(--fh-t4)' }}>Tap + to endorse</span>
+              <span style={{ fontSize: 11, color: 'var(--fh-t4)' }}>{tp.tapToEndorse}</span>
             )}
           </div>
           <SkillsWithEndorsements
@@ -433,7 +438,7 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
             {item.url && (
               <a href={item.url} target="_blank" rel="noopener noreferrer"
                 style={{ fontSize: 10, color: '#5e6ad2', display: 'flex', alignItems: 'center', gap: 3 }}>
-                <ExternalLink className="h-2.5 w-2.5" /> View
+                <ExternalLink className="h-2.5 w-2.5" /> {tp.view}
               </a>
             )}
           </div>
@@ -443,15 +448,15 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
   ) : (
     <div style={{ padding: '40px 24px', textAlign: 'center', fontSize: 13, color: 'var(--fh-t4)',
       background: 'var(--fh-surface)', borderRadius: 14, border: '1px solid var(--fh-border-2)' }}>
-      No portfolio items yet.
+      {tp.noPortfolio}
     </div>
   )
 
   const tabs = [
-    { id: 'posts', label: 'Posts' },
-    { id: 'about', label: 'About' },
-    ...(p.isFreelancer ? [{ id: 'portfolio', label: 'Portfolio', count: p.portfolio?.length ?? 0 }] : []),
-    ...(p.isFreelancer ? [{ id: 'reviews',   label: 'Reviews',   count: p.reviewsCount ?? 0 }] : []),
+    { id: 'posts', label: tp.tabPosts },
+    { id: 'about', label: tp.tabAbout },
+    ...(p.isFreelancer ? [{ id: 'portfolio', label: tp.tabPortfolio, count: p.portfolio?.length ?? 0 }] : []),
+    ...(p.isFreelancer ? [{ id: 'reviews',   label: tp.tabReviews,   count: p.reviewsCount ?? 0 }] : []),
   ]
 
   const panels: Record<string, React.ReactNode> = {
@@ -470,7 +475,7 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
       <Link href="/freelancers"
         className="inline-flex items-center gap-2 mb-6 transition-colors"
         style={{ fontSize: 13, color: 'var(--fh-t4)' }}>
-        <ArrowLeft className="h-3.5 w-3.5" /> Back to freelancers
+        <ArrowLeft className="h-3.5 w-3.5" /> {tp.backToFreelancers}
       </Link>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
@@ -539,7 +544,7 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
               padding: '11px 16px', borderRadius: 8, background: '#5e6ad2', color: '#fff',
               fontSize: 13, fontWeight: 590, textDecoration: 'none',
             }}>
-              <MessageCircle className="h-4 w-4" /> Send message
+              <MessageCircle className="h-4 w-4" /> {tp.sendMessage}
             </Link>
             <div style={{ flex: 1 }}><FollowButton targetUserId={p.userId} /></div>
             <Link href="/orders/new" style={{
@@ -548,7 +553,7 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
               background: 'var(--fh-surface-2)', border: '1px solid var(--fh-border-2)',
               color: 'var(--fh-t2)', fontSize: 13, fontWeight: 510, textDecoration: 'none',
             }}>
-              <Briefcase className="h-4 w-4" /> Hire
+              <Briefcase className="h-4 w-4" /> {tp.hire}
             </Link>
           </div>
         )}

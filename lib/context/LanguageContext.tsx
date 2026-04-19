@@ -163,6 +163,29 @@ export const T: Record<Lang, any> = {
       featuresLabel: 'features',
       userFallback:  'User',
     },
+    profilePage: {
+      backToFreelancers:  'Back to freelancers',
+      sendMessage:        'Send message',
+      hire:               'Hire',
+      rate:               'Rate',
+      from:               'from ',
+      perHour:            '/hr',
+      respondsIn:         'Responds in',
+      completedOrders:    'completed orders',
+      skills:             'Skills',
+      tapToEndorse:       'Tap + to endorse',
+      view:               'View',
+      noPortfolio:        'No portfolio items yet.',
+      tabPosts:           'Posts',
+      tabAbout:           'About',
+      tabPortfolio:       'Portfolio',
+      tabReviews:         'Reviews',
+      userFallback:       'User',
+      locationFallback:   'CIS',
+      notFound:           'Profile not found — FreelanceHub',
+      metaDescFreelancer: 'reviews, rating',
+      metaDescBase:       'profile on FreelanceHub.',
+    },
   },
 
   // ─────────────────────────────── RUSSIAN ─────────────────────────────────────────
@@ -316,6 +339,29 @@ export const T: Record<Lang, any> = {
       justShipped:   'Только что выпущено',
       featuresLabel: 'фич',
       userFallback:  'Пользователь',
+    },
+    profilePage: {
+      backToFreelancers:  'К фрилансерам',
+      sendMessage:        'Написать',
+      hire:               'Нанять',
+      rate:               'Ставка',
+      from:               'от ',
+      perHour:            '/ч',
+      respondsIn:         'Отвечает в среднем за',
+      completedOrders:    'завершённых заказов',
+      skills:             'Навыки',
+      tapToEndorse:       'Нажми + чтобы подтвердить',
+      view:               'Открыть',
+      noPortfolio:        'В портфолио пока пусто.',
+      tabPosts:           'Посты',
+      tabAbout:           'О себе',
+      tabPortfolio:       'Портфолио',
+      tabReviews:         'Отзывы',
+      userFallback:       'Пользователь',
+      locationFallback:   'СНГ',
+      notFound:           'Профиль не найден — FreelanceHub',
+      metaDescFreelancer: 'отзывов, рейтинг',
+      metaDescBase:       'профиль на FreelanceHub.',
     },
   },
 
@@ -471,6 +517,29 @@ export const T: Record<Lang, any> = {
       featuresLabel: 'мүмкіндік',
       userFallback:  'Қолданушы',
     },
+    profilePage: {
+      backToFreelancers:  'Фрилансерлерге',
+      sendMessage:        'Хабар жіберу',
+      hire:               'Жалдау',
+      rate:               'Бағасы',
+      from:               'бастап ',
+      perHour:            '/сағ',
+      respondsIn:         'Орташа жауап уақыты',
+      completedOrders:    'аяқталған тапсырыс',
+      skills:             'Дағдылар',
+      tapToEndorse:       'Растау үшін + басыңыз',
+      view:               'Ашу',
+      noPortfolio:        'Портфолио әзірге бос.',
+      tabPosts:           'Посттар',
+      tabAbout:           'Ол кім',
+      tabPortfolio:       'Портфолио',
+      tabReviews:         'Пікірлер',
+      userFallback:       'Қолданушы',
+      locationFallback:   'ТМД',
+      notFound:           'Профиль табылмады — FreelanceHub',
+      metaDescFreelancer: 'пікір, рейтинг',
+      metaDescBase:       'FreelanceHub платформасындағы профиль.',
+    },
   },
 }
 
@@ -486,6 +555,13 @@ const LangContext = createContext<LangContextValue>({
   t: T['en'],
 })
 
+function writeLangCookie(l: Lang) {
+  try {
+    // 1 year, lax same-site, path=/ so server components can read it
+    document.cookie = `fh-lang=${l}; max-age=${60 * 60 * 24 * 365}; path=/; samesite=lax`
+  } catch {}
+}
+
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const [lang, setLangState] = useState<Lang>('en')
 
@@ -495,17 +571,20 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
       if (saved && (saved === 'ru' || saved === 'en' || saved === 'kz')) {
         // eslint-disable-next-line react-hooks/set-state-in-effect
         setLangState(saved)
+        writeLangCookie(saved)
         return
       }
       // Fall back to browser language — better default than hard-coded 'en'.
       const nav = typeof navigator !== 'undefined' ? navigator.language.toLowerCase() : ''
-      if (nav.startsWith('ru')) setLangState('ru')
-      else if (nav.startsWith('kk') || nav.startsWith('kz')) setLangState('kz')
+      if (nav.startsWith('ru'))                         { setLangState('ru'); writeLangCookie('ru') }
+      else if (nav.startsWith('kk') || nav.startsWith('kz')) { setLangState('kz'); writeLangCookie('kz') }
+      else                                              { writeLangCookie('en') }
     } catch {}
   }, [])
 
   const setLang = (l: Lang) => {
     try { localStorage.setItem('fh-lang', l) } catch {}
+    writeLangCookie(l)
     setLangState(l)
   }
 
