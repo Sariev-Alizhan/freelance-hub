@@ -166,8 +166,10 @@ export default function InstallPrompt() {
   useEffect(() => {
     // Android / Chrome / Edge: native install prompt
     const handler = (e: Event) => {
-      e.preventDefault()
+      // Skip preventDefault when we won't show our banner — otherwise Chrome
+      // logs "Banner not shown: preventDefault called" for no reason.
       if (isDismissed()) return
+      e.preventDefault()
       setPwaEvent(e as BeforeInstallPromptEvent)
       setMode('pwa')
       setTimeout(() => setVisible(true), 2500)

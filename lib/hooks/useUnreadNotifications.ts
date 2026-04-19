@@ -41,10 +41,19 @@ export function useUnreadNotifications(): number {
         event: 'UPDATE', schema: 'public', table: 'notifications',
         filter: `user_id=eq.${userId}`,
       }, load)
-      .subscribe()
+      .subscribe((status) => {
+        // Fall back to a manual refetch if the WS drops; prevents stale counts.
+        if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT' || status === 'CLOSED') {
+          load()
+        }
+      })
+
+    // Polling fallback — belt-and-suspenders in case realtime is permanently down.
+    const pollId = setInterval(load, 60_000)
 
     return () => {
       cancelled = true
+      clearInterval(pollId)
       supabase.removeChannel(channel)
     }
   }, [userId, instanceId])

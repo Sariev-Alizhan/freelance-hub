@@ -51,10 +51,17 @@ export function useUnreadMessages(): number {
       .channel(`unread-count:${userId}:${instanceId}`)
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, load)
       .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'messages' }, load)
-      .subscribe()
+      .subscribe((status) => {
+        if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT' || status === 'CLOSED') {
+          load()
+        }
+      })
+
+    const pollId = setInterval(load, 60_000)
 
     return () => {
       cancelled = true
+      clearInterval(pollId)
       supabase.removeChannel(channel)
     }
   }, [userId, instanceId])
