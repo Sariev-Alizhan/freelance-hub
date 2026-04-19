@@ -91,7 +91,7 @@ export async function verifyHttpSignature(params: {
 
   if (!ok) return {
     ok: false,
-    reason: `verify-failed | host=${headers['host']} | date=${headers['date']} | digest=${headers['digest']}`,
+    reason: `verify-failed | host=${headers['host']} | date=${headers['date']} | x-date=${headers['x-test-date']} | digest=${headers['digest']}`,
   }
 
   return { ok: true, actorKeyId: keyId, actorUrl: keyId.split('#')[0] }
