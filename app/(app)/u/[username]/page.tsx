@@ -27,6 +27,7 @@ import SkillsWithEndorsements from '@/components/profile/SkillsWithEndorsements'
 import ProfileProSection from '@/components/freelancers/ProfileProSection'
 import FounderCard from '@/components/freelancers/FounderCard'
 import ProfileExperienceTimeline, { type WorkEntry } from '@/components/profile/ProfileExperienceTimeline'
+import ProfileServices, { type Service as ServiceCard } from '@/components/profile/ProfileServices'
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.freelance-hub.kz'
 
@@ -216,6 +217,7 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
     { count: viewsWeek },
     { data: postRows },
     { data: experienceRows },
+    { data: serviceRows },
   ] = await Promise.all([
     db.from('follows').select('follower',  { count: 'exact', head: true }).eq('following', p.userId),
     db.from('follows').select('following', { count: 'exact', head: true }).eq('follower',  p.userId),
@@ -227,9 +229,16 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
     db.from('work_experience')
       .select('id, company, position, description, start_date, end_date, is_current, location')
       .eq('user_id', p.userId).order('start_date', { ascending: false }),
+    p.isFreelancer
+      ? db.from('services').select(`
+          id, title, description, category, cover_image, skills, purchases_count,
+          tiers:service_tiers(id, tier, title, price, delivery_days, revisions, description, features)
+        `).eq('freelancer_id', p.userId).eq('is_active', true).order('created_at', { ascending: false })
+      : Promise.resolve({ data: [] }),
   ])
 
   const experience: WorkEntry[] = (experienceRows ?? []) as WorkEntry[]
+  const services:   ServiceCard[] = (serviceRows ?? []) as ServiceCard[]
 
   // Bucket posts by day for activity heatmap
   const activityCounts: Record<string, number> = {}
@@ -309,6 +318,14 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
       )}
 
       <ProfileActivityHeatmap counts={activityCounts} totalCount={totalActivity} />
+
+      {p.isFreelancer && (
+        <ProfileServices
+          services={services}
+          isOwnProfile={isOwnProfile}
+          viewerLoggedIn={!!user}
+        />
+      )}
 
       <ProfileExperienceTimeline items={experience} isOwnProfile={isOwnProfile} />
 
