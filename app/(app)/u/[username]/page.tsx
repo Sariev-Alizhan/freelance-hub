@@ -31,6 +31,7 @@ import ProfileServices, { type Service as ServiceCard } from '@/components/profi
 import ProfileRecommendations, { type Recommendation } from '@/components/profile/ProfileRecommendations'
 import ProfileReels from '@/components/profile/ProfileReels'
 import type { Reel } from '@/components/reels/ReelPlayer'
+import ProfileFeaturedWork, { type FeaturedItem } from '@/components/profile/ProfileFeaturedWork'
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.freelance-hub.kz'
 
@@ -58,6 +59,7 @@ interface PageProfile {
   availability?: string
   languages?: string[]
   portfolio?: PortfolioItem[]
+  featured?: FeaturedItem[]
   // Pro section fields (freelancer_profiles v6/v7)
   headline?: string
   portfolioWebsite?: string
@@ -118,23 +120,39 @@ async function getProfile(username: string): Promise<PageProfile | null> {
 
     if (!fp) return base
 
-    // 3. Load portfolio
+    // 3. Load portfolio — featured first
     const { data: portfolioData } = await db
       .from('portfolio_items')
-      .select('id, title, image_url, category, project_url')
+      .select('id, title, image_url, category, project_url, description, is_featured, featured_position')
       .eq('freelancer_id', profile.id)
-      .order('created_at', { ascending: false })
+      .order('is_featured',       { ascending: false })
+      .order('featured_position', { ascending: true, nullsFirst: false })
+      .order('created_at',        { ascending: false })
 
-    const portfolio: PortfolioItem[] = (portfolioData ?? []).map((p: {
+    type PortfolioRow = {
       id: string; title: string; image_url: string | null
       category: string | null; project_url: string | null
-    }) => ({
+      description: string | null; is_featured: boolean
+      featured_position: number | null
+    }
+    const portfolio: PortfolioItem[] = (portfolioData ?? []).map((p: PortfolioRow) => ({
       id:       p.id,
       title:    p.title,
       image:    p.image_url ?? '',
       category: p.category ?? '',
       url:      p.project_url ?? undefined,
     }))
+    const featured: FeaturedItem[] = ((portfolioData ?? []) as PortfolioRow[])
+      .filter(p => p.is_featured)
+      .slice(0, 4)
+      .map(p => ({
+        id:          p.id,
+        title:       p.title,
+        description: p.description,
+        image_url:   p.image_url,
+        project_url: p.project_url,
+        category:    p.category,
+      }))
 
     return {
       ...base,
@@ -154,6 +172,7 @@ async function getProfile(username: string): Promise<PageProfile | null> {
       availability:    fp.availability_status ?? 'open',
       languages:       fp.languages ?? [],
       portfolio,
+      featured,
       headline:         fp.headline ?? undefined,
       portfolioWebsite: fp.portfolio_website ?? undefined,
       githubUrl:        fp.github_url ?? undefined,
@@ -500,6 +519,13 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
           availability={p.availability}
           isFreelancer={p.isFreelancer}
         />
+
+        {p.isFreelancer && ((p.featured?.length ?? 0) > 0 || isOwnProfile) && (
+          <ProfileFeaturedWork
+            items={p.featured ?? []}
+            isOwner={isOwnProfile}
+          />
+        )}
 
         {(highlights.length > 0 || isOwnProfile) && (
           <ProfileStoryHighlights highlights={highlights} isOwnProfile={isOwnProfile} />

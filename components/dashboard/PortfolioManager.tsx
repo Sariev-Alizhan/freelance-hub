@@ -1,7 +1,7 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
 import Image from 'next/image'
-import { Plus, Trash2, ExternalLink, Upload, Loader2, ImageIcon, X, Link as LinkIcon } from 'lucide-react'
+import { Plus, Trash2, ExternalLink, Upload, Loader2, ImageIcon, X, Link as LinkIcon, Star, Sparkles } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 
 interface PortfolioItem {
@@ -10,12 +10,18 @@ interface PortfolioItem {
   image_url: string | null
   project_url: string | null
   category: string | null
+  description: string | null
+  is_featured: boolean
+  featured_position: number | null
 }
+
+const MAX_FEATURED = 4
 
 interface AddForm {
   title: string
   project_url: string
   category: string
+  description: string
 }
 
 const CATEGORIES = [
@@ -32,7 +38,7 @@ export default function PortfolioManager({ freelancerId }: { freelancerId: strin
   const [deleting, setDeleting] = useState<string | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const [uploadedPath, setUploadedPath] = useState<string | null>(null)
-  const [form, setForm]         = useState<AddForm>({ title: '', project_url: '', category: 'Other' })
+  const [form, setForm]         = useState<AddForm>({ title: '', project_url: '', category: 'Other', description: '' })
   const [error, setError]       = useState<string | null>(null)
   const fileRef                 = useRef<HTMLInputElement>(null)
   const supabase                = createClient()
@@ -48,11 +54,39 @@ export default function PortfolioManager({ freelancerId }: { freelancerId: strin
     setLoading(true)
     const { data } = await db
       .from('portfolio_items')
-      .select('id, title, image_url, project_url, category')
+      .select('id, title, image_url, project_url, category, description, is_featured, featured_position')
       .eq('freelancer_id', freelancerId)
+      .order('is_featured', { ascending: false })
+      .order('featured_position', { ascending: true, nullsFirst: false })
       .order('created_at', { ascending: false })
     setItems(data ?? [])
     setLoading(false)
+  }
+
+  const featuredCount = items.filter(i => i.is_featured).length
+
+  async function toggleFeatured(item: PortfolioItem) {
+    if (!item.is_featured && featuredCount >= MAX_FEATURED) {
+      setError(`You can feature at most ${MAX_FEATURED} items. Unfeature one first.`)
+      return
+    }
+    setError(null)
+    // Optimistic — flip instantly, revert on failure
+    setItems(prev => prev.map(p => p.id === item.id
+      ? { ...p, is_featured: !p.is_featured, featured_position: !p.is_featured ? featuredCount : null }
+      : p))
+    const r = await fetch(`/api/portfolio/${item.id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ is_featured: !item.is_featured }),
+    }).catch(() => null)
+    if (!r || !r.ok) {
+      setItems(prev => prev.map(p => p.id === item.id ? item : p))
+      const msg = r ? (await r.json()).error : 'Network error'
+      setError(msg)
+      return
+    }
+    await load()
   }
 
   async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -84,7 +118,7 @@ export default function PortfolioManager({ freelancerId }: { freelancerId: strin
   }
 
   function resetForm() {
-    setForm({ title: '', project_url: '', category: 'Other' })
+    setForm({ title: '', project_url: '', category: 'Other', description: '' })
     setPreviewUrl(null)
     setUploadedPath(null)
     setError(null)
@@ -103,6 +137,7 @@ export default function PortfolioManager({ freelancerId }: { freelancerId: strin
       image_url:     previewUrl ?? null,
       project_url:   form.project_url.trim() || null,
       category:      form.category,
+      description:   form.description.trim() || null,
     })
 
     if (insErr) { setError(insErr.message); setSaving(false); return }
@@ -128,8 +163,12 @@ export default function PortfolioManager({ freelancerId }: { freelancerId: strin
       <div className="flex items-center justify-between mb-4">
         <div>
           <h2 className="font-semibold" style={{ color: 'var(--fh-t1)' }}>Portfolio</h2>
-          <p style={{ fontSize: '12px', color: 'var(--fh-t4)', marginTop: '2px' }}>
-            Showcase your best work to attract clients
+          <p style={{ fontSize: '12px', color: 'var(--fh-t4)', marginTop: '2px', display: 'flex', alignItems: 'center', gap: 6 }}>
+            <Sparkles className="h-3 w-3" style={{ color: '#7170ff' }} />
+            Tap the star to pin up to {MAX_FEATURED} featured projects — they appear at the top of your profile.
+            <span style={{ fontWeight: 600, color: featuredCount > 0 ? '#7170ff' : 'var(--fh-t4)' }}>
+              {featuredCount}/{MAX_FEATURED}
+            </span>
           </p>
         </div>
         <button
@@ -233,6 +272,25 @@ export default function PortfolioManager({ freelancerId }: { freelancerId: strin
               />
             </div>
 
+            {/* Description */}
+            <div>
+              <label style={{ fontSize: '12px', fontWeight: 510, color: 'var(--fh-t3)', display: 'block', marginBottom: '5px' }}>
+                Short impact line <span style={{ color: 'var(--fh-t4)', fontWeight: 400 }}>({form.description.length}/400)</span>
+              </label>
+              <textarea
+                value={form.description}
+                onChange={e => setForm(f => ({ ...f, description: e.target.value.slice(0, 400) }))}
+                placeholder="e.g. Rebuilt their checkout — conversion went from 2.1% → 4.8% in 6 weeks."
+                rows={2}
+                style={{
+                  width: '100%', padding: '9px 12px', borderRadius: '8px',
+                  background: 'var(--fh-canvas)', border: '1px solid var(--fh-border-2)',
+                  color: 'var(--fh-t1)', fontSize: '13px', outline: 'none',
+                  resize: 'none', fontFamily: 'inherit', lineHeight: 1.4,
+                }}
+              />
+            </div>
+
             {/* Category */}
             <div>
               <label style={{ fontSize: '12px', fontWeight: 510, color: 'var(--fh-t3)', display: 'block', marginBottom: '5px' }}>
@@ -329,7 +387,11 @@ export default function PortfolioManager({ freelancerId }: { freelancerId: strin
           {items.map(item => (
             <div
               key={item.id}
-              style={{ borderRadius: '10px', overflow: 'hidden', border: '1px solid var(--fh-border)', background: 'var(--fh-surface)', position: 'relative' }}
+              style={{
+                borderRadius: '10px', overflow: 'hidden',
+                border: item.is_featured ? '1.5px solid #7170ff' : '1px solid var(--fh-border)',
+                background: 'var(--fh-surface)', position: 'relative',
+              }}
             >
               {/* Image */}
               <div style={{ height: '120px', background: 'var(--fh-surface-2)', position: 'relative', overflow: 'hidden' }}>
@@ -346,6 +408,34 @@ export default function PortfolioManager({ freelancerId }: { freelancerId: strin
                     <ImageIcon className="h-8 w-8" style={{ color: 'var(--fh-t4)', opacity: 0.3 }} />
                   </div>
                 )}
+
+                {/* Feature toggle — always visible */}
+                <button
+                  onClick={() => toggleFeatured(item)}
+                  aria-label={item.is_featured ? 'Unpin from featured' : 'Pin as featured'}
+                  title={item.is_featured ? 'Unpin from featured' : 'Pin as featured'}
+                  style={{
+                    position: 'absolute', top: '6px', left: '6px',
+                    background: item.is_featured ? '#7170ff' : 'rgba(0,0,0,0.55)',
+                    backdropFilter: 'blur(6px)',
+                    border: 'none', borderRadius: '6px',
+                    padding: '5px', cursor: 'pointer',
+                    color: '#fff',
+                    display: 'flex', alignItems: 'center', gap: 3,
+                    transition: 'background 0.15s',
+                  }}
+                >
+                  <Star
+                    className="h-3 w-3"
+                    fill={item.is_featured ? '#fff' : 'none'}
+                  />
+                  {item.is_featured && item.featured_position !== null && (
+                    <span style={{ fontSize: 10, fontWeight: 700 }}>
+                      #{item.featured_position + 1}
+                    </span>
+                  )}
+                </button>
+
                 {/* Delete button overlay */}
                 <button
                   onClick={() => handleDelete(item)}
@@ -370,6 +460,16 @@ export default function PortfolioManager({ freelancerId }: { freelancerId: strin
                 <p style={{ fontSize: '12px', fontWeight: 590, color: 'var(--fh-t1)', marginBottom: '3px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                   {item.title}
                 </p>
+                {item.description && (
+                  <p style={{
+                    fontSize: '11px', color: 'var(--fh-t4)', marginBottom: '4px',
+                    lineHeight: 1.4,
+                    display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical',
+                    overflow: 'hidden',
+                  }}>
+                    {item.description}
+                  </p>
+                )}
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   {item.category && (
                     <span style={{ fontSize: '10px', color: 'var(--fh-t4)', fontWeight: 400 }}>{item.category}</span>
