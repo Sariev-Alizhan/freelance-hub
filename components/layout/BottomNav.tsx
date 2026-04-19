@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import {
   Home, Briefcase, Plus, User,
   Settings, BarChart3,
-  Search, Zap, FileText, Film,
+  Search, Zap, FileText, Film, Sparkles,
   LayoutDashboard, Brain, Star, Users, MessageSquare,
 } from 'lucide-react'
 import { useState, useCallback } from 'react'
@@ -17,6 +17,7 @@ import { useUnreadMessages } from '@/lib/hooks/useUnreadMessages'
 
 const QUICK_LINKS = [
   { href: '/dashboard',            icon: LayoutDashboard, label: 'Operations' },
+  { href: '/explore',              icon: Sparkles,        label: 'Explore'    },
   { href: '/ai-search',            icon: Search,          label: 'AI Search'  },
   { href: '/ai-assistant',         icon: Brain,           label: 'AI Chat'    },
   { href: '/freelancers',          icon: Users,           label: 'People'     },
