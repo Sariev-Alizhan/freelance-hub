@@ -1,0 +1,14 @@
+node_modules
+.next
+.git
+.vercel
+.env*
+!.env.example
+tsconfig.tsbuildinfo
+*.log
+.DS_Store
+.playwright-mcp
+.code-review-graph
+obsidian
+instagram-posts
+login-page.png

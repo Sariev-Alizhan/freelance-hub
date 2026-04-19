@@ -51,6 +51,10 @@ const SECURITY_HEADERS = [
 
 const nextConfig: NextConfig = {
   reactStrictMode: false,
+  // `standalone` bundles a minimal node_modules under .next/standalone so the
+  // Docker image can run with `node server.js` — no package manager needed.
+  // Vercel ignores this flag and builds normally.
+  output: 'standalone',
   // Strip all console.log calls in production builds (keep error + warn for monitoring)
   compiler: process.env.NODE_ENV === 'production'
     ? { removeConsole: { exclude: ['error', 'warn'] } }
