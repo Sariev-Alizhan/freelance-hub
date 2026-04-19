@@ -140,6 +140,13 @@ export const T: Record<Lang, any> = {
       termsLink:         'Terms',
       privacyLink:       'Privacy',
     },
+    feedPage: {
+      searchDesktop:    'Search posts, news, topics…',
+      searchMobile:     'Search…',
+      emptyFound:       'Nothing found',
+      clear:            'Clear',
+      clearSearch:      'Clear search',
+    },
   },
 
   // ─────────────────────────────── RUSSIAN ─────────────────────────────────────────
@@ -271,6 +278,13 @@ export const T: Record<Lang, any> = {
       termsLink:         'Условиями',
       privacyLink:       'Политикой',
     },
+    feedPage: {
+      searchDesktop:    'Поиск постов, новостей, тем…',
+      searchMobile:     'Поиск…',
+      emptyFound:       'Ничего не найдено',
+      clear:            'Очистить',
+      clearSearch:      'Очистить поиск',
+    },
   },
 
   // ─────────────────────────────── KAZAKH ──────────────────────────────────────────
@@ -401,6 +415,13 @@ export const T: Record<Lang, any> = {
       termsAnd:          'және',
       termsLink:         'Шарттармен',
       privacyLink:       'Құпиялылық саясатымен келісесіз',
+    },
+    feedPage: {
+      searchDesktop:    'Посттар, жаңалықтар, тақырыптар іздеу…',
+      searchMobile:     'Іздеу…',
+      emptyFound:       'Ештеңе табылмады',
+      clear:            'Тазарту',
+      clearSearch:      'Іздеуді тазарту',
     },
   },
 }

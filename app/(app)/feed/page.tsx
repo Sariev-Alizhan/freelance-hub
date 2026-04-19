@@ -3,6 +3,7 @@ import { useCallback, useState } from 'react'
 import { Search, RefreshCw, X } from 'lucide-react'
 import { CURRENT_RELEASE } from '@/lib/company-report'
 import { useProfile } from '@/lib/context/ProfileContext'
+import { useLang } from '@/lib/context/LanguageContext'
 import { useUser } from '@/lib/hooks/useUser'
 import { useFeedData } from '@/lib/hooks/useFeedData'
 import { usePullToRefresh } from '@/lib/hooks/usePullToRefresh'
@@ -16,6 +17,8 @@ import EditorCard from '@/components/feed/EditorCard'
 export default function FeedPage() {
   const { user } = useUser()
   const { profile } = useProfile()
+  const { t } = useLang()
+  const tf = t.feedPage
 
   const [search, setSearch] = useState('')
   const [query,  setQuery]  = useState('')   // committed search
@@ -50,12 +53,12 @@ export default function FeedPage() {
         <div className="sticky z-20 pt-4 pb-3" style={{ top: 'var(--feed-sticky-top, 0px)', background: 'var(--fh-canvas)', backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)' }}>
           <div className="flex items-center gap-2" style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border)', borderRadius: 24, padding: '10px 16px' }}>
             <Search className="h-4 w-4 flex-shrink-0" style={{ color: 'var(--fh-t4)' }} />
-            <input value={search} onChange={e => setSearch(e.target.value)} onKeyDown={e => { if (e.key === 'Enter') setQuery(search) }} placeholder="Search posts, news, topics…" style={{ flex: 1, background: 'none', border: 'none', outline: 'none', fontSize: 14, color: 'var(--fh-t1)', fontFamily: 'inherit' }} />
+            <input value={search} onChange={e => setSearch(e.target.value)} onKeyDown={e => { if (e.key === 'Enter') setQuery(search) }} placeholder={tf.searchDesktop} style={{ flex: 1, background: 'none', border: 'none', outline: 'none', fontSize: 14, color: 'var(--fh-t1)', fontFamily: 'inherit' }} />
             {search && <button onClick={() => { setSearch(''); setQuery('') }} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--fh-t4)', padding: 0 }}><X className="h-3.5 w-3.5" /></button>}
           </div>
         </div>
         {!query && <div style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border)', borderRadius: 18, padding: '4px 12px', marginBottom: 12, overflow: 'hidden' }}><StoriesBar currentUserId={user?.id} /></div>}
-        {loading ? <div className="space-y-3">{[...Array(6)].map((_, i) => <div key={i} className="rounded-2xl animate-pulse" style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border)', height: 140 }} />)}</div> : feedItems.length === 0 ? <div className="flex flex-col items-center justify-center py-20 gap-3 text-center"><Search className="h-8 w-8" style={{ color: 'var(--fh-t4)', opacity: 0.3 }} /><p style={{ fontSize: 14, color: 'var(--fh-t4)' }}>Ничего не найдено</p><button onClick={() => { setSearch(''); setQuery('') }} style={{ fontSize: 13, color: 'var(--fh-primary)', background: 'none', border: 'none', cursor: 'pointer' }}>Очистить</button></div> : <div className="space-y-3">{feedItems.map((item) => { if (item.kind === 'update') return <UpdateCard key="update" reactions={getR(`update-v${CURRENT_RELEASE.version}`)} onReact={handleReact} user={user} profile={profile} />; if (item.kind === 'release') return <ReleaseCard key={`rel-${item.data.version}`} release={item.data} reactions={getR(`rel-${item.data.version}`)} onReact={handleReact} user={user} profile={profile} />; if (item.kind === 'editor') return <EditorCard key={`ed-${item.data.id}`} post={item.data} reactions={getR(`ed-${item.data.id}`)} onReact={handleReact} user={user} profile={profile} />; if (item.kind === 'post') return <PostCard key={item.data.id} post={item.data} reactions={getR(item.data.id)} onReact={handleReact} user={user} profile={profile} onDelete={handleDeletePost} />; return <NewsCard key={item.data.id} item={item.data} reactions={getR(item.data.id)} onReact={handleReact} user={user} profile={profile} /> })}</div>}
+        {loading ? <div className="space-y-3">{[...Array(6)].map((_, i) => <div key={i} className="rounded-2xl animate-pulse" style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border)', height: 140 }} />)}</div> : feedItems.length === 0 ? <div className="flex flex-col items-center justify-center py-20 gap-3 text-center"><Search className="h-8 w-8" style={{ color: 'var(--fh-t4)', opacity: 0.3 }} /><p style={{ fontSize: 14, color: 'var(--fh-t4)' }}>{tf.emptyFound}</p><button onClick={() => { setSearch(''); setQuery('') }} style={{ fontSize: 13, color: 'var(--fh-primary)', background: 'none', border: 'none', cursor: 'pointer' }}>{tf.clear}</button></div> : <div className="space-y-3">{feedItems.map((item) => { if (item.kind === 'update') return <UpdateCard key="update" reactions={getR(`update-v${CURRENT_RELEASE.version}`)} onReact={handleReact} user={user} profile={profile} />; if (item.kind === 'release') return <ReleaseCard key={`rel-${item.data.version}`} release={item.data} reactions={getR(`rel-${item.data.version}`)} onReact={handleReact} user={user} profile={profile} />; if (item.kind === 'editor') return <EditorCard key={`ed-${item.data.id}`} post={item.data} reactions={getR(`ed-${item.data.id}`)} onReact={handleReact} user={user} profile={profile} />; if (item.kind === 'post') return <PostCard key={item.data.id} post={item.data} reactions={getR(item.data.id)} onReact={handleReact} user={user} profile={profile} onDelete={handleDeletePost} />; return <NewsCard key={item.data.id} item={item.data} reactions={getR(item.data.id)} onReact={handleReact} user={user} profile={profile} /> })}</div>}
         <div className="h-8" />
       </div>
 
@@ -71,7 +74,7 @@ export default function FeedPage() {
           <div style={{ padding: '10px 16px', borderBottom: '0.5px solid var(--fh-sep)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, background: 'var(--fh-surface-2)', borderRadius: 12, padding: '10px 14px' }}>
               <Search style={{ width: 16, height: 16, flexShrink: 0, color: 'var(--fh-t4)' }} />
-              <input value={search} onChange={e => setSearch(e.target.value)} onKeyDown={e => { if (e.key === 'Enter') setQuery(search) }} placeholder="Поиск…" style={{ flex: 1, background: 'none', border: 'none', outline: 'none', fontSize: 15, color: 'var(--fh-t1)', fontFamily: 'inherit' }} autoFocus />
+              <input value={search} onChange={e => setSearch(e.target.value)} onKeyDown={e => { if (e.key === 'Enter') setQuery(search) }} placeholder={tf.searchMobile} style={{ flex: 1, background: 'none', border: 'none', outline: 'none', fontSize: 15, color: 'var(--fh-t1)', fontFamily: 'inherit' }} autoFocus />
               <button onClick={() => { setSearch(''); setQuery('') }} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--fh-t4)', padding: 0 }}><X style={{ width: 16, height: 16 }} /></button>
             </div>
           </div>
@@ -92,8 +95,8 @@ export default function FeedPage() {
         ) : feedItems.length === 0 ? (
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '80px 24px', gap: 12, textAlign: 'center' }}>
             <Search style={{ width: 32, height: 32, color: 'var(--fh-t4)', opacity: 0.3 }} />
-            <p style={{ fontSize: 15, color: 'var(--fh-t4)' }}>Ничего не найдено</p>
-            <button onClick={() => { setSearch(''); setQuery('') }} style={{ fontSize: 14, color: 'var(--fh-primary)', background: 'none', border: 'none', cursor: 'pointer' }}>Очистить поиск</button>
+            <p style={{ fontSize: 15, color: 'var(--fh-t4)' }}>{tf.emptyFound}</p>
+            <button onClick={() => { setSearch(''); setQuery('') }} style={{ fontSize: 14, color: 'var(--fh-primary)', background: 'none', border: 'none', cursor: 'pointer' }}>{tf.clearSearch}</button>
           </div>
         ) : (
           <div>
