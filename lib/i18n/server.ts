@@ -1,5 +1,5 @@
 import { cookies, headers } from 'next/headers'
-import { T, type Lang } from '@/lib/context/LanguageContext'
+import { T, type Lang } from '@/lib/i18n/dict'
 
 function pickLang(cookieVal: string | undefined, acceptLang: string): Lang {
   if (cookieVal === 'ru' || cookieVal === 'kz' || cookieVal === 'en') return cookieVal
