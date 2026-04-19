@@ -8,6 +8,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient as createServiceClient } from '@supabase/supabase-js'
 import webpush from 'web-push'
+import crypto from 'crypto'
+
+function timingSafeEq(a: string, b: string): boolean {
+  if (a.length !== b.length) return false
+  try { return crypto.timingSafeEqual(Buffer.from(a, 'utf8'), Buffer.from(b, 'utf8')) }
+  catch { return false }
+}
 
 // Lazy-init: setVapidDetails throws when keys aren't set, which would break
 // `next build` page-data collection on environments that don't use push.
@@ -33,7 +40,9 @@ export async function POST(req: NextRequest) {
   if (!secret) return NextResponse.json({ error: 'Not configured' }, { status: 503 })
 
   const body = await req.json()
-  if (body.secret !== secret) return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  if (typeof body.secret !== 'string' || !timingSafeEq(body.secret, secret)) {
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  }
 
   const { userId, title, body: msgBody, link } = body
   if (!userId || !title) return NextResponse.json({ error: 'Missing fields' }, { status: 400 })

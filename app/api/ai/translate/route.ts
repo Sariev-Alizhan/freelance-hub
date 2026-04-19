@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Anthropic from '@anthropic-ai/sdk'
-import { applyRateLimit } from '@/lib/security'
+import { createClient } from '@/lib/supabase/server'
+import { rateLimit } from '@/lib/rateLimit'
 
 export const dynamic = 'force-dynamic'
 
@@ -13,8 +14,18 @@ const LANG_NAMES: Record<string, string> = {
 }
 
 export async function POST(req: NextRequest) {
-  const rl = applyRateLimit(req, 'translate', { limit: 30, windowMs: 60_000 })
-  if (rl) return rl
+  // Auth — this route spends Anthropic credits per call.
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+  const rl = rateLimit(`ai:translate:${user.id}`, 30, 60_000)
+  if (!rl.success) {
+    return NextResponse.json(
+      { error: 'Too many requests' },
+      { status: 429, headers: { 'Retry-After': String(rl.retryAfter) } },
+    )
+  }
 
   let body: { text?: string; targetLang?: string }
   try { body = await req.json() } catch { return NextResponse.json({ error: 'Bad JSON' }, { status: 400 }) }

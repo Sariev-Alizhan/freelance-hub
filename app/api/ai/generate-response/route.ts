@@ -51,6 +51,11 @@ export async function PUT(request: Request) {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 })
 
+    const rl = rateLimit(`ai:respond-critique:${user.id}`, 15, 60_000)
+    if (!rl.success) {
+      return Response.json({ error: 'Too many requests' }, { status: 429, headers: { 'Retry-After': String(rl.retryAfter) } })
+    }
+
     const { message, orderTitle, proposedPrice } = await request.json()
 
     if (!message?.trim()) {

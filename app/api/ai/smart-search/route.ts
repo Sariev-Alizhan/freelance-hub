@@ -1,6 +1,6 @@
 import { generateText } from 'ai'
 import { createClient } from '@/lib/supabase/server'
-import { rateLimit, getClientIp } from '@/lib/rateLimit'
+import { rateLimit } from '@/lib/rateLimit'
 
 const SYSTEM = `Ты — AI-поисковик фриланс-платформы FreelanceHub.
 Пользователь описал что ему нужно на естественном языке.
@@ -60,8 +60,11 @@ async function buildOrderList() {
 }
 
 export async function POST(request: Request) {
-  const ip = getClientIp(request)
-  const rl = rateLimit(`ai:search:${ip}`, 20, 60_000)
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 })
+
+  const rl = rateLimit(`ai:search:${user.id}`, 20, 60_000)
   if (!rl.success) {
     return Response.json({ error: 'Too many requests' }, { status: 429, headers: { 'Retry-After': String(rl.retryAfter) } })
   }

@@ -21,6 +21,13 @@ interface OrderRow {
   id: string
   client_id: string
   chain_escrow_id: string | null
+  chain_freelancer_addr: string | null
+}
+
+const KIND_REQUIRES_STATUS: Record<'fund' | 'release' | 'refund', 'Funded' | 'Released' | 'Refunded'> = {
+  fund:    'Funded',
+  release: 'Released',
+  refund:  'Refunded',
 }
 
 export async function POST(req: NextRequest) {
@@ -38,13 +45,16 @@ export async function POST(req: NextRequest) {
   if (!/^0x[0-9a-fA-F]{64}$/.test(tx_hash)) {
     return NextResponse.json({ error: 'Bad tx hash' }, { status: 400 })
   }
+  if (!['fund', 'release', 'refund'].includes(kind)) {
+    return NextResponse.json({ error: 'Bad kind' }, { status: 400 })
+  }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const db = supabase as any
 
   const { data: order } = await db
     .from('orders')
-    .select('id, client_id, chain_escrow_id')
+    .select('id, client_id, chain_escrow_id, chain_freelancer_addr')
     .eq('id', order_id)
     .maybeSingle() as { data: OrderRow | null }
 
@@ -52,8 +62,32 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Not an on-chain order' }, { status: 404 })
   }
 
+  // Only the client or the assigned freelancer may sync escrow state.
+  // (Freelancer check requires mapping user → wallet; client check is direct.)
+  const isClient = order.client_id === user.id
+  if (!isClient) {
+    const { data: resp } = await db
+      .from('order_responses')
+      .select('freelancer_id')
+      .eq('order_id', order.id)
+      .eq('status', 'accepted')
+      .maybeSingle() as { data: { freelancer_id: string } | null }
+    if (!resp || resp.freelancer_id !== user.id) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    }
+  }
+
   const onChain = await readEscrow(order.id)
   if (!onChain) return NextResponse.json({ error: 'Escrow read failed' }, { status: 502 })
+
+  // CRITICAL: the DB escrow_status must reflect on-chain truth, not user input.
+  // If the caller says "release" but the chain still shows "Funded", refuse.
+  if (onChain.status !== KIND_REQUIRES_STATUS[kind]) {
+    return NextResponse.json(
+      { error: `On-chain status is ${onChain.status}, cannot mark as ${kind}` },
+      { status: 409 },
+    )
+  }
 
   const update: Record<string, unknown> = {
     chain_client_address: onChain.client,
@@ -72,8 +106,6 @@ export async function POST(req: NextRequest) {
     update.escrow_status    = 'refunded'
   }
 
-  // Use admin to bypass RLS — we've already verified order.client_id === user.id
-  // is not strictly required for confirmation (any party can trigger sync).
   await admin().from('orders').update(update).eq('id', order.id)
 
   return NextResponse.json({
