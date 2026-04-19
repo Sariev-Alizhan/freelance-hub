@@ -1,6 +1,8 @@
+'use client'
 import { Loader2, MessageSquare, Search } from 'lucide-react'
 import type { Conversation } from './types'
 import Avatar from './Avatar'
+import { useLang } from '@/lib/context/LanguageContext'
 import { formatTime } from './utils'
 
 /**
@@ -24,6 +26,8 @@ export default function ConversationList(props: {
     convsLoading, conversations, activeId, onlineUserIds,
     onSelectConversation,
   } = props
+  const { t } = useLang()
+  const tm = t.messagesPage
 
   const filteredConvs = conversations.filter(c =>
     !search || (c.other_user.full_name ?? '').toLowerCase().includes(search.toLowerCase())
@@ -41,7 +45,7 @@ export default function ConversationList(props: {
       <div className="flex-shrink-0" style={{ borderBottom: '0.5px solid var(--fh-sep)' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '14px 16px 10px', position: 'relative' }}>
           <h1 style={{ fontSize: 17, fontWeight: 700, color: 'var(--fh-t1)', letterSpacing: '-0.02em', margin: 0 }}>
-            Messages
+            {tm.messagesHeader}
           </h1>
         </div>
         {/* Search pill */}
@@ -58,7 +62,7 @@ export default function ConversationList(props: {
           <input
             value={search}
             onChange={e => setSearch(e.target.value)}
-            placeholder="Search"
+            placeholder={tm.searchPlaceholder}
             style={{
               flex: 1, background: 'none', border: 'none', outline: 'none',
               fontSize: 14, color: 'var(--fh-t1)', fontFamily: 'inherit',
@@ -77,7 +81,7 @@ export default function ConversationList(props: {
           <div className="flex flex-col items-center justify-center py-16 gap-3 px-6 text-center">
             <MessageSquare className="h-9 w-9" style={{ color: 'var(--fh-t4)', opacity: 0.3 }} />
             <p style={{ fontSize: 13, color: 'var(--fh-t4)' }}>
-              {search ? 'No results' : 'No conversations yet'}
+              {search ? tm.noResults : tm.noConvs}
             </p>
           </div>
         ) : (
@@ -119,7 +123,7 @@ export default function ConversationList(props: {
                       letterSpacing: '-0.01em',
                       overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
                     }}>
-                      {conv.other_user.full_name || 'User'}
+                      {conv.other_user.full_name || tm.userFallback}
                     </span>
                     {conv.last_message_at && (
                       <span style={{
@@ -140,7 +144,7 @@ export default function ConversationList(props: {
                       overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
                       flex: 1,
                     }}>
-                      {conv.last_message || 'No messages'}
+                      {conv.last_message || tm.noMessages}
                     </p>
                     {conv.unread > 0 && (
                       <span style={{

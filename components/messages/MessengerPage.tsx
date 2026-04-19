@@ -8,6 +8,7 @@ import {
 } from 'lucide-react'
 import MessageActionsSheet from './MessageActionsSheet'
 import { createClient } from '@/lib/supabase/client'
+import { useLang } from '@/lib/context/LanguageContext'
 import { useUser } from '@/lib/hooks/useUser'
 import { useVisualViewport } from '@/lib/hooks/useVisualViewport'
 import {
@@ -28,6 +29,8 @@ import ComposeBar from './ComposeBar'
 
 export default function MessengerPage() {
   const { user, loading } = useUser()
+  const { t } = useLang()
+  const tm = t.messagesPage
   const supabase = createClient()
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const db = supabase as any
@@ -204,11 +207,11 @@ export default function MessengerPage() {
         <LogIn className="h-8 w-8" style={{ color: 'var(--fh-primary)' }} />
       </div>
       <div className="text-center">
-        <h2 style={{ fontSize: 18, fontWeight: 590, color: 'var(--fh-t1)', marginBottom: 6 }}>Sign in to view messages</h2>
-        <p style={{ fontSize: 13, color: 'var(--fh-t4)' }}>You need an account to use messaging</p>
+        <h2 style={{ fontSize: 18, fontWeight: 590, color: 'var(--fh-t1)', marginBottom: 6 }}>{tm.signInToView}</h2>
+        <p style={{ fontSize: 13, color: 'var(--fh-t4)' }}>{tm.needAccount}</p>
       </div>
       <Link href="/auth/login" className="px-5 py-2.5 rounded-xl text-white text-sm font-semibold" style={{ background: 'var(--fh-primary)' }}>
-        Sign in
+        {tm.signIn}
       </Link>
     </div>
   )
@@ -267,11 +270,11 @@ export default function MessengerPage() {
                   {activeConv.other_user.username ? (
                     <Link href={`/u/${activeConv.other_user.username}`}
                       style={{ fontSize: 14, fontWeight: 590, color: 'var(--fh-t1)', letterSpacing: '-0.01em', textDecoration: 'none' }}>
-                      {activeConv.other_user.full_name || 'User'}
+                      {activeConv.other_user.full_name || tm.userFallback}
                     </Link>
                   ) : (
                     <p style={{ fontSize: 14, fontWeight: 590, color: 'var(--fh-t1)', letterSpacing: '-0.01em' }}>
-                      {activeConv.other_user.full_name || 'User'}
+                      {activeConv.other_user.full_name || tm.userFallback}
                     </p>
                   )}
                   {activeConv.other_user.is_verified && (
@@ -285,12 +288,12 @@ export default function MessengerPage() {
                       <span className="typing-dots">
                         <span /><span /><span />
                       </span>
-                      typing…
+                      {tm.typing}
                     </span>
                   ) : isOtherOnline ? (
                     <span style={{ fontSize: 11, color: '#27a644', display: 'flex', alignItems: 'center', gap: 4 }}>
                       <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#27a644', display: 'inline-block' }} />
-                      online
+                      {tm.online}
                     </span>
                   ) : null}
                 </div>
@@ -309,7 +312,7 @@ export default function MessengerPage() {
               setActionSheetMsgId={setActionSheetMsgId}
               isDark={isDark}
               onReply={(msg, senderName) => {
-                setReplyTo({ id: msg.id, text: msg.text || '📎 Attachment', name: senderName })
+                setReplyTo({ id: msg.id, text: msg.text || tm.attachment, name: senderName })
                 inputRef.current?.focus()
               }}
             />
@@ -345,10 +348,10 @@ export default function MessengerPage() {
             </div>
             <div>
               <h2 style={{ fontSize: 18, fontWeight: 590, color: 'var(--fh-t1)', letterSpacing: '-0.03em', marginBottom: 6 }}>
-                Your messages
+                {tm.yourMessages}
               </h2>
               <p style={{ fontSize: 13, color: 'var(--fh-t4)', maxWidth: 240 }}>
-                Select a conversation or start a new one
+                {tm.selectConv}
               </p>
             </div>
             <Link
@@ -356,7 +359,7 @@ export default function MessengerPage() {
               className="px-5 py-2 rounded-xl text-sm font-semibold transition-colors"
               style={{ background: 'var(--fh-primary-muted)', color: 'var(--fh-primary)', border: '1px solid color-mix(in srgb, var(--fh-primary) 25%, transparent)', textDecoration: 'none' }}
             >
-              Find freelancers
+              {tm.findFreelancers}
             </Link>
           </div>
         )}
@@ -366,7 +369,7 @@ export default function MessengerPage() {
       {(() => {
         const sheetMsg = actionSheetMsgId ? messages.find(m => m.id === actionSheetMsgId) : null
         const sheetIsMine = sheetMsg?.sender_id === user?.id
-        const sheetSenderName = sheetIsMine ? 'You' : (activeConv?.other_user.full_name ?? 'User')
+        const sheetSenderName = sheetIsMine ? tm.you : (activeConv?.other_user.full_name ?? tm.userFallback)
         return (
           <MessageActionsSheet
             open={!!sheetMsg}
@@ -375,10 +378,10 @@ export default function MessengerPage() {
             onReact={emoji => sheetMsg && toggleReaction(sheetMsg.id, emoji)}
             onReply={() => {
               if (!sheetMsg) return
-              setReplyTo({ id: sheetMsg.id, text: sheetMsg.text || '📎 Attachment', name: sheetSenderName })
+              setReplyTo({ id: sheetMsg.id, text: sheetMsg.text || tm.attachment, name: sheetSenderName })
               inputRef.current?.focus()
             }}
-            onForward={() => alert('Forward — coming soon')}
+            onForward={() => alert(tm.forwardSoon)}
             onCopy={() => {
               if (sheetMsg?.text && typeof navigator !== 'undefined' && navigator.clipboard) {
                 navigator.clipboard.writeText(sheetMsg.text).catch(() => {})
@@ -387,10 +390,10 @@ export default function MessengerPage() {
             onDelete={() => {
               if (sheetMsg) setHiddenMsgIds(prev => new Set(prev).add(sheetMsg.id))
             }}
-            onReport={() => alert('Report — coming soon')}
-            onTranslate={() => alert('Translate — coming soon')}
-            onPin={() => alert('Pin — coming soon')}
-            onAddSticker={() => { inputRef.current?.blur(); alert('Tap the 😊 button in the composer to add a sticker') }}
+            onReport={() => alert(tm.reportSoon)}
+            onTranslate={() => alert(tm.translateSoon)}
+            onPin={() => alert(tm.pinSoon)}
+            onAddSticker={() => { inputRef.current?.blur(); alert(tm.stickerTip) }}
           />
         )
       })()}

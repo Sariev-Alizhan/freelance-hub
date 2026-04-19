@@ -7,6 +7,7 @@ import {
   CornerUpLeft, Send, Copy, Trash2, AlertCircle, MoreHorizontal,
   Languages, Pin, Smile, ChevronRight, ChevronLeft, Plus,
 } from 'lucide-react'
+import { useLang } from '@/lib/context/LanguageContext'
 
 const EmojiMartPicker = dynamic(() => import('@emoji-mart/react'), { ssr: false })
 
@@ -32,6 +33,8 @@ export default function MessageActionsSheet({
   onReact, onReply, onForward, onCopy, onDelete, onReport,
   onTranslate, onPin, onAddSticker,
 }: Props) {
+  const { t } = useLang()
+  const tm = t.messagesPage
   const [pickerOpen, setPickerOpen] = useState(false)
   const [moreOpen,   setMoreOpen]   = useState(false)
 
@@ -146,12 +149,12 @@ export default function MessageActionsSheet({
               >
                 {!moreOpen ? (
                   <>
-                    <Row icon={CornerUpLeft}     label="Reply"          onClick={() => { onReply();   onClose() }} />
-                    <Row icon={Send}             label="Forward"        onClick={() => { onForward(); onClose() }} />
-                    <Row icon={Copy}             label="Copy"           onClick={() => { onCopy();    onClose() }} />
-                    <Row icon={Trash2}           label="Delete for you" onClick={() => { onDelete();  onClose() }} />
-                    <Row icon={AlertCircle}      label="Report"         danger onClick={() => { onReport(); onClose() }} />
-                    <Row icon={MoreHorizontal}   label="More"           hasArrow onClick={() => setMoreOpen(true)} />
+                    <Row icon={CornerUpLeft}     label={tm.reply}        onClick={() => { onReply();   onClose() }} />
+                    <Row icon={Send}             label={tm.forward}      onClick={() => { onForward(); onClose() }} />
+                    <Row icon={Copy}             label={tm.copy}         onClick={() => { onCopy();    onClose() }} />
+                    <Row icon={Trash2}           label={tm.deleteForYou} onClick={() => { onDelete();  onClose() }} />
+                    <Row icon={AlertCircle}      label={tm.report}       danger onClick={() => { onReport(); onClose() }} />
+                    <Row icon={MoreHorizontal}   label={tm.more}         hasArrow onClick={() => setMoreOpen(true)} />
                   </>
                 ) : (
                   <>
@@ -166,11 +169,11 @@ export default function MessageActionsSheet({
                       }}
                     >
                       <ChevronLeft className="h-4 w-4" />
-                      Back
+                      {tm.back}
                     </button>
-                    <Row icon={Languages} label="Translate"   onClick={() => { onTranslate();  onClose() }} />
-                    <Row icon={Pin}       label="Pin"         onClick={() => { onPin();        onClose() }} />
-                    <Row icon={Smile}     label="Add sticker" onClick={() => { onAddSticker(); onClose() }} />
+                    <Row icon={Languages} label={tm.translate}  onClick={() => { onTranslate();  onClose() }} />
+                    <Row icon={Pin}       label={tm.pin}        onClick={() => { onPin();        onClose() }} />
+                    <Row icon={Smile}     label={tm.addSticker} onClick={() => { onAddSticker(); onClose() }} />
                   </>
                 )}
               </div>
@@ -218,6 +221,8 @@ interface FullProps {
   onClose: () => void
 }
 function FullEmojiSheet({ isDark, onEmoji, onClose }: FullProps) {
+  const { t } = useLang()
+  const tm = t.messagesPage
   return (
     <motion.div
       initial={{ y: '100%' }}
@@ -257,7 +262,7 @@ function FullEmojiSheet({ isDark, onEmoji, onClose }: FullProps) {
           flexShrink: 0,
         }}
       >
-        Your reactions
+        {tm.yourReactions}
       </div>
 
       {/* Quick reactions row */}

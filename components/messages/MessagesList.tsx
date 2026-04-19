@@ -1,3 +1,4 @@
+'use client'
 import { useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { CheckCheck, Check, Loader2, Plus, CornerUpLeft } from 'lucide-react'
@@ -8,6 +9,7 @@ import { QUICK_REACTIONS } from './MessageActionsSheet'
 import Avatar from './Avatar'
 import AttachmentBubble from './AttachmentBubble'
 import OrderPreviewCard, { extractOrderId } from './OrderPreviewCard'
+import { useLang } from '@/lib/context/LanguageContext'
 import { formatDate, formatTime, isSameDay } from './utils'
 import type { Conversation, Message, ReactionMap } from './types'
 
@@ -39,6 +41,8 @@ export default function MessagesList(props: {
     messages, activeConv, currentUserId, msgsLoading,
     reactions, toggleReaction, hiddenMsgIds, setActionSheetMsgId, isDark, onReply,
   } = props
+  const { t } = useLang()
+  const tm = t.messagesPage
 
   const msgsContainerRef = useRef<HTMLDivElement>(null)
   const longPressTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
@@ -93,10 +97,10 @@ export default function MessagesList(props: {
           <Avatar user={activeConv.other_user} size={56} />
           <div>
             <p style={{ fontSize: 15, fontWeight: 590, color: 'var(--fh-t1)', marginBottom: 4 }}>
-              {activeConv.other_user.full_name || 'User'}
+              {activeConv.other_user.full_name || tm.userFallback}
             </p>
             <p style={{ fontSize: 13, color: 'var(--fh-t4)' }}>
-              Say hi 👋
+              {tm.sayHi}
             </p>
           </div>
         </div>
@@ -193,7 +197,7 @@ export default function MessagesList(props: {
                       ))}
                       <button
                         onClick={() => setReactionPickerMsgId(prev => prev === msg.id ? null : msg.id)}
-                        title="More reactions"
+                        title={tm.moreReactions}
                         style={{
                           background: reactionPickerMsgId === msg.id ? 'var(--fh-primary-muted)' : 'transparent',
                           border: 'none', cursor: 'pointer', borderRadius: 6,
@@ -209,12 +213,12 @@ export default function MessagesList(props: {
                       <button
                         onClick={() => {
                           const senderName = isMine
-                            ? 'You'
-                            : (activeConv.other_user.full_name ?? 'User')
+                            ? tm.you
+                            : (activeConv.other_user.full_name ?? tm.userFallback)
                           onReply(msg, senderName)
                           setHoveredMsgId(null)
                         }}
-                        title="Reply"
+                        title={tm.reply}
                         style={{
                           background: 'transparent', border: 'none', cursor: 'pointer',
                           borderRadius: 6, padding: '3px 5px', color: 'var(--fh-t3)',

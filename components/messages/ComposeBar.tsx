@@ -1,6 +1,8 @@
+'use client'
 import type { ChangeEvent, Dispatch, RefObject, SetStateAction } from 'react'
 import { CornerUpLeft, FileText, Loader2, Paperclip, Send, X } from 'lucide-react'
 import EmojiPickerPopover from './EmojiPickerPopover'
+import { useLang } from '@/lib/context/LanguageContext'
 import { humanSize } from './utils'
 
 const MAX_MSG_LEN = 4000
@@ -42,6 +44,8 @@ export default function ComposeBar(props: {
     inputRef, broadcastTyping, insertEmoji, sendSticker, sendMessage,
     isDark,
   } = props
+  const { t } = useLang()
+  const tm = t.messagesPage
 
   return (
     <>
@@ -146,7 +150,7 @@ export default function ComposeBar(props: {
               const isMobile = window.matchMedia('(hover: none)').matches
               if (e.key === 'Enter' && !e.shiftKey && !isMobile) { e.preventDefault(); sendMessage() }
             }}
-            placeholder="Message…"
+            placeholder={tm.messageInput}
             rows={1}
             style={{
               width: '100%',
