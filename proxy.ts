@@ -111,7 +111,7 @@ export async function proxy(request: NextRequest) {
   )
 
   // Refresh session token — required for Server Components to read auth state
-  const { data: { user } } = await supabase.auth.getUser()
+  const { data: { user }, error: authError } = await supabase.auth.getUser()
 
   // ── 7. Auth-protected routes: redirect to login if unauthenticated ────────
   const isProtected = AUTH_PROTECTED.some(p => pathname === p || pathname.startsWith(p + '/'))
@@ -119,7 +119,15 @@ export async function proxy(request: NextRequest) {
     const url = request.nextUrl.clone()
     url.pathname = '/auth/login'
     url.searchParams.set('next', pathname)
-    return NextResponse.redirect(url)
+    const redirect = NextResponse.redirect(url)
+    // If refresh failed (stale/invalid session), wipe sb-* cookies so the
+    // next login starts clean and doesn't keep retrying the bad token.
+    if (authError) {
+      for (const c of request.cookies.getAll()) {
+        if (c.name.startsWith('sb-')) redirect.cookies.delete(c.name)
+      }
+    }
+    return redirect
   }
 
   // ── 8. Authenticated user visiting login/register → send to dashboard ─────
