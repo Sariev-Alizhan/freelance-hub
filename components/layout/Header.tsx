@@ -1,18 +1,16 @@
 'use client'
 import Link from 'next/link'
-import Image from 'next/image'
 import { useState, useEffect, useCallback } from 'react'
-import { Bell, Sun, Moon, Search } from 'lucide-react'
+import { Bell, Sun, Moon, Search, Plus } from 'lucide-react'
 import Logo from '@/components/ui/Logo'
 import { useUser } from '@/lib/hooks/useUser'
-import { useProfile } from '@/lib/context/ProfileContext'
 import { usePathname } from 'next/navigation'
 import { useUnreadNotifications } from '@/lib/hooks/useUnreadNotifications'
 import { useTheme } from '@/lib/context/ThemeContext'
+import CreateSheet from '@/components/create/CreateSheet'
 
 export default function Header() {
   const { user } = useUser()
-  const { profile } = useProfile()
   const pathname = usePathname()
 
   const isLanding = pathname === '/' && !user
@@ -27,9 +25,7 @@ export default function Header() {
   const isApp = !!user && !isLanding
   const unreadNotifs = useUnreadNotifications()
   const { theme, setTheme } = useTheme()
-
-  const avatarUrl = profile?.avatar_url || user?.user_metadata?.avatar_url
-  const initials = (profile?.full_name || user?.email || 'U')[0].toUpperCase()
+  const [createOpen, setCreateOpen] = useState(false)
 
   // ── Landing header ─────────────────────────────────────────────────────────
   if (isLanding) {
@@ -64,6 +60,7 @@ export default function Header() {
   // ── App header — LinkedIn-style ─────────────────────────────────────────────
   if (isApp) {
     return (
+      <>
       <header
         className="sticky top-0 z-50 md:hidden"
         style={{
@@ -78,25 +75,21 @@ export default function Header() {
       >
         <div style={{ display: 'flex', alignItems: 'center', height: 52, padding: '0 12px', gap: 10 }}>
 
-          {/* Left: small avatar → public profile (falls back to operations) */}
-          <Link href="/profile" style={{ flexShrink: 0, textDecoration: 'none' }}>
-            {avatarUrl ? (
-              <Image
-                src={avatarUrl} alt="" width={34} height={34}
-                style={{ width: 34, height: 34, borderRadius: '50%', objectFit: 'cover', display: 'block' }}
-                unoptimized
-              />
-            ) : (
-              <div style={{
-                width: 34, height: 34, borderRadius: '50%',
-                background: 'var(--fh-primary)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                flexShrink: 0,
-              }}>
-                <span style={{ fontSize: 14, fontWeight: 700, color: '#fff' }}>{initials}</span>
-              </div>
-            )}
-          </Link>
+          {/* Left: plus button → opens Instagram-style create sheet */}
+          <button
+            onClick={() => setCreateOpen(true)}
+            aria-label="Create"
+            style={{
+              flexShrink: 0,
+              width: 34, height: 34, borderRadius: '50%',
+              background: 'var(--fh-surface-2)', border: '1px solid var(--fh-border)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              cursor: 'pointer', padding: 0,
+              color: 'var(--fh-t1)',
+            }}
+          >
+            <Plus style={{ width: 20, height: 20 }} strokeWidth={2.2} />
+          </button>
 
           {/* Center: search bar — tappable, goes to /orders */}
           <Link href="/orders" style={{ flex: 1, minWidth: 0, textDecoration: 'none' }}>
@@ -143,6 +136,8 @@ export default function Header() {
           </Link>
         </div>
       </header>
+      <CreateSheet open={createOpen} onClose={() => setCreateOpen(false)} />
+      </>
     )
   }
 
