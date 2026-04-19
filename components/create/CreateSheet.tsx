@@ -2,14 +2,15 @@
 import { useState, useRef, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, ImagePlus, Loader2, Hash } from 'lucide-react'
+import { X, ImagePlus, Loader2, Hash, Briefcase, Users, Search, ArrowRight } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 
-type Tab = 'post' | 'story' | 'reel' | 'live'
+type Tab = 'post' | 'story' | 'work' | 'reel' | 'live'
 
 const TABS: { id: Tab; label: string }[] = [
   { id: 'post',  label: 'POST'  },
   { id: 'story', label: 'STORY' },
+  { id: 'work',  label: 'WORK'  },
   { id: 'reel',  label: 'REEL'  },
   { id: 'live',  label: 'LIVE'  },
 ]
@@ -202,6 +203,108 @@ export default function CreateSheet({ open, onClose }: Props) {
                     )}
                   </div>
                 </>
+              )}
+
+              {tab === 'work' && (
+                <div style={{ padding: 16, display: 'flex', flexDirection: 'column', gap: 14 }}>
+                  {/* Hero card — Post a job */}
+                  <button
+                    onClick={() => { close(); router.push('/orders/new') }}
+                    style={{
+                      position: 'relative', width: '100%', textAlign: 'left',
+                      borderRadius: 18, padding: 1, border: 'none', cursor: 'pointer',
+                      background: 'linear-gradient(135deg, #5e6ad2 0%, #7170ff 50%, #a855f7 100%)',
+                    }}
+                  >
+                    <div style={{
+                      borderRadius: 17, padding: '20px 18px',
+                      background: 'rgba(10,10,15,0.88)',
+                      display: 'flex', alignItems: 'center', gap: 14,
+                    }}>
+                      <div style={{
+                        flexShrink: 0, width: 56, height: 56, borderRadius: 16,
+                        background: 'linear-gradient(135deg, #5e6ad2, #a855f7)',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        boxShadow: '0 10px 24px rgba(94,106,210,0.35)',
+                      }}>
+                        <Briefcase style={{ width: 26, height: 26, color: '#fff' }} strokeWidth={2.2} />
+                      </div>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ fontSize: 16, fontWeight: 700, letterSpacing: '-0.02em', marginBottom: 3 }}>
+                          Post a job or vacancy
+                        </div>
+                        <div style={{ fontSize: 12.5, color: 'rgba(255,255,255,0.6)', lineHeight: 1.45 }}>
+                          Hire freelancers for a gig, project, or full-time role.
+                        </div>
+                      </div>
+                      <ArrowRight style={{ width: 18, height: 18, color: 'rgba(255,255,255,0.5)', flexShrink: 0 }} />
+                    </div>
+                  </button>
+
+                  {/* Find freelancers */}
+                  <button
+                    onClick={() => { close(); router.push('/freelancers') }}
+                    style={{
+                      width: '100%', textAlign: 'left', cursor: 'pointer',
+                      border: '1px solid rgba(255,255,255,0.08)', borderRadius: 16,
+                      background: '#151520', padding: '16px 18px',
+                      display: 'flex', alignItems: 'center', gap: 14,
+                    }}
+                  >
+                    <div style={{
+                      flexShrink: 0, width: 48, height: 48, borderRadius: 14,
+                      background: 'rgba(52,211,153,0.12)',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    }}>
+                      <Users style={{ width: 22, height: 22, color: '#34d399' }} strokeWidth={2} />
+                    </div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontSize: 15, fontWeight: 600, letterSpacing: '-0.01em', marginBottom: 2 }}>
+                        Find a freelancer
+                      </div>
+                      <div style={{ fontSize: 12.5, color: 'rgba(255,255,255,0.55)', lineHeight: 1.4 }}>
+                        Browse verified specialists by skill, city, or category.
+                      </div>
+                    </div>
+                    <ArrowRight style={{ width: 18, height: 18, color: 'rgba(255,255,255,0.4)', flexShrink: 0 }} />
+                  </button>
+
+                  {/* Browse jobs */}
+                  <button
+                    onClick={() => { close(); router.push('/orders') }}
+                    style={{
+                      width: '100%', textAlign: 'left', cursor: 'pointer',
+                      border: '1px solid rgba(255,255,255,0.08)', borderRadius: 16,
+                      background: '#151520', padding: '16px 18px',
+                      display: 'flex', alignItems: 'center', gap: 14,
+                    }}
+                  >
+                    <div style={{
+                      flexShrink: 0, width: 48, height: 48, borderRadius: 14,
+                      background: 'rgba(251,146,60,0.12)',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    }}>
+                      <Search style={{ width: 22, height: 22, color: '#fb923c' }} strokeWidth={2} />
+                    </div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontSize: 15, fontWeight: 600, letterSpacing: '-0.01em', marginBottom: 2 }}>
+                        Browse open jobs
+                      </div>
+                      <div style={{ fontSize: 12.5, color: 'rgba(255,255,255,0.55)', lineHeight: 1.4 }}>
+                        Search live vacancies and freelance orders.
+                      </div>
+                    </div>
+                    <ArrowRight style={{ width: 18, height: 18, color: 'rgba(255,255,255,0.4)', flexShrink: 0 }} />
+                  </button>
+
+                  <div style={{
+                    marginTop: 6, padding: '12px 4px',
+                    fontSize: 11, color: 'rgba(255,255,255,0.35)', textAlign: 'center',
+                    letterSpacing: '0.02em',
+                  }}>
+                    Unique to FreelanceHub — work your network can&apos;t do on Instagram or LinkedIn.
+                  </div>
+                </div>
               )}
 
               {(tab === 'reel' || tab === 'live') && (
