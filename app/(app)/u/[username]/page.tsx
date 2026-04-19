@@ -21,7 +21,7 @@ import ProfileTabs from '@/components/profile/ProfileTabs'
 import ProfileStickyActions from '@/components/profile/ProfileStickyActions'
 import ProfileOwnerActions from '@/components/profile/ProfileOwnerActions'
 import ProfileBadges from '@/components/profile/ProfileBadges'
-import ProfileHighlights from '@/components/profile/ProfileHighlights'
+import ProfileStoryHighlights, { type Highlight as HighlightRow } from '@/components/profile/ProfileStoryHighlights'
 import ProfileActivityHeatmap from '@/components/profile/ProfileActivityHeatmap'
 import SkillsWithEndorsements from '@/components/profile/SkillsWithEndorsements'
 import ProfileProSection from '@/components/freelancers/ProfileProSection'
@@ -218,6 +218,7 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
     { data: postRows },
     { data: experienceRows },
     { data: serviceRows },
+    { data: highlightRows },
   ] = await Promise.all([
     db.from('follows').select('follower',  { count: 'exact', head: true }).eq('following', p.userId),
     db.from('follows').select('following', { count: 'exact', head: true }).eq('follower',  p.userId),
@@ -235,10 +236,18 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
           tiers:service_tiers(id, tier, title, price, delivery_days, revisions, description, features)
         `).eq('freelancer_id', p.userId).eq('is_active', true).order('created_at', { ascending: false })
       : Promise.resolve({ data: [] }),
+    db.from('story_highlights').select(`
+      id, title, cover_url, position,
+      items:story_highlight_items(id, type, content, bg_color, media_url, position)
+    `).eq('user_id', p.userId).order('position', { ascending: true }),
   ])
 
   const experience: WorkEntry[] = (experienceRows ?? []) as WorkEntry[]
   const services:   ServiceCard[] = (serviceRows ?? []) as ServiceCard[]
+  const highlights: HighlightRow[] = ((highlightRows ?? []) as HighlightRow[]).map(h => ({
+    ...h,
+    items: [...(h.items ?? [])].sort((a, b) => a.position - b.position),
+  }))
 
   // Bucket posts by day for activity heatmap
   const activityCounts: Record<string, number> = {}
@@ -468,8 +477,8 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
           isFreelancer={p.isFreelancer}
         />
 
-        {p.portfolio && p.portfolio.length > 0 && (
-          <ProfileHighlights items={p.portfolio} />
+        {(highlights.length > 0 || isOwnProfile) && (
+          <ProfileStoryHighlights highlights={highlights} isOwnProfile={isOwnProfile} />
         )}
 
         {/* Inline desktop action bar — only for other users (own sees gear/pencil on cover) */}
