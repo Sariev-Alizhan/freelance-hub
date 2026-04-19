@@ -2,18 +2,26 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { User, Sliders, Bell, Eye, Shield, Fingerprint } from 'lucide-react'
+import { useLang } from '@/lib/context/LanguageContext'
 
-const NAV = [
-  { href: '/settings',               label: 'Account',       icon: User        },
-  { href: '/settings/identity',      label: 'Identity',      icon: Fingerprint },
-  { href: '/settings/preferences',   label: 'Preferences',   icon: Sliders     },
-  { href: '/settings/notifications', label: 'Notifications', icon: Bell        },
-  { href: '/settings/privacy',       label: 'Privacy',       icon: Eye         },
-  { href: '/settings/security',      label: 'Security',      icon: Shield      },
-]
+function useNav() {
+  const { t } = useLang()
+  const td = t.settingsPage
+  return [
+    { href: '/settings',               label: td.navAccount,       icon: User        },
+    { href: '/settings/identity',      label: td.navIdentity,      icon: Fingerprint },
+    { href: '/settings/preferences',   label: td.navPreferences,   icon: Sliders     },
+    { href: '/settings/notifications', label: td.navNotifications, icon: Bell        },
+    { href: '/settings/privacy',       label: td.navPrivacy,       icon: Eye         },
+    { href: '/settings/security',      label: td.navSecurity,      icon: Shield      },
+  ]
+}
 
 export function SettingsSidebar() {
   const pathname = usePathname()
+  const { t } = useLang()
+  const td = t.settingsPage
+  const NAV = useNav()
   return (
     <aside style={{ width: '196px', flexShrink: 0 }} className="hidden md:block">
       <p style={{
@@ -21,7 +29,7 @@ export function SettingsSidebar() {
         textTransform: 'uppercase', letterSpacing: '0.08em',
         marginBottom: '10px', paddingLeft: '10px',
       }}>
-        Settings
+        {td.navTitle}
       </p>
       <nav style={{ display: 'flex', flexDirection: 'column', gap: '1px' }}>
         {NAV.map(item => {
@@ -67,6 +75,7 @@ export function SettingsSidebar() {
 
 export function SettingsMobileNav() {
   const pathname = usePathname()
+  const NAV = useNav()
   return (
     <div
       className="md:hidden"

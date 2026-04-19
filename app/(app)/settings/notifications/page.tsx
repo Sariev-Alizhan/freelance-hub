@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { MessageSquare, ShoppingBag, Megaphone, Smartphone } from 'lucide-react'
+import { useLang } from '@/lib/context/LanguageContext'
 
 type NotifPrefs = {
   msg_new:          boolean
@@ -29,6 +30,8 @@ const LS_KEY = 'fh-notif-prefs'
 export default function NotificationsPage() {
   const [prefs, setPrefs] = useState<NotifPrefs>(DEFAULT)
   const [saved, setSaved]   = useState(false)
+  const { t } = useLang()
+  const td = t.settingsPage
 
   useEffect(() => {
     try {
@@ -58,46 +61,46 @@ export default function NotificationsPage() {
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
         <div>
           <h1 style={{ fontSize: '20px', fontWeight: 590, color: 'var(--fh-t1)', letterSpacing: '-0.04em' }}>
-            Notifications
+            {td.notifTitle}
           </h1>
           <p style={{ fontSize: '13px', color: 'var(--fh-t4)', marginTop: '2px' }}>
-            Control what you get notified about and how.
+            {td.notifSubtitle}
           </p>
         </div>
         {saved && (
           <span style={{ fontSize: '12px', color: '#27a644', fontWeight: 510, transition: 'opacity 0.3s' }}>
-            Saved ✓
+            {td.savedBadge}
           </span>
         )}
       </div>
 
       {/* Messages */}
-      <Section icon={MessageSquare} label="Messages">
+      <Section icon={MessageSquare} label={td.secMessages}>
         <Toggle
-          label="New message received"
-          sub="When someone starts a conversation or replies"
+          label={td.newMsgLabel}
+          sub={td.newMsgSub}
           value={prefs.msg_new}
           onChange={v => update('msg_new', v)}
         />
       </Section>
 
       {/* Orders */}
-      <Section icon={ShoppingBag} label="Orders">
+      <Section icon={ShoppingBag} label={td.secOrders}>
         <Toggle
-          label="New proposal on your order"
-          sub="When a freelancer applies to your job posting"
+          label={td.proposalLabel}
+          sub={td.proposalSub}
           value={prefs.order_proposal}
           onChange={v => update('order_proposal', v)}
         />
         <Toggle
-          label="Order status update"
-          sub="When an order you applied to changes status"
+          label={td.orderStatusLabel}
+          sub={td.orderStatusSub}
           value={prefs.order_status}
           onChange={v => update('order_status', v)}
         />
         <Toggle
-          label="Contract milestone"
-          sub="When a contract milestone is reached or updated"
+          label={td.contractLabel}
+          sub={td.contractSub}
           value={prefs.contract_update}
           onChange={v => update('contract_update', v)}
           last
@@ -105,10 +108,10 @@ export default function NotificationsPage() {
       </Section>
 
       {/* Platform */}
-      <Section icon={Megaphone} label="Platform">
+      <Section icon={Megaphone} label={td.secPlatform}>
         <Toggle
-          label="Platform news & updates"
-          sub="New features, announcements and changelog"
+          label={td.platformNewsLabel}
+          sub={td.platformNewsSub}
           value={prefs.platform_news}
           onChange={v => update('platform_news', v)}
           last
@@ -116,10 +119,10 @@ export default function NotificationsPage() {
       </Section>
 
       {/* Channels */}
-      <Section icon={Smartphone} label="Delivery Channels">
+      <Section icon={Smartphone} label={td.secDelivery}>
         <Toggle
-          label="Email notifications"
-          sub="Receive notifications to your registered email"
+          label={td.emailLabel}
+          sub={td.emailSub}
           value={prefs.email_enabled}
           onChange={v => update('email_enabled', v)}
         />
@@ -132,10 +135,10 @@ export default function NotificationsPage() {
           }}>
             <div>
               <p style={{ fontSize: '14px', fontWeight: 510, color: 'var(--fh-t1)', marginBottom: '1px' }}>
-                Email digest frequency
+                {td.digestLabel}
               </p>
               <p style={{ fontSize: '12px', color: 'var(--fh-t4)' }}>
-                How often to receive a summary email
+                {td.digestSub}
               </p>
             </div>
             <select
@@ -148,16 +151,16 @@ export default function NotificationsPage() {
                 outline: 'none',
               }}
             >
-              <option value="never">Never</option>
-              <option value="daily">Daily</option>
-              <option value="weekly">Weekly</option>
+              <option value="never">{td.digestNever}</option>
+              <option value="daily">{td.digestDaily}</option>
+              <option value="weekly">{td.digestWeekly}</option>
             </select>
           </div>
         )}
 
         <Toggle
-          label="Browser push notifications"
-          sub="Get alerts even when the tab is in the background"
+          label={td.pushLabel}
+          sub={td.pushSub}
           value={prefs.push_enabled}
           onChange={requestPush}
         />
@@ -169,10 +172,10 @@ export default function NotificationsPage() {
         }}>
           <div>
             <p style={{ fontSize: '14px', fontWeight: 510, color: 'var(--fh-t1)', marginBottom: '1px' }}>
-              Telegram notifications
+              {td.telegramLabel}
             </p>
             <p style={{ fontSize: '12px', color: 'var(--fh-t4)' }}>
-              Instant alerts via our Telegram bot
+              {td.telegramSub}
             </p>
           </div>
           <span style={{
@@ -181,7 +184,7 @@ export default function NotificationsPage() {
             padding: '4px 9px', borderRadius: '6px', letterSpacing: '0.04em',
             whiteSpace: 'nowrap',
           }}>
-            Coming soon
+            {td.comingSoon}
           </span>
         </div>
       </Section>

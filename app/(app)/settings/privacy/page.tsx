@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { Globe, Users, Lock, Eye, EyeOff, Search, MessageSquare } from 'lucide-react'
+import { Globe, Users, Lock, Eye, Search, MessageSquare } from 'lucide-react'
+import { useLang } from '@/lib/context/LanguageContext'
 
 type ProfileVisibility = 'public' | 'registered' | 'private'
 type DmPermission      = 'everyone' | 'registered' | 'nobody'
@@ -28,6 +29,8 @@ const LS_KEY = 'fh-privacy-prefs'
 export default function PrivacyPage() {
   const [prefs, setPrefs] = useState<PrivacyPrefs>(DEFAULT)
   const [saved, setSaved]   = useState(false)
+  const { t } = useLang()
+  const td = t.settingsPage
 
   useEffect(() => {
     try {
@@ -49,15 +52,15 @@ export default function PrivacyPage() {
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
         <div>
           <h1 style={{ fontSize: '20px', fontWeight: 590, color: 'var(--fh-t1)', letterSpacing: '-0.04em' }}>
-            Privacy & Visibility
+            {td.privacyTitle}
           </h1>
           <p style={{ fontSize: '13px', color: 'var(--fh-t4)', marginTop: '2px' }}>
-            Control who can see you and how you appear on the platform.
+            {td.privacySubtitle}
           </p>
         </div>
         {saved && (
           <span style={{ fontSize: '12px', color: '#27a644', fontWeight: 510 }}>
-            Saved ✓
+            {td.savedBadge}
           </span>
         )}
       </div>
@@ -68,30 +71,30 @@ export default function PrivacyPage() {
         borderRadius: '16px', padding: '20px', marginBottom: '12px',
       }}>
         <p style={{ fontSize: '14px', fontWeight: 590, color: 'var(--fh-t1)', marginBottom: '2px' }}>
-          Profile Visibility
+          {td.profileVisibilityLabel}
         </p>
         <p style={{ fontSize: '12px', color: 'var(--fh-t4)', marginBottom: '14px' }}>
-          Who can view your public profile page
+          {td.profileVisibilitySub}
         </p>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
           {([
             {
               value: 'public' as const,
               icon: Globe,
-              label: 'Public',
-              sub: 'Anyone, including visitors who are not signed in, can view your profile',
+              label: td.visPublic,
+              sub: td.visPublicSub,
             },
             {
               value: 'registered' as const,
               icon: Users,
-              label: 'Registered users only',
-              sub: 'Only signed-in platform members can view your profile',
+              label: td.visReg,
+              sub: td.visRegSub,
             },
             {
               value: 'private' as const,
               icon: Lock,
-              label: 'Private',
-              sub: 'Your profile is hidden from everyone — only you can see it',
+              label: td.visPriv,
+              sub: td.visPrivSub,
             },
           ]).map(opt => {
             const active = prefs.profile_visibility === opt.value
@@ -127,16 +130,16 @@ export default function PrivacyPage() {
       </div>
 
       {/* Activity status */}
-      <SectionCard label="Activity Status" icon={Eye}>
+      <SectionCard label={td.activityStatus} icon={Eye}>
         <ToggleRow
-          label="Show online status"
-          sub="Let others see a green dot when you're active"
+          label={td.onlineLabel}
+          sub={td.onlineSub}
           value={prefs.show_online}
           onChange={v => update('show_online', v)}
         />
         <ToggleRow
-          label="Show last seen time"
-          sub="Display how long ago you were last active"
+          label={td.lastSeenLabel}
+          sub={td.lastSeenSub}
           value={prefs.show_last_seen}
           onChange={v => update('show_last_seen', v)}
           last
@@ -144,16 +147,16 @@ export default function PrivacyPage() {
       </SectionCard>
 
       {/* Discovery */}
-      <SectionCard label="Search & Discovery" icon={Search}>
+      <SectionCard label={td.searchDiscovery} icon={Search}>
         <ToggleRow
-          label="Appear in search results"
-          sub="Show up when clients search for freelancers using AI or filters"
+          label={td.searchableLabel}
+          sub={td.searchableSub}
           value={prefs.searchable}
           onChange={v => update('searchable', v)}
         />
         <ToggleRow
-          label="Show in Freelancers listing"
-          sub="Your card appears on the public /freelancers page"
+          label={td.listingsLabel}
+          sub={td.listingsSub}
           value={prefs.show_in_listings}
           onChange={v => update('show_in_listings', v)}
           last
@@ -167,27 +170,27 @@ export default function PrivacyPage() {
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '7px', marginBottom: '2px' }}>
           <MessageSquare style={{ width: 13, height: 13, color: 'var(--fh-t4)' }} />
-          <p style={{ fontSize: '14px', fontWeight: 590, color: 'var(--fh-t1)' }}>Direct Messages</p>
+          <p style={{ fontSize: '14px', fontWeight: 590, color: 'var(--fh-t1)' }}>{td.dmHeading}</p>
         </div>
         <p style={{ fontSize: '12px', color: 'var(--fh-t4)', marginBottom: '14px' }}>
-          Who is allowed to send you direct messages
+          {td.dmSub}
         </p>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
           {([
             {
               value: 'everyone' as const,
-              label: 'Everyone',
-              sub: 'Any visitor, even without an account, can start a conversation',
+              label: td.dmEveryone,
+              sub: td.dmEveryoneSub,
             },
             {
               value: 'registered' as const,
-              label: 'Registered users only',
-              sub: 'Only signed-in platform members can message you',
+              label: td.dmReg,
+              sub: td.dmRegSub,
             },
             {
               value: 'nobody' as const,
-              label: 'Nobody',
-              sub: 'Your inbox is closed — no new DMs from anyone',
+              label: td.dmNobody,
+              sub: td.dmNobodySub,
             },
           ]).map(opt => {
             const active = prefs.allow_dms === opt.value

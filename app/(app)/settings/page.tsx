@@ -10,38 +10,21 @@ import { useUser } from '@/lib/hooks/useUser'
 import { useProfile } from '@/lib/context/ProfileContext'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
-
-const SECTIONS = [
-  {
-    href: '/settings/preferences',
-    icon: Sliders,
-    label: 'Appearance & Region',
-    sub: 'Language, currency and theme',
-  },
-  {
-    href: '/settings/notifications',
-    icon: Bell,
-    label: 'Notifications',
-    sub: 'Control which alerts you receive and where',
-  },
-  {
-    href: '/settings/privacy',
-    icon: Eye,
-    label: 'Privacy & Visibility',
-    sub: 'Who can see your profile and message you',
-  },
-  {
-    href: '/settings/security',
-    icon: Shield,
-    label: 'Password & Security',
-    sub: 'Change password and enable two-factor auth',
-  },
-]
+import { useLang } from '@/lib/context/LanguageContext'
 
 export default function AccountSettings() {
   const { user } = useUser()
   const { profile } = useProfile()
   const router = useRouter()
+  const { t, lang } = useLang()
+  const td = t.settingsPage
+  const dateLocale = lang === 'en' ? 'en' : lang === 'kz' ? 'kk' : 'ru'
+  const SECTIONS = [
+    { href: '/settings/preferences',   icon: Sliders, label: td.sectionAppearanceLabel, sub: td.sectionAppearanceSub },
+    { href: '/settings/notifications', icon: Bell,    label: td.sectionNotifLabel,      sub: td.sectionNotifSub      },
+    { href: '/settings/privacy',       icon: Eye,     label: td.sectionPrivacyLabel,    sub: td.sectionPrivacySub    },
+    { href: '/settings/security',      icon: Shield,  label: td.sectionSecurityLabel,   sub: td.sectionSecuritySub   },
+  ]
   const [isPremium, setIsPremium] = useState<boolean | null>(null)
   const [confirmDelete, setConfirmDelete] = useState(false)
 
@@ -61,17 +44,17 @@ export default function AccountSettings() {
 
   const avatarUrl   = profile?.avatar_url
   const displayName = profile?.full_name || user.user_metadata?.full_name || user.email?.split('@')[0]
-  const joinedDate  = new Date(user.created_at).toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' })
+  const joinedDate  = new Date(user.created_at).toLocaleDateString(dateLocale, { month: 'long', year: 'numeric' })
 
   return (
     <div>
       {/* Page heading */}
       <div style={{ marginBottom: '20px' }}>
         <h1 style={{ fontSize: '20px', fontWeight: 590, color: 'var(--fh-t1)', letterSpacing: '-0.04em' }}>
-          Account
+          {td.accountTitle}
         </h1>
         <p style={{ fontSize: '13px', color: 'var(--fh-t4)', marginTop: '2px' }}>
-          Manage your profile and account preferences.
+          {td.accountSubtitle}
         </p>
       </div>
 
@@ -131,7 +114,7 @@ export default function AccountSettings() {
               fontWeight: 510, flexShrink: 0, whiteSpace: 'nowrap',
             }}
           >
-            Edit profile <ExternalLink style={{ width: 12, height: 12 }} />
+            {td.editProfile} <ExternalLink style={{ width: 12, height: 12 }} />
           </Link>
         </div>
 
@@ -141,24 +124,24 @@ export default function AccountSettings() {
           borderTop: '1px solid var(--fh-sep)', flexWrap: 'wrap',
         }}>
           <div>
-            <p style={{ fontSize: '11px', color: 'var(--fh-t4)', marginBottom: '2px' }}>Joined</p>
+            <p style={{ fontSize: '11px', color: 'var(--fh-t4)', marginBottom: '2px' }}>{td.joined}</p>
             <p style={{ fontSize: '13px', color: 'var(--fh-t2)', fontWeight: 510, display: 'flex', alignItems: 'center', gap: '5px' }}>
               <Calendar style={{ width: 11, height: 11 }} /> {joinedDate}
             </p>
           </div>
           <div>
-            <p style={{ fontSize: '11px', color: 'var(--fh-t4)', marginBottom: '2px' }}>Plan</p>
+            <p style={{ fontSize: '11px', color: 'var(--fh-t4)', marginBottom: '2px' }}>{td.plan}</p>
             <p style={{ fontSize: '13px', fontWeight: 590, color: isPremium ? '#7170ff' : 'var(--fh-t3)' }}>
-              {isPremium === null ? '—' : isPremium ? 'Premium' : 'Free'}
+              {isPremium === null ? '—' : isPremium ? td.planPremium : td.planFree}
               {isPremium === false && (
                 <Link href="/premium" style={{ color: 'var(--fh-primary)', textDecoration: 'none', marginLeft: '8px', fontSize: '12px', fontWeight: 400 }}>
-                  Upgrade →
+                  {td.upgradeLink}
                 </Link>
               )}
             </p>
           </div>
           <div>
-            <p style={{ fontSize: '11px', color: 'var(--fh-t4)', marginBottom: '2px' }}>User ID</p>
+            <p style={{ fontSize: '11px', color: 'var(--fh-t4)', marginBottom: '2px' }}>{td.userId}</p>
             <p style={{ fontSize: '12px', color: 'var(--fh-t4)', fontFamily: 'monospace' }}>
               {user.id.slice(0, 8)}…
             </p>
@@ -210,12 +193,12 @@ export default function AccountSettings() {
         borderRadius: '16px', padding: '18px',
       }}>
         <p style={{ fontSize: '13px', fontWeight: 590, color: '#ef4444', marginBottom: '3px' }}>
-          Danger Zone
+          {td.dangerZone}
         </p>
         {!confirmDelete ? (
           <>
             <p style={{ fontSize: '12px', color: 'var(--fh-t4)', marginBottom: '12px' }}>
-              Permanently delete your account and all associated data. This action cannot be undone.
+              {td.deleteDesc}
             </p>
             <button
               onClick={() => setConfirmDelete(true)}
@@ -226,18 +209,17 @@ export default function AccountSettings() {
                 color: '#ef4444', fontSize: '13px', fontWeight: 510, cursor: 'pointer',
               }}
             >
-              <Trash2 style={{ width: 13, height: 13 }} /> Delete my account
+              <Trash2 style={{ width: 13, height: 13 }} /> {td.deleteBtn}
             </button>
           </>
         ) : (
           <>
             <p style={{ fontSize: '13px', color: 'var(--fh-t2)', marginBottom: '12px', lineHeight: 1.6 }}>
-              This will permanently erase your profile, orders, proposals, messages and all data.
-              To proceed, write to{' '}
+              {td.deleteConfirm1}{' '}
               <a href="mailto:support@freelance-hub.kz" style={{ color: '#ef4444', textDecoration: 'underline' }}>
                 support@freelance-hub.kz
               </a>{' '}
-              from your registered email address.
+              {td.deleteConfirm2}
             </p>
             <button
               onClick={() => setConfirmDelete(false)}
@@ -247,7 +229,7 @@ export default function AccountSettings() {
                 color: 'var(--fh-t2)', fontSize: '13px', cursor: 'pointer',
               }}
             >
-              Cancel
+              {td.cancelBtn}
             </button>
           </>
         )}

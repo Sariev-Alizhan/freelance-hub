@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import ConnectWallet from '@/components/identity/ConnectWallet'
+import { getServerT } from '@/lib/i18n/server'
 
 export const metadata = { title: 'Identity · FreelanceHub' }
 
@@ -17,6 +18,9 @@ export default async function IdentityPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/auth/login?next=/settings/identity')
+
+  const t = await getServerT()
+  const td = t.settingsPage
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const db = supabase as any
@@ -41,11 +45,10 @@ export default async function IdentityPage() {
           fontSize: 20, fontWeight: 600, letterSpacing: '-0.02em',
           color: 'var(--fh-t1)', marginBottom: 4,
         }}>
-          Identity
+          {td.identityTitle}
         </h2>
         <p style={{ fontSize: 13, color: 'var(--fh-t3)', lineHeight: 1.5 }}>
-          Wallet-bound decentralized identity. Portable across federated instances
-          and Web3 apps — your credentials travel with you.
+          {td.identitySubtitle}
         </p>
       </div>
 
@@ -53,12 +56,12 @@ export default async function IdentityPage() {
 
       <div>
         <div style={{ fontSize: 14, fontWeight: 590, color: 'var(--fh-t2)', marginBottom: 8 }}>
-          Verifiable credentials
+          {td.credentialsHeading}
         </div>
         {vcs && vcs.length > 0 ? (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             {(vcs as VerificationRow[]).map(vc => (
-              <VcCard key={vc.id} vc={vc} />
+              <VcCard key={vc.id} vc={vc} credentialSuffix={td.credentialSuffix} issuedBy={td.issuedBy} />
             ))}
           </div>
         ) : (
@@ -67,7 +70,7 @@ export default async function IdentityPage() {
             border: '1px dashed var(--fh-border)',
             fontSize: 13, color: 'var(--fh-t4)', textAlign: 'center',
           }}>
-            No credentials yet. Connect a wallet to receive your first one.
+            {td.noCredentials}
           </div>
         )}
       </div>
@@ -75,7 +78,7 @@ export default async function IdentityPage() {
   )
 }
 
-function VcCard({ vc }: { vc: VerificationRow }) {
+function VcCard({ vc, credentialSuffix, issuedBy }: { vc: VerificationRow; credentialSuffix: string; issuedBy: string }) {
   const color =
     vc.credential_type === 'identity' ? '#7170ff' :
     vc.credential_type === 'skill'    ? '#34d399' :
@@ -98,10 +101,10 @@ function VcCard({ vc }: { vc: VerificationRow }) {
       </div>
       <div style={{ flex: 1, minWidth: 0 }}>
         <div style={{ fontSize: 13, fontWeight: 590, color: 'var(--fh-t1)', textTransform: 'capitalize' }}>
-          {vc.credential_type} credential
+          {vc.credential_type} {credentialSuffix}
         </div>
         <div style={{ fontSize: 11, color: 'var(--fh-t4)', marginTop: 1, wordBreak: 'break-all' }}>
-          Issued by <span style={{ fontFamily: 'monospace' }}>{vc.issuer_did}</span>
+          {issuedBy} <span style={{ fontFamily: 'monospace' }}>{vc.issuer_did}</span>
           {' · '}
           {new Date(vc.issued_at).toLocaleDateString()}
         </div>

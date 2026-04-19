@@ -10,6 +10,7 @@ import {
 } from 'lucide-react'
 import { useUser } from '@/lib/hooks/useUser'
 import { createClient } from '@/lib/supabase/client'
+import { useLang } from '@/lib/context/LanguageContext'
 
 type SetupState = 'idle' | 'loading' | 'scan' | 'verify' | 'done' | 'error'
 
@@ -23,6 +24,8 @@ function TwoFactorSection() {
   const [enabled, setEnabled]       = useState<boolean | null>(null)
   const [copied, setCopied]         = useState(false)
   const [disabling, setDisabling]   = useState(false)
+  const { t } = useLang()
+  const td = t.settingsPage
 
   // Load current status
   useEffect(() => {
@@ -36,7 +39,7 @@ function TwoFactorSection() {
     setState('loading')
     setErrorMsg('')
     const res = await fetch('/api/profile/2fa/setup')
-    if (!res.ok) { setState('error'); setErrorMsg('Не удалось сгенерировать QR-код'); return }
+    if (!res.ok) { setState('error'); setErrorMsg(td.errQrGen); return }
     const data = await res.json()
     setSecret(data.secret)
     setQrDataUrl(data.qrDataUrl)
@@ -44,7 +47,7 @@ function TwoFactorSection() {
   }
 
   async function verifyAndSave() {
-    if (token.length !== 6) { setErrorMsg('Введите 6-значный код'); return }
+    if (token.length !== 6) { setErrorMsg(td.errEnterCode); return }
     setState('loading')
     setErrorMsg('')
     const res = await fetch('/api/profile/2fa/setup', {
@@ -53,13 +56,13 @@ function TwoFactorSection() {
       body: JSON.stringify({ secret, token }),
     })
     const data = await res.json()
-    if (!res.ok) { setState('scan'); setErrorMsg(data.error ?? 'Неверный код, попробуйте снова'); return }
+    if (!res.ok) { setState('scan'); setErrorMsg(data.error ?? td.errInvalid); return }
     setState('done')
     setEnabled(true)
   }
 
   async function disable2FA() {
-    if (!confirm('Отключить двухфакторную аутентификацию? Ваш аккаунт станет менее защищённым.')) return
+    if (!confirm(td.disableConfirm)) return
     setDisabling(true)
     const res = await fetch('/api/profile/2fa/setup', { method: 'DELETE' })
     setDisabling(false)
@@ -84,9 +87,9 @@ function TwoFactorSection() {
           <Smartphone className="h-5 w-5" style={{ color: '#7170ff' }} />
         </div>
         <div>
-          <h2 className="font-semibold text-sm">Двухфакторная аутентификация (2FA)</h2>
+          <h2 className="font-semibold text-sm">{td.twoFaTitle}</h2>
           <p className="text-xs" style={{ color: 'var(--fh-t4)' }}>
-            TOTP через Google Authenticator, Authy или 1Password
+            {td.twoFaSub}
           </p>
         </div>
       </div>
@@ -104,12 +107,10 @@ function TwoFactorSection() {
           }
           <div>
             <p className={`text-sm font-semibold ${enabled ? 'text-green-400' : 'text-amber-400'}`}>
-              {enabled ? '2FA включена' : '2FA не настроена'}
+              {enabled ? td.twoFaOn : td.twoFaOff}
             </p>
             <p className="text-xs" style={{ color: 'var(--fh-t4)' }}>
-              {enabled
-                ? 'Ваш аккаунт защищён одноразовыми кодами.'
-                : 'Включите 2FA для дополнительной защиты аккаунта.'}
+              {enabled ? td.twoFaOnDesc : td.twoFaOffDesc}
             </p>
           </div>
         </div>
@@ -124,7 +125,7 @@ function TwoFactorSection() {
           onMouseEnter={e => { e.currentTarget.style.background = '#8280ff' }}
           onMouseLeave={e => { e.currentTarget.style.background = '#7170ff' }}
         >
-          Настроить 2FA
+          {td.setupBtn}
         </button>
       )}
 
@@ -140,15 +141,15 @@ function TwoFactorSection() {
         <div className="space-y-5">
           <div className="rounded-xl border p-5 text-center"
             style={{ background: 'var(--fh-surface-2)', borderColor: 'var(--fh-border)' }}>
-            <p className="text-sm font-medium mb-1">1. Отсканируйте QR-код</p>
+            <p className="text-sm font-medium mb-1">{td.step1Title}</p>
             <p className="text-xs mb-4" style={{ color: 'var(--fh-t4)' }}>
-              Откройте Google Authenticator, Authy или любое TOTP-приложение
+              {td.step1Sub}
             </p>
             {qrDataUrl && (
               <div className="flex justify-center mb-4">
                 <Image
                   src={qrDataUrl}
-                  alt="QR код для 2FA"
+                  alt={td.twoFaTitle}
                   width={180}
                   height={180}
                   className="rounded-xl"
@@ -157,7 +158,7 @@ function TwoFactorSection() {
               </div>
             )}
             <p className="text-xs mb-2" style={{ color: 'var(--fh-t4)' }}>
-              Или введите ключ вручную:
+              {td.orEnterKey}
             </p>
             <div className="flex items-center gap-2 rounded-lg px-3 py-2"
               style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border)' }}>
@@ -168,7 +169,7 @@ function TwoFactorSection() {
                 onClick={copySecret}
                 className="flex-shrink-0 transition-colors"
                 style={{ color: 'var(--fh-t4)' }}
-                aria-label="Скопировать секретный ключ"
+                aria-label={td.copyKeyAria}
                 onMouseEnter={e => { e.currentTarget.style.color = 'var(--fh-t1)' }}
                 onMouseLeave={e => { e.currentTarget.style.color = 'var(--fh-t4)' }}
               >
@@ -181,7 +182,7 @@ function TwoFactorSection() {
 
           <div className="space-y-3">
             <label className="block text-sm font-medium">
-              2. Введите 6-значный код из приложения
+              {td.step2Label}
             </label>
             <input
               type="text"
@@ -191,7 +192,7 @@ function TwoFactorSection() {
               value={token}
               onChange={e => { setToken(e.target.value.replace(/\D/g, '')); setErrorMsg('') }}
               autoFocus
-              placeholder="000000"
+              placeholder={td.codePlaceholder}
               className="w-full px-4 py-3 rounded-xl border bg-surface text-center text-2xl font-mono tracking-[0.4em] focus:outline-none focus:ring-2 focus:ring-primary/30"
               style={{ borderColor: 'var(--fh-border)' }}
             />
@@ -209,7 +210,7 @@ function TwoFactorSection() {
               onMouseEnter={e => { if (token.length === 6) e.currentTarget.style.background = '#8280ff' }}
               onMouseLeave={e => { e.currentTarget.style.background = '#7170ff' }}
             >
-              Подтвердить и включить 2FA
+              {td.confirmBtn}
             </button>
             <button
               onClick={() => { setState('idle'); setToken(''); setErrorMsg('') }}
@@ -218,7 +219,7 @@ function TwoFactorSection() {
               onMouseEnter={e => { e.currentTarget.style.background = 'var(--fh-surface-2)' }}
               onMouseLeave={e => { e.currentTarget.style.background = 'transparent' }}
             >
-              Отмена
+              {td.cancelBtn}
             </button>
           </div>
         </div>
@@ -229,9 +230,9 @@ function TwoFactorSection() {
         <div className="rounded-xl border border-green-500/30 bg-green-500/5 p-6 text-center space-y-3">
           <ShieldCheck className="h-12 w-12 text-green-400 mx-auto" />
           <div>
-            <p className="font-semibold text-green-400 text-base">2FA включена!</p>
+            <p className="font-semibold text-green-400 text-base">{td.doneTitle}</p>
             <p className="text-xs mt-1" style={{ color: 'var(--fh-t4)' }}>
-              Теперь при входе будет запрашиваться код из приложения-аутентификатора.
+              {td.doneDesc}
             </p>
           </div>
           <button
@@ -241,7 +242,7 @@ function TwoFactorSection() {
             onMouseEnter={e => { e.currentTarget.style.background = 'var(--fh-surface-2)' }}
             onMouseLeave={e => { e.currentTarget.style.background = 'transparent' }}
           >
-            Готово
+            {td.doneBtn}
           </button>
         </div>
       )}
@@ -264,7 +265,7 @@ function TwoFactorSection() {
             onMouseEnter={e => { e.currentTarget.style.background = 'var(--fh-surface-2)' }}
             onMouseLeave={e => { e.currentTarget.style.background = 'transparent' }}
           >
-            Переподключить аутентификатор
+            {td.reconnectBtn}
           </button>
           <button
             onClick={disable2FA}
@@ -273,7 +274,7 @@ function TwoFactorSection() {
             onMouseEnter={e => { e.currentTarget.style.background = 'rgba(239,68,68,0.05)' }}
             onMouseLeave={e => { e.currentTarget.style.background = 'transparent' }}
           >
-            {disabling ? <Loader2 className="h-4 w-4 animate-spin mx-auto" /> : 'Отключить 2FA'}
+            {disabling ? <Loader2 className="h-4 w-4 animate-spin mx-auto" /> : td.disableBtn}
           </button>
         </div>
       )}
@@ -290,21 +291,23 @@ function PasswordSection() {
   const [showNew,     setShowNew]     = useState(false)
   const [saving,   setSaving]   = useState(false)
   const [msg,      setMsg]      = useState<{ type: 'ok' | 'err'; text: string } | null>(null)
+  const { t } = useLang()
+  const td = t.settingsPage
 
   async function changePassword() {
-    if (!newPw || newPw.length < 8) { setMsg({ type: 'err', text: 'Пароль должен быть минимум 8 символов' }); return }
-    if (newPw !== confirmPw) { setMsg({ type: 'err', text: 'Пароли не совпадают' }); return }
+    if (!newPw || newPw.length < 8) { setMsg({ type: 'err', text: td.pwTooShort }); return }
+    if (newPw !== confirmPw) { setMsg({ type: 'err', text: td.pwMismatch }); return }
     setSaving(true)
     setMsg(null)
     try {
       const supabase = createClient()
       const { error } = await supabase.auth.updateUser({ password: newPw })
       if (error) throw error
-      setMsg({ type: 'ok', text: 'Пароль успешно изменён' })
+      setMsg({ type: 'ok', text: td.pwChanged })
       setCurrentPw(''); setNewPw(''); setConfirmPw('')
     } catch (e: unknown) {
       const err = e as { message?: string }
-      setMsg({ type: 'err', text: err.message ?? 'Ошибка при смене пароля' })
+      setMsg({ type: 'err', text: err.message ?? td.pwError })
     } finally {
       setSaving(false)
     }
@@ -321,17 +324,17 @@ function PasswordSection() {
           <Key className="h-5 w-5" style={{ color: '#22c55e' }} />
         </div>
         <div>
-          <h2 className="font-semibold text-sm">Смена пароля</h2>
+          <h2 className="font-semibold text-sm">{td.pwTitle}</h2>
           <p className="text-xs" style={{ color: 'var(--fh-t4)' }}>
-            Обновите пароль вашего аккаунта
+            {td.pwSub}
           </p>
         </div>
       </div>
 
       <div className="space-y-3">
         {[
-          { label: 'Новый пароль', value: newPw, set: setNewPw, show: showNew, toggle: () => setShowNew(v => !v) },
-          { label: 'Подтвердите пароль', value: confirmPw, set: setConfirmPw, show: showNew, toggle: () => setShowNew(v => !v) },
+          { label: td.pwNewLabel, value: newPw, set: setNewPw, show: showNew, toggle: () => setShowNew(v => !v) },
+          { label: td.pwConfirmLabel, value: confirmPw, set: setConfirmPw, show: showNew, toggle: () => setShowNew(v => !v) },
         ].map(({ label, value, set, show, toggle }) => (
           <div key={label}>
             <label className="block text-xs font-medium mb-1" style={{ color: 'var(--fh-t3)' }}>{label}</label>
@@ -376,10 +379,10 @@ function PasswordSection() {
           onMouseEnter={e => { e.currentTarget.style.opacity = '0.9' }}
           onMouseLeave={e => { e.currentTarget.style.opacity = '1' }}
         >
-          {saving ? <Loader2 className="h-4 w-4 animate-spin mx-auto" /> : 'Сменить пароль'}
+          {saving ? <Loader2 className="h-4 w-4 animate-spin mx-auto" /> : td.changePwBtn}
         </button>
         <p className="text-[11px]" style={{ color: 'var(--fh-t4)' }}>
-          Минимум 8 символов. После смены вы останетесь в системе.
+          {td.pwNote}
         </p>
       </div>
     </div>
@@ -389,6 +392,8 @@ function PasswordSection() {
 // ── Main page ─────────────────────────────────────────────────────────────
 export default function SecuritySettingsPage() {
   const { user, loading } = useUser()
+  const { t } = useLang()
+  const td = t.settingsPage
 
   if (loading) {
     return (
@@ -402,9 +407,9 @@ export default function SecuritySettingsPage() {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4 text-center px-4">
         <Lock className="h-12 w-12 text-muted-foreground/30" />
-        <p className="font-medium">Войдите, чтобы открыть настройки безопасности</p>
+        <p className="font-medium">{td.signinHint}</p>
         <Link href="/auth/login" className="px-5 py-2.5 rounded-xl bg-primary text-white text-sm font-semibold">
-          Войти
+          {td.signinBtn}
         </Link>
       </div>
     )
@@ -422,7 +427,7 @@ export default function SecuritySettingsPage() {
           onMouseEnter={e => { e.currentTarget.style.color = 'var(--fh-t2)' }}
           onMouseLeave={e => { e.currentTarget.style.color = 'var(--fh-t4)' }}
         >
-          <ArrowLeft className="h-3.5 w-3.5" /> Операции
+          <ArrowLeft className="h-3.5 w-3.5" /> {td.secBackOps}
         </Link>
       </div>
 
@@ -432,9 +437,9 @@ export default function SecuritySettingsPage() {
           <Shield className="h-6 w-6" style={{ color: '#7170ff' }} />
         </div>
         <div>
-          <h1 className="text-xl font-bold">Безопасность</h1>
+          <h1 className="text-xl font-bold">{td.secPageTitle}</h1>
           <p className="text-sm" style={{ color: 'var(--fh-t4)' }}>
-            Пароль и двухфакторная аутентификация
+            {td.secPageSubtitle}
           </p>
         </div>
       </div>
@@ -448,10 +453,9 @@ export default function SecuritySettingsPage() {
           style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border)' }}>
           <Shield className="h-4 w-4 flex-shrink-0 mt-0.5" style={{ color: 'var(--fh-t4)' }} />
           <div className="text-xs" style={{ color: 'var(--fh-t4)', lineHeight: 1.6 }}>
-            <strong style={{ color: 'var(--fh-t3)' }}>Рекомендуем включить 2FA.</strong>{' '}
-            Двухфакторная аутентификация защищает аккаунт даже если кто-то узнал ваш пароль.
-            Используйте <strong style={{ color: 'var(--fh-t3)' }}>Google Authenticator</strong>,{' '}
-            <strong style={{ color: 'var(--fh-t3)' }}>Authy</strong> или{' '}
+            <strong style={{ color: 'var(--fh-t3)' }}>{td.infoRec}</strong>{' '}
+            {td.infoText} <strong style={{ color: 'var(--fh-t3)' }}>Google Authenticator</strong>,{' '}
+            <strong style={{ color: 'var(--fh-t3)' }}>Authy</strong>{' / '}
             <strong style={{ color: 'var(--fh-t3)' }}>1Password</strong>.
           </div>
         </div>

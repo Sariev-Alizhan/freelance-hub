@@ -14,38 +14,39 @@ const LANGS = [
   { code: 'kz' as const, flag: '🇰🇿', name: 'Қазақша'  },
 ]
 
-const CURRENCIES: { code: Currency; label: string; name: string }[] = [
-  { code: 'KZT',  label: '₸',   name: 'Tenge'    },
-  { code: 'RUB',  label: '₽',   name: 'Ruble'    },
-  { code: 'USD',  label: '$',   name: 'Dollar'   },
-  { code: 'EUR',  label: '€',   name: 'Euro'     },
-  { code: 'GBP',  label: '£',   name: 'Pound'    },
-  { code: 'USDT', label: '₮',   name: 'Tether'   },
-  { code: 'UAH',  label: '₴',   name: 'Hryvnia'  },
-  { code: 'CNY',  label: '¥',   name: 'Yuan'     },
-  { code: 'AED',  label: 'د.إ', name: 'Dirham'   },
-  { code: 'TRY',  label: '₺',   name: 'Lira'     },
+const CURRENCIES: { code: Currency; label: string; nameKey: 'currencyTenge' | 'currencyRuble' | 'currencyDollar' | 'currencyEuro' | 'currencyPound' | 'currencyTether' | 'currencyHryvnia' | 'currencyYuan' | 'currencyDirham' | 'currencyLira' }[] = [
+  { code: 'KZT',  label: '₸',   nameKey: 'currencyTenge'   },
+  { code: 'RUB',  label: '₽',   nameKey: 'currencyRuble'   },
+  { code: 'USD',  label: '$',   nameKey: 'currencyDollar'  },
+  { code: 'EUR',  label: '€',   nameKey: 'currencyEuro'    },
+  { code: 'GBP',  label: '£',   nameKey: 'currencyPound'   },
+  { code: 'USDT', label: '₮',   nameKey: 'currencyTether'  },
+  { code: 'UAH',  label: '₴',   nameKey: 'currencyHryvnia' },
+  { code: 'CNY',  label: '¥',   nameKey: 'currencyYuan'    },
+  { code: 'AED',  label: 'د.إ', nameKey: 'currencyDirham'  },
+  { code: 'TRY',  label: '₺',   nameKey: 'currencyLira'    },
 ]
 
 export default function PreferencesPage() {
-  const { lang, setLang } = useLang()
+  const { lang, setLang, t } = useLang()
   const { currency, setCurrency } = useCurrency()
   const { themeMode, theme, setThemeMode } = useTheme()
   const { user } = useUser()
+  const td = t.settingsPage
 
   return (
     <div>
       <div style={{ marginBottom: '24px' }}>
         <h1 style={{ fontSize: '20px', fontWeight: 590, color: 'var(--fh-t1)', letterSpacing: '-0.04em' }}>
-          Appearance & Region
+          {td.prefTitle}
         </h1>
         <p style={{ fontSize: '13px', color: 'var(--fh-t4)', marginTop: '2px' }}>
-          Saved locally in your browser — applied immediately.
+          {td.prefSubtitle}
         </p>
       </div>
 
       {/* Language */}
-      <Card label="Language" description="Interface language used across the entire platform.">
+      <Card label={td.langCard} description={td.langCardSub}>
         <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
           {LANGS.map(l => {
             const active = lang === l.code
@@ -84,7 +85,7 @@ export default function PreferencesPage() {
       </Card>
 
       {/* Currency */}
-      <Card label="Default Currency" description="All prices and amounts across the platform will be shown in this currency.">
+      <Card label={td.currencyCard} description={td.currencyCardSub}>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(84px, 1fr))', gap: '8px' }}>
           {CURRENCIES.map(c => {
             const active = currency === c.code
@@ -113,7 +114,7 @@ export default function PreferencesPage() {
                 }}>
                   {c.code}
                 </span>
-                <span style={{ fontSize: '10px', color: 'var(--fh-t4)' }}>{c.name}</span>
+                <span style={{ fontSize: '10px', color: 'var(--fh-t4)' }}>{td[c.nameKey]}</span>
               </button>
             )
           })}
@@ -121,39 +122,39 @@ export default function PreferencesPage() {
       </Card>
 
       {/* Theme */}
-      <Card label="Theme" description="Controls the color scheme. Auto adjusts based on your local time (6am–8pm light, 8pm–6am dark).">
+      <Card label={td.themeCard} description={td.themeCardSub}>
         <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
           {([
             {
               id: 'auto'  as ThemeMode,
               Icon: SunMoon,
-              label: 'Auto',
-              sub: 'Day / Night by time',
+              label: td.themeAuto,
+              sub: td.themeAutoSub,
               previewLeft: '#0d0d12',
               previewRight: '#f5f5f7',
             },
             {
               id: 'light' as ThemeMode,
               Icon: Sun,
-              label: 'Light',
-              sub: 'Always light',
+              label: td.themeLight,
+              sub: td.themeLightSub,
               previewLeft: '#f5f5f7',
               previewRight: '#f5f5f7',
             },
             {
               id: 'dark'  as ThemeMode,
               Icon: Moon,
-              label: 'Dark',
-              sub: 'Always dark',
+              label: td.themeDark,
+              sub: td.themeDarkSub,
               previewLeft: '#0d0d12',
               previewRight: '#0d0d12',
             },
-          ]).map(t => {
-            const active = themeMode === t.id
+          ]).map(tk => {
+            const active = themeMode === tk.id
             return (
               <button
-                key={t.id}
-                onClick={() => setThemeMode(t.id)}
+                key={tk.id}
+                onClick={() => setThemeMode(tk.id)}
                 style={{
                   display: 'flex', flexDirection: 'column', gap: '10px',
                   padding: '12px', borderRadius: '12px', cursor: 'pointer',
@@ -168,19 +169,19 @@ export default function PreferencesPage() {
                   overflow: 'hidden', border: '1px solid rgba(128,128,128,0.15)',
                   display: 'flex',
                 }}>
-                  <div style={{ flex: 1, background: t.previewLeft }} />
-                  {t.id === 'auto' && (
-                    <div style={{ flex: 1, background: t.previewRight, borderLeft: '1px solid rgba(128,128,128,0.2)' }} />
+                  <div style={{ flex: 1, background: tk.previewLeft }} />
+                  {tk.id === 'auto' && (
+                    <div style={{ flex: 1, background: tk.previewRight, borderLeft: '1px solid rgba(128,128,128,0.2)' }} />
                   )}
                 </div>
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
-                  <t.Icon style={{ width: 13, height: 13, color: active ? '#7170ff' : 'var(--fh-t4)', flexShrink: 0 }} />
+                  <tk.Icon style={{ width: 13, height: 13, color: active ? '#7170ff' : 'var(--fh-t4)', flexShrink: 0 }} />
                   <div style={{ flex: 1, textAlign: 'left' }}>
                     <p style={{ fontSize: '13px', fontWeight: active ? 590 : 400, color: active ? 'var(--fh-t1)' : 'var(--fh-t3)' }}>
-                      {t.label}
+                      {tk.label}
                     </p>
-                    <p style={{ fontSize: '11px', color: 'var(--fh-t4)' }}>{t.sub}</p>
+                    <p style={{ fontSize: '11px', color: 'var(--fh-t4)' }}>{tk.sub}</p>
                   </div>
                   {active && (
                     <div style={{ width: 15, height: 15, borderRadius: '50%', background: '#5e6ad2', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -195,14 +196,14 @@ export default function PreferencesPage() {
         {themeMode === 'auto' && (
           <p style={{ fontSize: '11px', color: 'var(--fh-t4)', marginTop: '12px', display: 'flex', alignItems: 'center', gap: '5px' }}>
             <SunMoon style={{ width: 11, height: 11 }} />
-            Currently showing <strong style={{ color: 'var(--fh-t3)' }}>{theme}</strong> mode based on your local time.
+            {td.themeNow1} <strong style={{ color: 'var(--fh-t3)' }}>{theme}</strong> {td.themeNow2}
           </p>
         )}
       </Card>
 
       {/* Role */}
       {user && (
-        <Card label="Platform Role" description="Switch between posting orders as a client or offering services as a freelancer.">
+        <Card label={td.roleCard} description={td.roleCardSub}>
           <RoleSwitcher />
         </Card>
       )}
