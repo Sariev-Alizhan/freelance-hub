@@ -1,2 +1,0 @@
-[    1163ms] [INFO] Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner. @ https://freelance-hub.kz/search?q=react:0
-[    1674ms] [INFO] Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner. @ https://freelance-hub.kz/search?q=react:0
