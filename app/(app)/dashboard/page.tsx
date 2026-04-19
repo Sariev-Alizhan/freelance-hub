@@ -18,6 +18,7 @@ import AnalyticsTab from '@/components/dashboard/AnalyticsTab'
 import FavoritesTab from '@/components/dashboard/FavoritesTab'
 import ResponsesList from '@/components/dashboard/ResponsesList'
 import OrdersList from '@/components/dashboard/OrdersList'
+import OnboardingChecklist from '@/components/dashboard/OnboardingChecklist'
 
 type DashboardTab = 'freelancer' | 'client' | 'favorites' | 'portfolio' | 'analytics'
 
@@ -136,6 +137,8 @@ export default function DashboardPage() {
         </div>
 
         <div className="space-y-6">
+          <OnboardingChecklist />
+
           <div className="grid grid-cols-2 gap-3">
             <Link href="/messages" className="flex flex-col items-center gap-2 p-4 rounded-xl border border-subtle bg-card hover:bg-subtle transition-colors text-center">
               <MessageSquare className="h-5 w-5 text-primary" />
