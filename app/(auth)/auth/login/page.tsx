@@ -4,12 +4,15 @@ import Link from 'next/link'
 import { Loader2 } from 'lucide-react'
 import Logo from '@/components/ui/Logo'
 import { createClient } from '@/lib/supabase/client'
+import { useLang } from '@/lib/context/LanguageContext'
 import OAuthButton, { type OAuthProvider } from '@/components/auth/OAuthButton'
 
 type Provider = OAuthProvider
 
 /* ── Page ───────────────────────────────────────────────────────────────── */
 export default function LoginPage() {
+  const { t } = useLang()
+  const tl = t.loginPage
   const [loading, setLoading] = useState<string | null>(null)
   const [email, setEmail]     = useState('')
   const [sent, setSent]       = useState(false)
@@ -61,12 +64,12 @@ export default function LoginPage() {
             <Logo size={40} />
           </div>
           <h1 style={{ fontSize: '22px', fontWeight: 600, letterSpacing: '-0.03em', color: 'var(--fh-t1)', margin: 0 }}>
-            Войти в аккаунт
+            {tl.title}
           </h1>
           <p style={{ fontSize: '13px', color: 'var(--fh-t4)', marginTop: '6px' }}>
-            Нет аккаунта?{' '}
+            {tl.noAccount}{' '}
             <Link href="/auth/register" style={{ color: '#7170ff', fontWeight: 510 }}>
-              Зарегистрироваться
+              {tl.signUpLink}
             </Link>
           </p>
         </div>
@@ -98,7 +101,7 @@ export default function LoginPage() {
           )}
 
           {/* Google — primary (full width) */}
-          <OAuthButton provider="google" label="Продолжить с Google" loading={loading} onClick={signIn} />
+          <OAuthButton provider="google" label={tl.continueGoogle} loading={loading} onClick={signIn} />
 
           {/* GitHub + Apple — 2 columns */}
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
@@ -107,12 +110,12 @@ export default function LoginPage() {
           </div>
 
           {/* Discord — full width */}
-          <OAuthButton provider="discord" label="Продолжить с Discord" loading={loading} onClick={signIn} />
+          <OAuthButton provider="discord" label={tl.continueDiscord} loading={loading} onClick={signIn} />
 
           {/* Divider */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '2px 0' }}>
             <div style={{ flex: 1, height: '1px', background: 'var(--fh-sep)' }} />
-            <span style={{ fontSize: '11px', color: 'var(--fh-t4)', fontWeight: 500, letterSpacing: '0.04em' }}>ИЛИ</span>
+            <span style={{ fontSize: '11px', color: 'var(--fh-t4)', fontWeight: 500, letterSpacing: '0.04em' }}>{tl.or}</span>
             <div style={{ flex: 1, height: '1px', background: 'var(--fh-sep)' }} />
           </div>
 
@@ -126,10 +129,10 @@ export default function LoginPage() {
               border: '1px solid rgba(39,166,68,0.2)',
             }}>
               <p style={{ fontSize: '14px', fontWeight: 600, color: '#27a644', margin: '0 0 4px' }}>
-                Проверьте почту
+                {tl.checkEmail}
               </p>
               <p style={{ fontSize: '12px', color: 'var(--fh-t4)', margin: 0 }}>
-                Ссылка отправлена на <strong>{email}</strong>
+                {tl.linkSentTo} <strong>{email}</strong>
               </p>
             </div>
           ) : (
@@ -186,17 +189,17 @@ export default function LoginPage() {
                     <polyline points="22,6 12,13 2,6"/>
                   </svg>
                 )}
-                Отправить ссылку на почту
+                {tl.sendEmailLink}
               </button>
             </form>
           )}
         </div>
 
         <p style={{ textAlign: 'center', marginTop: '16px', fontSize: '11px', color: 'var(--fh-t3)' }}>
-          Входя, вы соглашаетесь с{' '}
-          <Link href="/terms" style={{ color: 'var(--fh-t3)', textDecoration: 'underline' }}>Условиями</Link>
-          {' '}и{' '}
-          <Link href="/privacy" style={{ color: 'var(--fh-t3)', textDecoration: 'underline' }}>Политикой конфиденциальности</Link>
+          {tl.termsPrefix}{' '}
+          <Link href="/terms" style={{ color: 'var(--fh-t3)', textDecoration: 'underline' }}>{tl.termsLink}</Link>
+          {' '}{tl.termsAnd}{' '}
+          <Link href="/privacy" style={{ color: 'var(--fh-t3)', textDecoration: 'underline' }}>{tl.privacyLink}</Link>
         </p>
       </div>
 

@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { Briefcase, Code2 } from 'lucide-react'
 import Logo from '@/components/ui/Logo'
 import { createClient } from '@/lib/supabase/client'
+import { useLang } from '@/lib/context/LanguageContext'
 import { UserRole } from '@/lib/supabase/types'
 import OAuthButton, { type OAuthProvider } from '@/components/auth/OAuthButton'
 
@@ -11,6 +12,8 @@ type Provider = OAuthProvider
 
 /* ── Page ───────────────────────────────────────────────────────────────── */
 export default function RegisterPage() {
+  const { t } = useLang()
+  const tr = t.registerPage
   const [loading, setLoading]     = useState<string | null>(null)
   const [role, setRole]           = useState<UserRole>('client')
   const [authError, setAuthError] = useState<string | null>(null)
@@ -19,7 +22,7 @@ export default function RegisterPage() {
 
   async function signUp(provider: Provider) {
     if (!ageConfirmed) {
-      setAuthError('Подтвердите, что вам 18 лет или больше.')
+      setAuthError(tr.mustBe18)
       return
     }
     setAuthError(null)
@@ -54,12 +57,12 @@ export default function RegisterPage() {
             <Logo size={40} />
           </div>
           <h1 style={{ fontSize: '22px', fontWeight: 600, letterSpacing: '-0.03em', color: 'var(--fh-t1)', margin: 0 }}>
-            Создать аккаунт
+            {tr.title}
           </h1>
           <p style={{ fontSize: '13px', color: 'var(--fh-t4)', marginTop: '6px' }}>
-            Уже есть аккаунт?{' '}
+            {tr.hasAccount}{' '}
             <Link href="/auth/login" style={{ color: '#7170ff', fontWeight: 510 }}>
-              Войти
+              {tr.signInLink}
             </Link>
           </p>
         </div>
@@ -89,12 +92,12 @@ export default function RegisterPage() {
           {/* Role selector */}
           <div>
             <p style={{ fontSize: '11px', fontWeight: 600, color: 'var(--fh-t3)', marginBottom: '10px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-              Я регистрируюсь как
+              {tr.iRegisterAs}
             </p>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
               {([
-                { value: 'client' as UserRole, Icon: Briefcase, label: 'Заказчик', sub: 'Размещаю задания' },
-                { value: 'freelancer' as UserRole, Icon: Code2,     label: 'Фрилансер', sub: 'Выполняю работу' },
+                { value: 'client' as UserRole, Icon: Briefcase, label: tr.roleClient, sub: tr.roleClientSub },
+                { value: 'freelancer' as UserRole, Icon: Code2,     label: tr.roleFreelancer, sub: tr.roleFreelancerSub },
               ]).map(({ value, Icon, label, sub }) => {
                 const active = role === value
                 return (
@@ -137,39 +140,39 @@ export default function RegisterPage() {
               }}
             />
             <span style={{ fontSize: '12px', color: 'var(--fh-t2)', lineHeight: 1.5 }}>
-              Мне исполнилось <strong style={{ color: 'var(--fh-t1)' }}>18 лет</strong>. FreelanceHub — платформа только для совершеннолетних.
+              {tr.age18} <strong style={{ color: 'var(--fh-t1)' }}>{tr.age18Bold}</strong>{tr.age18Suffix}
             </span>
           </label>
 
           {/* Divider */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <div style={{ flex: 1, height: '1px', background: 'var(--fh-sep)' }} />
-            <span style={{ fontSize: '11px', color: 'var(--fh-t4)', fontWeight: 500, letterSpacing: '0.04em' }}>ВОЙТИ ЧЕРЕЗ</span>
+            <span style={{ fontSize: '11px', color: 'var(--fh-t4)', fontWeight: 500, letterSpacing: '0.04em' }}>{tr.signUpVia}</span>
             <div style={{ flex: 1, height: '1px', background: 'var(--fh-sep)' }} />
           </div>
 
           {/* OAuth buttons */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', opacity: ageConfirmed ? 1 : 0.5, pointerEvents: ageConfirmed ? 'auto' : 'none' }}>
-            <OAuthButton provider="google" label="Продолжить с Google" loading={loading} onClick={signUp} />
+            <OAuthButton provider="google" label={t.loginPage.continueGoogle} loading={loading} onClick={signUp} />
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
               <OAuthButton provider="github" label="GitHub" loading={loading} onClick={signUp} />
               <OAuthButton provider="apple"  label="Apple"  loading={loading} onClick={signUp} />
             </div>
 
-            <OAuthButton provider="discord" label="Продолжить с Discord" loading={loading} onClick={signUp} />
+            <OAuthButton provider="discord" label={t.loginPage.continueDiscord} loading={loading} onClick={signUp} />
           </div>
 
           <p style={{ textAlign: 'center', fontSize: '12px', color: 'var(--fh-t3)', margin: 0 }}>
-            Комиссия: <span style={{ color: '#27a644', fontWeight: 600 }}>0%</span> навсегда
+            {tr.commissionLabel} <span style={{ color: '#27a644', fontWeight: 600 }}>{tr.commissionValue}</span> {tr.commissionSuffix}
           </p>
         </div>
 
         <p style={{ textAlign: 'center', marginTop: '16px', fontSize: '11px', color: 'var(--fh-t3)' }}>
-          Регистрируясь, вы соглашаетесь с{' '}
-          <Link href="/terms" style={{ color: 'var(--fh-t3)', textDecoration: 'underline' }}>Условиями</Link>
-          {' '}и{' '}
-          <Link href="/privacy" style={{ color: 'var(--fh-t3)', textDecoration: 'underline' }}>Политикой</Link>
+          {tr.termsPrefix}{' '}
+          <Link href="/terms" style={{ color: 'var(--fh-t3)', textDecoration: 'underline' }}>{tr.termsLink}</Link>
+          {' '}{tr.termsAnd}{' '}
+          <Link href="/privacy" style={{ color: 'var(--fh-t3)', textDecoration: 'underline' }}>{tr.privacyLink}</Link>
         </p>
       </div>
 

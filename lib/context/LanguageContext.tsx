@@ -103,6 +103,43 @@ export const T: Record<Lang, any> = {
       donateDesc: 'All funds go to promoting the platform so people worldwide can work for free',
       copyright:  '© 2026 FreelanceHub by SITS — 0% commission forever',
     },
+    loginPage: {
+      title:            'Sign in to your account',
+      noAccount:        'Don\'t have an account?',
+      signUpLink:       'Sign up',
+      continueGoogle:   'Continue with Google',
+      continueDiscord:  'Continue with Discord',
+      or:               'OR',
+      sendEmailLink:    'Send link to email',
+      checkEmail:       'Check your email',
+      linkSentTo:       'Link sent to',
+      termsPrefix:      'By signing in, you agree to our',
+      termsAnd:         'and',
+      termsLink:        'Terms',
+      privacyLink:      'Privacy Policy',
+    },
+    registerPage: {
+      title:             'Create account',
+      hasAccount:        'Already have an account?',
+      signInLink:        'Sign in',
+      iRegisterAs:       'I register as',
+      roleClient:        'Client',
+      roleClientSub:     'Posting jobs',
+      roleFreelancer:    'Freelancer',
+      roleFreelancerSub: 'Doing work',
+      age18:             'I am',
+      age18Bold:         '18 years old',
+      age18Suffix:       '. FreelanceHub is a platform for adults only.',
+      mustBe18:          'Please confirm you are 18 or older.',
+      signUpVia:         'SIGN UP WITH',
+      commissionLabel:   'Commission:',
+      commissionValue:   '0%',
+      commissionSuffix:  'forever',
+      termsPrefix:       'By registering, you agree to our',
+      termsAnd:          'and',
+      termsLink:         'Terms',
+      privacyLink:       'Privacy',
+    },
   },
 
   // ─────────────────────────────── RUSSIAN ─────────────────────────────────────────
@@ -196,6 +233,43 @@ export const T: Record<Lang, any> = {
       donate:     'Поддержи проект донатом',
       donateDesc: 'Все средства идут на продвижение платформы, чтобы люди по всему миру могли работать бесплатно',
       copyright:  '© 2026 FreelanceHub by SITS — 0% комиссия навсегда',
+    },
+    loginPage: {
+      title:            'Войти в аккаунт',
+      noAccount:        'Нет аккаунта?',
+      signUpLink:       'Зарегистрироваться',
+      continueGoogle:   'Продолжить с Google',
+      continueDiscord:  'Продолжить с Discord',
+      or:               'ИЛИ',
+      sendEmailLink:    'Отправить ссылку на почту',
+      checkEmail:       'Проверьте почту',
+      linkSentTo:       'Ссылка отправлена на',
+      termsPrefix:      'Входя, вы соглашаетесь с',
+      termsAnd:         'и',
+      termsLink:        'Условиями',
+      privacyLink:      'Политикой конфиденциальности',
+    },
+    registerPage: {
+      title:             'Создать аккаунт',
+      hasAccount:        'Уже есть аккаунт?',
+      signInLink:        'Войти',
+      iRegisterAs:       'Я регистрируюсь как',
+      roleClient:        'Заказчик',
+      roleClientSub:     'Размещаю задания',
+      roleFreelancer:    'Фрилансер',
+      roleFreelancerSub: 'Выполняю работу',
+      age18:             'Мне исполнилось',
+      age18Bold:         '18 лет',
+      age18Suffix:       '. FreelanceHub — платформа только для совершеннолетних.',
+      mustBe18:          'Подтвердите, что вам 18 лет или больше.',
+      signUpVia:         'ВОЙТИ ЧЕРЕЗ',
+      commissionLabel:   'Комиссия:',
+      commissionValue:   '0%',
+      commissionSuffix:  'навсегда',
+      termsPrefix:       'Регистрируясь, вы соглашаетесь с',
+      termsAnd:          'и',
+      termsLink:         'Условиями',
+      privacyLink:       'Политикой',
     },
   },
 
@@ -291,6 +365,43 @@ export const T: Record<Lang, any> = {
       donateDesc: 'Барлық қаражат бүкіл әлем бойынша адамдар тегін жұмыс істей алуы үшін жобаны насихаттауға жіберіледі',
       copyright:  '© 2026 FreelanceHub by SITS — 0% комиссия мәңгіге',
     },
+    loginPage: {
+      title:            'Аккаунтқа кіру',
+      noAccount:        'Аккаунт жоқ па?',
+      signUpLink:       'Тіркелу',
+      continueGoogle:   'Google арқылы жалғастыру',
+      continueDiscord:  'Discord арқылы жалғастыру',
+      or:               'НЕМЕСЕ',
+      sendEmailLink:    'Поштаға сілтеме жіберу',
+      checkEmail:       'Поштаңызды тексеріңіз',
+      linkSentTo:       'Сілтеме жіберілді:',
+      termsPrefix:      'Кіру арқылы сіз',
+      termsAnd:         'және',
+      termsLink:        'Шарттармен',
+      privacyLink:      'Құпиялылық саясатымен келісесіз',
+    },
+    registerPage: {
+      title:             'Аккаунт құру',
+      hasAccount:        'Аккаунт бар ма?',
+      signInLink:        'Кіру',
+      iRegisterAs:       'Мен мына ретінде тіркелемін',
+      roleClient:        'Тапсырыс беруші',
+      roleClientSub:     'Тапсырыс беремін',
+      roleFreelancer:    'Фрилансер',
+      roleFreelancerSub: 'Жұмысты орындаймын',
+      age18:             'Маған',
+      age18Bold:         '18 жас толды',
+      age18Suffix:       '. FreelanceHub — тек ересектерге арналған платформа.',
+      mustBe18:          'Сізге 18 жас толғанын растаңыз.',
+      signUpVia:         'АРҚЫЛЫ КІРУ',
+      commissionLabel:   'Комиссия:',
+      commissionValue:   '0%',
+      commissionSuffix:  'мәңгіге',
+      termsPrefix:       'Тіркелу арқылы сіз',
+      termsAnd:          'және',
+      termsLink:         'Шарттармен',
+      privacyLink:       'Құпиялылық саясатымен келісесіз',
+    },
   },
 }
 
@@ -313,8 +424,14 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     try {
       const saved = localStorage.getItem('fh-lang') as Lang | null
       if (saved && (saved === 'ru' || saved === 'en' || saved === 'kz')) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setLangState(saved)
+        return
       }
+      // Fall back to browser language — better default than hard-coded 'en'.
+      const nav = typeof navigator !== 'undefined' ? navigator.language.toLowerCase() : ''
+      if (nav.startsWith('ru')) setLangState('ru')
+      else if (nav.startsWith('kk') || nav.startsWith('kz')) setLangState('kz')
     } catch {}
   }, [])
 
