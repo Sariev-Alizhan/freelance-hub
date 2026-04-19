@@ -19,6 +19,7 @@ import FavoritesTab from '@/components/dashboard/FavoritesTab'
 import ResponsesList from '@/components/dashboard/ResponsesList'
 import OrdersList from '@/components/dashboard/OrdersList'
 import OnboardingChecklist from '@/components/dashboard/OnboardingChecklist'
+import ProfileViewersWidget from '@/components/dashboard/ProfileViewersWidget'
 
 type DashboardTab = 'freelancer' | 'client' | 'favorites' | 'portfolio' | 'analytics'
 
@@ -168,6 +169,8 @@ export default function DashboardPage() {
               Open AI assistant
             </Link>
           </div>
+
+          {fp && <ProfileViewersWidget />}
 
           {profile?.username && <ReferralWidget username={profile.username} />}
           {fp && <TelegramWidget />}
