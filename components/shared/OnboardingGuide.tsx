@@ -91,14 +91,14 @@ const STEPS: Step[] = [
 ]
 
 // Tour content targets logged-in users (links to /dashboard, /messages, /agents).
-// Don't show it on the landing page or auth flows — it blocks the register form
-// and wouldn't be actionable for anonymous visitors anyway.
+// Only show on landing-style surfaces where users are browsing. On focused work
+// pages (order detail, chat thread, profile view, reel player) a modal-over-content
+// is obtrusive and blocks the action the user came for.
+const TOUR_ALLOWED_PATHS = ['/feed', '/explore', '/dashboard', '/orders', '/freelancers']
+
 function shouldSkipTour(pathname: string | null): boolean {
-  if (!pathname) return false
-  if (pathname === '/') return true
-  if (pathname.startsWith('/auth')) return true
-  if (pathname === '/terms' || pathname === '/privacy') return true
-  return false
+  if (!pathname) return true
+  return !TOUR_ALLOWED_PATHS.includes(pathname)
 }
 
 export default function OnboardingGuide() {
@@ -106,22 +106,17 @@ export default function OnboardingGuide() {
   const pathname = usePathname()
   const [visible, setVisible] = useState(false)
   const [step, setStep] = useState(0)
-  const [mounted, setMounted] = useState(false)
+
+  const allowed = !shouldSkipTour(pathname)
 
   useEffect(() => {
-    setMounted(true)
-    if (shouldSkipTour(pathname)) {
-      setVisible(false)
-      return
-    }
+    if (!allowed) return
     try {
-      const done = localStorage.getItem(STORAGE_KEY)
-      if (!done) {
-        const t = setTimeout(() => setVisible(true), 1200)
-        return () => clearTimeout(t)
-      }
-    } catch {}
-  }, [pathname])
+      if (localStorage.getItem(STORAGE_KEY)) return
+    } catch { return }
+    const t = setTimeout(() => setVisible(true), 1200)
+    return () => clearTimeout(t)
+  }, [allowed])
 
   function dismiss() {
     try { localStorage.setItem(STORAGE_KEY, '1') } catch {}
@@ -137,7 +132,7 @@ export default function OnboardingGuide() {
     if (step > 0) setStep(s => s - 1)
   }
 
-  if (!mounted || !visible) return null
+  if (!allowed || !visible) return null
 
   const s = STEPS[step]
   const title = lang === 'ru' ? s.titleRu : lang === 'kz' ? s.titleKz : s.titleEn

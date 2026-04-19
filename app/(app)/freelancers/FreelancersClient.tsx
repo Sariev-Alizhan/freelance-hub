@@ -178,7 +178,7 @@ export default function FreelancersClient({ realFreelancers = [], defaultCategor
             <input
               value={inputVal}
               onChange={(e) => setInputVal(e.target.value)}
-              placeholder="Search by name, skills..."
+              placeholder="Name or skills…"
               className="w-full outline-none transition-all"
               style={{
                 padding: '10px 14px 10px 36px', borderRadius: '8px',
