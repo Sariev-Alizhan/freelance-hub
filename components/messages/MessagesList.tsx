@@ -7,6 +7,7 @@ import { FH_STICKER_SET } from './EmojiPickerPopover'
 import { QUICK_REACTIONS } from './MessageActionsSheet'
 import Avatar from './Avatar'
 import AttachmentBubble from './AttachmentBubble'
+import OrderPreviewCard, { extractOrderId } from './OrderPreviewCard'
 import { formatDate, formatTime, isSameDay } from './utils'
 import type { Conversation, Message, ReactionMap } from './types'
 
@@ -332,6 +333,12 @@ export default function MessagesList(props: {
                         </div>
                       )
                     )}
+
+                    {/* Inline order preview if the message links to an order */}
+                    {(() => {
+                      const oid = extractOrderId(msg.text)
+                      return oid ? <OrderPreviewCard orderId={oid} isMine={isMine} /> : null
+                    })()}
 
                     {/* Attachment */}
                     <AttachmentBubble msg={msg} isMine={isMine} />
