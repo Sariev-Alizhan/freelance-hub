@@ -93,13 +93,16 @@ function emailHtml(params: {
 }
 
 export async function GET(req: NextRequest) {
-  // Validate cron secret to prevent unauthorized triggers
+  // Require a cron secret — Vercel Cron auto-sends `Authorization: Bearer $CRON_SECRET`.
+  // Without this, anyone hitting the public URL can trigger a Resend email blast.
   const cronSecret = process.env.CRON_SECRET
-  if (cronSecret) {
-    const auth = req.headers.get('authorization')
-    if (auth !== `Bearer ${cronSecret}`) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+  if (!cronSecret) {
+    console.error('[cron/weekly-digest] CRON_SECRET not configured — refusing to run')
+    return NextResponse.json({ error: 'Cron not configured' }, { status: 503 })
+  }
+  const auth = req.headers.get('authorization')
+  if (auth !== `Bearer ${cronSecret}`) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
   const resendKey = process.env.RESEND_API_KEY

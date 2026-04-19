@@ -1,5 +1,6 @@
 import { createAdminClient } from '@/lib/supabase/admin'
 import { sendTelegramMessage } from '@/lib/telegram'
+import crypto from 'crypto'
 
 const SITE_URL      = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.freelance-hub.kz'
 const ADMIN_CHAT_ID = process.env.ADMIN_TELEGRAM_CHAT_ID || ''
@@ -8,8 +9,30 @@ function isAdmin(chatId: number | string) {
   return ADMIN_CHAT_ID && String(chatId) === String(ADMIN_CHAT_ID)
 }
 
+/**
+ * Telegram signs every webhook POST with a secret we register via setWebhook.
+ * Without this check, anyone who knows the public URL can spoof messages —
+ * including ones claiming to come from the admin chat_id, unlocking admin
+ * commands (/stats, /nexus).
+ */
+function verifyTelegramSecret(req: Request): boolean {
+  const expected = process.env.TELEGRAM_WEBHOOK_SECRET
+  if (!expected) return false
+  const got = req.headers.get('x-telegram-bot-api-secret-token') ?? ''
+  if (got.length !== expected.length) return false
+  try {
+    return crypto.timingSafeEqual(Buffer.from(got, 'utf8'), Buffer.from(expected, 'utf8'))
+  } catch {
+    return false
+  }
+}
+
 // POST /api/telegram/webhook
 export async function POST(req: Request) {
+  if (!verifyTelegramSecret(req)) {
+    console.warn(JSON.stringify({ level: 'SECURITY', event: 'telegram_bad_secret' }))
+    return Response.json({ error: 'Forbidden' }, { status: 403 })
+  }
   try {
     const body    = await req.json()
     const message = body?.message

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 import Anthropic from '@anthropic-ai/sdk'
+import { isAdmin } from '@/lib/auth/isAdmin'
 
 export const dynamic = 'force-dynamic'
 
@@ -28,8 +29,7 @@ export async function POST(req: NextRequest) {
     { cookies: { getAll: () => cookieStore.getAll(), setAll: () => {} } }
   )
   const { data: { user } } = await supabase.auth.getUser()
-  const adminEmail = process.env.ADMIN_EMAIL
-  if (!user || (adminEmail && user.email !== adminEmail)) {
+  if (!isAdmin(user)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
@@ -153,7 +153,7 @@ Begin implementation now.`
         category:    item.category,
         version:     item.version,
         prompt_hint: item.promptHint,
-        submitted_by: user.id,
+        submitted_by: user!.id,
         status:      'queued',
       }))
     )

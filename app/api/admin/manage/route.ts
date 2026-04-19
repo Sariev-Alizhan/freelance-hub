@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { createClient as createServiceClient } from '@supabase/supabase-js'
 import { applyRateLimit, isValidUUID, logSecurityEvent } from '@/lib/security'
+import { isAdmin } from '@/lib/auth/isAdmin'
 
 function serviceClient() {
   return createServiceClient(
@@ -19,8 +20,7 @@ export async function POST(request: Request) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
-  const adminEmail = process.env.ADMIN_EMAIL
-  if (!adminEmail || !user || user.email !== adminEmail) {
+  if (!isAdmin(user)) {
     logSecurityEvent('unauthorized', { route: '/api/admin/manage', email: user?.email ?? 'anon' }, request)
     return Response.json({ error: 'Forbidden' }, { status: 403 })
   }
@@ -31,6 +31,7 @@ export async function POST(request: Request) {
   if (!userId || !action) return Response.json({ error: 'Missing params' }, { status: 400 })
   if (!isValidUUID(userId)) return Response.json({ error: 'Invalid userId' }, { status: 400 })
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const db = serviceClient() as any
 
   if (action === 'verify') {
