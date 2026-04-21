@@ -118,7 +118,7 @@ function LogPanel({ logs, done, jobId }: { logs: LogLine[]; done: boolean; jobId
         ))}
         {!done && (
           <div className="flex items-center gap-2">
-            <Loader2 className="h-3 w-3 animate-spin" style={{ color: '#7170ff' }} />
+            <Loader2 className="h-3 w-3 animate-spin" style={{ color: '#27a644' }} />
             <span style={{ color: 'var(--fh-t4)' }}>Agent is working...</span>
           </div>
         )}
@@ -222,7 +222,7 @@ export default function AgentDetailPage() {
   if (agentLoading) {
     return (
       <div className="flex justify-center items-center min-h-[50vh]">
-        <Loader2 className="h-8 w-8 animate-spin" style={{ color: '#7170ff' }} />
+        <Loader2 className="h-8 w-8 animate-spin" style={{ color: '#27a644' }} />
       </div>
     )
   }
@@ -232,7 +232,7 @@ export default function AgentDetailPage() {
       <div className="page-shell page-shell--narrow text-center">
         <Bot className="h-12 w-12 mx-auto mb-4 opacity-30" style={{ color: 'var(--fh-t4)' }} />
         <p className="text-lg font-semibold mb-2">Agent not found</p>
-        <Link href="/agents" className="text-sm" style={{ color: '#7170ff' }}>← Back</Link>
+        <Link href="/agents" className="text-sm" style={{ color: '#27a644' }}>← Back</Link>
       </div>
     )
   }
@@ -300,15 +300,15 @@ export default function AgentDetailPage() {
           <div className="rounded-2xl p-6" style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border-2)' }}>
             <div className="flex items-start gap-4">
               <div className="h-14 w-14 rounded-2xl flex items-center justify-center flex-shrink-0"
-                style={{ background: 'rgba(113,112,255,0.12)', border: '1px solid rgba(113,112,255,0.2)' }}>
-                <Bot className="h-7 w-7" style={{ color: '#7170ff' }} />
+                style={{ background: 'rgba(39,166,68,0.12)', border: '1px solid rgba(39,166,68,0.2)' }}>
+                <Bot className="h-7 w-7" style={{ color: '#27a644' }} />
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex flex-wrap items-center gap-2 mb-1">
                   <h1 className="text-xl font-bold" style={{ color: 'var(--fh-t1)' }}>{agent.name}</h1>
                   {(agent.badges ?? []).map(b => (
                     <span key={b} className="text-xs px-2 py-0.5 rounded-full font-semibold"
-                      style={{ background: `${badgeColor[b] ?? '#7170ff'}18`, color: badgeColor[b] ?? '#7170ff', border: `1px solid ${badgeColor[b] ?? '#7170ff'}30` }}>
+                      style={{ background: `${badgeColor[b] ?? '#27a644'}18`, color: badgeColor[b] ?? '#27a644', border: `1px solid ${badgeColor[b] ?? '#27a644'}30` }}>
                       {b}
                     </span>
                   ))}
@@ -355,7 +355,7 @@ export default function AgentDetailPage() {
 
           <div className="rounded-2xl p-5" style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border-2)' }}>
             <h2 className="text-sm font-bold mb-4" style={{ color: 'var(--fh-t1)' }}>
-              {phase === 'form' ? 'New task' : phase === 'running' ? 'Running...' : '✅ Done'}
+              {phase === 'form' ? 'New task' : phase === 'running' ? 'Running...' : 'Done'}
             </h2>
             {phase === 'form' && (
               userLoading
@@ -373,7 +373,7 @@ export default function AgentDetailPage() {
             )}
             {phase === 'running' && (
               <div className="flex flex-col items-center gap-3 py-6">
-                <Loader2 className="h-8 w-8 animate-spin" style={{ color: '#7170ff' }} />
+                <Loader2 className="h-8 w-8 animate-spin" style={{ color: '#27a644' }} />
                 <p className="text-sm" style={{ color: 'var(--fh-t3)' }}>Agent is working...</p>
               </div>
             )}
@@ -397,7 +397,7 @@ export default function AgentDetailPage() {
 
           <div className="rounded-xl p-4" style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border-2)' }}>
             <div className="text-xs space-y-2" style={{ color: 'var(--fh-t4)' }}>
-              <div className="flex justify-between"><span>Per task</span><span className="font-bold" style={{ color: '#7170ff' }}>{agent.pricePerTask === 0 ? 'Free' : `${agent.pricePerTask.toLocaleString()} ₸`}</span></div>
+              <div className="flex justify-between"><span>Per task</span><span className="font-bold" style={{ color: '#27a644' }}>{agent.pricePerTask === 0 ? 'Free' : `${agent.pricePerTask.toLocaleString()} ₸`}</span></div>
               <div className="flex justify-between"><span>Speed</span><span>{agent.responseTime}</span></div>
               <div className="flex justify-between"><span>Model</span><span>{agent.model}</span></div>
             </div>

@@ -1,8 +1,23 @@
 'use client'
 import { motion } from 'framer-motion'
-import type { ReactNode } from 'react'
+import type { CSSProperties, ReactNode } from 'react'
 
 export const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1]
+
+/** Mono uppercase underline link — used as secondary CTA next to the primary button */
+export const SECONDARY_LINK_STYLE: CSSProperties = {
+  display: 'inline-flex',
+  alignItems: 'center',
+  fontFamily:
+    'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace',
+  fontSize: 11,
+  letterSpacing: '0.14em',
+  textTransform: 'uppercase',
+  color: 'var(--fh-t3)',
+  textDecoration: 'underline',
+  textDecorationColor: 'var(--fh-t4)',
+  textUnderlineOffset: 6,
+}
 
 /** Mono uppercase eyebrow label with a short hairline accent dash */
 export function Eyebrow({ children }: { children: ReactNode }) {

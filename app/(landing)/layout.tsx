@@ -13,10 +13,8 @@ export default function LandingLayout({ children }: { children: React.ReactNode 
       <nav
         className="hidden md:flex items-center justify-between px-8 h-[60px] sticky top-0 z-50"
         style={{
-          background: 'var(--fh-header-bg)',
-          backdropFilter: 'blur(20px)',
-          WebkitBackdropFilter: 'blur(20px)',
-          borderBottom: '1px solid var(--fh-border)',
+          background: 'var(--fh-canvas)',
+          borderBottom: '1px solid var(--fh-sep)',
         }}
       >
         <Link

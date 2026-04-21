@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useState } from 'react'
 import {
-  Check, X as XIcon, Crown, Zap, ArrowRight,
+  Check, X as XIcon, Crown, Zap,
   BarChart3, Target, Sparkles, BadgeCheck,
   TrendingUp, Bell, Shield, MessageSquare,
   Calculator, Bot, FileText, Globe,
@@ -66,8 +66,8 @@ const COMPARISON: { label: string; free: string | boolean; premium: string | boo
 function Cell({ val }: { val: string | boolean }) {
   if (val === true)  return (
     <div className="flex justify-center">
-      <div style={{ width: 20, height: 20, borderRadius: '50%', background: 'rgba(113,112,255,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <Check className="h-3 w-3" style={{ color: '#7170ff' }} />
+      <div style={{ width: 20, height: 20, borderRadius: '50%', background: 'rgba(39,166,68,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <Check className="h-3 w-3" style={{ color: '#27a644' }} />
       </div>
     </div>
   )
@@ -270,7 +270,7 @@ export default function PricingPage() {
                 onMouseEnter={e => { e.currentTarget.style.background = 'var(--fh-surface-3)' }}
                 onMouseLeave={e => { e.currentTarget.style.background = 'var(--fh-surface-2)' }}
               >
-                Начать бесплатно <ArrowRight className="h-4 w-4" />
+                Начать бесплатно
               </Link>
             </div>
           </div>
@@ -279,15 +279,15 @@ export default function PricingPage() {
           <div style={{
             display: 'flex', flexDirection: 'column',
             borderRadius: 20, padding: '28px 28px 24px',
-            background: 'linear-gradient(145deg, rgba(94,106,210,0.07) 0%, rgba(113,112,255,0.03) 100%)',
-            border: '1.5px solid rgba(113,112,255,0.3)',
+            background: 'linear-gradient(145deg, rgba(39,166,68,0.07) 0%, rgba(39,166,68,0.03) 100%)',
+            border: '1.5px solid rgba(39,166,68,0.3)',
             position: 'relative', overflow: 'hidden',
           }}>
             {/* Glow */}
             <div style={{
               position: 'absolute', top: -40, right: -40,
               width: 200, height: 200,
-              background: 'radial-gradient(circle, rgba(113,112,255,0.12) 0%, transparent 70%)',
+              background: 'radial-gradient(circle, rgba(39,166,68,0.12) 0%, transparent 70%)',
               pointerEvents: 'none',
             }} />
 
@@ -295,7 +295,7 @@ export default function PricingPage() {
             <div style={{
               position: 'absolute', top: 0, right: 24,
               padding: '4px 12px', borderRadius: '0 0 10px 10px',
-              background: '#5e6ad2', color: '#fff',
+              background: '#27a644', color: '#fff',
               fontSize: 11, fontWeight: 700, letterSpacing: '0.04em',
             }}>
               ПОПУЛЯРНЫЙ
@@ -303,8 +303,8 @@ export default function PricingPage() {
 
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 10 }}>
-                <Crown className="h-4 w-4" style={{ color: '#7170ff' }} />
-                <p style={{ fontSize: 11, fontWeight: 700, color: '#7170ff', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                <Crown className="h-4 w-4" style={{ color: '#27a644' }} />
+                <p style={{ fontSize: 11, fontWeight: 700, color: '#27a644', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
                   Premium
                 </p>
               </div>
@@ -335,8 +335,8 @@ export default function PricingPage() {
               }}>
                 {PREMIUM_HIGHLIGHTS.map(({ icon: Icon, text }) => (
                   <div key={text} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <div style={{ width: 24, height: 24, borderRadius: 6, background: 'rgba(113,112,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                      <Icon className="h-3 w-3" style={{ color: '#7170ff' }} />
+                    <div style={{ width: 24, height: 24, borderRadius: 6, background: 'rgba(39,166,68,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                      <Icon className="h-3 w-3" style={{ color: '#27a644' }} />
                     </div>
                     <span style={{ fontSize: 12, color: 'var(--fh-t2)', lineHeight: 1.3 }}>{text}</span>
                   </div>
@@ -350,15 +350,15 @@ export default function PricingPage() {
                 style={{
                   display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
                   padding: '13px 16px', borderRadius: 12,
-                  background: '#5e6ad2', color: '#fff',
+                  background: '#27a644', color: '#fff',
                   fontSize: 14, fontWeight: 700, textDecoration: 'none',
-                  boxShadow: '0 0 0 1px rgba(113,112,255,0.25), 0 6px 24px rgba(94,106,210,0.3)',
+                  boxShadow: '0 0 0 1px rgba(39,166,68,0.25), 0 6px 24px rgba(39,166,68,0.3)',
                   transition: 'all 0.15s',
                 }}
-                onMouseEnter={e => { e.currentTarget.style.background = '#7170ff' }}
-                onMouseLeave={e => { e.currentTarget.style.background = '#5e6ad2' }}
+                onMouseEnter={e => { e.currentTarget.style.background = '#1f8a37' }}
+                onMouseLeave={e => { e.currentTarget.style.background = '#27a644' }}
               >
-                <Crown className="h-4 w-4" /> Получить Premium <ArrowRight className="h-4 w-4" />
+                <Crown className="h-4 w-4" /> Получить Premium
               </Link>
               <p style={{ textAlign: 'center', marginTop: 10, fontSize: 11, color: 'var(--fh-t4)' }}>
                 7 дней пробного · Оплата картой
@@ -383,7 +383,7 @@ export default function PricingPage() {
               background: 'var(--fh-surface)', border: '1px solid var(--fh-border)',
               borderRadius: 16,
             }}>
-              <p style={{ fontSize: 30, fontWeight: 700, color: '#7170ff', letterSpacing: '-0.04em', marginBottom: 4 }}>{n}</p>
+              <p style={{ fontSize: 30, fontWeight: 700, color: '#27a644', letterSpacing: '-0.04em', marginBottom: 4 }}>{n}</p>
               <p style={{ fontSize: 12, color: 'var(--fh-t4)', lineHeight: 1.4 }}>{label}</p>
             </div>
           ))}
@@ -410,7 +410,7 @@ export default function PricingPage() {
               Функция
             </span>
             <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--fh-t3)', textAlign: 'center' }}>Starter</span>
-            <span style={{ fontSize: 13, fontWeight: 700, color: '#7170ff', textAlign: 'center' }}>Premium</span>
+            <span style={{ fontSize: 13, fontWeight: 700, color: '#27a644', textAlign: 'center' }}>Premium</span>
           </div>
 
           {COMPARISON.map((row, i) => (
@@ -436,10 +436,10 @@ export default function PricingPage() {
           marginTop: 64, textAlign: 'center',
           padding: 'clamp(36px,5vw,56px) 24px',
           borderRadius: 24,
-          background: 'linear-gradient(135deg, rgba(94,106,210,0.07) 0%, rgba(113,112,255,0.03) 100%)',
-          border: '1px solid rgba(113,112,255,0.2)',
+          background: 'linear-gradient(135deg, rgba(39,166,68,0.07) 0%, rgba(39,166,68,0.03) 100%)',
+          border: '1px solid rgba(39,166,68,0.2)',
         }}>
-          <Crown className="h-10 w-10 mx-auto mb-4" style={{ color: '#7170ff' }} />
+          <Crown className="h-10 w-10 mx-auto mb-4" style={{ color: '#27a644' }} />
           <h2 style={{ fontSize: 'clamp(20px,3vw,30px)', fontWeight: 700, color: 'var(--fh-t1)', marginBottom: 12, letterSpacing: '-0.04em' }}>
             Готовы зарабатывать больше?
           </h2>
@@ -450,22 +450,24 @@ export default function PricingPage() {
             <Link
               href="/auth/register"
               style={{
-                display: 'inline-flex', alignItems: 'center', gap: 6,
-                padding: '11px 22px', borderRadius: 12,
-                background: 'var(--fh-surface)', border: '1px solid var(--fh-border)',
-                color: 'var(--fh-t2)', fontSize: 14, fontWeight: 600, textDecoration: 'none',
+                display: 'inline-flex', alignItems: 'center',
+                fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace',
+                fontSize: 11, letterSpacing: '0.14em', textTransform: 'uppercase',
+                color: 'var(--fh-t3)', textDecoration: 'underline',
+                textDecorationColor: 'var(--fh-t4)', textUnderlineOffset: 6,
+                paddingLeft: 12,
               }}
             >
-              Начать бесплатно <ArrowRight className="h-3.5 w-3.5" />
+              Начать бесплатно
             </Link>
             <Link
               href="/premium"
               style={{
                 display: 'inline-flex', alignItems: 'center', gap: 6,
                 padding: '11px 22px', borderRadius: 12,
-                background: '#5e6ad2', color: '#fff',
+                background: '#27a644', color: '#fff',
                 fontSize: 14, fontWeight: 700, textDecoration: 'none',
-                boxShadow: '0 4px 20px rgba(94,106,210,0.3)',
+                boxShadow: '0 4px 20px rgba(39,166,68,0.3)',
               }}
             >
               <Crown className="h-4 w-4" /> Получить Premium

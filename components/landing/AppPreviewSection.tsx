@@ -333,7 +333,7 @@ const CONTENT = {
       { kv: '06', title: 'Верификация', sub: 'Тексерілген мамандарға бейдж.' },
     ],
   },
-} as const
+}
 
 export default function AppPreviewSection() {
   const { lang } = useLang()

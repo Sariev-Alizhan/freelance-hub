@@ -15,7 +15,7 @@ export default async function NewOrderPage() {
               width: '52px',
               height: '52px',
               background: 'var(--fh-primary-muted)',
-              border: '1px solid rgba(94,106,210,0.2)',
+              border: '1px solid rgba(39,166,68,0.2)',
             }}
           >
             <Briefcase className="h-6 w-6" style={{ color: 'var(--fh-primary)' }} />

@@ -1,9 +1,9 @@
 'use client'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { ArrowUpRight, ArrowRight } from 'lucide-react'
+import { ArrowUpRight } from 'lucide-react'
 import { useLang } from '@/lib/context/LanguageContext'
-import { SectionShell, EditorialHeading, EASE } from './_section-atoms'
+import { SectionShell, EditorialHeading, EASE, SECONDARY_LINK_STYLE } from './_section-atoms'
 
 const CONTENT = {
   en: {
@@ -92,7 +92,7 @@ const CONTENT = {
     ctaBtn1: 'Қосылу',
     ctaBtn2: 'Фрилансерлер',
   },
-} as const
+}
 
 export default function TopFreelancers() {
   const { lang } = useLang()
@@ -266,24 +266,9 @@ export default function TopFreelancers() {
             </Link>
             <Link
               href="/freelancers"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: 8,
-                padding: '13px 18px',
-                borderRadius: 999,
-                background: 'transparent',
-                border: '1px solid var(--fh-border-2)',
-                color: 'var(--fh-t2)',
-                fontSize: 14,
-                fontWeight: 510,
-                letterSpacing: '-0.01em',
-                textDecoration: 'none',
-                whiteSpace: 'nowrap',
-              }}
+              style={{ ...SECONDARY_LINK_STYLE, paddingLeft: 8, whiteSpace: 'nowrap' }}
             >
               {c.ctaBtn2}
-              <ArrowRight style={{ width: 14, height: 14 }} />
             </Link>
           </div>
         </motion.div>

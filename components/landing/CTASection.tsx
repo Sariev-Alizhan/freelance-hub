@@ -1,8 +1,9 @@
 'use client'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { ArrowUpRight, ArrowRight } from 'lucide-react'
+import { ArrowUpRight } from 'lucide-react'
 import { useLang } from '@/lib/context/LanguageContext'
+import { SECONDARY_LINK_STYLE } from './_section-atoms'
 
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1]
 
@@ -42,12 +43,9 @@ export default function CTASection() {
           display: 'grid',
           gridTemplateColumns: 'minmax(0, 1fr)',
           gap: 'clamp(28px, 4vw, 48px)',
-          padding: 'clamp(36px, 6vw, 72px) clamp(24px, 5vw, 64px)',
-          borderRadius: 'clamp(18px, 2.2vw, 28px)',
-          background: 'var(--card)',
-          border: '1px solid var(--fh-border)',
-          backdropFilter: 'blur(10px)',
-          WebkitBackdropFilter: 'blur(10px)',
+          padding: 'clamp(36px, 6vw, 72px) 0',
+          borderTop: '1px solid var(--fh-sep)',
+          borderBottom: '1px solid var(--fh-sep)',
         }}
       >
         {/* Hairline accent bar */}
@@ -135,32 +133,9 @@ export default function CTASection() {
 
           <Link
             href="/auth/register"
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: 10,
-              padding: '15px 22px',
-              borderRadius: 999,
-              border: '1px solid var(--fh-border-2)',
-              color: 'var(--fh-t2)',
-              fontSize: 15,
-              fontWeight: 510,
-              letterSpacing: '-0.01em',
-              textDecoration: 'none',
-              background: 'transparent',
-              transition: 'color 180ms ease, border-color 180ms ease',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = 'var(--fh-t3)'
-              e.currentTarget.style.color = 'var(--fh-t1)'
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = 'var(--fh-border-2)'
-              e.currentTarget.style.color = 'var(--fh-t2)'
-            }}
+            style={{ ...SECONDARY_LINK_STYLE, paddingLeft: 12 }}
           >
             {ct.btn2}
-            <ArrowRight style={{ width: 16, height: 16 }} />
           </Link>
         </div>
 
@@ -175,7 +150,7 @@ export default function CTASection() {
             color: 'var(--fh-t4)',
           }}
         >
-          Built in Kazakhstan · Open to the world
+          {ct.tag}
         </p>
       </motion.div>
     </section>

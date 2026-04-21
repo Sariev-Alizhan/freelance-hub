@@ -17,7 +17,7 @@ const SECTIONS = [
   },
   {
     icon: Search,
-    color: '#7170ff',
+    color: '#27a644',
     title: 'Finding Freelancers',
     id: 'find-freelancers',
     items: [
@@ -110,7 +110,7 @@ const SECTIONS = [
   },
   {
     icon: Globe,
-    color: '#7170ff',
+    color: '#27a644',
     title: 'Localization',
     id: 'localization',
     items: [
@@ -297,7 +297,7 @@ export default function DocsPage() {
                 { href: '/modules',       label: 'AI Modules'        },
                 { href: '/premium',       label: 'Get Premium'       },
                 { href: '/vote',          label: 'Vote on features'  },
-                { href: '/play',          label: '🎮 Play Block Blast'},
+                { href: '/play',          label: 'Play Block Blast'},
               ].map(l => (
                 <Link
                   key={l.href}
@@ -326,7 +326,7 @@ export default function DocsPage() {
                 style={{ padding: '8px 20px', borderRadius: 8, background: 'rgba(41,182,246,0.1)', border: '1px solid rgba(41,182,246,0.2)', color: '#29b6f6', fontSize: 13, fontWeight: 600, textDecoration: 'none' }}>
                 Telegram @zhanmate
               </a>
-              <Link href="/vote" style={{ padding: '8px 20px', borderRadius: 8, background: 'rgba(113,112,255,0.08)', border: '1px solid rgba(113,112,255,0.2)', color: '#7170ff', fontSize: 13, fontWeight: 600, textDecoration: 'none' }}>
+              <Link href="/vote" style={{ padding: '8px 20px', borderRadius: 8, background: 'rgba(39,166,68,0.08)', border: '1px solid rgba(39,166,68,0.2)', color: '#27a644', fontSize: 13, fontWeight: 600, textDecoration: 'none' }}>
                 Request a feature
               </Link>
             </div>

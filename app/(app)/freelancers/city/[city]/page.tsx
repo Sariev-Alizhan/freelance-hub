@@ -76,8 +76,8 @@ export default async function CityFreelancersPage({ params }: { params: Promise<
       {/* Hero */}
       <div className="mb-10">
         <div className="flex items-center gap-2 mb-3">
-          <MapPin className="h-5 w-5" style={{ color: '#7170ff' }} />
-          <span style={{ fontSize: '12px', color: '#7170ff', fontWeight: 590, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+          <MapPin className="h-5 w-5" style={{ color: '#27a644' }} />
+          <span style={{ fontSize: '12px', color: '#27a644', fontWeight: 590, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
             {city.country}
           </span>
         </div>
@@ -126,7 +126,7 @@ export default async function CityFreelancersPage({ params }: { params: Promise<
           <Link
             href="/auth/register"
             className="inline-flex items-center gap-2"
-            style={{ padding: '10px 24px', borderRadius: '8px', background: '#5e6ad2', color: '#fff', fontSize: '14px', fontWeight: 590 }}
+            style={{ padding: '10px 24px', borderRadius: '8px', background: '#27a644', color: '#fff', fontSize: '14px', fontWeight: 590 }}
           >
             Join as freelancer <ArrowRight className="h-4 w-4" />
           </Link>
@@ -167,7 +167,7 @@ export default async function CityFreelancersPage({ params }: { params: Promise<
                       <span style={{ fontSize: '12px', fontWeight: 590, color: 'var(--fh-t1)' }}>{f.rating?.toFixed(1) || '—'}</span>
                       <span style={{ fontSize: '11px', color: 'var(--fh-t4)' }}>({f.reviews_count || 0})</span>
                     </div>
-                    <span style={{ fontSize: '12px', fontWeight: 590, color: '#7170ff' }}>
+                    <span style={{ fontSize: '12px', fontWeight: 590, color: '#27a644' }}>
                       from {f.price_from?.toLocaleString()} ₸
                     </span>
                   </div>

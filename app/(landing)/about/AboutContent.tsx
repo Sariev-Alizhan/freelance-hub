@@ -37,8 +37,8 @@ const CONTENT = {
       },
       {
         icon: Sparkles,
-        color: '#7170ff',
-        bg: 'rgba(113,112,255,0.08)',
+        color: '#27a644',
+        bg: 'rgba(39,166,68,0.08)',
         title: 'The idea',
         text: 'We built the platform we always wanted: clients and specialists connect directly, agree on payment in any way that works — Kaspi, USDT, bank transfer, cash. No middlemen taking a cut.',
       },
@@ -66,7 +66,7 @@ const CONTENT = {
 
     stats: [
       { label: 'Commission', value: '0%', color: '#27a644' },
-      { label: 'Countries',  value: 'Global', color: '#7170ff' },
+      { label: 'Countries',  value: 'Global', color: '#27a644' },
       { label: 'AI model',   value: 'Claude', color: '#fbbf24' },
     ],
 
@@ -83,13 +83,13 @@ const CONTENT = {
     founderName: 'Alizhan Sariyev',
     founderBio: 'Developer, entrepreneur, and AI enthusiast from Almaty, Kazakhstan. Building tools that give everyone equal access to digital opportunity — regardless of geography, language, or currency.',
     founderTimeline: [
-      { year: '2026', icon: '🌐', label: 'FreelanceHub', desc: 'Launched a global decentralized freelance platform built entirely solo. 0% commission, AI-powered, designed for the world.' },
-      { year: '2025', icon: '🎮', label: 'GrandGames', desc: 'Deputy Director at GrandGames (Almaty). Game development and company growth strategy.' },
-      { year: '2024', icon: '🕹', label: 'RedPadGames — Dustland', desc: 'Frontend Game Developer at RedPadGames (Almaty). Built gameplay UI for Dustland using Unreal Engine 5.' },
-      { year: '2023', icon: '🤖', label: 'SITS & AI Journey', desc: 'Founded Sariyev IT Solutions. Began deep dive into AI: Claude, GPT, prompt engineering, Telegram bots, automation.' },
+      { year: '2026', label: 'FreelanceHub', desc: 'Launched a global decentralized freelance platform built entirely solo. 0% commission, AI-powered, designed for the world.' },
+      { year: '2025', label: 'GrandGames', desc: 'Deputy Director at GrandGames (Almaty). Game development and company growth strategy.' },
+      { year: '2024', label: 'RedPadGames — Dustland', desc: 'Frontend Game Developer at RedPadGames (Almaty). Built gameplay UI for Dustland using Unreal Engine 5.' },
+      { year: '2023', label: 'SITS & AI Journey', desc: 'Founded Sariyev IT Solutions. Began deep dive into AI: Claude, GPT, prompt engineering, Telegram bots, automation.' },
     ],
     founderSkills: ['Next.js', 'TypeScript', 'React', 'Supabase', 'Claude AI', 'Python', 'Telegram Bots', 'C++', 'Unreal Engine 5', 'PostgreSQL'],
-    founderLangs: ['🇰🇿 Kazakh', '🇷🇺 Russian', '🇬🇧 English', '🇹🇷 Turkish', '🇰🇷 Korean (learning)', '🤖 AI / Prompting'],
+    founderLangs: ['Kazakh', 'Russian', 'English', 'Turkish', 'Korean (learning)', 'AI / Prompting'],
     founderEdu: 'Kazakh-Turkish High School · Issyk, Kazakhstan',
     founderProjects: [
       { name: 'FreelanceHub', url: 'https://www.freelance-hub.kz', desc: 'Global freelance platform' },
@@ -127,8 +127,8 @@ const CONTENT = {
       },
       {
         icon: Sparkles,
-        color: '#7170ff',
-        bg: 'rgba(113,112,255,0.08)',
+        color: '#27a644',
+        bg: 'rgba(39,166,68,0.08)',
         title: 'Идея',
         text: 'Мы построили платформу, которую всегда хотели видеть сами: клиенты и специалисты общаются напрямую и договариваются об оплате любым удобным способом — Kaspi, USDT, банковский перевод, наличные. Без посредников.',
       },
@@ -156,7 +156,7 @@ const CONTENT = {
 
     stats: [
       { label: 'Комиссия', value: '0%',         color: '#27a644' },
-      { label: 'Страны',   value: 'Весь мир',    color: '#7170ff' },
+      { label: 'Страны',   value: 'Весь мир',    color: '#27a644' },
       { label: 'AI-модель', value: 'Claude',     color: '#fbbf24' },
     ],
 
@@ -173,13 +173,13 @@ const CONTENT = {
     founderName: 'Алижан Сариев',
     founderBio: 'Разработчик, предприниматель и AI-энтузиаст из Алматы, Казахстан. Создаёт инструменты, дающие каждому равный доступ к цифровым возможностям — вне зависимости от географии, языка или валюты.',
     founderTimeline: [
-      { year: '2026', icon: '🌐', label: 'FreelanceHub', desc: 'Запустил глобальную децентрализованную фриланс-платформу полностью самостоятельно. 0% комиссии, AI-функции, рассчитана на весь мир.' },
-      { year: '2025', icon: '🎮', label: 'GrandGames', desc: 'Заместитель директора в GrandGames (Алматы). Разработка игр и стратегия развития компании.' },
-      { year: '2024', icon: '🕹', label: 'RedPadGames — Dustland', desc: 'Frontend Game Developer в RedPadGames (Алматы). Разработка игрового UI для Dustland на Unreal Engine 5.' },
-      { year: '2023', icon: '🤖', label: 'SITS & путь в AI', desc: 'Основал Sariyev IT Solutions. Начал глубокое погружение в AI: Claude, GPT, промпт-инжиниринг, Telegram-боты, автоматизация.' },
+      { year: '2026', label: 'FreelanceHub', desc: 'Запустил глобальную децентрализованную фриланс-платформу полностью самостоятельно. 0% комиссии, AI-функции, рассчитана на весь мир.' },
+      { year: '2025', label: 'GrandGames', desc: 'Заместитель директора в GrandGames (Алматы). Разработка игр и стратегия развития компании.' },
+      { year: '2024', label: 'RedPadGames — Dustland', desc: 'Frontend Game Developer в RedPadGames (Алматы). Разработка игрового UI для Dustland на Unreal Engine 5.' },
+      { year: '2023', label: 'SITS & путь в AI', desc: 'Основал Sariyev IT Solutions. Начал глубокое погружение в AI: Claude, GPT, промпт-инжиниринг, Telegram-боты, автоматизация.' },
     ],
     founderSkills: ['Next.js', 'TypeScript', 'React', 'Supabase', 'Claude AI', 'Python', 'Telegram Боты', 'C++', 'Unreal Engine 5', 'PostgreSQL'],
-    founderLangs: ['🇰🇿 Казахский', '🇷🇺 Русский', '🇬🇧 Английский', '🇹🇷 Турецкий', '🇰🇷 Корейский (изучаю)', '🤖 AI / Промптинг'],
+    founderLangs: ['Казахский', 'Русский', 'Английский', 'Турецкий', 'Корейский (изучаю)', 'AI / Промптинг'],
     founderEdu: 'Казахско-Турецкий лицей-Интернат · г. Иссык, Казахстан',
     founderProjects: [
       { name: 'FreelanceHub', url: 'https://www.freelance-hub.kz', desc: 'Глобальная фриланс-платформа' },
@@ -220,7 +220,7 @@ const DONATE_CARDS = [
 
 const ROLE_ICONS = [Code2, Globe, MapPin]
 const ROLE_COLORS = [
-  { color: '#7170ff', bg: 'rgba(113,112,255,0.08)' },
+  { color: '#27a644', bg: 'rgba(39,166,68,0.08)' },
   { color: '#fbbf24', bg: 'rgba(251,191,36,0.08)' },
   { color: '#27a644', bg: 'rgba(39,166,68,0.08)' },
 ]
@@ -392,9 +392,9 @@ export default function AboutContent() {
       </div>
 
       {/* Values / Manifesto */}
-      <div className="rounded-xl p-6 mb-6" style={{ background: 'rgba(94,106,210,0.04)', border: '1px solid rgba(94,106,210,0.15)' }}>
+      <div className="rounded-xl p-6 mb-6" style={{ background: 'rgba(39,166,68,0.04)', border: '1px solid rgba(39,166,68,0.15)' }}>
         <div className="flex items-center gap-2 mb-3">
-          <Shield className="h-4 w-4" style={{ color: '#7170ff' }} />
+          <Shield className="h-4 w-4" style={{ color: '#27a644' }} />
           <h2 style={{ fontSize: '14px', fontWeight: 590, color: 'var(--fh-t1)', letterSpacing: '-0.02em' }}>{c.sectionValues}</h2>
         </div>
         <p style={{ fontSize: '14px', color: 'var(--fh-t3)', lineHeight: 1.75, fontWeight: 400, letterSpacing: '-0.01em', marginBottom: '12px' }}>
@@ -408,9 +408,9 @@ export default function AboutContent() {
           <Link
             href="/orders"
             className="transition-all"
-            style={{ padding: '9px 20px', borderRadius: '6px', background: '#5e6ad2', color: '#ffffff', fontSize: '14px', fontWeight: 510 }}
-            onMouseEnter={e => { e.currentTarget.style.background = '#828fff' }}
-            onMouseLeave={e => { e.currentTarget.style.background = '#5e6ad2' }}
+            style={{ padding: '9px 20px', borderRadius: '6px', background: '#27a644', color: '#ffffff', fontSize: '14px', fontWeight: 510 }}
+            onMouseEnter={e => { e.currentTarget.style.background = '#1f8a37' }}
+            onMouseLeave={e => { e.currentTarget.style.background = '#27a644' }}
           >
             {c.ctaOrders}
           </Link>
@@ -459,15 +459,17 @@ export default function AboutContent() {
         <div className="flex items-start gap-4 mb-5">
           <div style={{
             width: 60, height: 60, borderRadius: 16, flexShrink: 0,
-            background: 'linear-gradient(135deg, rgba(113,112,255,0.2), rgba(39,166,68,0.15))',
-            border: '2px solid rgba(113,112,255,0.25)',
+            background: 'linear-gradient(135deg, rgba(39,166,68,0.2), rgba(39,166,68,0.15))',
+            border: '2px solid rgba(39,166,68,0.25)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             fontSize: 26,
-          }}>🧑‍💻</div>
+          }}>
+            <span style={{ fontSize: 20, fontWeight: 800, color: '#27a644', letterSpacing: '-0.03em' }}>AS</span>
+          </div>
           <div style={{ flex: 1 }}>
             <h3 style={{ fontSize: 18, fontWeight: 800, letterSpacing: '-0.03em', color: 'var(--fh-t1)', marginBottom: 4 }}>{c.founderName}</h3>
             <p style={{ fontSize: 13, color: 'var(--fh-t3)', lineHeight: 1.6 }}>{c.founderBio}</p>
-            <p style={{ fontSize: 11, color: 'var(--fh-t4)', marginTop: 4 }}>🎓 {c.founderEdu}</p>
+            <p style={{ fontSize: 11, color: 'var(--fh-t4)', marginTop: 4 }}>{c.founderEdu}</p>
           </div>
         </div>
 
@@ -476,9 +478,8 @@ export default function AboutContent() {
           {c.founderTimeline.map(t => (
             <div key={t.year} style={{ display: 'flex', gap: 12, alignItems: 'flex-start' }}>
               <div style={{ minWidth: 36, paddingTop: 2 }}>
-                <div style={{ fontSize: 11, fontWeight: 700, color: '#7170ff', letterSpacing: '-0.01em' }}>{t.year}</div>
+                <div style={{ fontSize: 11, fontWeight: 700, color: '#27a644', letterSpacing: '-0.01em' }}>{t.year}</div>
               </div>
-              <div style={{ fontSize: 18, flexShrink: 0, paddingTop: 0 }}>{t.icon}</div>
               <div style={{ flex: 1 }}>
                 <p style={{ fontSize: 13, fontWeight: 700, color: 'var(--fh-t1)', marginBottom: 2 }}>{t.label}</p>
                 <p style={{ fontSize: 12, color: 'var(--fh-t4)', lineHeight: 1.5 }}>{t.desc}</p>
@@ -508,7 +509,7 @@ export default function AboutContent() {
           </p>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
             {c.founderSkills.map(s => (
-              <span key={s} style={{ padding: '4px 10px', borderRadius: 6, background: 'rgba(113,112,255,0.08)', border: '1px solid rgba(113,112,255,0.18)', fontSize: 12, fontWeight: 600, color: '#7170ff' }}>
+              <span key={s} style={{ padding: '4px 10px', borderRadius: 6, background: 'rgba(39,166,68,0.08)', border: '1px solid rgba(39,166,68,0.18)', fontSize: 12, fontWeight: 600, color: '#27a644' }}>
                 {s}
               </span>
             ))}
@@ -548,7 +549,7 @@ export default function AboutContent() {
         </p>
         <div className="flex flex-wrap gap-2">
           {TECH.map(t => (
-            <span key={t} style={{ padding: '4px 10px', borderRadius: '5px', background: 'rgba(113,112,255,0.08)', border: '1px solid rgba(113,112,255,0.18)', fontSize: '12px', fontWeight: 510, color: '#7170ff' }}>
+            <span key={t} style={{ padding: '4px 10px', borderRadius: '5px', background: 'rgba(39,166,68,0.08)', border: '1px solid rgba(39,166,68,0.18)', fontSize: '12px', fontWeight: 510, color: '#27a644' }}>
               {t}
             </span>
           ))}

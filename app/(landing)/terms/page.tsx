@@ -92,9 +92,9 @@ export default function TermsPage() {
       <div className="mb-12">
         <div
           className="inline-flex items-center gap-2 mb-4 rounded-full px-3 py-1"
-          style={{ background: 'rgba(94,106,210,0.08)', border: '1px solid rgba(94,106,210,0.2)' }}
+          style={{ background: 'rgba(39,166,68,0.08)', border: '1px solid rgba(39,166,68,0.2)' }}
         >
-          <span style={{ fontSize: '11px', fontWeight: 590, color: '#7170ff', letterSpacing: '0.06em', textTransform: 'uppercase' }}>Legal</span>
+          <span style={{ fontSize: '11px', fontWeight: 590, color: '#27a644', letterSpacing: '0.06em', textTransform: 'uppercase' }}>Legal</span>
         </div>
         <h1
           style={{ fontSize: 'clamp(28px, 5vw, 40px)', fontWeight: 700, color: 'var(--fh-t1)', letterSpacing: '-0.03em', lineHeight: 1.15, marginBottom: '12px' }}
@@ -109,7 +109,7 @@ export default function TermsPage() {
       {/* Intro callout */}
       <div
         className="mb-10 rounded-xl p-4"
-        style={{ background: 'rgba(94,106,210,0.05)', border: '1px solid rgba(94,106,210,0.15)' }}
+        style={{ background: 'rgba(39,166,68,0.05)', border: '1px solid rgba(39,166,68,0.15)' }}
       >
         <p style={{ fontSize: '13px', color: 'var(--fh-t3)', lineHeight: 1.7 }}>
           These Terms govern your use of FreelanceHub — a freelance marketplace for the CIS region.
@@ -120,7 +120,7 @@ export default function TermsPage() {
             href="https://t.me/zhanmate"
             target="_blank"
             rel="noopener noreferrer"
-            style={{ color: '#7170ff', textDecoration: 'none' }}
+            style={{ color: '#27a644', textDecoration: 'none' }}
           >
             Telegram
           </a>.
@@ -153,7 +153,7 @@ export default function TermsPage() {
         <Link
           href="/privacy"
           className="hover:underline"
-          style={{ fontSize: '13px', color: '#7170ff', fontWeight: 510, textDecoration: 'none' }}
+          style={{ fontSize: '13px', color: '#27a644', fontWeight: 510, textDecoration: 'none' }}
         >
           Privacy Policy →
         </Link>

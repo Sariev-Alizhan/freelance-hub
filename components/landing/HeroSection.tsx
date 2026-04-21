@@ -1,8 +1,8 @@
 'use client'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { ArrowUpRight, ArrowRight } from 'lucide-react'
 import { useLang } from '@/lib/context/LanguageContext'
+import { SECONDARY_LINK_STYLE } from './_section-atoms'
 
 const EASE_OUT_EXPO: [number, number, number, number] = [0.16, 1, 0.3, 1]
 const EASE_OUT_SOFT: [number, number, number, number] = [0.22, 1, 0.36, 1]
@@ -43,11 +43,6 @@ export default function HeroSection() {
           0%,100% { opacity: 1; transform: scale(1); }
           50%      { opacity: 0.35; transform: scale(0.7); }
         }
-        @keyframes fh-arrow-nudge {
-          0%,100% { transform: translate(0,0); }
-          50%      { transform: translate(2px,-2px); }
-        }
-
         /* Grain: SVG noise with monochrome channel. Opacity + blend mode
            flip between modes so it stays visible but not harsh on light. */
         .fh-grain {
@@ -92,9 +87,6 @@ export default function HeroSection() {
                       background 260ms ease;
         }
         .fh-cta-primary:hover { transform: translateY(-2px); }
-        .fh-cta-primary:hover .fh-cta-arrow { animation: fh-arrow-nudge 700ms ease-in-out infinite; }
-        .fh-cta-ghost { transition: color 180ms ease, border-color 180ms ease; }
-        .fh-cta-ghost:hover .fh-cta-arrow { animation: fh-arrow-nudge 700ms ease-in-out infinite; }
 
         .fh-ticker-track {
           display: flex;
@@ -321,7 +313,7 @@ export default function HeroSection() {
                 initial={{ opacity: 0, y: 14 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.55, delay: 0.32, ease: EASE_OUT_SOFT }}
-                style={{ display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'center' }}
+                style={{ display: 'flex', flexWrap: 'wrap', gap: 24, alignItems: 'center' }}
               >
                 <Link
                   href="/auth/register"
@@ -329,105 +321,55 @@ export default function HeroSection() {
                   style={{
                     display: 'inline-flex',
                     alignItems: 'center',
-                    gap: 10,
-                    padding: '16px 26px',
-                    borderRadius: 999,
+                    padding: '18px 30px',
                     background: 'var(--fh-t1)',
                     color: 'var(--fh-canvas)',
                     fontSize: 15,
                     fontWeight: 590,
                     letterSpacing: '-0.01em',
                     textDecoration: 'none',
-                    boxShadow: '0 12px 40px rgba(0,0,0,0.12)',
+                    borderRadius: 0,
                   }}
                 >
                   {h.cta1}
-                  <ArrowUpRight className="fh-cta-arrow" style={{ width: 16, height: 16 }} />
                 </Link>
 
-                <Link
-                  href="/orders"
-                  className="fh-cta-ghost"
-                  style={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: 10,
-                    padding: '16px 22px',
-                    borderRadius: 999,
-                    border: '1px solid var(--fh-border-2)',
-                    color: 'var(--fh-t2)',
-                    fontSize: 15,
-                    fontWeight: 510,
-                    letterSpacing: '-0.01em',
-                    textDecoration: 'none',
-                    background: 'transparent',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.borderColor = 'var(--fh-t3)'
-                    e.currentTarget.style.color = 'var(--fh-t1)'
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.borderColor = 'var(--fh-border-2)'
-                    e.currentTarget.style.color = 'var(--fh-t2)'
-                  }}
-                >
+                <Link href="/orders" style={SECONDARY_LINK_STYLE}>
                   {h.cta2}
-                  <ArrowRight className="fh-cta-arrow" style={{ width: 16, height: 16 }} />
                 </Link>
               </motion.div>
             </div>
 
-            {/* Stats — editorial vertical stack, not a boxy grid */}
-            <motion.dl
+            {/* Specimen-label metadata strip — replaces stats grid */}
+            <motion.div
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.42, ease: EASE_OUT_SOFT }}
               style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(3, minmax(0, auto))',
-                columnGap: 'clamp(28px, 5vw, 72px)',
-                rowGap: 4,
+                display: 'flex',
+                flexWrap: 'wrap',
+                gap: 'clamp(20px, 3vw, 40px)',
                 margin: 0,
                 paddingTop: 'clamp(20px, 3vh, 32px)',
                 borderTop: '1px solid var(--fh-hero-stat-border)',
-                justifyContent: 'start',
+                fontFamily:
+                  'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace',
+                fontSize: 11,
+                letterSpacing: '0.14em',
+                textTransform: 'uppercase',
+                color: 'var(--fh-t3)',
               }}
             >
-              {[
-                { v: h.stat1v, l: h.stat1l },
-                { v: h.stat2v, l: h.stat2l },
-                { v: h.stat3v, l: h.stat3l },
-              ].map((s) => (
-                <div key={s.l} style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                  <dt
-                    style={{
-                      order: 2,
-                      fontFamily:
-                        'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace',
-                      fontSize: 10,
-                      letterSpacing: '0.16em',
-                      textTransform: 'uppercase',
-                      color: 'var(--fh-t4)',
-                    }}
-                  >
-                    {s.l}
-                  </dt>
-                  <dd
-                    style={{
-                      order: 1,
-                      margin: 0,
-                      fontSize: 'clamp(26px, 3.2vw, 40px)',
-                      lineHeight: 1,
-                      letterSpacing: '-0.03em',
-                      fontWeight: 590,
-                      color: 'var(--fh-t1)',
-                    }}
-                  >
-                    {s.v}
-                  </dd>
-                </div>
-              ))}
-            </motion.dl>
+              <span>v0.1.0</span>
+              <span style={{ color: 'var(--fh-t4)' }}>—</span>
+              <span>No commission</span>
+              <span style={{ color: 'var(--fh-t4)' }}>—</span>
+              <span>Self-hostable</span>
+              <span style={{ color: 'var(--fh-t4)' }}>—</span>
+              <span>Federated identity</span>
+              <span style={{ color: 'var(--fh-t4)' }}>—</span>
+              <span>Kaspi · USDT · bank</span>
+            </motion.div>
           </div>
         </div>
 

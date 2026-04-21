@@ -141,7 +141,7 @@ export default function AgentsPage() {
           <div key={label} className="flex items-center gap-2 px-3 py-2 rounded-lg"
             style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border)' }}
           >
-            <Icon className="h-3.5 w-3.5" style={{ color: '#7170ff' }} />
+            <Icon className="h-3.5 w-3.5" style={{ color: '#27a644' }} />
             <span style={{ fontSize: '13px', fontWeight: 590, color: 'var(--fh-t1)' }}>{value}</span>
             <span style={{ fontSize: '12px', color: 'var(--fh-t4)' }}>{label}</span>
           </div>
@@ -165,7 +165,7 @@ export default function AgentsPage() {
               color: 'var(--fh-t1)',
               fontSize: '14px',
             }}
-            onFocus={e => { e.currentTarget.style.border = '1px solid rgba(113,112,255,0.35)' }}
+            onFocus={e => { e.currentTarget.style.border = '1px solid rgba(39,166,68,0.35)' }}
             onBlur={e => { e.currentTarget.style.border = '1px solid var(--fh-border-2)' }}
           />
         </div>
