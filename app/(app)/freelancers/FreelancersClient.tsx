@@ -140,15 +140,56 @@ export default function FreelancersClient({ realFreelancers = [], defaultCategor
   return (
     <div className="page-shell page-shell--wide pb-safe-mobile">
 
-      {/* ── Header ─────────────────────────────────────────────── */}
+      {/* ── Editorial header ───────────────────────────────────── */}
       <div className="mb-5 sm:mb-8">
-        <h1 style={{
-          fontSize: 'clamp(20px, 3.5vw, 30px)', fontWeight: 510,
-          letterSpacing: '-0.04em', color: 'var(--fh-t1)', marginBottom: '4px',
-        }}>
-          Freelancers
+        <div
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 12,
+            marginBottom: 14,
+            fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace',
+            fontSize: 11,
+            letterSpacing: '0.18em',
+            textTransform: 'uppercase',
+            color: 'var(--fh-t3)',
+          }}
+        >
+          <span
+            aria-hidden
+            style={{
+              width: 24, height: 2, borderRadius: 2,
+              background: '#27a644',
+              boxShadow: '0 0 12px rgba(39,166,68,0.55)',
+            }}
+          />
+          <span>Talent pool</span>
+        </div>
+        <h1
+          style={{
+            fontSize: 'clamp(28px, 4.5vw, 48px)',
+            fontWeight: 700,
+            letterSpacing: '-0.035em',
+            color: 'var(--fh-t1)',
+            margin: 0,
+            lineHeight: 1.0,
+            fontFeatureSettings: '"cv01", "ss03"',
+          }}
+        >
+          Find your{' '}
+          <span
+            style={{
+              fontFamily:
+                'var(--font-serif-display), ui-serif, Georgia, "Times New Roman", serif',
+              fontStyle: 'italic',
+              fontWeight: 400,
+              letterSpacing: '-0.01em',
+            }}
+          >
+            specialist.
+          </span>
         </h1>
-        <p style={{ fontSize: '13px', color: 'var(--fh-t3)' }}>
+        <p style={{ fontSize: 14, color: 'var(--fh-t3)', marginTop: 10 }}>
           Find the perfect specialist for your project
         </p>
       </div>
@@ -340,27 +381,28 @@ export default function FreelancersClient({ realFreelancers = [], defaultCategor
                   onClick={() => handleCategory(cat.slug)}
                   className="flex-shrink-0 transition-all active:scale-[0.97] inline-flex items-center gap-1.5"
                   style={{
-                    padding: '6px 12px 6px 10px', borderRadius: '99px', fontSize: '13px',
-                    fontWeight: active ? 600 : 510,
-                    background: active ? 'var(--fh-primary)' : 'var(--fh-surface-2)',
-                    border: active ? '1px solid transparent' : '1px solid var(--fh-border)',
-                    color: active ? '#fff' : 'var(--fh-t3)',
+                    padding: '7px 12px 7px 10px', borderRadius: 999, fontSize: 13,
+                    fontWeight: active ? 590 : 510,
+                    background: active ? 'var(--fh-t1)' : 'var(--fh-surface-2)',
+                    border: active ? '1px solid var(--fh-t1)' : '1px solid var(--fh-border)',
+                    color: active ? 'var(--fh-canvas)' : 'var(--fh-t3)',
                     whiteSpace: 'nowrap',
+                    letterSpacing: '-0.01em',
                   }}
                 >
                   {Icon && (
                     <Icon style={{
                       width: 13, height: 13,
-                      color: active ? '#fff' : (cat.slug === 'all' ? 'var(--fh-t4)' : cat.color),
+                      color: active ? 'var(--fh-canvas)' : (cat.slug === 'all' ? 'var(--fh-t4)' : cat.color),
                     }} />
                   )}
                   {cat.label}
                   {count > 0 && (
                     <span style={{
                       marginLeft: 1, padding: '1px 6px', borderRadius: 999,
-                      background: active ? 'rgba(255,255,255,0.22)' : 'var(--fh-surface)',
+                      background: active ? 'rgba(0,0,0,0.15)' : 'var(--fh-surface)',
                       fontSize: 10, fontWeight: 700,
-                      color: active ? '#fff' : 'var(--fh-t4)',
+                      color: active ? 'var(--fh-canvas)' : 'var(--fh-t4)',
                       lineHeight: 1.4,
                     }}>
                       {count}
@@ -433,7 +475,7 @@ export default function FreelancersClient({ realFreelancers = [], defaultCategor
               </p>
               {!search && category === 'all' && (
                 <a href="/auth/register" className="inline-block mt-4 active:scale-[0.97] transition-all"
-                  style={{ padding: '10px 24px', borderRadius: '8px', background: 'var(--fh-primary)', color: '#fff', fontSize: '14px', fontWeight: 510 }}>
+                  style={{ padding: '12px 26px', borderRadius: 999, background: 'var(--fh-t1)', color: 'var(--fh-canvas)', fontSize: 14, fontWeight: 590, letterSpacing: '-0.01em', textDecoration: 'none' }}>
                   Register for free
                 </a>
               )}

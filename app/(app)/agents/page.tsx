@@ -67,39 +67,66 @@ export default function AgentsPage() {
   return (
     <div className="page-shell page-shell--wide">
 
-      {/* Page header */}
+      {/* Editorial header */}
       <div className="mb-8">
-        {/* Hero badge */}
-        <div className="inline-flex items-center gap-2 mb-4 px-3 py-1.5 rounded-full"
+        <div
           style={{
-            background: 'rgba(113,112,255,0.08)',
-            border: '1px solid rgba(113,112,255,0.2)',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 12,
+            marginBottom: 14,
+            fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace',
+            fontSize: 11,
+            letterSpacing: '0.18em',
+            textTransform: 'uppercase',
+            color: 'var(--fh-t3)',
           }}
         >
-          <Bot className="h-3.5 w-3.5" style={{ color: '#7170ff' }} />
-          <span style={{ fontSize: '12px', fontWeight: 590, color: '#7170ff', letterSpacing: '0.02em' }}>
-            Phase 1 · AI Agent Marketplace
-          </span>
-          <span style={{
-            fontSize: '9px', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase',
-            padding: '1px 6px', borderRadius: '4px',
-            background: 'rgba(39,166,68,0.12)', border: '1px solid rgba(39,166,68,0.25)', color: '#27a644',
-          }}>
+          <span
+            aria-hidden
+            style={{
+              width: 24, height: 2, borderRadius: 2,
+              background: '#27a644',
+              boxShadow: '0 0 12px rgba(39,166,68,0.55)',
+            }}
+          />
+          <span>AI Marketplace</span>
+          <span
+            style={{
+              padding: '2px 8px',
+              borderRadius: 999,
+              border: '1px solid rgba(39,166,68,0.35)',
+              color: '#27a644',
+              fontSize: 10,
+              letterSpacing: '0.14em',
+            }}
+          >
             Beta
           </span>
         </div>
 
         <h1 style={{
-          fontSize: 'clamp(22px, 3.5vw, 30px)',
-          fontWeight: 510,
-          letterSpacing: '-0.04em',
+          fontSize: 'clamp(28px, 4.5vw, 48px)',
+          fontWeight: 700,
+          letterSpacing: '-0.035em',
           color: 'var(--fh-t1)',
-          marginBottom: '6px',
+          margin: 0,
+          lineHeight: 1.0,
           fontFeatureSettings: '"cv01", "ss03"',
         }}>
-          AI Agents
+          AI{' '}
+          <span
+            style={{
+              fontFamily: 'var(--font-serif-display), ui-serif, Georgia, "Times New Roman", serif',
+              fontStyle: 'italic',
+              fontWeight: 400,
+              letterSpacing: '-0.01em',
+            }}
+          >
+            workers.
+          </span>
         </h1>
-        <p style={{ fontSize: '14px', color: 'var(--fh-t3)', fontWeight: 400, maxWidth: '480px', lineHeight: 1.6 }}>
+        <p style={{ fontSize: 14, color: 'var(--fh-t3)', fontWeight: 400, maxWidth: 560, lineHeight: 1.6, marginTop: 10 }}>
           Autonomous AI workers that complete real tasks — just like freelancers, but available 24/7, respond in minutes, and never miss a deadline.
         </p>
       </div>
@@ -170,13 +197,14 @@ export default function AgentsPage() {
               onClick={() => setCategory(cat.slug)}
               className="transition-all"
               style={{
-                padding: '6px 14px',
-                borderRadius: '6px',
-                fontSize: '13px',
-                fontWeight: 510,
-                background: active ? '#5e6ad2' : 'var(--fh-surface-2)',
-                border: active ? '1px solid rgba(113,112,255,0.3)' : '1px solid var(--fh-border)',
-                color: active ? '#ffffff' : 'var(--fh-t3)',
+                padding: '7px 14px',
+                borderRadius: 999,
+                fontSize: 13,
+                fontWeight: active ? 590 : 510,
+                background: active ? 'var(--fh-t1)' : 'var(--fh-surface-2)',
+                border: active ? '1px solid var(--fh-t1)' : '1px solid var(--fh-border)',
+                color: active ? 'var(--fh-canvas)' : 'var(--fh-t3)',
+                letterSpacing: '-0.01em',
               }}
             >
               {cat.label}
@@ -207,40 +235,62 @@ export default function AgentsPage() {
 
       {/* CTA: become an agent creator */}
       <div
-        className="mt-12 rounded-xl p-6 sm:p-8"
+        className="mt-12 rounded-2xl p-6 sm:p-8"
         style={{
-          background: 'linear-gradient(135deg, rgba(113,112,255,0.06), rgba(113,112,255,0.02))',
-          border: '1px solid rgba(113,112,255,0.18)',
+          background: 'var(--card)',
+          border: '1px solid var(--fh-border)',
         }}
       >
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
           <div className="flex-1">
-            <div className="flex items-center gap-2 mb-2">
-              <Bot className="h-4 w-4" style={{ color: '#7170ff' }} />
-              <p style={{ fontSize: '14px', fontWeight: 590, color: 'var(--fh-t1)' }}>
-                Want to deploy your own AI Agent?
-              </p>
+            <div
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 10,
+                marginBottom: 12,
+                fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace',
+                fontSize: 10,
+                letterSpacing: '0.18em',
+                textTransform: 'uppercase',
+                color: '#27a644',
+              }}
+            >
+              <span
+                aria-hidden
+                style={{
+                  width: 18, height: 2, borderRadius: 2,
+                  background: '#27a644',
+                  boxShadow: '0 0 10px rgba(39,166,68,0.55)',
+                }}
+              />
+              <Bot className="h-3 w-3" />
+              Build & earn
             </div>
-            <p style={{ fontSize: '13px', color: 'var(--fh-t3)', lineHeight: 1.6 }}>
-              Build an agent once, earn money while you sleep. Agent creators keep 85% of every task payment.
-              Define a system prompt, set your price, and publish in minutes.
+            <h3 style={{ fontSize: 20, fontWeight: 590, letterSpacing: '-0.02em', color: 'var(--fh-t1)', margin: 0, marginBottom: 8 }}>
+              Deploy your own AI agent.
+            </h3>
+            <p style={{ fontSize: 13.5, color: 'var(--fh-t3)', lineHeight: 1.6, margin: 0, maxWidth: 560 }}>
+              Build an agent once, earn money while you sleep. Creators keep 85% of every task payment.
+              Define a system prompt, set your price, publish in minutes.
             </p>
           </div>
           <Link
             href="/agents/builder"
             className="shrink-0 transition-all"
             style={{
-              padding: '10px 20px',
-              borderRadius: '8px',
-              background: '#5e6ad2',
-              color: '#fff',
-              fontSize: '13px',
+              padding: '12px 22px',
+              borderRadius: 999,
+              background: 'var(--fh-t1)',
+              color: 'var(--fh-canvas)',
+              fontSize: 13,
               fontWeight: 590,
+              letterSpacing: '-0.01em',
               textDecoration: 'none',
               whiteSpace: 'nowrap',
             }}
-            onMouseEnter={(e: React.MouseEvent<HTMLAnchorElement>) => { e.currentTarget.style.background = '#828fff' }}
-            onMouseLeave={(e: React.MouseEvent<HTMLAnchorElement>) => { e.currentTarget.style.background = '#5e6ad2' }}
+            onMouseEnter={(e: React.MouseEvent<HTMLAnchorElement>) => { e.currentTarget.style.transform = 'translateY(-1px)' }}
+            onMouseLeave={(e: React.MouseEvent<HTMLAnchorElement>) => { e.currentTarget.style.transform = 'translateY(0)' }}
           >
             Create Agent →
           </Link>

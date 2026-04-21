@@ -84,27 +84,73 @@ export default function OrdersClient({ realOrders = [], currentUserId }: Props) 
   return (
     <div className="page-shell page-shell--wide pb-safe-mobile">
 
-      {/* ── Header ─────────────────────────────────────────────── */}
-      <div className="flex items-center justify-between mb-5 sm:mb-8">
+      {/* ── Editorial header ───────────────────────────────────── */}
+      <div className="mb-5 sm:mb-8" style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 20, alignItems: 'end' }}>
         <div>
-          <h1 style={{
-            fontSize: 'clamp(20px, 3.5vw, 30px)', fontWeight: 510,
-            letterSpacing: '-0.04em', color: 'var(--fh-t1)', marginBottom: '4px',
-          }}>
-            {to.heading}
+          <div
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 12,
+              marginBottom: 14,
+              fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace',
+              fontSize: 11,
+              letterSpacing: '0.18em',
+              textTransform: 'uppercase',
+              color: 'var(--fh-t3)',
+            }}
+          >
+            <span
+              aria-hidden
+              style={{
+                width: 24, height: 2, borderRadius: 2,
+                background: '#27a644',
+                boxShadow: '0 0 12px rgba(39,166,68,0.55)',
+              }}
+            />
+            <span>{to.heading}</span>
+          </div>
+          <h1
+            style={{
+              fontSize: 'clamp(28px, 4.5vw, 48px)',
+              fontWeight: 700,
+              letterSpacing: '-0.035em',
+              color: 'var(--fh-t1)',
+              margin: 0,
+              lineHeight: 1.0,
+              fontFeatureSettings: '"cv01", "ss03"',
+            }}
+          >
+            {to.subtitle.split(' ').slice(0, -1).join(' ')}{' '}
+            <span
+              style={{
+                fontFamily:
+                  'var(--font-serif-display), ui-serif, Georgia, "Times New Roman", serif',
+                fontStyle: 'italic',
+                fontWeight: 400,
+                letterSpacing: '-0.01em',
+              }}
+            >
+              {to.subtitle.split(' ').slice(-1)[0]}
+            </span>
           </h1>
-          <p style={{ fontSize: '13px', color: 'var(--fh-t3)' }}>
-            {to.subtitle}
-          </p>
         </div>
         <Link
           href="/orders/new"
-          className="flex items-center gap-1.5 transition-all active:scale-[0.97]"
+          className="flex items-center gap-2 transition-all"
           style={{
-            padding: '8px 14px', borderRadius: '8px',
-            background: 'var(--fh-primary)', color: '#fff',
-            fontSize: '13px', fontWeight: 600,
+            padding: '11px 18px',
+            borderRadius: 999,
+            background: 'var(--fh-t1)',
+            color: 'var(--fh-canvas)',
+            fontSize: 13,
+            fontWeight: 590,
+            letterSpacing: '-0.01em',
+            whiteSpace: 'nowrap',
+            textDecoration: 'none',
           }}
+          onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-1px)' }}
+          onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)' }}
         >
           <Plus className="h-4 w-4" />
           <span className="hidden sm:inline">{to.postJobFull}</span>
@@ -233,11 +279,12 @@ export default function OrdersClient({ realOrders = [], currentUserId }: Props) 
                 onClick={() => handleCategory(cat.slug)}
                 className="flex-shrink-0 transition-all active:scale-[0.97]"
                 style={{
-                  padding: '6px 14px', borderRadius: '99px', fontSize: '13px', fontWeight: active ? 600 : 500,
-                  background: active ? 'var(--fh-primary)' : 'var(--fh-surface-2)',
-                  border: active ? '1px solid transparent' : '1px solid var(--fh-border)',
-                  color: active ? '#fff' : 'var(--fh-t3)',
+                  padding: '7px 14px', borderRadius: 999, fontSize: 13, fontWeight: active ? 590 : 510,
+                  background: active ? 'var(--fh-t1)' : 'var(--fh-surface-2)',
+                  border: active ? '1px solid var(--fh-t1)' : '1px solid var(--fh-border)',
+                  color: active ? 'var(--fh-canvas)' : 'var(--fh-t3)',
                   whiteSpace: 'nowrap',
+                  letterSpacing: '-0.01em',
                 }}
               >
                 {cat.label}
@@ -271,7 +318,7 @@ export default function OrdersClient({ realOrders = [], currentUserId }: Props) 
           </div>
           {!search && !urgentOnly && category === 'all' && (
             <Link href="/orders/new" className="transition-all active:scale-[0.97]"
-              style={{ padding: '10px 24px', borderRadius: '8px', background: 'var(--fh-primary)', color: '#fff', fontSize: '14px', fontWeight: 510 }}>
+              style={{ padding: '12px 26px', borderRadius: 999, background: 'var(--fh-t1)', color: 'var(--fh-canvas)', fontSize: 14, fontWeight: 590, letterSpacing: '-0.01em' }}>
               {to.postJobFree}
             </Link>
           )}
