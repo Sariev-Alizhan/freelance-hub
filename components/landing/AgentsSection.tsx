@@ -102,7 +102,7 @@ export default function AgentsSection() {
               viewport={{ once: true, amount: 0.4 }}
               transition={{ delay: i * 0.06, duration: 0.5, ease: EASE }}
               style={{
-                background: 'var(--fh-canvas)',
+                background: 'var(--card)',
                 padding: '26px 26px 24px',
                 display: 'flex',
                 flexDirection: 'column',
@@ -174,7 +174,7 @@ export default function AgentsSection() {
                   padding: '20px 22px',
                   borderRadius: 14,
                   border: '1px solid var(--fh-border)',
-                  background: 'var(--fh-surface)',
+                  background: 'var(--card)',
                   textDecoration: 'none',
                   transition: 'border-color 200ms ease, background 200ms ease',
                 }}

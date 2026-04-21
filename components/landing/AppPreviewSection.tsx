@@ -499,7 +499,7 @@ export default function AppPreviewSection() {
                 viewport={{ once: true, amount: 0.4 }}
                 transition={{ delay: i * 0.05, duration: 0.5, ease: EASE }}
                 style={{
-                  background: 'var(--fh-canvas)',
+                  background: 'var(--card)',
                   padding: '22px 22px 20px',
                   display: 'flex',
                   flexDirection: 'column',

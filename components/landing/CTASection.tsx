@@ -44,7 +44,7 @@ export default function CTASection() {
           gap: 'clamp(28px, 4vw, 48px)',
           padding: 'clamp(36px, 6vw, 72px) clamp(24px, 5vw, 64px)',
           borderRadius: 'clamp(18px, 2.2vw, 28px)',
-          background: 'var(--fh-surface)',
+          background: 'var(--card)',
           border: '1px solid var(--fh-border)',
           backdropFilter: 'blur(10px)',
           WebkitBackdropFilter: 'blur(10px)',

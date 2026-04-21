@@ -134,7 +134,7 @@ export default function TopFreelancers() {
               viewport={{ once: true, amount: 0.4 }}
               transition={{ delay: i * 0.06, duration: 0.55, ease: EASE }}
               style={{
-                background: 'var(--fh-canvas)',
+                background: 'var(--card)',
                 padding: 'clamp(26px, 2.5vw, 40px)',
                 display: 'flex',
                 flexDirection: 'column',
@@ -193,7 +193,7 @@ export default function TopFreelancers() {
             padding: 'clamp(24px, 3vw, 40px)',
             borderRadius: 18,
             border: '1px solid var(--fh-border)',
-            background: 'var(--fh-surface)',
+            background: 'var(--card)',
           }}
           className="fh-pioneer"
         >

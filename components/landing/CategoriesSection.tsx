@@ -92,7 +92,7 @@ export default function CategoriesSection() {
                     justifyContent: 'space-between',
                     gap: 12,
                     padding: '22px 22px',
-                    background: 'var(--fh-canvas)',
+                    background: 'var(--card)',
                     textDecoration: 'none',
                     transition: 'background 200ms ease, color 200ms ease',
                     height: '100%',

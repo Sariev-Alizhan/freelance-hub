@@ -53,7 +53,7 @@ export default function HowItWorks() {
               viewport={{ once: true, amount: 0.4 }}
               transition={{ delay: i * 0.08, duration: 0.55, ease: EASE }}
               style={{
-                background: 'var(--fh-canvas)',
+                background: 'var(--card)',
                 padding: 'clamp(26px, 2.5vw, 40px)',
                 display: 'flex',
                 flexDirection: 'column',
