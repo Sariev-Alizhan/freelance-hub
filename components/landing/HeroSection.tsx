@@ -47,33 +47,44 @@ export default function HeroSection() {
           0%,100% { transform: translate(0,0); }
           50%      { transform: translate(2px,-2px); }
         }
+
+        /* Grain: SVG noise with monochrome channel. Opacity + blend mode
+           flip between modes so it stays visible but not harsh on light. */
         .fh-grain {
           position: absolute; inset: -50%;
-          background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.08 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+          background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.6 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
           animation: fh-grain 7s steps(10) infinite;
           pointer-events: none;
+          mix-blend-mode: multiply;
+          opacity: 0.08;
+        }
+        .dark .fh-grain {
+          background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.08 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
           mix-blend-mode: overlay;
           opacity: 0.7;
         }
+
         .fh-scan {
           position: absolute; inset: 0;
           background-image: linear-gradient(
             to bottom,
             transparent 0%,
             transparent calc(50% - 0.5px),
-            rgba(255,255,255,0.02) 50%,
+            var(--fh-scan-line) 50%,
             transparent calc(50% + 0.5px),
             transparent 100%
           );
           background-size: 100% 4px;
           pointer-events: none;
         }
+
         .fh-serif {
           font-family: var(--font-serif-display), ui-serif, Georgia, "Times New Roman", serif;
           font-style: italic;
           font-weight: 400;
           letter-spacing: -0.015em;
         }
+
         .fh-cta-primary {
           position: relative;
           isolation: isolate;
@@ -93,16 +104,34 @@ export default function HeroSection() {
         }
         @media (prefers-reduced-motion: reduce) {
           .fh-ticker-track { animation: none; }
-          .fh-grain { animation: none; opacity: 0.35; }
+          .fh-grain { animation: none; opacity: 0.04; }
+          .dark .fh-grain { opacity: 0.35; }
+        }
+
+        /* Hero local design tokens — flipped per theme */
+        .fh-hero {
+          --fh-scan-line: rgba(0,0,0,0.03);
+          --fh-hero-grid-a: rgba(0,0,0,0.06);
+          --fh-hero-grid-b: rgba(0,0,0,0.04);
+          --fh-hero-ticker-bg: rgba(247,248,248,0.7);
+          --fh-hero-stat-border: rgba(0,0,0,0.09);
+        }
+        .dark .fh-hero {
+          --fh-scan-line: rgba(255,255,255,0.02);
+          --fh-hero-grid-a: rgba(255,255,255,0.035);
+          --fh-hero-grid-b: rgba(255,255,255,0.025);
+          --fh-hero-ticker-bg: rgba(7,8,10,0.6);
+          --fh-hero-stat-border: rgba(244,244,246,0.09);
         }
       `}</style>
 
       <section
+        className="fh-hero"
         style={{
           position: 'relative',
           minHeight: '100dvh',
-          background: '#07080a',
-          color: '#f4f4f6',
+          background: 'var(--fh-canvas)',
+          color: 'var(--fh-t1)',
           overflow: 'hidden',
           display: 'flex',
           flexDirection: 'column',
@@ -115,8 +144,8 @@ export default function HeroSection() {
           style={{
             position: 'absolute', inset: 0,
             backgroundImage:
-              'linear-gradient(to right, rgba(255,255,255,0.035) 1px, transparent 1px),' +
-              'linear-gradient(to bottom, rgba(255,255,255,0.025) 1px, transparent 1px)',
+              'linear-gradient(to right, var(--fh-hero-grid-a) 1px, transparent 1px),' +
+              'linear-gradient(to bottom, var(--fh-hero-grid-b) 1px, transparent 1px)',
             backgroundSize: '88px 88px, 88px 88px',
             maskImage:
               'radial-gradient(ellipse at 50% 40%, #000 40%, transparent 78%)',
@@ -174,7 +203,7 @@ export default function HeroSection() {
               fontSize: 11,
               letterSpacing: '0.12em',
               textTransform: 'uppercase',
-              color: 'rgba(244,244,246,0.55)',
+              color: 'var(--fh-t3)',
             }}
           >
             <span style={{ display: 'inline-flex', alignItems: 'center', gap: 10 }}>
@@ -186,9 +215,9 @@ export default function HeroSection() {
                   animation: 'fh-pulse-dot 2.2s ease-in-out infinite',
                 }}
               />
-              <span style={{ color: '#f4f4f6' }}>{h.early}</span>
+              <span style={{ color: 'var(--fh-t1)' }}>{h.early}</span>
             </span>
-            <span style={{ color: 'rgba(244,244,246,0.38)' }}>{h.badge1}</span>
+            <span style={{ color: 'var(--fh-t4)' }}>{h.badge1}</span>
           </motion.div>
 
           {/* Headline block */}
@@ -206,7 +235,7 @@ export default function HeroSection() {
                 letterSpacing: '-0.045em',
                 fontWeight: 700,
                 margin: 0,
-                color: '#f4f4f6',
+                color: 'var(--fh-t1)',
                 fontFeatureSettings: '"cv01", "ss03"',
               }}
             >
@@ -231,7 +260,7 @@ export default function HeroSection() {
                 style={{
                   fontSize: 'clamp(40px, 11vw, 152px)',
                   lineHeight: 0.9,
-                  color: '#f4f4f6',
+                  color: 'var(--fh-t1)',
                   display: 'inline-block',
                   hyphens: 'auto',
                   WebkitHyphens: 'auto',
@@ -281,7 +310,7 @@ export default function HeroSection() {
                   fontSize: 'clamp(16px, 1.6vw, 19px)',
                   lineHeight: 1.55,
                   letterSpacing: '-0.012em',
-                  color: 'rgba(244,244,246,0.62)',
+                  color: 'var(--fh-t3)',
                   margin: 0,
                 }}
               >
@@ -303,13 +332,13 @@ export default function HeroSection() {
                     gap: 10,
                     padding: '16px 26px',
                     borderRadius: 999,
-                    background: '#f4f4f6',
-                    color: '#07080a',
+                    background: 'var(--fh-t1)',
+                    color: 'var(--fh-canvas)',
                     fontSize: 15,
                     fontWeight: 590,
                     letterSpacing: '-0.01em',
                     textDecoration: 'none',
-                    boxShadow: '0 12px 40px rgba(244,244,246,0.12)',
+                    boxShadow: '0 12px 40px rgba(0,0,0,0.12)',
                   }}
                 >
                   {h.cta1}
@@ -325,8 +354,8 @@ export default function HeroSection() {
                     gap: 10,
                     padding: '16px 22px',
                     borderRadius: 999,
-                    border: '1px solid rgba(244,244,246,0.18)',
-                    color: 'rgba(244,244,246,0.82)',
+                    border: '1px solid var(--fh-border-2)',
+                    color: 'var(--fh-t2)',
                     fontSize: 15,
                     fontWeight: 510,
                     letterSpacing: '-0.01em',
@@ -334,12 +363,12 @@ export default function HeroSection() {
                     background: 'transparent',
                   }}
                   onMouseEnter={(e) => {
-                    e.currentTarget.style.borderColor = 'rgba(244,244,246,0.42)'
-                    e.currentTarget.style.color = '#f4f4f6'
+                    e.currentTarget.style.borderColor = 'var(--fh-t3)'
+                    e.currentTarget.style.color = 'var(--fh-t1)'
                   }}
                   onMouseLeave={(e) => {
-                    e.currentTarget.style.borderColor = 'rgba(244,244,246,0.18)'
-                    e.currentTarget.style.color = 'rgba(244,244,246,0.82)'
+                    e.currentTarget.style.borderColor = 'var(--fh-border-2)'
+                    e.currentTarget.style.color = 'var(--fh-t2)'
                   }}
                 >
                   {h.cta2}
@@ -360,7 +389,7 @@ export default function HeroSection() {
                 rowGap: 4,
                 margin: 0,
                 paddingTop: 'clamp(20px, 3vh, 32px)',
-                borderTop: '1px solid rgba(244,244,246,0.09)',
+                borderTop: '1px solid var(--fh-hero-stat-border)',
                 justifyContent: 'start',
               }}
             >
@@ -378,7 +407,7 @@ export default function HeroSection() {
                       fontSize: 10,
                       letterSpacing: '0.16em',
                       textTransform: 'uppercase',
-                      color: 'rgba(244,244,246,0.38)',
+                      color: 'var(--fh-t4)',
                     }}
                   >
                     {s.l}
@@ -391,7 +420,7 @@ export default function HeroSection() {
                       lineHeight: 1,
                       letterSpacing: '-0.03em',
                       fontWeight: 590,
-                      color: '#f4f4f6',
+                      color: 'var(--fh-t1)',
                     }}
                   >
                     {s.v}
@@ -407,9 +436,9 @@ export default function HeroSection() {
           style={{
             position: 'relative',
             zIndex: 2,
-            borderTop: '1px solid rgba(244,244,246,0.08)',
-            borderBottom: '1px solid rgba(244,244,246,0.08)',
-            background: 'rgba(7,8,10,0.6)',
+            borderTop: '1px solid var(--fh-hero-stat-border)',
+            borderBottom: '1px solid var(--fh-hero-stat-border)',
+            background: 'var(--fh-hero-ticker-bg)',
             overflow: 'hidden',
           }}
         >
@@ -422,7 +451,7 @@ export default function HeroSection() {
               fontSize: 12,
               letterSpacing: '0.18em',
               textTransform: 'uppercase',
-              color: 'rgba(244,244,246,0.45)',
+              color: 'var(--fh-t3)',
             }}
           >
             {[...TICKER, ...TICKER].map((item, i) => (
@@ -435,7 +464,7 @@ export default function HeroSection() {
                   aria-hidden
                   style={{
                     width: 4, height: 4, borderRadius: '50%',
-                    background: 'rgba(244,244,246,0.25)',
+                    background: 'var(--fh-t4)',
                   }}
                 />
               </span>

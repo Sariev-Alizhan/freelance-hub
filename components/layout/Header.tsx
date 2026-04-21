@@ -35,8 +35,8 @@ export default function Header() {
       <header
         className="sticky top-0 z-50 md:hidden"
         style={{
-          borderBottom: scrolled ? '0.5px solid rgba(255,255,255,0.08)' : 'none',
-          background: scrolled ? 'rgba(6,6,18,0.85)' : 'transparent',
+          borderBottom: scrolled ? '0.5px solid var(--fh-border)' : 'none',
+          background: scrolled ? 'var(--fh-header-bg)' : 'transparent',
           backdropFilter: scrolled ? 'blur(20px)' : 'none',
           WebkitBackdropFilter: scrolled ? 'blur(20px)' : 'none',
           transition: 'background 0.3s, border-color 0.3s',
@@ -46,11 +46,11 @@ export default function Header() {
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 52, padding: '0 16px' }}>
           <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: 8, textDecoration: 'none' }}>
             <Logo size={26} showWordmark={false} />
-            <span style={{ fontSize: 16, fontWeight: 700, color: '#fff', letterSpacing: '-0.02em' }}>FreelanceHub</span>
+            <span style={{ fontSize: 16, fontWeight: 700, color: 'var(--fh-t1)', letterSpacing: '-0.02em' }}>FreelanceHub</span>
           </Link>
           <Link href="/auth/login" style={{
             padding: '7px 16px', borderRadius: 8, fontSize: 13, fontWeight: 600,
-            color: '#fff', background: 'var(--fh-primary)', textDecoration: 'none',
+            color: 'var(--fh-canvas)', background: 'var(--fh-t1)', textDecoration: 'none',
           }}>
             {t.auth.login}
           </Link>
