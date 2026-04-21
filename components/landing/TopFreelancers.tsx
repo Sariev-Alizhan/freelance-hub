@@ -1,190 +1,293 @@
 'use client'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { ArrowRight, Zap, Globe, Briefcase } from 'lucide-react'
+import { ArrowUpRight, ArrowRight } from 'lucide-react'
 import { useLang } from '@/lib/context/LanguageContext'
+import { SectionShell, EditorialHeading, EASE } from './_section-atoms'
 
 const CONTENT = {
   en: {
-    heading: 'Why FreelanceHub?',
-    sub:     'A fair platform with no middlemen and no hidden fees',
+    eyebrow: 'Why FreelanceHub',
+    pre: 'A fair platform —',
+    accent: 'no middlemen.',
+    sub: 'No middlemen, no hidden fees. Work directly. Keep 100%.',
     perks: [
       {
-        title: '0% commission',
-        text:  'Keep 100% of payment from the client. No commission now or in the future.',
+        kv: '0%',
+        title: 'Commission',
+        text: 'You keep 100% of what the client pays. Not now, not ever.',
       },
       {
-        title: 'Global platform',
-        text:  'Work from anywhere, with anyone. No regional restrictions, no currency limits.',
+        kv: '∞',
+        title: 'Global',
+        text: 'Work from anywhere, with anyone. No regional restrictions.',
       },
       {
+        kv: '1:1',
         title: 'Direct deals',
-        text:  'Client and freelancer work directly — no middlemen, no hidden fees.',
+        text: 'Client and freelancer work directly — no middlemen in between.',
       },
     ],
-    ctaBadge:  'Just launched',
-    ctaTitle:  'Be among the first',
-    ctaSub:    'Early members get priority in search and the "Pioneer" badge.',
-    ctaBtn1:   'Join now',
-    ctaBtn2:   'Freelancers',
+    ctaBadge: 'Just launched',
+    ctaTitle: 'Be among the first',
+    ctaSub:
+      'Early members get priority in search results and a "Pioneer" badge on their profile.',
+    ctaBtn1: 'Join now',
+    ctaBtn2: 'Browse freelancers',
   },
   ru: {
-    heading: 'Почему FreelanceHub?',
-    sub:     'Честная платформа без посредников и скрытых комиссий',
+    eyebrow: 'Почему FreelanceHub',
+    pre: 'Честная платформа —',
+    accent: 'без посредников.',
+    sub: 'Никаких посредников и скрытых комиссий. Работайте напрямую. Забирайте 100%.',
     perks: [
       {
-        title: '0% комиссии',
-        text:  'Получайте 100% оплаты от клиента. Никакой комиссии — сейчас и в будущем.',
+        kv: '0%',
+        title: 'Комиссия',
+        text: 'Вам достаётся 100% оплаты клиента. Сейчас и в будущем.',
       },
       {
-        title: 'Глобальная платформа',
-        text:  'Работайте откуда угодно, с кем угодно. Без региональных ограничений и валютных барьеров.',
+        kv: '∞',
+        title: 'Глобально',
+        text: 'Работайте откуда угодно, с кем угодно. Никаких региональных барьеров.',
       },
       {
+        kv: '1:1',
         title: 'Прямые сделки',
-        text:  'Клиент и фрилансер работают напрямую — без посредников и скрытых платежей.',
+        text: 'Клиент и фрилансер общаются напрямую — посредников нет.',
       },
     ],
-    ctaBadge:  'Только запустились',
-    ctaTitle:  'Будь среди первых',
-    ctaSub:    'Ранние участники получают приоритет в поиске и значок «Первопроходец».',
-    ctaBtn1:   'Присоединиться',
-    ctaBtn2:   'Фрилансеры',
+    ctaBadge: 'Только запустились',
+    ctaTitle: 'Будь среди первых',
+    ctaSub:
+      'Ранние участники получают приоритет в поиске и значок «Первопроходец» в профиле.',
+    ctaBtn1: 'Присоединиться',
+    ctaBtn2: 'Смотреть фрилансеров',
   },
-}
-
-const PERK_ICONS = [Zap, Globe, Briefcase]
-const PERK_COLORS = [
-  { color: '#7170ff', bg: 'rgba(113,112,255,0.08)' },
-  { color: '#27a644', bg: 'rgba(39,166,68,0.08)'   },
-  { color: '#fbbf24', bg: 'rgba(251,191,36,0.08)'  },
-]
+  kz: {
+    eyebrow: 'Неге FreelanceHub',
+    pre: 'Әділ платформа —',
+    accent: 'делдалсыз.',
+    sub: 'Делдалсыз, жасырын комиссиясыз. Тікелей жұмыс. 100% сізде.',
+    perks: [
+      {
+        kv: '0%',
+        title: 'Комиссия',
+        text: 'Клиенттің төлемі — 100% сізге. Қазір де, болашақта да.',
+      },
+      {
+        kv: '∞',
+        title: 'Ғаламдық',
+        text: 'Қалаған жерден, қалаған адаммен жұмыс. Аймақтық шектеусіз.',
+      },
+      {
+        kv: '1:1',
+        title: 'Тікелей мәмілелер',
+        text: 'Клиент пен фрилансер тікелей сөйлеседі — делдал жоқ.',
+      },
+    ],
+    ctaBadge: 'Жаңа іске қосылды',
+    ctaTitle: 'Бірінші болыңыз',
+    ctaSub: 'Алғашқы қатысушылар іздеуде басымдыққа ие және профильге «Pioneer» бейджі беріледі.',
+    ctaBtn1: 'Қосылу',
+    ctaBtn2: 'Фрилансерлер',
+  },
+} as const
 
 export default function TopFreelancers() {
   const { lang } = useLang()
   const c = (CONTENT as Record<string, typeof CONTENT.en>)[lang] ?? CONTENT.en
 
   return (
-    <section className="py-12 sm:py-20 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: 'var(--fh-canvas)' }}>
-      <div className="mx-auto max-w-7xl">
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-14"
-        >
-          <h2
-            style={{
-              fontSize: 'clamp(24px, 4vw, 36px)',
-              fontWeight: 510,
-              letterSpacing: '-0.04em',
-              color: 'var(--fh-t1)',
-              lineHeight: 1.1,
-              marginBottom: '12px',
-              fontFeatureSettings: '"cv01", "ss03"',
-            }}
-          >
-            {c.heading}
-          </h2>
-          <p style={{ fontSize: '15px', color: '#8a8f98', fontWeight: 400, letterSpacing: '-0.01em', maxWidth: '400px', margin: '0 auto', lineHeight: 1.6 }}>
-            {c.sub}
-          </p>
-        </motion.div>
+    <SectionShell>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'minmax(0, 1fr)',
+          gap: 'clamp(40px, 6vw, 72px)',
+        }}
+      >
+        <EditorialHeading
+          eyebrow={c.eyebrow}
+          pre={c.pre}
+          accent={c.accent}
+          sub={c.sub}
+        />
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-10">
-          {c.perks.map((perk, i) => {
-            const Icon = PERK_ICONS[i]
-            const { color, bg } = PERK_COLORS[i]
-            return (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.08 }}
-                className="rounded-xl p-6"
-                style={{
-                  background: 'var(--fh-surface)',
-                  border: '1px solid var(--fh-border)',
-                }}
-              >
-                <div
-                  className="h-10 w-10 rounded-lg flex items-center justify-center mb-5"
-                  style={{ background: bg }}
-                >
-                  <Icon className="h-5 w-5" style={{ color }} />
-                </div>
-                <h3 style={{ fontSize: '15px', fontWeight: 590, color: 'var(--fh-t1)', marginBottom: '8px', letterSpacing: '-0.02em' }}>
-                  {perk.title}
-                </h3>
-                <p style={{ fontSize: '13px', color: '#8a8f98', lineHeight: 1.6, fontWeight: 400, letterSpacing: '-0.01em' }}>
-                  {perk.text}
-                </p>
-              </motion.div>
-            )
-          })}
-        </div>
-
-        {/* Join CTA */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="rounded-xl p-8 flex flex-col sm:flex-row items-center justify-between gap-6"
+        {/* Perks — big-type stat cards */}
+        <div
           style={{
-            background: 'rgba(94,106,210,0.06)',
-            border: '1px solid rgba(94,106,210,0.2)',
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+            gap: '1px',
+            background: 'var(--fh-sep)',
+            border: '1px solid var(--fh-sep)',
+            borderRadius: 16,
+            overflow: 'hidden',
           }}
         >
-          <div>
-            <p style={{ fontSize: '11px', fontWeight: 590, color: '#7170ff', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '6px' }}>
+          {c.perks.map((perk, i) => (
+            <motion.div
+              key={perk.title}
+              initial={{ opacity: 0, y: 14 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.4 }}
+              transition={{ delay: i * 0.06, duration: 0.55, ease: EASE }}
+              style={{
+                background: 'var(--fh-canvas)',
+                padding: 'clamp(26px, 2.5vw, 40px)',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 14,
+                minHeight: 200,
+              }}
+            >
+              <span
+                style={{
+                  fontSize: 'clamp(48px, 5.5vw, 72px)',
+                  lineHeight: 0.9,
+                  letterSpacing: '-0.04em',
+                  fontWeight: 700,
+                  color: 'var(--fh-t1)',
+                }}
+              >
+                {perk.kv}
+              </span>
+              <span
+                style={{
+                  fontFamily:
+                    'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace',
+                  fontSize: 11,
+                  letterSpacing: '0.16em',
+                  textTransform: 'uppercase',
+                  color: 'var(--fh-t4)',
+                }}
+              >
+                {perk.title}
+              </span>
+              <p
+                style={{
+                  margin: 0,
+                  fontSize: 14,
+                  lineHeight: 1.55,
+                  color: 'var(--fh-t3)',
+                }}
+              >
+                {perk.text}
+              </p>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Pioneer CTA */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.4 }}
+          transition={{ duration: 0.6, ease: EASE }}
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'minmax(0, 1fr) auto',
+            alignItems: 'center',
+            gap: 28,
+            padding: 'clamp(24px, 3vw, 40px)',
+            borderRadius: 18,
+            border: '1px solid var(--fh-border)',
+            background: 'var(--fh-surface)',
+          }}
+          className="fh-pioneer"
+        >
+          <style>{`
+            @media (max-width: 720px) {
+              .fh-pioneer { grid-template-columns: 1fr !important; }
+            }
+          `}</style>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <span
+              style={{
+                fontFamily:
+                  'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace',
+                fontSize: 11,
+                letterSpacing: '0.18em',
+                textTransform: 'uppercase',
+                color: '#27a644',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 10,
+              }}
+            >
+              <span
+                style={{
+                  width: 6,
+                  height: 6,
+                  borderRadius: '50%',
+                  background: '#27a644',
+                  boxShadow: '0 0 10px rgba(39,166,68,0.6)',
+                }}
+              />
               {c.ctaBadge}
-            </p>
-            <h3 style={{ fontSize: '18px', fontWeight: 510, color: 'var(--fh-t1)', letterSpacing: '-0.03em', marginBottom: '6px' }}>
+            </span>
+            <h3
+              style={{
+                margin: 0,
+                fontSize: 'clamp(22px, 2.6vw, 32px)',
+                lineHeight: 1.1,
+                letterSpacing: '-0.025em',
+                fontWeight: 590,
+                color: 'var(--fh-t1)',
+              }}
+            >
               {c.ctaTitle}
             </h3>
-            <p style={{ fontSize: '13px', color: '#8a8f98', fontWeight: 400, letterSpacing: '-0.01em', lineHeight: 1.6 }}>
+            <p style={{ margin: 0, fontSize: 14.5, lineHeight: 1.55, color: 'var(--fh-t3)', maxWidth: 540 }}>
               {c.ctaSub}
             </p>
           </div>
-          <div className="flex gap-2.5 shrink-0">
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
             <Link
               href="/auth/register"
-              className="flex items-center gap-2 transition-all whitespace-nowrap"
               style={{
-                padding: '9px 20px',
-                borderRadius: '6px',
-                background: '#5e6ad2',
-                color: '#ffffff',
-                fontSize: '14px',
-                fontWeight: 510,
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 8,
+                padding: '13px 22px',
+                borderRadius: 999,
+                background: 'var(--fh-t1)',
+                color: 'var(--fh-canvas)',
+                fontSize: 14,
+                fontWeight: 590,
                 letterSpacing: '-0.01em',
+                textDecoration: 'none',
+                whiteSpace: 'nowrap',
               }}
-              onMouseEnter={e => { e.currentTarget.style.background = '#828fff' }}
-              onMouseLeave={e => { e.currentTarget.style.background = '#5e6ad2' }}
             >
               {c.ctaBtn1}
+              <ArrowUpRight style={{ width: 15, height: 15 }} />
             </Link>
             <Link
               href="/freelancers"
-              className="hidden sm:flex items-center gap-1.5 transition-all whitespace-nowrap"
               style={{
-                padding: '9px 16px',
-                borderRadius: '6px',
-                background: 'rgba(255,255,255,0.04)',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 8,
+                padding: '13px 18px',
+                borderRadius: 999,
+                background: 'transparent',
                 border: '1px solid var(--fh-border-2)',
-                color: 'var(--fh-t3)',
-                fontSize: '13px',
+                color: 'var(--fh-t2)',
+                fontSize: 14,
                 fontWeight: 510,
+                letterSpacing: '-0.01em',
+                textDecoration: 'none',
+                whiteSpace: 'nowrap',
               }}
-              onMouseEnter={e => { e.currentTarget.style.color = 'var(--fh-t1)'; e.currentTarget.style.background = 'var(--fh-surface-3)' }}
-              onMouseLeave={e => { e.currentTarget.style.color = 'var(--fh-t3)'; e.currentTarget.style.background = 'var(--fh-surface-2)' }}
             >
-              {c.ctaBtn2} <ArrowRight className="h-3.5 w-3.5" />
+              {c.ctaBtn2}
+              <ArrowRight style={{ width: 14, height: 14 }} />
             </Link>
           </div>
         </motion.div>
       </div>
-    </section>
+    </SectionShell>
   )
 }

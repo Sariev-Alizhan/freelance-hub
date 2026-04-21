@@ -1,192 +1,291 @@
 'use client'
 import React from 'react'
 import Link from 'next/link'
-import { Bot, Zap, Clock, DollarSign, ArrowRight } from 'lucide-react'
+import { motion } from 'framer-motion'
+import { ArrowUpRight, Zap, Clock, DollarSign, Bot } from 'lucide-react'
 import { useLang } from '@/lib/context/LanguageContext'
 import { MOCK_AGENTS } from '@/lib/mock/agents'
+import { SectionShell, EditorialHeading, EASE } from './_section-atoms'
 
 const CONTENT = {
   en: {
-    badge:    '🤖 New · AI Agent Marketplace',
-    heading:  'AI Workers, Not Just Tools',
-    sub:      'The first freelance platform where AI agents take real orders, deliver real results, and earn money — just like human freelancers.',
-    cta:      'Browse AI Agents',
+    eyebrow: 'AI Agent Marketplace',
+    pre: 'Workers, not just',
+    accent: 'tools.',
+    sub:
+      'The first platform where AI agents take real orders, deliver real results, and earn — like any other freelancer.',
+    cta: 'Browse AI agents',
     features: [
-      { icon: Zap,        title: 'Instant start',     text: 'No onboarding calls. Agents respond in minutes and start working immediately.' },
-      { icon: Clock,      title: '24/7 availability', text: 'No vacations, no time zones. Agents work around the clock without delays.' },
-      { icon: DollarSign, title: 'Pay per task',      text: 'Fixed price per result. No hourly billing, no scope creep.' },
-      { icon: Bot,        title: 'Built on Claude AI', text: 'Every agent is powered by Anthropic Claude — the most capable AI models available.' },
+      { icon: Zap, title: 'Instant start', text: 'No onboarding calls. Agents respond in minutes.' },
+      { icon: Clock, title: '24/7 availability', text: 'No vacations, no time zones.' },
+      { icon: DollarSign, title: 'Pay per task', text: 'Fixed price per result. No hourly billing.' },
+      { icon: Bot, title: 'Built on Claude', text: 'Every agent uses Anthropic Claude models.' },
     ],
+    available: 'Available',
+    role: 'AI assistant',
   },
   ru: {
-    badge:    '🤖 Новинка · Маркетплейс AI Агентов',
-    heading:  'AI Работники, не просто инструменты',
-    sub:      'Первая фриланс-платформа, где AI агенты берут реальные заказы, дают реальные результаты и зарабатывают деньги — как обычные фрилансеры.',
-    cta:      'Смотреть AI Агентов',
+    eyebrow: 'Маркетплейс AI-агентов',
+    pre: 'Работники,',
+    accent: 'не просто инструменты.',
+    sub:
+      'Первая платформа, где AI-агенты берут реальные заказы, дают реальный результат и зарабатывают — как обычные фрилансеры.',
+    cta: 'Смотреть AI-агентов',
     features: [
-      { icon: Zap,        title: 'Мгновенный старт',    text: 'Никаких созвонов. Агенты отвечают за минуты и сразу начинают работу.' },
-      { icon: Clock,      title: 'Доступны 24/7',       text: 'Никаких отпусков и часовых поясов. Агенты работают круглосуточно.' },
-      { icon: DollarSign, title: 'Оплата за задачу',    text: 'Фиксированная цена за результат. Никакой почасовки и расползания объёма.' },
-      { icon: Bot,        title: 'Работают на Claude AI', text: 'Каждый агент использует модели Anthropic Claude — лучший AI в мире.' },
+      { icon: Zap, title: 'Мгновенный старт', text: 'Никаких созвонов. Агент отвечает за минуты.' },
+      { icon: Clock, title: 'Доступны 24/7', text: 'Без отпусков и часовых поясов.' },
+      { icon: DollarSign, title: 'Оплата за задачу', text: 'Фикс-цена за результат, без почасовки.' },
+      { icon: Bot, title: 'На базе Claude', text: 'Каждый агент — на моделях Anthropic Claude.' },
     ],
+    available: 'Доступен',
+    role: 'AI-ассистент',
   },
-}
+  kz: {
+    eyebrow: 'AI-агенттер маркетплейсі',
+    pre: 'Құрал емес,',
+    accent: 'қызметкер.',
+    sub:
+      'AI-агенттер нақты тапсырысты қабылдап, нәтиже беріп, ақша табатын алғашқы платформа — әдеттегі фрилансерлер секілді.',
+    cta: 'AI-агенттерді қарау',
+    features: [
+      { icon: Zap, title: 'Бірден бастау', text: 'Онбординг жоқ. Агент минутта жауап береді.' },
+      { icon: Clock, title: '24/7 қолжетімді', text: 'Демалыссыз, сағаттық белдеусіз.' },
+      { icon: DollarSign, title: 'Тапсырмаға төлем', text: 'Нәтижеге бекітілген баға.' },
+      { icon: Bot, title: 'Claude негізінде', text: 'Әр агент Anthropic Claude үлгілерінде.' },
+    ],
+    available: 'Қолжетімді',
+    role: 'AI-көмекші',
+  },
+} as const
 
 export default function AgentsSection() {
   const { lang } = useLang()
   const c = (CONTENT as Record<string, typeof CONTENT.en>)[lang] ?? CONTENT.en
-  const previewAgents = MOCK_AGENTS.filter(a => a.isAvailable).slice(0, 3)
+  const previewAgents = MOCK_AGENTS.filter((a) => a.isAvailable).slice(0, 3)
 
   return (
-    <section className="py-12 sm:py-20" style={{ borderTop: '1px solid var(--fh-sep)' }}>
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <SectionShell>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'minmax(0, 1fr)',
+          gap: 'clamp(40px, 6vw, 72px)',
+        }}
+      >
+        <EditorialHeading
+          eyebrow={c.eyebrow}
+          pre={c.pre}
+          accent={c.accent}
+          sub={c.sub}
+        />
 
-        {/* Header */}
-        <div className="mb-12 text-center">
-          <div
-            className="inline-flex items-center gap-2 mb-4 px-3 py-1.5 rounded-full"
-            style={{
-              background: 'rgba(113,112,255,0.08)',
-              border: '1px solid rgba(113,112,255,0.2)',
-            }}
-          >
-            <Bot className="h-3.5 w-3.5" style={{ color: '#7170ff' }} />
-            <span style={{ fontSize: '12px', fontWeight: 590, color: '#7170ff' }}>{c.badge}</span>
-          </div>
-          <h2 style={{
-            fontSize: 'clamp(24px, 3.5vw, 34px)',
-            fontWeight: 510,
-            letterSpacing: '-0.04em',
-            color: 'var(--fh-t1)',
-            marginBottom: '12px',
-            fontFeatureSettings: '"cv01", "ss03"',
-          }}>
-            {c.heading}
-          </h2>
-          <p style={{ fontSize: '15px', color: 'var(--fh-t3)', maxWidth: '520px', margin: '0 auto', lineHeight: 1.7 }}>
-            {c.sub}
-          </p>
-        </div>
-
-        {/* Feature grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
-          {c.features.map(({ icon: Icon, title, text }: { icon: React.ElementType; title: string; text: string }) => (
-            <div
+        {/* Features — editorial 4-up, monochrome */}
+        <ul
+          style={{
+            listStyle: 'none',
+            margin: 0,
+            padding: 0,
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+            gap: '1px',
+            background: 'var(--fh-sep)',
+            border: '1px solid var(--fh-sep)',
+            borderRadius: 16,
+            overflow: 'hidden',
+          }}
+        >
+          {c.features.map(({ icon: Icon, title, text }, i) => (
+            <motion.li
               key={title}
-              className="p-5 rounded-xl"
+              initial={{ opacity: 0, y: 14 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.4 }}
+              transition={{ delay: i * 0.06, duration: 0.5, ease: EASE }}
               style={{
-                background: 'var(--fh-surface)',
-                border: '1px solid var(--fh-border)',
+                background: 'var(--fh-canvas)',
+                padding: '26px 26px 24px',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 14,
+                minHeight: 180,
               }}
             >
               <div
-                className="flex items-center justify-center rounded-lg mb-3"
                 style={{
-                  width: 36, height: 36,
-                  background: 'rgba(113,112,255,0.1)',
-                  border: '1px solid rgba(113,112,255,0.2)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 10,
+                  color: 'var(--fh-t2)',
                 }}
               >
-                <Icon className="h-4 w-4" style={{ color: '#7170ff' }} />
-              </div>
-              <p style={{ fontSize: '13px', fontWeight: 590, color: 'var(--fh-t1)', marginBottom: '4px' }}>
-                {title}
-              </p>
-              <p style={{ fontSize: '12px', color: 'var(--fh-t4)', lineHeight: 1.6 }}>
-                {text}
-              </p>
-            </div>
-          ))}
-        </div>
-
-        {/* Agent preview cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-8">
-          {previewAgents.map(agent => (
-            <Link
-              key={agent.id}
-              href={`/agents/${agent.id}`}
-              className="group/ac p-4 rounded-xl transition-all block"
-              style={{
-                background: 'var(--fh-surface)',
-                border: '1px solid rgba(113,112,255,0.15)',
-                position: 'relative',
-                overflow: 'hidden',
-                textDecoration: 'none',
-              }}
-              onMouseEnter={e => { e.currentTarget.style.border = '1px solid rgba(113,112,255,0.35)' }}
-              onMouseLeave={e => { e.currentTarget.style.border = '1px solid rgba(113,112,255,0.15)' }}
-            >
-              {/* Top glow line */}
-              <div style={{
-                position: 'absolute', top: 0, left: 0, right: 0, height: '1px',
-                background: 'linear-gradient(90deg, transparent, rgba(113,112,255,0.4), transparent)',
-              }} />
-
-              <div className="flex items-start gap-3">
-                <div
-                  className="shrink-0 flex items-center justify-center rounded-lg"
+                <Icon style={{ width: 18, height: 18 }} />
+                <span
                   style={{
-                    width: 36, height: 36,
-                    background: 'rgba(113,112,255,0.1)',
-                    border: '1px solid rgba(113,112,255,0.2)',
+                    fontFamily:
+                      'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace',
+                    fontSize: 11,
+                    letterSpacing: '0.18em',
+                    textTransform: 'uppercase',
+                    color: 'var(--fh-t4)',
                   }}
                 >
-                  <Bot className="h-4 w-4" style={{ color: '#7170ff' }} />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-1.5">
-                    <p style={{ fontSize: '13px', fontWeight: 590, color: 'var(--fh-t1)', letterSpacing: '-0.01em' }}>
-                      {agent.name}
-                    </p>
-                    <span style={{
-                      fontSize: '8px', fontWeight: 700, letterSpacing: '0.06em', textTransform: 'uppercase',
-                      padding: '1px 5px', borderRadius: '3px',
-                      background: 'rgba(113,112,255,0.1)', border: '1px solid rgba(113,112,255,0.2)', color: '#7170ff',
-                    }}>
-                      AI
-                    </span>
-                  </div>
-                  <p style={{ fontSize: '12px', color: 'var(--fh-t4)', marginTop: '2px' }} className="truncate">
-                    {agent.tagline}
-                  </p>
-                </div>
+                  {String(i + 1).padStart(2, '0')}
+                </span>
               </div>
+              <div
+                style={{
+                  fontSize: 16,
+                  fontWeight: 590,
+                  letterSpacing: '-0.015em',
+                  color: 'var(--fh-t1)',
+                }}
+              >
+                {title}
+              </div>
+              <div style={{ fontSize: 13.5, lineHeight: 1.55, color: 'var(--fh-t3)' }}>
+                {text}
+              </div>
+            </motion.li>
+          ))}
+        </ul>
 
-              <div className="flex items-center justify-between mt-3 pt-3" style={{ borderTop: '1px solid var(--fh-sep)' }}>
-                <span style={{ fontSize: '12px', color: 'var(--fh-t4)', fontWeight: 510 }}>
-                  {lang === 'ru' ? 'AI-ассистент' : 'AI assistant'}
-                </span>
-                <span style={{ fontSize: '11px', color: '#27a644', fontWeight: 510 }}>
-                  ● {lang === 'ru' ? 'Доступен' : 'Available'}
-                </span>
-              </div>
-            </Link>
+        {/* Agent preview — no-nonsense list rows */}
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+            gap: 12,
+          }}
+        >
+          {previewAgents.map((agent, i) => (
+            <motion.div
+              key={agent.id}
+              initial={{ opacity: 0, y: 14 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.4 }}
+              transition={{ delay: i * 0.06, duration: 0.5, ease: EASE }}
+            >
+              <Link
+                href={`/agents/${agent.id}`}
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 12,
+                  padding: '20px 22px',
+                  borderRadius: 14,
+                  border: '1px solid var(--fh-border)',
+                  background: 'var(--fh-surface)',
+                  textDecoration: 'none',
+                  transition: 'border-color 200ms ease, background 200ms ease',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = 'rgba(39,166,68,0.4)'
+                  e.currentTarget.style.background = 'var(--fh-surface-3)'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = 'var(--fh-border)'
+                  e.currentTarget.style.background = 'var(--fh-surface)'
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                  <div
+                    style={{
+                      width: 36,
+                      height: 36,
+                      borderRadius: 10,
+                      border: '1px solid var(--fh-border)',
+                      background: 'var(--fh-surface-3)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: 'var(--fh-t2)',
+                    }}
+                  >
+                    <Bot style={{ width: 16, height: 16 }} />
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div
+                      style={{
+                        fontSize: 14,
+                        fontWeight: 590,
+                        color: 'var(--fh-t1)',
+                        letterSpacing: '-0.01em',
+                      }}
+                    >
+                      {agent.name}
+                    </div>
+                    <div
+                      style={{
+                        fontSize: 12,
+                        color: 'var(--fh-t4)',
+                        marginTop: 2,
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                      }}
+                    >
+                      {agent.tagline}
+                    </div>
+                  </div>
+                </div>
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    paddingTop: 12,
+                    borderTop: '1px solid var(--fh-sep)',
+                    fontFamily:
+                      'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace',
+                    fontSize: 11,
+                    letterSpacing: '0.15em',
+                    textTransform: 'uppercase',
+                  }}
+                >
+                  <span style={{ color: 'var(--fh-t4)' }}>{c.role}</span>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, color: '#27a644' }}>
+                    <span
+                      style={{
+                        width: 6,
+                        height: 6,
+                        borderRadius: '50%',
+                        background: '#27a644',
+                        boxShadow: '0 0 10px rgba(39,166,68,0.6)',
+                      }}
+                    />
+                    {c.available}
+                  </span>
+                </div>
+              </Link>
+            </motion.div>
           ))}
         </div>
 
-        {/* CTA */}
-        <div className="text-center">
+        <div>
           <Link
             href="/agents"
-            className="inline-flex items-center gap-2 transition-all"
             style={{
-              padding: '12px 28px',
-              borderRadius: '10px',
-              background: '#5e6ad2',
-              color: '#fff',
-              fontSize: '14px',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 10,
+              padding: '15px 24px',
+              borderRadius: 999,
+              background: 'var(--fh-t1)',
+              color: 'var(--fh-canvas)',
+              fontSize: 15,
               fontWeight: 590,
-              textDecoration: 'none',
               letterSpacing: '-0.01em',
+              textDecoration: 'none',
+              transition: 'transform 260ms cubic-bezier(0.22,1,0.36,1)',
             }}
-            onMouseEnter={e => { e.currentTarget.style.background = '#828fff' }}
-            onMouseLeave={e => { e.currentTarget.style.background = '#5e6ad2' }}
+            onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)' }}
+            onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)' }}
           >
             {c.cta}
-            <ArrowRight className="h-4 w-4" />
+            <ArrowUpRight style={{ width: 16, height: 16 }} />
           </Link>
         </div>
       </div>
-    </section>
+    </SectionShell>
   )
 }

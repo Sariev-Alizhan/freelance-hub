@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next'
-import { Inter } from 'next/font/google'
+import { Inter, Instrument_Serif } from 'next/font/google'
 import { headers } from 'next/headers'
 import './globals.css'
 import { Analytics } from '@vercel/analytics/next'
@@ -17,6 +17,15 @@ const inter = Inter({
   subsets: ['latin', 'cyrillic'],
   variable: '--font-sans',
   // Enable variable font axes for weight 510, 590 (Linear signature weights)
+  display: 'swap',
+})
+
+// Editorial display serif — landing-only, italic for extreme-contrast pairing with Inter
+const instrumentSerif = Instrument_Serif({
+  subsets: ['latin'],
+  weight: '400',
+  style: ['normal', 'italic'],
+  variable: '--font-serif-display',
   display: 'swap',
 })
 
@@ -109,7 +118,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
         <link rel="manifest" href="/manifest.json" />
       </head>
-      <body className={`${inter.variable} font-sans antialiased min-h-screen flex flex-col`}>
+      <body className={`${inter.variable} ${instrumentSerif.variable} font-sans antialiased min-h-screen flex flex-col`}>
         <MotionProvider>
         <ThemeProvider>
           <LanguageProvider>

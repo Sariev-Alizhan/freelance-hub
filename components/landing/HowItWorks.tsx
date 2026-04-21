@@ -1,94 +1,117 @@
 'use client'
 import { motion } from 'framer-motion'
-import { MessageSquare, Search, CreditCard, Star } from 'lucide-react'
 import { useLang } from '@/lib/context/LanguageContext'
+import { SectionShell, EditorialHeading, EASE } from './_section-atoms'
 
-const ICONS = [MessageSquare, Search, CreditCard, Star]
-const COLORS = [
-  { color: '#5e6ad2', bg: 'rgba(94,106,210,0.08)'  },
-  { color: '#7170ff', bg: 'rgba(113,112,255,0.08)' },
-  { color: '#27a644', bg: 'rgba(39,166,68,0.08)'   },
-  { color: '#fbbf24', bg: 'rgba(251,191,36,0.08)'  },
-]
+const ACCENT_BY_LANG: Record<string, { pre: string; accent: string }> = {
+  en: { pre: 'How it', accent: 'works.' },
+  ru: { pre: 'Как это', accent: 'работает.' },
+  kz: { pre: 'Қалай', accent: 'жұмыс істейді.' },
+}
 
 export default function HowItWorks() {
-  const { t } = useLang()
+  const { t, lang } = useLang()
   const hw = t.howItWorks
+  const head = ACCENT_BY_LANG[lang] ?? ACCENT_BY_LANG.en
 
   return (
-    <section className="py-12 sm:py-20 px-4 sm:px-6 lg:px-8" style={{ background: 'var(--fh-canvas)' }}>
-      <div className="mx-auto max-w-7xl">
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-14"
-        >
-          <h2
-            style={{
-              fontSize: 'clamp(24px, 4vw, 36px)',
-              fontWeight: 510,
-              letterSpacing: '-0.04em',
-              color: 'var(--fh-t1)',
-              lineHeight: 1.1,
-              marginBottom: '12px',
-              fontFeatureSettings: '"cv01", "ss03"',
-            }}
-          >
-            {hw.heading}
-          </h2>
-          <p style={{ fontSize: '15px', color: '#8a8f98', fontWeight: 400, letterSpacing: '-0.01em', lineHeight: 1.6 }}>
-            {hw.sub}
-          </p>
-        </motion.div>
+    <SectionShell>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'minmax(0, 1fr)',
+          gap: 'clamp(40px, 6vw, 72px)',
+        }}
+      >
+        <EditorialHeading
+          eyebrow={hw.step}
+          pre={head.pre}
+          accent={head.accent}
+          sub={hw.sub}
+        />
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-          {hw.steps.map((step: { title: string; text: string }, i: number) => {
-            const Icon = ICONS[i]
-            const { color, bg } = COLORS[i]
-            return (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.08 }}
-                className="relative"
-              >
-                {i < hw.steps.length - 1 && (
-                  <div
-                    className="hidden lg:block absolute top-9 left-full w-full h-px z-0"
-                    style={{ background: 'linear-gradient(to right, var(--fh-border), transparent)' }}
-                  />
-                )}
-                <div
-                  className="relative z-10 rounded-xl p-6 h-full flex flex-col"
-                  style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border)' }}
+        <ol
+          style={{
+            listStyle: 'none',
+            margin: 0,
+            padding: 0,
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+            gap: '1px',
+            background: 'var(--fh-sep)',
+            border: '1px solid var(--fh-sep)',
+            borderRadius: 16,
+            overflow: 'hidden',
+            counterReset: 'fh-step',
+          }}
+        >
+          {hw.steps.map((step: { title: string; text: string }, i: number) => (
+            <motion.li
+              key={i}
+              initial={{ opacity: 0, y: 14 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.4 }}
+              transition={{ delay: i * 0.08, duration: 0.55, ease: EASE }}
+              style={{
+                background: 'var(--fh-canvas)',
+                padding: 'clamp(26px, 2.5vw, 40px)',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 16,
+                minHeight: 220,
+                position: 'relative',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: 14 }}>
+                <span
+                  style={{
+                    fontSize: 'clamp(40px, 4.5vw, 56px)',
+                    lineHeight: 0.9,
+                    letterSpacing: '-0.04em',
+                    fontWeight: 700,
+                    color: 'var(--fh-t1)',
+                  }}
                 >
-                  <div
-                    className="h-11 w-11 rounded-lg flex items-center justify-center mb-5"
-                    style={{ background: bg }}
-                  >
-                    <Icon className="h-5 w-5" style={{ color }} />
-                  </div>
-                  <div
-                    className="text-[11px] mb-2"
-                    style={{ fontWeight: 590, color, letterSpacing: '0.04em', textTransform: 'uppercase' }}
-                  >
-                    {hw.step} {i + 1}
-                  </div>
-                  <h3 style={{ fontSize: '14px', fontWeight: 590, color: 'var(--fh-t1)', marginBottom: '8px', letterSpacing: '-0.02em' }}>
-                    {step.title}
-                  </h3>
-                  <p style={{ fontSize: '13px', color: '#8a8f98', lineHeight: 1.6, fontWeight: 400, letterSpacing: '-0.01em' }}>
-                    {step.text}
-                  </p>
-                </div>
-              </motion.div>
-            )
-          })}
-        </div>
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                <span
+                  style={{
+                    fontFamily:
+                      'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace',
+                    fontSize: 11,
+                    letterSpacing: '0.18em',
+                    textTransform: 'uppercase',
+                    color: 'var(--fh-t4)',
+                  }}
+                >
+                  / {String(hw.steps.length).padStart(2, '0')}
+                </span>
+              </div>
+              <h3
+                style={{
+                  margin: 0,
+                  fontSize: 17,
+                  fontWeight: 590,
+                  letterSpacing: '-0.015em',
+                  color: 'var(--fh-t1)',
+                }}
+              >
+                {step.title}
+              </h3>
+              <p
+                style={{
+                  margin: 0,
+                  fontSize: 13.5,
+                  lineHeight: 1.55,
+                  color: 'var(--fh-t3)',
+                }}
+              >
+                {step.text}
+              </p>
+            </motion.li>
+          ))}
+        </ol>
       </div>
-    </section>
+    </SectionShell>
   )
 }

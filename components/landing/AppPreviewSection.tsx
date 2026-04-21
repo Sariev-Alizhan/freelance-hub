@@ -1,64 +1,159 @@
 'use client'
 import { motion } from 'framer-motion'
-import { MessageCircle, Star, Zap, BadgeCheck, Users, TrendingUp } from 'lucide-react'
+import { MessageCircle, Star, Zap, BadgeCheck } from 'lucide-react'
+import { useLang } from '@/lib/context/LanguageContext'
+import { SectionShell, EditorialHeading, EASE } from './_section-atoms'
 
-// ── Fake phone screen content ─────────────────────────────────────────────────
-function PhoneScreen() {
+// ── Fake phone screen content (unchanged content, lightly polished) ──────────
+function PhoneScreen({ labelFeed }: { labelFeed: string }) {
   const posts = [
-    { name: 'Алижан С.', role: 'Full-stack разработчик', time: '2м', text: 'Завершил проект по интеграции AI в CRM. Результат — конверсия выросла на 34% 🚀', likes: 24, verified: true },
-    { name: 'Дана К.',   role: 'UX/UI Designer',         time: '15м', text: 'Запустила новый лендинг для клиента. Сделала за 2 дня вместо 5 — AI помог с wireframes ✅', likes: 41, verified: true },
+    {
+      name: 'Alizhan S.',
+      role: 'Full-stack developer',
+      time: '2m',
+      text: 'Finished CRM AI integration. Conversion jumped 34% 🚀',
+      likes: 24,
+      verified: true,
+    },
+    {
+      name: 'Dana K.',
+      role: 'UX/UI Designer',
+      time: '15m',
+      text: 'Shipped a new landing for a client. 2 days instead of 5 — AI handled wireframes ✅',
+      likes: 41,
+      verified: true,
+    },
   ]
-  const stories = ['А', 'Д', 'М', 'Е', 'С', 'Р']
+  const stories = ['A', 'D', 'M', 'E', 'S', 'R']
 
   return (
-    <div style={{
-      background: '#0a0a12',
-      height: '100%',
-      overflowY: 'hidden',
-      display: 'flex',
-      flexDirection: 'column',
-      fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
-    }}>
-      {/* Status bar */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px 6px', fontSize: 11, color: 'rgba(255,255,255,0.6)', fontWeight: 600 }}>
+    <div
+      style={{
+        background: '#0a0a12',
+        height: '100%',
+        overflowY: 'hidden',
+        display: 'flex',
+        flexDirection: 'column',
+        fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
+      }}
+    >
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          padding: '12px 16px 6px',
+          fontSize: 11,
+          color: 'rgba(255,255,255,0.6)',
+          fontWeight: 600,
+        }}
+      >
         <span>9:41</span>
-        <div style={{ width: 80, height: 18, borderRadius: 99, background: '#111', border: '1px solid rgba(255,255,255,0.08)' }} />
+        <div
+          style={{
+            width: 80,
+            height: 18,
+            borderRadius: 99,
+            background: '#111',
+            border: '1px solid rgba(255,255,255,0.08)',
+          }}
+        />
         <span>●●●</span>
       </div>
 
-      {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '4px 14px 10px' }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '4px 14px 10px',
+        }}
+      >
         <div>
-          <div style={{ fontSize: 18, fontWeight: 800, color: '#fff', letterSpacing: '-0.03em' }}>FreelanceHub</div>
-          <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.35)', marginTop: 1 }}>Лента · Казахстан</div>
+          <div
+            style={{
+              fontSize: 18,
+              fontWeight: 800,
+              color: '#fff',
+              letterSpacing: '-0.03em',
+            }}
+          >
+            FreelanceHub
+          </div>
+          <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.35)', marginTop: 1 }}>
+            {labelFeed}
+          </div>
         </div>
         <div style={{ display: 'flex', gap: 8 }}>
-          <div style={{ width: 28, height: 28, borderRadius: '50%', background: 'rgba(255,255,255,0.07)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div
+            style={{
+              width: 28,
+              height: 28,
+              borderRadius: '50%',
+              background: 'rgba(255,255,255,0.07)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
             <MessageCircle size={12} color="rgba(255,255,255,0.5)" />
           </div>
-          <div style={{ width: 28, height: 28, borderRadius: '50%', background: 'rgba(255,255,255,0.07)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div
+            style={{
+              width: 28,
+              height: 28,
+              borderRadius: '50%',
+              background: 'rgba(255,255,255,0.07)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
             <Zap size={12} color="rgba(255,255,255,0.5)" />
           </div>
         </div>
       </div>
 
-      {/* Stories bar */}
       <div style={{ display: 'flex', gap: 10, padding: '6px 14px 12px', overflowX: 'hidden' }}>
-        {/* Add story */}
         <div style={{ flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
-          <div style={{ width: 44, height: 44, borderRadius: '50%', background: 'rgba(113,112,255,0.15)', border: '1.5px dashed rgba(113,112,255,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, color: 'rgba(113,112,255,0.8)' }}>+</div>
-          <span style={{ fontSize: 8, color: 'rgba(255,255,255,0.3)' }}>Добавить</span>
+          <div
+            style={{
+              width: 44,
+              height: 44,
+              borderRadius: '50%',
+              background: 'rgba(244,244,246,0.06)',
+              border: '1.5px dashed rgba(244,244,246,0.3)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: 18,
+              color: 'rgba(244,244,246,0.6)',
+            }}
+          >
+            +
+          </div>
+          <span style={{ fontSize: 8, color: 'rgba(255,255,255,0.3)' }}>+</span>
         </div>
-        {/* Story bubbles */}
         {stories.map((s, i) => (
-          <div key={i} style={{ flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
-            <div style={{
-              width: 44, height: 44, borderRadius: '50%',
-              background: `hsl(${(i * 60) % 360}, 60%, 35%)`,
-              border: `2px solid ${i < 2 ? '#7170ff' : 'rgba(255,255,255,0.12)'}`,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: 16, fontWeight: 700, color: '#fff',
-            }}>
+          <div
+            key={i}
+            style={{ flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}
+          >
+            <div
+              style={{
+                width: 44,
+                height: 44,
+                borderRadius: '50%',
+                background: `hsl(0, 0%, ${18 + i * 5}%)`,
+                border: i < 2 ? '2px solid #27a644' : '2px solid rgba(255,255,255,0.12)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: 16,
+                fontWeight: 700,
+                color: '#fff',
+              }}
+            >
               {s}
             </div>
             <span style={{ fontSize: 8, color: 'rgba(255,255,255,0.3)' }}>User {i + 1}</span>
@@ -66,28 +161,85 @@ function PhoneScreen() {
         ))}
       </div>
 
-      {/* Posts */}
-      <div style={{ flex: 1, overflowY: 'hidden', padding: '0 10px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+      <div
+        style={{
+          flex: 1,
+          overflowY: 'hidden',
+          padding: '0 10px',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 8,
+        }}
+      >
         {posts.map((p, i) => (
-          <div key={i} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 14, padding: '10px 12px' }}>
+          <div
+            key={i}
+            style={{
+              background: 'rgba(255,255,255,0.04)',
+              border: '1px solid rgba(255,255,255,0.07)',
+              borderRadius: 14,
+              padding: '10px 12px',
+            }}
+          >
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
-              <div style={{ width: 28, height: 28, borderRadius: '50%', background: `hsl(${i * 120}, 60%, 40%)`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700, color: '#fff', flexShrink: 0 }}>
+              <div
+                style={{
+                  width: 28,
+                  height: 28,
+                  borderRadius: '50%',
+                  background: `hsl(0, 0%, ${22 + i * 8}%)`,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: 12,
+                  fontWeight: 700,
+                  color: '#fff',
+                  flexShrink: 0,
+                }}
+              >
                 {p.name[0]}
               </div>
               <div style={{ flex: 1 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
                   <span style={{ fontSize: 11, fontWeight: 700, color: '#fff' }}>{p.name}</span>
-                  {p.verified && <BadgeCheck size={10} color="#7170ff" />}
+                  {p.verified && <BadgeCheck size={10} color="#27a644" />}
                 </div>
-                <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.3)' }}>{p.role} · {p.time}</div>
+                <div style={{ fontSize: 9, color: 'rgba(255,255,255,0.3)' }}>
+                  {p.role} · {p.time}
+                </div>
               </div>
             </div>
-            <p style={{ fontSize: 10, color: 'rgba(255,255,255,0.65)', lineHeight: 1.5, marginBottom: 8 }}>{p.text}</p>
+            <p
+              style={{
+                fontSize: 10,
+                color: 'rgba(255,255,255,0.65)',
+                lineHeight: 1.5,
+                marginBottom: 8,
+              }}
+            >
+              {p.text}
+            </p>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 3, fontSize: 9, color: 'rgba(255,255,255,0.3)' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 3,
+                  fontSize: 9,
+                  color: 'rgba(255,255,255,0.3)',
+                }}
+              >
                 <Star size={9} /> {p.likes}
               </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 3, fontSize: 9, color: 'rgba(255,255,255,0.3)' }}>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 3,
+                  fontSize: 9,
+                  color: 'rgba(255,255,255,0.3)',
+                }}
+              >
                 <MessageCircle size={9} /> 5
               </div>
             </div>
@@ -95,17 +247,38 @@ function PhoneScreen() {
         ))}
       </div>
 
-      {/* Bottom nav */}
-      <div style={{ padding: '10px 0 14px', borderTop: '1px solid rgba(255,255,255,0.06)', display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)' }}>
+      <div
+        style={{
+          padding: '10px 0 14px',
+          borderTop: '1px solid rgba(255,255,255,0.06)',
+          display: 'grid',
+          gridTemplateColumns: 'repeat(5, 1fr)',
+        }}
+      >
         {['🏠', '🔍', '＋', '💬', '👤'].map((icon, i) => (
           <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
-            <div style={{
-              width: 30, height: 30, borderRadius: 10,
-              background: i === 0 ? 'rgba(113,112,255,0.15)' : 'transparent',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: i === 2 ? 22 : 16,
-            }}>{icon}</div>
-            <div style={{ width: i === 0 ? 4 : 0, height: 4, borderRadius: 2, background: '#7170ff' }} />
+            <div
+              style={{
+                width: 30,
+                height: 30,
+                borderRadius: 10,
+                background: i === 0 ? 'rgba(39,166,68,0.15)' : 'transparent',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: i === 2 ? 22 : 16,
+              }}
+            >
+              {icon}
+            </div>
+            <div
+              style={{
+                width: i === 0 ? 4 : 0,
+                height: 4,
+                borderRadius: 2,
+                background: '#27a644',
+              }}
+            />
           </div>
         ))}
       </div>
@@ -113,179 +286,262 @@ function PhoneScreen() {
   )
 }
 
-// ── Feature chips ─────────────────────────────────────────────────────────────
-const FEATURES = [
-  { icon: <Zap      size={18} color="#7170ff" />, bg: 'rgba(113,112,255,0.1)', border: 'rgba(113,112,255,0.2)', title: '0% комиссий', sub: 'Никаких скрытых платежей — никогда' },
-  { icon: <MessageCircle size={18} color="#27a644" />, bg: 'rgba(39,166,68,0.08)', border: 'rgba(39,166,68,0.2)', title: 'Мессенджер', sub: 'Реакции, истории, typing indicator' },
-  { icon: <Star     size={18} color="#fbbf24" />, bg: 'rgba(251,191,36,0.08)', border: 'rgba(251,191,36,0.2)', title: 'Рейтинг и отзывы', sub: 'Только реальные клиенты' },
-  { icon: <Users    size={18} color="#06b6d4" />, bg: 'rgba(6,182,212,0.08)',  border: 'rgba(6,182,212,0.2)',  title: 'Социальная сеть', sub: 'Лента, сторис, друзья' },
-  { icon: <TrendingUp size={18} color="#ec4899" />, bg: 'rgba(236,72,153,0.08)', border: 'rgba(236,72,153,0.2)', title: 'AI-помощник', sub: 'Подбор специалиста за 3 секунды' },
-  { icon: <BadgeCheck size={18} color="#a855f7" />, bg: 'rgba(168,85,247,0.08)', border: 'rgba(168,85,247,0.2)', title: 'Верификация', sub: 'Проверенные фрилансеры с бейджем' },
-]
+// Copy keyed by language
+const CONTENT = {
+  en: {
+    eyebrow: 'The app',
+    pre: 'Everything you need,',
+    accent: 'one app.',
+    sub: 'A freelance platform with a feed, stories, messenger, and AI — like a social network, but for work.',
+    feed: 'Feed · Kazakhstan',
+    features: [
+      { kv: '01', title: '0% commission', sub: 'No hidden fees. Ever.' },
+      { kv: '02', title: 'Messenger', sub: 'Reactions, stories, typing indicator.' },
+      { kv: '03', title: 'Ratings & reviews', sub: 'Real clients only.' },
+      { kv: '04', title: 'Social feed', sub: 'Posts, stories, follows.' },
+      { kv: '05', title: 'AI matchmaking', sub: 'Right freelancer in 3 seconds.' },
+      { kv: '06', title: 'Verified profiles', sub: 'Badge for proven freelancers.' },
+    ],
+  },
+  ru: {
+    eyebrow: 'Приложение',
+    pre: 'Всё что нужно —',
+    accent: 'одно приложение.',
+    sub: 'Фриланс-платформа с лентой, сторис, мессенджером и AI. Как соцсеть — только для работы.',
+    feed: 'Лента · Казахстан',
+    features: [
+      { kv: '01', title: '0% комиссий', sub: 'Никаких скрытых платежей. Никогда.' },
+      { kv: '02', title: 'Мессенджер', sub: 'Реакции, стори, typing-индикатор.' },
+      { kv: '03', title: 'Рейтинг и отзывы', sub: 'Только реальные клиенты.' },
+      { kv: '04', title: 'Социальная лента', sub: 'Посты, стори, подписки.' },
+      { kv: '05', title: 'AI-подбор', sub: 'Нужный специалист за 3 секунды.' },
+      { kv: '06', title: 'Верификация', sub: 'Бейдж для проверенных.' },
+    ],
+  },
+  kz: {
+    eyebrow: 'Қосымша',
+    pre: 'Керек нәрсенің бәрі —',
+    accent: 'бір қосымшада.',
+    sub: 'Лента, сторис, мессенджер және AI бар фриланс-платформа. Әлеуметтік желі, бірақ жұмысқа арналған.',
+    feed: 'Лента · Қазақстан',
+    features: [
+      { kv: '01', title: '0% комиссия', sub: 'Жасырын төлем жоқ. Ешқашан.' },
+      { kv: '02', title: 'Мессенджер', sub: 'Реакция, стори, typing көрсеткіш.' },
+      { kv: '03', title: 'Рейтинг және пікірлер', sub: 'Тек нақты клиенттер.' },
+      { kv: '04', title: 'Әлеуметтік лента', sub: 'Посттар, стори, жазылу.' },
+      { kv: '05', title: 'AI-сұрыптау', sub: '3 секундта сізге қажет маман.' },
+      { kv: '06', title: 'Верификация', sub: 'Тексерілген мамандарға бейдж.' },
+    ],
+  },
+} as const
 
-// ── Main export ───────────────────────────────────────────────────────────────
 export default function AppPreviewSection() {
+  const { lang } = useLang()
+  const c = (CONTENT as Record<string, typeof CONTENT.en>)[lang] ?? CONTENT.en
+
   return (
-    <section style={{
-      background: '#060612',
-      padding: 'clamp(60px, 10vw, 100px) 20px',
-      position: 'relative',
-      overflow: 'hidden',
-    }}>
-      {/* Top gradient from hero */}
-      <div style={{
-        position: 'absolute', top: 0, left: 0, right: 0, height: 80,
-        background: 'linear-gradient(to bottom, rgba(6,6,18,1) 0%, transparent 100%)',
-        pointerEvents: 'none', zIndex: 0,
-      }} />
-
-      <div style={{ maxWidth: 1100, margin: '0 auto', position: 'relative', zIndex: 1 }}>
-
-        {/* Section header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          style={{ textAlign: 'center', marginBottom: 'clamp(40px, 8vw, 72px)' }}
-        >
-          <div style={{
-            display: 'inline-flex', alignItems: 'center', gap: 8,
-            padding: '7px 16px', borderRadius: 99, marginBottom: 20,
-            background: 'rgba(113,112,255,0.1)',
-            border: '1px solid rgba(113,112,255,0.25)',
-          }}>
-            <Zap size={13} color="#7170ff" />
-            <span style={{ fontSize: 12, fontWeight: 700, color: '#7170ff', letterSpacing: '0.02em' }}>
-              Платформа нового поколения
-            </span>
-          </div>
-          <h2 style={{
-            fontSize: 'clamp(28px, 6vw, 48px)',
-            fontWeight: 800,
-            color: '#fff',
-            letterSpacing: '-0.04em',
-            lineHeight: 1.05,
-            marginBottom: 16,
-          }}>
-            Всё что нужно<br />
-            <span style={{
-              background: 'linear-gradient(90deg, #7170ff, #a855f7, #7170ff)',
-              backgroundSize: '200% auto',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-            }}>
-              в одном приложении
-            </span>
-          </h2>
-          <p style={{ fontSize: 16, color: 'rgba(255,255,255,0.45)', maxWidth: 420, margin: '0 auto' }}>
-            Фриланс-платформа с лентой, сторисами, мессенджером и AI — как соцсеть, только для работы
-          </p>
-        </motion.div>
-
-        {/* Phone + features grid */}
-        <div style={{
+    <SectionShell>
+      <div
+        style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-          gap: 24,
-          alignItems: 'center',
-        }}>
-          {/* Phone mockup */}
+          gridTemplateColumns: 'minmax(0, 1fr)',
+          gap: 'clamp(40px, 6vw, 72px)',
+        }}
+      >
+        <EditorialHeading
+          eyebrow={c.eyebrow}
+          pre={c.pre}
+          accent={c.accent}
+          sub={c.sub}
+          align="left"
+        />
+
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'minmax(240px, 320px) minmax(0, 1fr)',
+            gap: 'clamp(32px, 5vw, 72px)',
+            alignItems: 'center',
+          }}
+          className="fh-apppreview-grid"
+        >
+          {/* Phone */}
           <motion.div
-            initial={{ opacity: 0, y: 40 }}
+            initial={{ opacity: 0, y: 28 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-            style={{ display: 'flex', justifyContent: 'center' }}
-          >
-            <div style={{
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.75, ease: EASE }}
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
               position: 'relative',
-              width: 'min(260px, 75vw)',
-              animation: 'floatPhone 4s ease-in-out infinite',
-            }}>
-              <style>{`
-                @keyframes floatPhone {
-                  0%,100% { transform: translateY(0px) rotate(-1deg); }
-                  50%      { transform: translateY(-12px) rotate(1deg); }
-                }
-              `}</style>
+            }}
+          >
+            <style>{`
+              @keyframes fh-floatPhone {
+                0%,100% { transform: translateY(0) rotate(-1deg); }
+                50%     { transform: translateY(-10px) rotate(1deg); }
+              }
+              @media (prefers-reduced-motion: reduce) {
+                .fh-phone-wrap { animation: none !important; }
+              }
+              @media (max-width: 720px) {
+                .fh-apppreview-grid { grid-template-columns: 1fr !important; }
+              }
+            `}</style>
 
-              {/* Glow behind phone */}
-              <div style={{
-                position: 'absolute', inset: -20,
-                background: 'radial-gradient(ellipse, rgba(113,112,255,0.25) 0%, transparent 65%)',
-                filter: 'blur(30px)',
-                zIndex: 0,
-              }} />
-
-              {/* Phone frame */}
-              <div style={{
-                position: 'relative', zIndex: 1,
-                background: '#111118',
-                borderRadius: 38,
-                padding: '10px 8px',
-                border: '2px solid rgba(255,255,255,0.1)',
-                boxShadow: '0 40px 80px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.08)',
-                aspectRatio: '9/19',
-                overflow: 'hidden',
-              }}>
-                {/* Notch */}
-                <div style={{
-                  position: 'absolute', top: 10, left: '50%', transform: 'translateX(-50%)',
-                  width: 90, height: 22, borderRadius: 99,
-                  background: '#000',
-                  zIndex: 10,
-                }} />
+            <div
+              className="fh-phone-wrap"
+              style={{
+                position: 'relative',
+                width: 'min(260px, 80vw)',
+                animation: 'fh-floatPhone 5s ease-in-out infinite',
+              }}
+            >
+              <div
+                aria-hidden
+                style={{
+                  position: 'absolute',
+                  inset: -30,
+                  background:
+                    'radial-gradient(ellipse, rgba(39,166,68,0.15) 0%, transparent 65%)',
+                  filter: 'blur(30px)',
+                  zIndex: 0,
+                }}
+              />
+              <div
+                style={{
+                  position: 'relative',
+                  zIndex: 1,
+                  background: '#111118',
+                  borderRadius: 38,
+                  padding: '10px 8px',
+                  border: '2px solid rgba(255,255,255,0.1)',
+                  boxShadow:
+                    '0 40px 80px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08)',
+                  aspectRatio: '9/19',
+                  overflow: 'hidden',
+                }}
+              >
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: 10,
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                    width: 90,
+                    height: 22,
+                    borderRadius: 99,
+                    background: '#000',
+                    zIndex: 10,
+                  }}
+                />
                 <div style={{ height: '100%', borderRadius: 30, overflow: 'hidden' }}>
-                  <PhoneScreen />
+                  <PhoneScreen labelFeed={c.feed} />
                 </div>
               </div>
-
-              {/* Side buttons */}
-              <div style={{ position: 'absolute', right: -4, top: '25%', width: 3, height: 50, borderRadius: 2, background: 'rgba(255,255,255,0.15)' }} />
-              <div style={{ position: 'absolute', left: -4, top: '20%', width: 3, height: 32, borderRadius: 2, background: 'rgba(255,255,255,0.12)' }} />
-              <div style={{ position: 'absolute', left: -4, top: 'calc(20% + 40px)', width: 3, height: 32, borderRadius: 2, background: 'rgba(255,255,255,0.12)' }} />
+              <div
+                style={{
+                  position: 'absolute',
+                  right: -4,
+                  top: '25%',
+                  width: 3,
+                  height: 50,
+                  borderRadius: 2,
+                  background: 'rgba(255,255,255,0.15)',
+                }}
+              />
+              <div
+                style={{
+                  position: 'absolute',
+                  left: -4,
+                  top: '20%',
+                  width: 3,
+                  height: 32,
+                  borderRadius: 2,
+                  background: 'rgba(255,255,255,0.12)',
+                }}
+              />
+              <div
+                style={{
+                  position: 'absolute',
+                  left: -4,
+                  top: 'calc(20% + 40px)',
+                  width: 3,
+                  height: 32,
+                  borderRadius: 2,
+                  background: 'rgba(255,255,255,0.12)',
+                }}
+              />
             </div>
           </motion.div>
 
-          {/* Feature chips grid */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
-            {FEATURES.map((f, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
+          {/* Numbered feature list */}
+          <ul
+            style={{
+              listStyle: 'none',
+              margin: 0,
+              padding: 0,
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+              gap: '1px',
+              background: 'var(--fh-sep)',
+              border: '1px solid var(--fh-sep)',
+              borderRadius: 14,
+              overflow: 'hidden',
+            }}
+          >
+            {c.features.map((f, i) => (
+              <motion.li
+                key={f.kv}
+                initial={{ opacity: 0, y: 12 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.07, duration: 0.5 }}
+                viewport={{ once: true, amount: 0.4 }}
+                transition={{ delay: i * 0.05, duration: 0.5, ease: EASE }}
                 style={{
-                  background: f.bg,
-                  border: `1px solid ${f.border}`,
-                  borderRadius: 16,
-                  padding: '16px 14px',
+                  background: 'var(--fh-canvas)',
+                  padding: '22px 22px 20px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 10,
+                  minHeight: 140,
                 }}
               >
-                <div style={{
-                  width: 36, height: 36, borderRadius: 10, marginBottom: 10,
-                  background: f.bg,
-                  border: `1px solid ${f.border}`,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                }}>
-                  {f.icon}
-                </div>
-                <div style={{ fontSize: 13, fontWeight: 700, color: '#fff', marginBottom: 4, letterSpacing: '-0.02em' }}>{f.title}</div>
-                <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', lineHeight: 1.4 }}>{f.sub}</div>
-              </motion.div>
+                <span
+                  style={{
+                    fontFamily:
+                      'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace',
+                    fontSize: 11,
+                    letterSpacing: '0.14em',
+                    color: 'var(--fh-t4)',
+                  }}
+                >
+                  {f.kv}
+                </span>
+                <span
+                  style={{
+                    fontSize: 17,
+                    fontWeight: 590,
+                    letterSpacing: '-0.015em',
+                    color: 'var(--fh-t1)',
+                  }}
+                >
+                  {f.title}
+                </span>
+                <span
+                  style={{
+                    fontSize: 13.5,
+                    lineHeight: 1.5,
+                    color: 'var(--fh-t3)',
+                  }}
+                >
+                  {f.sub}
+                </span>
+              </motion.li>
             ))}
-          </div>
+          </ul>
         </div>
       </div>
-
-      {/* Bottom fade to next section */}
-      <div style={{
-        position: 'absolute', bottom: 0, left: 0, right: 0, height: 100,
-        background: 'linear-gradient(to bottom, transparent, rgba(6,6,18,0.7))',
-        pointerEvents: 'none',
-      }} />
-    </section>
+    </SectionShell>
   )
 }

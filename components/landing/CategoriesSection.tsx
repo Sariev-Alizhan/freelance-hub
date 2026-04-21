@@ -2,86 +2,149 @@
 import React from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { Code2, PenSquare, BarChart2, Target, PenLine, Video, Bot, Brain, Blocks, Sparkles } from 'lucide-react'
+import {
+  Code2,
+  PenSquare,
+  BarChart2,
+  Target,
+  PenLine,
+  Video,
+  Bot,
+  Brain,
+  Blocks,
+  Sparkles,
+} from 'lucide-react'
 import { CATEGORIES } from '@/lib/mock/categories'
 import { useLang } from '@/lib/context/LanguageContext'
+import { SectionShell, EditorialHeading, EASE } from './_section-atoms'
 
-const ICONS: Record<string, React.ComponentType<{ className?: string; style?: React.CSSProperties }>> = {
-  Code2, Figma: PenSquare, BarChart2, Target, PenLine, Video, Bot, Brain, Blocks, Sparkles,
+const ICONS: Record<
+  string,
+  React.ComponentType<{ className?: string; style?: React.CSSProperties }>
+> = {
+  Code2,
+  Figma: PenSquare,
+  BarChart2,
+  Target,
+  PenLine,
+  Video,
+  Bot,
+  Brain,
+  Blocks,
+  Sparkles,
+}
+
+const ACCENT_BY_LANG: Record<string, { pre: string; accent: string; eyebrow: string }> = {
+  en: { pre: 'Modern', accent: 'skills.', eyebrow: 'Categories' },
+  ru: { pre: 'Современные', accent: 'профессии.', eyebrow: 'Категории' },
+  kz: { pre: 'Заманауи', accent: 'мамандықтар.', eyebrow: 'Санаттар' },
 }
 
 export default function CategoriesSection() {
-  const { t } = useLang()
+  const { t, lang } = useLang()
   const ct = t.categories
+  const head = ACCENT_BY_LANG[lang] ?? ACCENT_BY_LANG.en
 
   return (
-    <section className="py-12 sm:py-20 px-4 sm:px-6 lg:px-8" style={{ background: 'var(--fh-canvas)' }}>
-      <div className="mx-auto max-w-7xl">
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mb-12"
-        >
-          <h2
-            style={{
-              fontSize: 'clamp(24px, 4vw, 36px)',
-              fontWeight: 510,
-              letterSpacing: '-0.04em',
-              color: 'var(--fh-t1)',
-              lineHeight: 1.1,
-              marginBottom: '12px',
-              fontFeatureSettings: '"cv01", "ss03"',
-            }}
-          >
-            {ct.heading}
-          </h2>
-          <p style={{ fontSize: '15px', color: 'var(--fh-t3)', fontWeight: 400, letterSpacing: '-0.01em', lineHeight: 1.6 }}>
-            {ct.sub}
-          </p>
-        </motion.div>
+    <SectionShell>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'minmax(0, 1fr)',
+          gap: 'clamp(40px, 6vw, 64px)',
+        }}
+      >
+        <EditorialHeading
+          eyebrow={head.eyebrow}
+          pre={head.pre}
+          accent={head.accent}
+          sub={ct.sub}
+        />
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2.5">
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))',
+            gap: '1px',
+            background: 'var(--fh-sep)',
+            border: '1px solid var(--fh-sep)',
+            borderRadius: 16,
+            overflow: 'hidden',
+          }}
+        >
           {CATEGORIES.map((cat, i) => {
             const Icon = ICONS[cat.icon] || Sparkles
             const label = ct[cat.slug] ?? cat.label
             return (
               <motion.div
                 key={cat.slug}
-                initial={{ opacity: 0, y: 16 }}
+                initial={{ opacity: 0, y: 10 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.04 }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={{ delay: i * 0.03, duration: 0.4, ease: EASE }}
               >
-                <Link href={`/freelancers?category=${cat.slug}`}>
-                  <div
-                    className="group flex flex-col items-center gap-3 p-4 rounded-xl text-center transition-all"
-                    style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border)' }}
-                    onMouseEnter={e => {
-                      e.currentTarget.style.background = 'var(--fh-surface-3)'
-                      e.currentTarget.style.border = '1px solid var(--fh-border-2)'
-                    }}
-                    onMouseLeave={e => {
-                      e.currentTarget.style.background = 'var(--fh-surface)'
-                      e.currentTarget.style.border = '1px solid var(--fh-border)'
+                <Link
+                  href={`/freelancers?category=${cat.slug}`}
+                  className="fh-cat-cell"
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: 12,
+                    padding: '22px 22px',
+                    background: 'var(--fh-canvas)',
+                    textDecoration: 'none',
+                    transition: 'background 200ms ease, color 200ms ease',
+                    height: '100%',
+                  }}
+                >
+                  <span
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: 14,
+                      color: 'var(--fh-t2)',
                     }}
                   >
-                    <div
-                      className="h-11 w-11 rounded-lg flex items-center justify-center transition-transform group-hover:scale-110"
-                      style={{ background: `${cat.color}14` }}
+                    <Icon
+                      style={{ width: 18, height: 18, color: 'var(--fh-t3)' }}
+                    />
+                    <span
+                      style={{
+                        fontSize: 14.5,
+                        fontWeight: 510,
+                        letterSpacing: '-0.01em',
+                        color: 'var(--fh-t1)',
+                      }}
                     >
-                      <Icon className="h-5 w-5" style={{ color: cat.color }} />
-                    </div>
-                    <span style={{ fontSize: '13px', fontWeight: 510, color: 'var(--fh-t2)', letterSpacing: '-0.01em' }}>
                       {label}
                     </span>
-                  </div>
+                  </span>
+                  <span
+                    aria-hidden
+                    style={{
+                      fontFamily:
+                        'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace',
+                      fontSize: 11,
+                      color: 'var(--fh-t4)',
+                    }}
+                  >
+                    →
+                  </span>
                 </Link>
               </motion.div>
             )
           })}
         </div>
+        <style>{`
+          .fh-cat-cell:hover {
+            background: var(--fh-surface-3) !important;
+          }
+          .fh-cat-cell:hover span {
+            color: var(--fh-t1);
+          }
+        `}</style>
       </div>
-    </section>
+    </SectionShell>
   )
 }
