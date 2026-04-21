@@ -54,7 +54,7 @@ export default function Footer() {
   return (
     <footer className="hidden md:block" style={{ borderTop: '1px solid var(--fh-sep)', background: 'var(--fh-footer-bg)', marginTop: 60 }}>
       {/* Accent gradient line */}
-      <div style={{ height: 1, background: 'linear-gradient(90deg, transparent 0%, color-mix(in srgb, var(--fh-primary) 35%, transparent) 40%, color-mix(in srgb, var(--fh-primary) 35%, transparent) 60%, transparent 100%)' }} />
+      <div style={{ height: 1, background: 'linear-gradient(90deg, transparent 0%, color-mix(in srgb, #27a644 40%, transparent) 40%, color-mix(in srgb, #27a644 40%, transparent) 60%, transparent 100%)' }} />
 
       {/* ── MOBILE footer — compact and clean ─────────────────── */}
       <div className="md:hidden" style={{ padding: 'clamp(14px, 5vw, 20px) clamp(12px, 5vw, 20px) 16px' }}>
@@ -63,7 +63,7 @@ export default function Footer() {
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <Logo size={20} showWordmark={false} />
             <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--fh-t1)', letterSpacing: '-0.03em' }}>
-              Freelance<span style={{ color: 'var(--fh-primary)' }}>Hub</span>
+              Freelance<span style={{ color: '#27a644' }}>Hub</span>
             </span>
           </div>
           {/* Social icons */}
@@ -113,7 +113,7 @@ export default function Footer() {
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
               <Logo size={22} showWordmark={false} />
               <span style={{ fontSize: 15, fontWeight: 700, color: 'var(--fh-t1)', letterSpacing: '-0.03em' }}>
-                Freelance<span style={{ color: 'var(--fh-primary)' }}>Hub</span>
+                Freelance<span style={{ color: '#27a644' }}>Hub</span>
               </span>
             </div>
             <p style={{ fontSize: 12, color: 'var(--fh-t4)', lineHeight: 1.6, maxWidth: 210 }}>{t.footer.tagline}</p>
@@ -132,7 +132,7 @@ export default function Footer() {
         {/* Nav grid */}
         <div className="grid grid-cols-4 gap-x-5 gap-y-7 mb-7">
           <NavCol label="Platform" labelColor="var(--fh-t4)" links={PLATFORM} lang={lang} />
-          <NavCol label="AI Tools" labelColor="var(--fh-primary)" links={AI_TOOLS} lang={lang} />
+          <NavCol label="AI Tools" labelColor="#27a644" links={AI_TOOLS} lang={lang} />
           <NavCol label={lang === 'en' ? 'Company' : 'Компания'} labelColor="var(--fh-t4)" links={COMPANY} lang={lang} />
           <div>
             <p style={{ fontSize: 10, fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--fh-t4)', marginBottom: 10 }}>
@@ -152,8 +152,8 @@ export default function Footer() {
         </div>
 
         {/* Donate strip */}
-        <div style={{ padding: '11px 14px', borderRadius: 10, marginBottom: 20, background: 'var(--fh-primary-muted)', border: '1px solid color-mix(in srgb, var(--fh-primary) 20%, transparent)', display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-          <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--fh-primary)', flexShrink: 0 }}>{t.footer.donate}</span>
+        <div style={{ padding: '11px 14px', borderRadius: 10, marginBottom: 20, background: 'rgba(39,166,68,0.08)', border: '1px solid color-mix(in srgb, #27a644 28%, transparent)', display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+          <span style={{ fontSize: 12, fontWeight: 600, color: '#27a644', flexShrink: 0 }}>{t.footer.donate}</span>
           <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
             <span style={{ padding: '3px 9px', borderRadius: 5, background: 'rgba(251,191,36,0.08)', border: '1px solid rgba(251,191,36,0.2)', fontSize: 11, color: '#fbbf24', fontFamily: 'monospace', letterSpacing: '0.02em' }}>Kaspi: 4400 4303 1167 6685</span>
             <span style={{ padding: '3px 9px', borderRadius: 5, background: 'rgba(39,166,68,0.06)', border: '1px solid rgba(39,166,68,0.18)', fontSize: 11, color: '#27a644', fontFamily: 'monospace', letterSpacing: '0.02em' }}>Freedom: 4002 8900 3407 5055</span>
@@ -166,7 +166,7 @@ export default function Footer() {
             <span className="pulse-green" style={{ display: 'block', width: 5, height: 5, borderRadius: '50%', background: '#27a644', flexShrink: 0 }} />
             <span style={{ fontSize: 11, color: 'var(--fh-t4)' }}>
               © 2025 FreelanceHub by{' '}
-              <a href="https://www.instagram.com/sariyev.it.solutions/?hl=ru" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--fh-primary)', textDecoration: 'none' }}>SITS</a>
+              <a href="https://www.instagram.com/sariyev.it.solutions/?hl=ru" target="_blank" rel="noopener noreferrer" style={{ color: '#27a644', textDecoration: 'none' }}>SITS</a>
             </span>
           </div>
           <span style={{ fontSize: 11, color: 'var(--fh-t4)', display: 'flex', alignItems: 'center', gap: 4 }}>{t.footer.made}</span>

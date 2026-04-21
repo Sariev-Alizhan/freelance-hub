@@ -183,9 +183,9 @@ export default function Header() {
             {t.auth.login}
           </Link>
           <Link href="/auth/register" style={{
-            padding: '8px 12px', borderRadius: 99, fontSize: 13, fontWeight: 600,
-            color: '#fff', background: 'var(--fh-primary)', textDecoration: 'none',
-            whiteSpace: 'nowrap',
+            padding: '8px 14px', borderRadius: 999, fontSize: 13, fontWeight: 590,
+            color: 'var(--fh-canvas)', background: 'var(--fh-t1)', textDecoration: 'none',
+            whiteSpace: 'nowrap', letterSpacing: '-0.01em',
           }}>
             {t.auth.register}
           </Link>

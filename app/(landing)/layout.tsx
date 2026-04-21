@@ -44,14 +44,15 @@ export default function LandingLayout({ children }: { children: React.ReactNode 
           <Link
             href="/auth/login"
             style={{
-              padding: '7px 18px',
-              borderRadius: 8,
+              padding: '8px 18px',
+              borderRadius: 999,
               fontSize: 14,
-              fontWeight: 600,
+              fontWeight: 510,
               color: 'var(--fh-t2)',
-              background: 'var(--fh-surface-2)',
-              border: '1px solid var(--fh-border)',
+              background: 'transparent',
+              border: '1px solid var(--fh-border-2)',
               textDecoration: 'none',
+              letterSpacing: '-0.01em',
             }}
           >
             Sign In
@@ -59,13 +60,15 @@ export default function LandingLayout({ children }: { children: React.ReactNode 
           <Link
             href="/auth/register"
             style={{
-              padding: '7px 18px',
-              borderRadius: 8,
+              padding: '8px 18px',
+              borderRadius: 999,
               fontSize: 14,
-              fontWeight: 600,
+              fontWeight: 590,
               color: 'var(--fh-canvas)',
               background: 'var(--fh-t1)',
+              border: '1px solid var(--fh-t1)',
               textDecoration: 'none',
+              letterSpacing: '-0.01em',
             }}
           >
             Get Started
