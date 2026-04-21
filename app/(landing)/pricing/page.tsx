@@ -119,26 +119,64 @@ export default function PricingPage() {
   return (
     <div style={{ background: 'var(--fh-canvas)', minHeight: 'calc(100vh - 52px)' }}>
 
-      {/* ── Hero ── */}
-      <div style={{ textAlign: 'center', padding: 'clamp(56px,7vw,96px) 16px 0' }}>
-        <p style={{
-          display: 'inline-block', marginBottom: 20,
-          padding: '4px 14px', borderRadius: 100,
-          background: 'rgba(113,112,255,0.08)', border: '1px solid rgba(113,112,255,0.2)',
-          fontSize: 12, fontWeight: 590, color: '#7170ff', letterSpacing: '0.04em',
-        }}>
-          FreelanceHub · Тарифы
-        </p>
+      {/* ── Editorial hero ── */}
+      <div style={{ textAlign: 'center', padding: 'clamp(64px,8vw,112px) 16px 0' }}>
+        <div
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 12,
+            marginBottom: 22,
+            fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace',
+            fontSize: 11,
+            letterSpacing: '0.18em',
+            textTransform: 'uppercase',
+            color: 'var(--fh-t3)',
+          }}
+        >
+          <span
+            aria-hidden
+            style={{
+              width: 24, height: 2, borderRadius: 2,
+              background: '#27a644',
+              boxShadow: '0 0 12px rgba(39,166,68,0.55)',
+            }}
+          />
+          <span>FreelanceHub · Тарифы</span>
+        </div>
 
         <h1 style={{
-          fontSize: 'clamp(28px,5vw,52px)', fontWeight: 700,
-          letterSpacing: '-0.05em', color: 'var(--fh-t1)',
-          marginBottom: 14, lineHeight: 1.05,
+          fontSize: 'clamp(34px,6.5vw,72px)', fontWeight: 700,
+          letterSpacing: '-0.045em', color: 'var(--fh-t1)',
+          marginBottom: 18, lineHeight: 0.95, margin: '0 0 18px',
+          fontFeatureSettings: '"cv01", "ss03"',
         }}>
-          Торговля — бесплатно.<br />
-          <span style={{ color: '#7170ff' }}>Максимум — с Premium.</span>
+          Торговля —{' '}
+          <span
+            style={{
+              fontFamily: 'var(--font-serif-display), ui-serif, Georgia, "Times New Roman", serif',
+              fontStyle: 'italic',
+              fontWeight: 400,
+              letterSpacing: '-0.01em',
+            }}
+          >
+            бесплатно.
+          </span>
+          <br />
+          Максимум —{' '}
+          <span
+            style={{
+              fontFamily: 'var(--font-serif-display), ui-serif, Georgia, "Times New Roman", serif',
+              fontStyle: 'italic',
+              fontWeight: 400,
+              letterSpacing: '-0.01em',
+              color: '#27a644',
+            }}
+          >
+            с Premium.
+          </span>
         </h1>
-        <p style={{ fontSize: 15, color: 'var(--fh-t3)', maxWidth: 460, margin: '0 auto 40px', lineHeight: 1.65 }}>
+        <p style={{ fontSize: 16, color: 'var(--fh-t3)', maxWidth: 520, margin: '0 auto 40px', lineHeight: 1.65 }}>
           Размещайте заказы и откликайтесь без комиссии. Premium открывает AI-инструменты, аналитику и буст в поиске.
         </p>
 

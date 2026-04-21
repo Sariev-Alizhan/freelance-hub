@@ -126,18 +126,74 @@ export default function DocsPage() {
   return (
     <div style={{ minHeight: '100vh' }}>
 
-      {/* Hero */}
-      <div style={{ background: 'var(--fh-surface)', borderBottom: '1px solid var(--fh-border)', padding: 'clamp(40px, 6vw, 72px) 24px clamp(28px, 4vw, 48px)' }}>
-        <div style={{ maxWidth: 720, margin: '0 auto', textAlign: 'center' }}>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, marginBottom: 16, padding: '4px 14px', borderRadius: 20, background: 'rgba(113,112,255,0.1)', border: '1px solid rgba(113,112,255,0.2)' }}>
-            <BookOpen size={13} style={{ color: '#7170ff' }} />
-            <span style={{ fontSize: 11, fontWeight: 800, color: '#7170ff', letterSpacing: '0.06em', textTransform: 'uppercase' }}>Documentation</span>
+      {/* Editorial hero */}
+      <div
+        style={{
+          background: 'var(--fh-canvas)',
+          borderBottom: '1px solid var(--fh-sep)',
+          padding: 'clamp(56px, 7vw, 96px) 24px clamp(40px, 5vw, 64px)',
+        }}
+      >
+        <div style={{ maxWidth: 760, margin: '0 auto' }}>
+          <div
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 12,
+              marginBottom: 18,
+              fontFamily:
+                'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace',
+              fontSize: 11,
+              letterSpacing: '0.18em',
+              textTransform: 'uppercase',
+              color: 'var(--fh-t3)',
+            }}
+          >
+            <span
+              aria-hidden
+              style={{
+                width: 24, height: 2, borderRadius: 2,
+                background: '#27a644',
+                boxShadow: '0 0 12px rgba(39,166,68,0.55)',
+              }}
+            />
+            <BookOpen size={12} />
+            <span>Documentation</span>
           </div>
-          <h1 style={{ fontSize: 'clamp(26px, 5vw, 44px)', fontWeight: 800, color: 'var(--fh-t1)', letterSpacing: '-0.04em', margin: '0 0 14px', lineHeight: 1.1 }}>
-            FreelanceHub Guide
+          <h1
+            style={{
+              fontSize: 'clamp(32px, 5.5vw, 56px)',
+              fontWeight: 700,
+              color: 'var(--fh-t1)',
+              letterSpacing: '-0.04em',
+              margin: '0 0 14px',
+              lineHeight: 1.0,
+              fontFeatureSettings: '"cv01", "ss03"',
+            }}
+          >
+            FreelanceHub{' '}
+            <span
+              style={{
+                fontFamily:
+                  'var(--font-serif-display), ui-serif, Georgia, "Times New Roman", serif',
+                fontStyle: 'italic',
+                fontWeight: 400,
+                letterSpacing: '-0.01em',
+              }}
+            >
+              guide.
+            </span>
           </h1>
-          <p style={{ fontSize: 'clamp(14px, 2vw, 16px)', color: 'var(--fh-t3)', lineHeight: 1.7, margin: 0 }}>
-            Everything you need to know about using FreelanceHub — from posting your first order to running AI agents.
+          <p
+            style={{
+              fontSize: 'clamp(15px, 2vw, 18px)',
+              color: 'var(--fh-t3)',
+              lineHeight: 1.65,
+              margin: 0,
+              maxWidth: 580,
+            }}
+          >
+            Everything you need — from posting your first order to running AI agents.
           </p>
         </div>
       </div>
@@ -205,10 +261,31 @@ export default function DocsPage() {
           ))}
 
           {/* Quick links */}
-          <div style={{ padding: 28, borderRadius: 16, background: 'linear-gradient(135deg, rgba(113,112,255,0.08), rgba(113,112,255,0.02))', border: '1px solid rgba(113,112,255,0.2)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
-              <Zap size={16} style={{ color: '#7170ff' }} />
-              <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--fh-t1)' }}>Quick links</span>
+          <div style={{ padding: 28, borderRadius: 16, background: 'var(--card)', border: '1px solid var(--fh-border)' }}>
+            <div
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 10,
+                marginBottom: 16,
+                fontFamily:
+                  'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace',
+                fontSize: 11,
+                letterSpacing: '0.16em',
+                textTransform: 'uppercase',
+                color: 'var(--fh-t3)',
+              }}
+            >
+              <span
+                aria-hidden
+                style={{
+                  width: 18, height: 2, borderRadius: 2,
+                  background: '#27a644',
+                  boxShadow: '0 0 10px rgba(39,166,68,0.55)',
+                }}
+              />
+              <Zap size={12} />
+              <span>Quick links</span>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 8 }}>
               {[
@@ -227,12 +304,12 @@ export default function DocsPage() {
                   href={l.href}
                   style={{
                     display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 4,
-                    padding: '8px 12px', borderRadius: 8, border: '1px solid rgba(113,112,255,0.2)',
+                    padding: '10px 14px', borderRadius: 8, border: '1px solid var(--fh-border)',
                     fontSize: 13, fontWeight: 510, color: 'var(--fh-t2)', textDecoration: 'none',
-                    background: 'rgba(113,112,255,0.04)', transition: 'all 0.15s',
+                    background: 'var(--fh-surface-2)', transition: 'all 0.15s',
                   }}
-                  onMouseEnter={e => { e.currentTarget.style.background = 'rgba(113,112,255,0.1)'; e.currentTarget.style.color = '#7170ff' }}
-                  onMouseLeave={e => { e.currentTarget.style.background = 'rgba(113,112,255,0.04)'; e.currentTarget.style.color = 'var(--fh-t2)' }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(39,166,68,0.4)'; e.currentTarget.style.color = 'var(--fh-t1)' }}
+                  onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--fh-border)'; e.currentTarget.style.color = 'var(--fh-t2)' }}
                 >
                   {l.label} <ArrowRight size={12} />
                 </Link>

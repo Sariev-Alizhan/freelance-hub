@@ -298,28 +298,75 @@ export default function AboutContent() {
         <ArrowLeft className="h-3.5 w-3.5" /> {c.back}
       </Link>
 
-      {/* Hero */}
+      {/* Editorial hero */}
       <div
-        className="rounded-xl p-8 mb-6 relative overflow-hidden"
-        style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border-2)' }}
+        className="rounded-2xl p-8 mb-6 relative overflow-hidden"
+        style={{ background: 'var(--card)', border: '1px solid var(--fh-border)' }}
       >
         <div
+          aria-hidden
           className="absolute -top-24 -right-24 h-64 w-64 rounded-full pointer-events-none"
-          style={{ background: 'radial-gradient(circle, rgba(113,112,255,0.12) 0%, transparent 70%)', filter: 'blur(40px)' }}
+          style={{ background: 'radial-gradient(circle, rgba(39,166,68,0.15) 0%, transparent 70%)', filter: 'blur(40px)' }}
         />
         <div className="relative">
-          <div className="flex items-center gap-2 flex-wrap mb-3">
+          <div
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 12,
+              marginBottom: 14,
+              fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace',
+              fontSize: 11,
+              letterSpacing: '0.18em',
+              textTransform: 'uppercase',
+              color: 'var(--fh-t3)',
+            }}
+          >
             <span
-              className="inline-flex items-center gap-1 rounded-full"
-              style={{ padding: '3px 10px', background: 'rgba(113,112,255,0.08)', border: '1px solid rgba(113,112,255,0.2)', fontSize: '11px', fontWeight: 590, color: '#7170ff' }}
-            >
-              <MapPin className="h-3 w-3" /> {c.heroBadge}
-            </span>
+              aria-hidden
+              style={{
+                width: 24, height: 2, borderRadius: 2,
+                background: '#27a644',
+                boxShadow: '0 0 12px rgba(39,166,68,0.55)',
+              }}
+            />
+            <MapPin className="h-3 w-3" />
+            <span>{c.heroBadge}</span>
           </div>
-          <h1 style={{ fontSize: 'clamp(22px, 4vw, 30px)', fontWeight: 590, letterSpacing: '-0.04em', color: 'var(--fh-t1)', marginBottom: '10px', fontFeatureSettings: '"cv01", "ss03"' }}>
-            {c.heroTitle}
+          <h1
+            style={{
+              fontSize: 'clamp(30px, 5vw, 48px)',
+              fontWeight: 700,
+              letterSpacing: '-0.035em',
+              color: 'var(--fh-t1)',
+              margin: 0,
+              lineHeight: 1.0,
+              fontFeatureSettings: '"cv01", "ss03"',
+            }}
+          >
+            {c.heroTitle.split(' ').slice(0, -1).join(' ')}{' '}
+            <span
+              style={{
+                fontFamily: 'var(--font-serif-display), ui-serif, Georgia, "Times New Roman", serif',
+                fontStyle: 'italic',
+                fontWeight: 400,
+                letterSpacing: '-0.01em',
+              }}
+            >
+              {c.heroTitle.split(' ').slice(-1)[0]}
+            </span>
           </h1>
-          <p style={{ fontSize: '15px', color: 'var(--fh-t3)', lineHeight: 1.7, fontWeight: 400, maxWidth: '540px' }}>
+          <p
+            style={{
+              marginTop: 12,
+              marginBottom: 0,
+              fontSize: 15,
+              color: 'var(--fh-t3)',
+              lineHeight: 1.7,
+              fontWeight: 400,
+              maxWidth: 560,
+            }}
+          >
             {c.heroSub}
           </p>
         </div>
