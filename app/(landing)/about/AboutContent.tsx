@@ -599,13 +599,27 @@ export default function AboutContent() {
         </p>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-3 gap-2.5">
-        {c.stats.map(s => (
-          <div key={s.label} className="rounded-xl p-4 text-center" style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border)' }}>
-            <div style={{ fontSize: '18px', fontWeight: 590, color: s.color, marginBottom: '4px', letterSpacing: '-0.03em' }}>{s.value}</div>
-            <div style={{ fontSize: '12px', color: 'var(--fh-t4)', fontWeight: 400 }}>{s.label}</div>
-          </div>
+      {/* Specimen-label strip — editorial metadata line */}
+      <div
+        style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: '20px',
+          paddingTop: 20,
+          borderTop: '1px solid var(--fh-border)',
+          fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace',
+          fontSize: 11,
+          letterSpacing: '0.14em',
+          textTransform: 'uppercase',
+          color: 'var(--fh-t3)',
+        }}
+      >
+        {c.stats.map((s, i) => (
+          <span key={s.label} style={{ display: 'inline-flex', gap: 10, alignItems: 'center' }}>
+            {i > 0 && <span style={{ color: 'var(--fh-t4)' }}>—</span>}
+            <span>{s.label}</span>
+            <span style={{ color: 'var(--fh-t1)' }}>{s.value}</span>
+          </span>
         ))}
       </div>
     </div>
