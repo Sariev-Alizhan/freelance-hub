@@ -8,9 +8,20 @@ interface Props {
 }
 
 /**
- * FreelanceHub brand logo.
- * Icon: stylised "F" lettermark with a hub/node accent, indigo rounded square.
- * Works in both dark and light themes — the icon background is a fixed brand colour.
+ * FreelanceHub brand mark — editorial brutalist.
+ *
+ * Construction (brief §3 + §6):
+ * - Sharp ink square (no rounded corners — `rx=0`)
+ * - Architectural F built from stacked paper rectangles (no terminal radius)
+ * - Hub-node "port" — sharp signal-green square at the end of the middle bar
+ *   (replaces the old circular ring → squares are the manifesto)
+ * - Wordmark: ink-weight "Freelance" + serif italic "hub"
+ *
+ * Colours from brief §3:
+ *   --paper #F4F0E8   --ink #0A0A08   --signal-green #27a644
+ *
+ * Inverse-aware: square stays ink in light mode (high contrast on paper)
+ * and flips to paper in dark mode (high contrast on ink).
  */
 export default function Logo({
   size = 36,
@@ -19,38 +30,56 @@ export default function Logo({
   wordmarkClass = '',
 }: Props) {
   return (
-    <div className={`flex items-center gap-2.5 ${className}`}>
+    <div className={`flex items-baseline gap-2.5 ${className}`}>
       <svg
         width={size}
         height={size}
-        viewBox="0 0 512 512"
+        viewBox="0 0 64 64"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
-        aria-hidden="true"
+        aria-label="FreelanceHub"
         style={{ flexShrink: 0 }}
       >
-        {/* Background — indigo rounded square */}
-        <rect width="512" height="512" rx="110" fill="#4338CA" />
+        {/* Ink square (sharp — radius 0). Filled with currentColor so the icon
+            inverts naturally between light and dark themes via parent text colour. */}
+        <rect width="64" height="64" fill="currentColor" />
 
-        {/* F — vertical stroke */}
-        <rect x="118" y="96" width="72" height="320" rx="8" fill="white" />
+        {/* F vertical stroke — paper */}
+        <rect x="14" y="12" width="9" height="40" fill="var(--fh-canvas, #F4F0E8)" />
 
-        {/* F — top horizontal bar */}
-        <rect x="118" y="96" width="276" height="72" rx="8" fill="white" />
+        {/* F top bar */}
+        <rect x="14" y="12" width="34" height="9" fill="var(--fh-canvas, #F4F0E8)" />
 
-        {/* F — middle horizontal bar */}
-        <rect x="118" y="232" width="196" height="72" rx="8" fill="white" />
+        {/* F middle bar */}
+        <rect x="14" y="29" width="24" height="9" fill="var(--fh-canvas, #F4F0E8)" />
 
-        {/* Hub node — outer ring (white) tangent to end of middle bar */}
-        <circle cx="350" cy="268" r="42" fill="white" />
-
-        {/* Hub node — inner dot (brand colour) creating a ring/port shape */}
-        <circle cx="350" cy="268" r="19" fill="#4338CA" />
+        {/* Signal-green port — ends the middle bar, sharp square (no circle) */}
+        <rect x="40" y="29" width="9" height="9" fill="#27A644" />
       </svg>
 
       {showWordmark && (
-        <span className={`font-bold tracking-tight leading-none text-[1.125rem] ${wordmarkClass}`}>
-          Freelance<span className="text-primary">Hub</span>
+        <span
+          className={`leading-none ${wordmarkClass}`}
+          style={{
+            fontSize: '1.125rem',
+            fontWeight: 700,
+            letterSpacing: '-0.025em',
+            color: 'var(--fh-t1)',
+          }}
+        >
+          freelance
+          <span
+            style={{
+              fontFamily:
+                'var(--font-serif-display), ui-serif, Georgia, "Times New Roman", serif',
+              fontStyle: 'italic',
+              fontWeight: 400,
+              letterSpacing: '-0.01em',
+              color: '#27A644',
+            }}
+          >
+            hub
+          </span>
         </span>
       )}
     </div>

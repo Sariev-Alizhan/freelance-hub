@@ -13,15 +13,16 @@ interface ThemeContextValue {
 }
 
 const ThemeContext = createContext<ThemeContextValue>({
-  theme:        'dark',
+  theme:        'light',
   themeMode:    'auto',
   setThemeMode: () => {},
   setTheme:     () => {},
 })
 
+// Auto mode = light-by-default (brief §9: paper canvas, no dark v1).
+// Users can still pick 'dark' explicitly via Settings → Preferences.
 function getAutoTheme(): Theme {
-  const h = new Date().getHours()
-  return h >= 6 && h < 20 ? 'light' : 'dark'
+  return 'light'
 }
 
 function applyToDOM(resolved: Theme) {
@@ -34,7 +35,7 @@ function applyToDOM(resolved: Theme) {
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [themeMode, setThemeModeState] = useState<ThemeMode>('auto')
-  const [theme,     setThemeState]     = useState<Theme>('dark')
+  const [theme,     setThemeState]     = useState<Theme>('light')
   const modeRef = useRef<ThemeMode>('auto')
 
   // Initialize from localStorage + sync with DOM (anti-FOUC already applied class)

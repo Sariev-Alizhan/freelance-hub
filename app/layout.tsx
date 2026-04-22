@@ -77,9 +77,9 @@ export const viewport: Viewport = {
 }
 
 // Anti-FOUC: apply theme BEFORE first paint.
-// Reads fh-theme-mode: 'auto' | 'dark' | 'light' (falls back to old fh-theme key).
-// Auto default: 6am–8pm = light, otherwise dark.
-const themeScript = `(function(){try{var m=localStorage.getItem('fh-theme-mode')||localStorage.getItem('fh-theme');var r;if(m==='dark'){r='dark'}else if(m==='light'){r='light'}else{var h=new Date().getHours();r=(h>=6&&h<20)?'light':'dark'}if(r==='light'){document.documentElement.classList.remove('dark')}else{document.documentElement.classList.add('dark')}}catch(e){}})();`
+// Default: light (editorial paper palette per brief §9 "no dark mode v1").
+// User can override via Settings → Preferences → Theme. No auto time-of-day switch.
+const themeScript = `(function(){try{var m=localStorage.getItem('fh-theme-mode')||localStorage.getItem('fh-theme');if(m==='dark'){document.documentElement.classList.add('dark')}else{document.documentElement.classList.remove('dark')}}catch(e){}})();`
 // Register Service Worker for push notifications + auto-reload on SW update
 const swScript = `(function(){
   if(!('serviceWorker' in navigator)) return;
@@ -98,7 +98,7 @@ const swScript = `(function(){
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const nonce = (await headers()).get('x-nonce') ?? ''
   return (
-    <html lang="en" className="dark" suppressHydrationWarning nonce={nonce}>
+    <html lang="en" className="" suppressHydrationWarning nonce={nonce}>
       <head>
         {/* Anti-FOUC — must run synchronously before any render */}
         <script nonce={nonce} dangerouslySetInnerHTML={{ __html: themeScript }} />
