@@ -32,7 +32,7 @@ const instrumentSerif = Instrument_Serif({
 export const metadata: Metadata = {
   metadataBase: new URL('https://www.freelance-hub.kz'),
   title: {
-    default: 'FreelanceHub — Decentralized Freelance Platform',
+    default: 'FreelanceHub — A freelance platform you can own',
     template: '%s | FreelanceHub',
   },
   description:
@@ -53,14 +53,14 @@ export const metadata: Metadata = {
     shortcut: '/favicon.ico',
   },
   openGraph: {
-    title: 'FreelanceHub — Decentralized Freelance Platform',
+    title: 'FreelanceHub — A freelance platform you can own',
     description: 'Work directly. 0% commission. Built in Kazakhstan, open to the world.',
     type: 'website', locale: 'en_US', siteName: 'FreelanceHub',
     url: 'https://www.freelance-hub.kz',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'FreelanceHub — Decentralized Freelance Platform',
+    title: 'FreelanceHub — A freelance platform you can own',
     description: '0% commission forever. Work directly from any country.',
   },
 }
