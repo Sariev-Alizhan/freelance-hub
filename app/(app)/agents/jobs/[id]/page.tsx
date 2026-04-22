@@ -48,7 +48,7 @@ interface Job {
 const STATUS_CONFIG: Record<string, { label: string; color: string }> = {
   pending:           { label: 'Ожидание',      color: '#f59e0b' },
   running:           { label: 'Выполняется',   color: '#3b82f6' },
-  awaiting_approval: { label: 'Ждёт проверки', color: '#7170ff' },
+  awaiting_approval: { label: 'Ждёт проверки', color: '#27a644' },
   approved:          { label: 'Одобрено',      color: '#10b981' },
   rejected:          { label: 'Отклонено',     color: '#e5484d' },
   failed:            { label: 'Ошибка',        color: '#e5484d' },
@@ -74,8 +74,8 @@ function CopyBtn({ text }: { text: string }) {
 function SMMResult({ output }: { output: SMMOutput }) {
   return (
     <div className="space-y-5">
-      <div className="rounded-xl p-4" style={{ background: 'rgba(113,112,255,0.06)', border: '1px solid rgba(113,112,255,0.15)' }}>
-        <p className="text-xs font-semibold mb-1" style={{ color: '#7170ff' }}>СТРАТЕГИЯ</p>
+      <div className="rounded-xl p-4" style={{ background: 'rgba(39,166,68,0.06)', border: '1px solid rgba(39,166,68,0.15)' }}>
+        <p className="text-xs font-semibold mb-1" style={{ color: '#27a644' }}>СТРАТЕГИЯ</p>
         <p className="text-sm leading-relaxed" style={{ color: 'var(--fh-t2)' }}>{output.strategy}</p>
       </div>
       {output.posts?.map((post, i) => (
@@ -84,7 +84,7 @@ function SMMResult({ output }: { output: SMMOutput }) {
             <div className="flex items-center gap-2">
               <span className="text-xs font-bold" style={{ color: 'var(--fh-t1)' }}>{post.day}</span>
               <span className="text-xs px-2 py-0.5 rounded-full"
-                style={{ background: 'rgba(113,112,255,0.1)', color: '#7170ff', border: '1px solid rgba(113,112,255,0.2)' }}>
+                style={{ background: 'rgba(39,166,68,0.1)', color: '#27a644', border: '1px solid rgba(39,166,68,0.2)' }}>
                 {post.type}
               </span>
               <span className="text-xs" style={{ color: 'var(--fh-t4)' }}>📅 {post.best_time}</span>
@@ -125,7 +125,7 @@ function LandingResult({ output }: { output: LandingOutput }) {
       </div>
 
       {/* Hero */}
-      <Section title="Hero" color="#7170ff">
+      <Section title="Hero" color="#27a644">
         <Headline text={copy?.hero_headline} />
         <p className="text-sm" style={{ color: 'var(--fh-t3)' }}>{copy?.hero_sub}</p>
       </Section>
@@ -203,8 +203,8 @@ function LandingResult({ output }: { output: LandingOutput }) {
 
       {/* Notes */}
       {notes && (
-        <div className="rounded-xl p-4" style={{ background: 'rgba(113,112,255,0.06)', border: '1px solid rgba(113,112,255,0.15)' }}>
-          <p className="text-xs font-semibold mb-1" style={{ color: '#7170ff' }}>ЗАМЕТКИ ПО КОНВЕРСИИ</p>
+        <div className="rounded-xl p-4" style={{ background: 'rgba(39,166,68,0.06)', border: '1px solid rgba(39,166,68,0.15)' }}>
+          <p className="text-xs font-semibold mb-1" style={{ color: '#27a644' }}>ЗАМЕТКИ ПО КОНВЕРСИИ</p>
           <p className="text-sm" style={{ color: 'var(--fh-t3)' }}>{notes}</p>
         </div>
       )}
@@ -217,7 +217,7 @@ function CustomResult({ output }: { output: CustomOutput }) {
   return (
     <div className="rounded-xl p-5 space-y-3" style={{ background: 'var(--fh-surface-2)', border: '1px solid var(--fh-border)' }}>
       <div className="flex items-center justify-between">
-        <p className="text-xs font-bold" style={{ color: '#7170ff' }}>РЕЗУЛЬТАТ — {output.agentName?.toUpperCase()}</p>
+        <p className="text-xs font-bold" style={{ color: '#27a644' }}>РЕЗУЛЬТАТ — {output.agentName?.toUpperCase()}</p>
         <CopyBtn text={output.text} />
       </div>
       <p className="text-sm leading-relaxed whitespace-pre-wrap" style={{ color: 'var(--fh-t2)' }}>{output.text}</p>
@@ -237,7 +237,7 @@ function OrchestratorResult({ output }: { output: OrchestratorOutput }) {
         <div key={i} className="rounded-xl p-5" style={{ background: 'var(--fh-surface-2)', border: '1px solid var(--fh-border)' }}>
           <div className="flex items-center gap-2 mb-3">
             <span className="text-xs font-bold px-2 py-0.5 rounded-full"
-              style={{ background: 'rgba(113,112,255,0.1)', color: '#7170ff', border: '1px solid rgba(113,112,255,0.2)' }}>
+              style={{ background: 'rgba(39,166,68,0.1)', color: '#27a644', border: '1px solid rgba(39,166,68,0.2)' }}>
               {i + 1}. {s.agentName}
             </span>
             <span className="text-xs font-semibold" style={{ color: 'var(--fh-t1)' }}>{s.title}</span>
@@ -381,8 +381,8 @@ export default function JobDetailPage() {
       <div className="rounded-2xl p-5 mb-6" style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border-2)' }}>
         <div className="flex items-center gap-3">
           <div className="h-10 w-10 rounded-xl flex items-center justify-center"
-            style={{ background: 'rgba(113,112,255,0.1)', border: '1px solid rgba(113,112,255,0.15)' }}>
-            <Bot className="h-5 w-5" style={{ color: '#7170ff' }} />
+            style={{ background: 'rgba(39,166,68,0.1)', border: '1px solid rgba(39,166,68,0.15)' }}>
+            <Bot className="h-5 w-5" style={{ color: '#27a644' }} />
           </div>
           <div className="flex-1">
             <div className="flex items-center gap-2 flex-wrap">
@@ -410,7 +410,7 @@ export default function JobDetailPage() {
         <div className="px-4 py-2.5 flex items-center gap-2" style={{ background: 'var(--fh-surface)' }}>
           <div className={`h-2 w-2 rounded-full ${isRunning ? 'bg-amber-400 animate-pulse' : 'bg-green-400'}`} />
           <span className="text-xs font-semibold" style={{ color: 'var(--fh-t2)' }}>Логи выполнения</span>
-          {isRunning && <Loader2 className="h-3 w-3 animate-spin ml-auto" style={{ color: '#7170ff' }} />}
+          {isRunning && <Loader2 className="h-3 w-3 animate-spin ml-auto" style={{ color: '#27a644' }} />}
         </div>
         <div className="p-4 space-y-1.5 font-mono text-xs min-h-[80px]" style={{ background: 'var(--fh-surface-2)' }}>
           {logs.length === 0 && isRunning && (
@@ -430,8 +430,8 @@ export default function JobDetailPage() {
       {/* Approve / Reject */}
       {canAct && (
         <div className="flex items-center gap-3 mb-6 p-4 rounded-xl"
-          style={{ background: 'rgba(113,112,255,0.06)', border: '1px solid rgba(113,112,255,0.2)' }}>
-          <AlertCircle className="h-5 w-5 flex-shrink-0" style={{ color: '#7170ff' }} />
+          style={{ background: 'rgba(39,166,68,0.06)', border: '1px solid rgba(39,166,68,0.2)' }}>
+          <AlertCircle className="h-5 w-5 flex-shrink-0" style={{ color: '#27a644' }} />
           <p className="text-sm flex-1" style={{ color: 'var(--fh-t2)' }}>Агент завершил работу. Одобрить или отклонить результат?</p>
           <button onClick={() => handleAction('reject')} disabled={acting}
             className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold transition-colors disabled:opacity-40"
@@ -474,7 +474,7 @@ export default function JobDetailPage() {
           <div className="flex items-center gap-2 mb-4">
             <h2 className="text-base font-bold" style={{ color: 'var(--fh-t1)' }}>Результат</h2>
             {job.status === 'awaiting_approval' && (
-              <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: 'rgba(113,112,255,0.1)', color: '#7170ff', border: '1px solid rgba(113,112,255,0.2)' }}>
+              <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: 'rgba(39,166,68,0.1)', color: '#27a644', border: '1px solid rgba(39,166,68,0.2)' }}>
                 На проверке
               </span>
             )}
@@ -492,7 +492,7 @@ export default function JobDetailPage() {
 
       {isRunning && !job.output && (
         <div className="text-center py-12">
-          <Loader2 className="h-8 w-8 animate-spin mx-auto mb-3" style={{ color: '#7170ff' }} />
+          <Loader2 className="h-8 w-8 animate-spin mx-auto mb-3" style={{ color: '#27a644' }} />
           <p className="text-sm" style={{ color: 'var(--fh-t3)' }}>Агент работает, результат появится здесь...</p>
           <div className="flex items-center justify-center gap-1.5 mt-2">
             <Clock className="h-3.5 w-3.5" style={{ color: 'var(--fh-t4)' }} />
@@ -517,8 +517,8 @@ export default function JobDetailPage() {
                   className="flex items-center gap-3 p-3 rounded-xl group transition-colors"
                   style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border-2)' }}>
                   <span className="text-xs w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 font-bold"
-                    style={{ background: 'rgba(113,112,255,0.15)', color: '#7170ff' }}>{i + 1}</span>
-                  <Bot className="h-4 w-4 flex-shrink-0" style={{ color: '#7170ff' }} />
+                    style={{ background: 'rgba(39,166,68,0.15)', color: '#27a644' }}>{i + 1}</span>
+                  <Bot className="h-4 w-4 flex-shrink-0" style={{ color: '#27a644' }} />
                   <span className="flex-1 text-sm font-medium truncate" style={{ color: 'var(--fh-t1)' }}>{sjName}</span>
                   <span className="text-xs px-1.5 py-0.5 rounded-full"
                     style={{ background: `${sjCfg.color}14`, color: sjCfg.color }}>{sjCfg.label}</span>
@@ -551,10 +551,10 @@ export default function JobDetailPage() {
       {['approved', 'rejected', 'awaiting_approval'].includes(job.status) && (
         <div className="mt-8">
           <div className="flex items-center gap-2 mb-3">
-            <MessageSquare className="h-4 w-4" style={{ color: '#7170ff' }} />
+            <MessageSquare className="h-4 w-4" style={{ color: '#27a644' }} />
             <h3 className="text-sm font-bold" style={{ color: 'var(--fh-t2)' }}>Team Mode — уточнения</h3>
             <span className="text-xs px-2 py-0.5 rounded-full ml-auto"
-              style={{ background: 'rgba(113,112,255,0.1)', color: '#7170ff', border: '1px solid rgba(113,112,255,0.2)' }}>
+              style={{ background: 'rgba(39,166,68,0.1)', color: '#27a644', border: '1px solid rgba(39,166,68,0.2)' }}>
               Beta
             </span>
           </div>
@@ -572,13 +572,13 @@ export default function JobDetailPage() {
                 <div key={m.id} className={`flex gap-2 ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                   {m.role === 'agent' && (
                     <div className="h-6 w-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5"
-                      style={{ background: 'rgba(113,112,255,0.15)' }}>
-                      <Bot className="h-3.5 w-3.5" style={{ color: '#7170ff' }} />
+                      style={{ background: 'rgba(39,166,68,0.15)' }}>
+                      <Bot className="h-3.5 w-3.5" style={{ color: '#27a644' }} />
                     </div>
                   )}
                   <div className="max-w-[80%] rounded-2xl px-3 py-2 text-sm"
                     style={{
-                      background: m.role === 'user' ? '#5e6ad2' : 'var(--fh-surface)',
+                      background: m.role === 'user' ? '#27a644' : 'var(--fh-surface)',
                       color: m.role === 'user' ? '#fff' : 'var(--fh-t2)',
                       border: m.role === 'agent' ? '1px solid var(--fh-border)' : 'none',
                       whiteSpace: 'pre-wrap',
@@ -591,11 +591,11 @@ export default function JobDetailPage() {
               {chatLoading && (
                 <div className="flex gap-2 justify-start">
                   <div className="h-6 w-6 rounded-full flex items-center justify-center flex-shrink-0"
-                    style={{ background: 'rgba(113,112,255,0.15)' }}>
-                    <Bot className="h-3.5 w-3.5" style={{ color: '#7170ff' }} />
+                    style={{ background: 'rgba(39,166,68,0.15)' }}>
+                    <Bot className="h-3.5 w-3.5" style={{ color: '#27a644' }} />
                   </div>
                   <div className="px-3 py-2 rounded-2xl" style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border)' }}>
-                    <Loader2 className="h-4 w-4 animate-spin" style={{ color: '#7170ff' }} />
+                    <Loader2 className="h-4 w-4 animate-spin" style={{ color: '#27a644' }} />
                   </div>
                 </div>
               )}
@@ -620,7 +620,7 @@ export default function JobDetailPage() {
               />
               <button type="submit" disabled={!chatInput.trim() || chatLoading}
                 className="h-9 w-9 rounded-xl flex items-center justify-center flex-shrink-0 disabled:opacity-40 transition-colors"
-                style={{ background: '#5e6ad2' }}>
+                style={{ background: '#27a644' }}>
                 <Send className="h-4 w-4 text-white" />
               </button>
             </form>

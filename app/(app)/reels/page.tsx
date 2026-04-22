@@ -146,7 +146,7 @@ export default function ReelsFeedPage() {
             background: 'var(--fh-primary)',
             border: 'none', cursor: 'pointer', color: '#fff',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            boxShadow: '0 4px 14px rgba(94,106,210,0.4)',
+            boxShadow: '0 4px 14px rgba(39,166,68,0.4)',
           }}
         >
           <Plus size={22} />

@@ -33,7 +33,7 @@ const DIFFICULTY_COLORS: Record<Difficulty, { color: string; bg: string }> = {
   impossible: { color: '#ef4444', bg: 'rgba(239,68,68,0.08)'   },
   hard:       { color: '#f59e0b', bg: 'rgba(245,158,11,0.08)'  },
   achievable: { color: '#22c55e', bg: 'rgba(34,197,94,0.08)'   },
-  easy:       { color: '#7170ff', bg: 'rgba(113,112,255,0.08)' },
+  easy:       { color: '#27a644', bg: 'rgba(39,166,68,0.08)' },
 }
 
 function calcDifficulty(ordersPerDay: number, responseRate: number): Difficulty {

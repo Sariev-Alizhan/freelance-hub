@@ -287,8 +287,8 @@ export default function MessagesList(props: {
                           display: 'flex', flexDirection: 'column', alignItems: 'center',
                           gap: 2, padding: '10px 14px',
                           borderRadius: 20,
-                          background: isMine ? 'rgba(94,106,210,0.12)' : 'var(--fh-surface-2)',
-                          border: `1px solid ${isMine ? 'rgba(94,106,210,0.25)' : 'var(--fh-sep)'}`,
+                          background: isMine ? 'rgba(39,166,68,0.12)' : 'var(--fh-surface-2)',
+                          border: `1px solid ${isMine ? 'rgba(39,166,68,0.25)' : 'var(--fh-sep)'}`,
                           minWidth: 80,
                         }}>
                           <span style={{ fontSize: 36, lineHeight: 1 }}>

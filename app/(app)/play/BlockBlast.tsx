@@ -7,7 +7,7 @@ import { useUser } from '@/lib/hooks/useUser'
 // ── Constants ──────────────────────────────────────────────────────────────
 const GRID = 8
 const CELL = 48
-const COLORS = ['#7170ff', '#22c55e', '#f59e0b', '#e5484d', '#06b6d4', '#e879f9', '#f97316']
+const COLORS = ['#27a644', '#22c55e', '#f59e0b', '#e5484d', '#06b6d4', '#e879f9', '#f97316']
 
 type Grid = (string | null)[][]
 type BlockShape = number[][]
@@ -228,8 +228,8 @@ export default function BlockBlast() {
         {/* Header */}
         <div style={{ textAlign: 'center', marginBottom: 24 }}>
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
-            <Zap size={20} style={{ color: '#7170ff' }} />
-            <span style={{ fontSize: 11, fontWeight: 800, color: '#7170ff', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+            <Zap size={20} style={{ color: '#27a644' }} />
+            <span style={{ fontSize: 11, fontWeight: 800, color: '#27a644', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
               FreelanceHub Play
             </span>
           </div>
@@ -249,7 +249,7 @@ export default function BlockBlast() {
               onClick={() => setTab(t.id as 'game' | 'board')}
               style={{
                 flex: 1, padding: '8px 0', borderRadius: 8, border: 'none', cursor: 'pointer',
-                background: tab === t.id ? '#7170ff' : 'transparent',
+                background: tab === t.id ? '#27a644' : 'transparent',
                 color: tab === t.id ? '#fff' : 'var(--fh-t3)',
                 fontSize: 13, fontWeight: 600, transition: 'all 0.15s',
               }}
@@ -264,7 +264,7 @@ export default function BlockBlast() {
             {/* Stats bar */}
             <div style={{ display: 'flex', gap: 12, marginBottom: 16 }}>
               {[
-                { label: 'Score', value: score.toLocaleString(), color: '#7170ff' },
+                { label: 'Score', value: score.toLocaleString(), color: '#27a644' },
                 { label: 'Level', value: level, color: '#f59e0b' },
                 { label: 'Combo', value: combo > 0 ? `×${combo}` : '—', color: '#22c55e' },
               ].map(s => (
@@ -326,7 +326,7 @@ export default function BlockBlast() {
                 }}>
                   <div style={{ fontSize: 36 }}>💀</div>
                   <div style={{ fontSize: 22, fontWeight: 800, color: '#fff' }}>Game Over</div>
-                  <div style={{ fontSize: 32, fontWeight: 900, color: '#7170ff' }}>{score.toLocaleString()}</div>
+                  <div style={{ fontSize: 32, fontWeight: 900, color: '#27a644' }}>{score.toLocaleString()}</div>
                   <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)' }}>
                     {saving ? 'Saving score…' : score > maxScore ? '🏆 New record!' : `Best: ${maxScore.toLocaleString()}`}
                   </div>
@@ -334,7 +334,7 @@ export default function BlockBlast() {
                     onClick={restart}
                     style={{
                       display: 'flex', alignItems: 'center', gap: 6, padding: '10px 24px',
-                      borderRadius: 10, border: 'none', background: '#7170ff', color: '#fff',
+                      borderRadius: 10, border: 'none', background: '#27a644', color: '#fff',
                       fontSize: 14, fontWeight: 700, cursor: 'pointer',
                     }}
                   >
@@ -353,8 +353,8 @@ export default function BlockBlast() {
                   disabled={!block}
                   style={{
                     padding: '12px', borderRadius: 12, cursor: block ? 'pointer' : 'default',
-                    background: selected === i ? 'rgba(113,112,255,0.12)' : 'var(--fh-surface-2)',
-                    border: selected === i ? '2px solid #7170ff' : '1px solid var(--fh-border)',
+                    background: selected === i ? 'rgba(39,166,68,0.12)' : 'var(--fh-surface-2)',
+                    border: selected === i ? '2px solid #27a644' : '1px solid var(--fh-border)',
                     opacity: block ? 1 : 0.3, transition: 'all 0.15s', minWidth: 80, minHeight: 80,
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                   }}
@@ -424,8 +424,8 @@ export default function BlockBlast() {
                   <div style={{ fontSize: 11, color: 'var(--fh-t4)' }}>Level {entry.level}</div>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                  <Star size={12} style={{ color: '#7170ff' }} />
-                  <span style={{ fontSize: 16, fontWeight: 800, color: '#7170ff', letterSpacing: '-0.03em' }}>
+                  <Star size={12} style={{ color: '#27a644' }} />
+                  <span style={{ fontSize: 16, fontWeight: 800, color: '#27a644', letterSpacing: '-0.03em' }}>
                     {entry.score.toLocaleString()}
                   </span>
                 </div>

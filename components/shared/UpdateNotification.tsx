@@ -184,14 +184,14 @@ export default function UpdateNotification() {
         width:          '38px',
         height:         '38px',
         borderRadius:   '9px',
-        background:     'rgba(94,106,210,0.12)',
-        border:         '1px solid rgba(94,106,210,0.25)',
+        background:     'rgba(39,166,68,0.12)',
+        border:         '1px solid rgba(39,166,68,0.25)',
         display:        'flex',
         alignItems:     'center',
         justifyContent: 'center',
         flexShrink:     0,
       }}>
-        <RefreshCw className="h-4 w-4" style={{ color: '#5e6ad2' }} />
+        <RefreshCw className="h-4 w-4" style={{ color: '#27a644' }} />
       </div>
 
       {/* Text */}
@@ -211,7 +211,7 @@ export default function UpdateNotification() {
         style={{
           padding:      '7px 14px',
           borderRadius: '7px',
-          background:   updating ? '#3d4494' : '#5e6ad2',
+          background:   updating ? '#3d4494' : '#27a644',
           color:        '#ffffff',
           fontSize:     '12px',
           fontWeight:   590,
@@ -223,8 +223,8 @@ export default function UpdateNotification() {
           alignItems:   'center',
           gap:          '5px',
         }}
-        onMouseEnter={(e) => { if (!updating) e.currentTarget.style.background = '#828fff' }}
-        onMouseLeave={(e) => { if (!updating) e.currentTarget.style.background = '#5e6ad2' }}
+        onMouseEnter={(e) => { if (!updating) e.currentTarget.style.background = '#1f8a37' }}
+        onMouseLeave={(e) => { if (!updating) e.currentTarget.style.background = '#27a644' }}
       >
         {updating && (
           <RefreshCw className="h-3 w-3" style={{ animation: 'spin 1s linear infinite' }} />

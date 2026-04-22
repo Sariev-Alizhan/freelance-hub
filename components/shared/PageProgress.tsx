@@ -72,11 +72,11 @@ export default function PageProgress() {
         style={{
           height: '100%',
           width: `${width}%`,
-          background: 'linear-gradient(90deg, #7170ff 0%, #a78bfa 40%, #38bdf8 70%, #7170ff 100%)',
+          background: 'linear-gradient(90deg, #27a644 0%, #a78bfa 40%, #38bdf8 70%, #27a644 100%)',
           backgroundSize: '300% 100%',
           animation: visible ? 'pg-shimmer 1.8s linear infinite' : 'none',
           transition: width >= 100 ? 'width 0.22s ease-out' : 'width 0.09s linear',
-          boxShadow: '0 0 14px rgba(113,112,255,0.9), 0 0 5px rgba(167,139,250,0.6)',
+          boxShadow: '0 0 14px rgba(39,166,68,0.9), 0 0 5px rgba(167,139,250,0.6)',
           borderRadius: '0 2px 2px 0',
         }}
       />

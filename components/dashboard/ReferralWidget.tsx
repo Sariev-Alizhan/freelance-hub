@@ -56,17 +56,17 @@ export default function ReferralWidget({ username }: Props) {
     <div
       className="rounded-2xl p-5"
       style={{
-        background: 'linear-gradient(135deg, rgba(94,106,210,0.06) 0%, rgba(113,112,255,0.04) 100%)',
-        border: '1px solid rgba(94,106,210,0.18)',
+        background: 'linear-gradient(135deg, rgba(39,166,68,0.06) 0%, rgba(39,166,68,0.04) 100%)',
+        border: '1px solid rgba(39,166,68,0.18)',
       }}
     >
       {/* Header */}
       <div className="flex items-center gap-2.5 mb-4">
         <div
           className="h-9 w-9 rounded-xl flex items-center justify-center flex-shrink-0"
-          style={{ background: 'rgba(94,106,210,0.12)', border: '1px solid rgba(94,106,210,0.2)' }}
+          style={{ background: 'rgba(39,166,68,0.12)', border: '1px solid rgba(39,166,68,0.2)' }}
         >
-          <Gift className="h-4.5 w-4.5" style={{ color: '#7170ff', width: '18px', height: '18px' }} />
+          <Gift className="h-4.5 w-4.5" style={{ color: '#27a644', width: '18px', height: '18px' }} />
         </div>
         <div>
           <p className="text-sm font-semibold" style={{ color: 'var(--fh-t1)' }}>Invite friends</p>
@@ -82,7 +82,7 @@ export default function ReferralWidget({ username }: Props) {
             style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border-2)' }}
           >
             <div className="flex items-center justify-center gap-1 mb-0.5">
-              <Users className="h-3.5 w-3.5" style={{ color: '#7170ff' }} />
+              <Users className="h-3.5 w-3.5" style={{ color: '#27a644' }} />
               <span className="text-lg font-bold" style={{ color: 'var(--fh-t1)' }}>{stats.total}</span>
             </div>
             <p className="text-xs" style={{ color: 'var(--fh-t4)' }}>referred</p>
@@ -110,7 +110,7 @@ export default function ReferralWidget({ username }: Props) {
           <div key={step.n} className="flex items-center gap-2.5">
             <div
               className="h-5 w-5 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0"
-              style={{ background: 'rgba(113,112,255,0.15)', color: '#7170ff' }}
+              style={{ background: 'rgba(39,166,68,0.15)', color: '#27a644' }}
             >
               {step.n}
             </div>
@@ -135,9 +135,9 @@ export default function ReferralWidget({ username }: Props) {
           aria-label="Copy referral link"
           className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex-shrink-0"
           style={{
-            background: copied ? 'rgba(39,166,68,0.1)' : 'rgba(113,112,255,0.1)',
-            border: copied ? '1px solid rgba(39,166,68,0.25)' : '1px solid rgba(113,112,255,0.25)',
-            color: copied ? '#27a644' : '#7170ff',
+            background: copied ? 'rgba(39,166,68,0.1)' : 'rgba(39,166,68,0.1)',
+            border: copied ? '1px solid rgba(39,166,68,0.25)' : '1px solid rgba(39,166,68,0.25)',
+            color: copied ? '#27a644' : '#27a644',
           }}
         >
           {copied ? <Check className="h-3 w-3" /> : <Copy className="h-3 w-3" />}
@@ -182,7 +182,7 @@ export default function ReferralWidget({ username }: Props) {
               className="h-full rounded-full transition-all"
               style={{
                 width: `${Math.min((stats.total / nextRewardAt) * 100, 100)}%`,
-                background: 'linear-gradient(90deg, #5e6ad2, #7170ff)',
+                background: 'linear-gradient(90deg, #27a644, #27a644)',
               }}
             />
           </div>

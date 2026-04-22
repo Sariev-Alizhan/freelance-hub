@@ -31,7 +31,7 @@ export default function Image() {
             width: '500px',
             height: '500px',
             borderRadius: '50%',
-            background: 'radial-gradient(circle, rgba(113,112,255,0.15) 0%, transparent 70%)',
+            background: 'radial-gradient(circle, rgba(39,166,68,0.15) 0%, transparent 70%)',
           }}
         />
         <div
@@ -53,7 +53,7 @@ export default function Image() {
               width: '44px',
               height: '44px',
               borderRadius: '10px',
-              background: 'linear-gradient(135deg, #5e6ad2, #7170ff)',
+              background: 'linear-gradient(135deg, #27a644, #27a644)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -102,7 +102,7 @@ export default function Image() {
         <div style={{ display: 'flex', gap: '16px' }}>
           {[
             { label: 'Freelancers', color: '#27a644', bg: 'rgba(39,166,68,0.1)', border: 'rgba(39,166,68,0.2)' },
-            { label: 'AI-powered', color: '#7170ff', bg: 'rgba(113,112,255,0.1)', border: 'rgba(113,112,255,0.2)' },
+            { label: 'AI-powered', color: '#27a644', bg: 'rgba(39,166,68,0.1)', border: 'rgba(39,166,68,0.2)' },
             { label: '0% Commission', color: '#fbbf24', bg: 'rgba(251,191,36,0.08)', border: 'rgba(251,191,36,0.2)' },
           ].map(({ label, color, bg, border }) => (
             <div

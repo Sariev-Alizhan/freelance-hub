@@ -88,7 +88,7 @@ export default function SavedSearchesWidget() {
         <Link
           href="/orders"
           style={{ fontSize: '12px', color: 'var(--fh-t4)', display: 'flex', alignItems: 'center', gap: '3px', textDecoration: 'none' }}
-          onMouseEnter={e => (e.currentTarget.style.color = '#5e6ad2')}
+          onMouseEnter={e => (e.currentTarget.style.color = '#27a644')}
           onMouseLeave={e => (e.currentTarget.style.color = 'var(--fh-t4)')}
         >
           Browse <ArrowRight className="h-3 w-3" />
@@ -108,7 +108,7 @@ export default function SavedSearchesWidget() {
           <p style={{ fontSize: '12px', color: 'var(--fh-t4)', marginBottom: '4px' }}>No saved searches</p>
           <p style={{ fontSize: '11px', color: 'var(--fh-t4)', lineHeight: 1.5 }}>
             Go to{' '}
-            <Link href="/orders" style={{ color: '#5e6ad2' }}>Orders</Link>
+            <Link href="/orders" style={{ color: '#27a644' }}>Orders</Link>
             {' '}and click <strong>Save</strong> next to the filters
           </p>
         </div>

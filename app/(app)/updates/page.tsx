@@ -17,9 +17,9 @@ export const metadata: Metadata = {
 const VISION = [
   {
     icon: Target,
-    color: '#7170ff',
-    bg: 'rgba(113,112,255,0.08)',
-    border: 'rgba(113,112,255,0.2)',
+    color: '#27a644',
+    bg: 'rgba(39,166,68,0.08)',
+    border: 'rgba(39,166,68,0.2)',
     title: 'Our mission',
     text: 'Build the #1 freelance platform in Central Asia — transparent, AI-powered, and built for the CIS market.',
   },
@@ -64,9 +64,9 @@ const GLOBAL_ROADMAP = [
   },
   {
     quarter: 'Q2 2026',
-    color: '#7170ff',
-    bg: 'rgba(113,112,255,0.08)',
-    border: 'rgba(113,112,255,0.2)',
+    color: '#27a644',
+    bg: 'rgba(39,166,68,0.08)',
+    border: 'rgba(39,166,68,0.2)',
     items: [
       '🔍 SEO pages — /freelancers/almaty, /freelancers/developer',
       '🤖 Smart matching — AI picks top 5 freelancers per order',
@@ -120,10 +120,10 @@ export default function UpdatesPage() {
       <div className="mb-16 text-center">
         <div
           className="inline-flex items-center gap-2 rounded-full mb-6 px-4 py-1.5"
-          style={{ background: 'rgba(113,112,255,0.08)', border: '1px solid rgba(113,112,255,0.2)' }}
+          style={{ background: 'rgba(39,166,68,0.08)', border: '1px solid rgba(39,166,68,0.2)' }}
         >
-          <Rocket className="h-3.5 w-3.5" style={{ color: '#7170ff' }} />
-          <span style={{ fontSize: '12px', fontWeight: 590, color: '#7170ff', letterSpacing: '0.04em' }}>
+          <Rocket className="h-3.5 w-3.5" style={{ color: '#27a644' }} />
+          <span style={{ fontSize: '12px', fontWeight: 590, color: '#27a644', letterSpacing: '0.04em' }}>
             BUILT IN PUBLIC
           </span>
         </div>
@@ -193,7 +193,7 @@ export default function UpdatesPage() {
           <div className="flex items-start gap-4 flex-wrap">
             <div
               className="h-12 w-12 rounded-2xl flex items-center justify-center flex-shrink-0 text-xl"
-              style={{ background: 'rgba(113,112,255,0.1)', border: '1px solid rgba(113,112,255,0.2)' }}
+              style={{ background: 'rgba(39,166,68,0.1)', border: '1px solid rgba(39,166,68,0.2)' }}
             >
               🚀
             </div>
@@ -201,7 +201,7 @@ export default function UpdatesPage() {
               <div className="flex items-center gap-2 flex-wrap mb-1">
                 <span
                   className="rounded-full text-xs font-bold px-2.5 py-0.5"
-                  style={{ background: 'rgba(113,112,255,0.1)', color: '#7170ff', border: '1px solid rgba(113,112,255,0.2)' }}
+                  style={{ background: 'rgba(39,166,68,0.1)', color: '#27a644', border: '1px solid rgba(39,166,68,0.2)' }}
                 >
                   v{rel.version}
                 </span>
@@ -275,7 +275,7 @@ export default function UpdatesPage() {
         <div className="flex items-center gap-3 mb-6">
           <div className="h-px flex-1" style={{ background: 'var(--fh-sep)' }} />
           <div className="flex items-center gap-2">
-            <Map className="h-4 w-4" style={{ color: '#7170ff' }} />
+            <Map className="h-4 w-4" style={{ color: '#27a644' }} />
             <span style={{ fontSize: '12px', fontWeight: 590, color: 'var(--fh-t3)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
               Roadmap
             </span>
@@ -326,15 +326,15 @@ export default function UpdatesPage() {
               key={r.version}
               className="flex items-center gap-4 rounded-xl px-4 py-3"
               style={{
-                background: i === 0 ? 'rgba(113,112,255,0.04)' : 'var(--fh-surface)',
-                border: i === 0 ? '1px solid rgba(113,112,255,0.15)' : '1px solid var(--fh-border)',
+                background: i === 0 ? 'rgba(39,166,68,0.04)' : 'var(--fh-surface)',
+                border: i === 0 ? '1px solid rgba(39,166,68,0.15)' : '1px solid var(--fh-border)',
               }}
             >
               <span
                 className="text-xs font-bold px-2 py-0.5 rounded"
                 style={{
-                  background: i === 0 ? 'rgba(113,112,255,0.1)' : 'var(--fh-surface-2)',
-                  color: i === 0 ? '#7170ff' : 'var(--fh-t4)',
+                  background: i === 0 ? 'rgba(39,166,68,0.1)' : 'var(--fh-surface-2)',
+                  color: i === 0 ? '#27a644' : 'var(--fh-t4)',
                   fontFamily: 'monospace',
                   minWidth: '52px',
                   textAlign: 'center',
@@ -357,7 +357,7 @@ export default function UpdatesPage() {
       {/* ── CTA ─────────────────────────────────────────────── */}
       <div
         className="mt-14 rounded-2xl p-8 text-center"
-        style={{ background: 'rgba(113,112,255,0.05)', border: '1px solid rgba(113,112,255,0.15)' }}
+        style={{ background: 'rgba(39,166,68,0.05)', border: '1px solid rgba(39,166,68,0.15)' }}
       >
         <p style={{ fontSize: '20px', fontWeight: 590, color: 'var(--fh-t1)', marginBottom: '8px', letterSpacing: '-0.03em' }}>
           Have a feature request?

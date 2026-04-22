@@ -141,7 +141,7 @@ export default function OrchestratorPage() {
               </label>
               {selectedIds.length > 0 && (
                 <span className="text-xs font-semibold px-2 py-0.5 rounded-full"
-                  style={{ background: 'rgba(113,112,255,0.1)', color: '#7170ff' }}>
+                  style={{ background: 'rgba(39,166,68,0.1)', color: '#27a644' }}>
                   {selectedIds.length} выбрано
                 </span>
               )}
@@ -151,7 +151,7 @@ export default function OrchestratorPage() {
               <div className="text-center py-8">
                 <Bot className="h-8 w-8 mx-auto mb-2 opacity-20" style={{ color: 'var(--fh-t4)' }} />
                 <p className="text-sm" style={{ color: 'var(--fh-t4)' }}>Нет опубликованных агентов</p>
-                <Link href="/agents/builder" className="text-xs mt-2 block" style={{ color: '#7170ff' }}>
+                <Link href="/agents/builder" className="text-xs mt-2 block" style={{ color: '#27a644' }}>
                   + Создать агента
                 </Link>
               </div>
@@ -164,13 +164,13 @@ export default function OrchestratorPage() {
                       disabled={phase === 'running'}
                       className="w-full flex items-center gap-3 p-3 rounded-xl text-left transition-all"
                       style={{
-                        background: selected ? 'rgba(113,112,255,0.08)' : 'var(--fh-surface-2)',
-                        border: selected ? '1px solid rgba(113,112,255,0.3)' : '1px solid var(--fh-border)',
+                        background: selected ? 'rgba(39,166,68,0.08)' : 'var(--fh-surface-2)',
+                        border: selected ? '1px solid rgba(39,166,68,0.3)' : '1px solid var(--fh-border)',
                       }}>
                       <div className="h-8 w-8 rounded-lg flex items-center justify-center flex-shrink-0"
-                        style={{ background: selected ? 'rgba(113,112,255,0.15)' : 'var(--fh-surface)' }}>
+                        style={{ background: selected ? 'rgba(39,166,68,0.15)' : 'var(--fh-surface)' }}>
                         {selected
-                          ? <X className="h-3.5 w-3.5" style={{ color: '#7170ff' }} />
+                          ? <X className="h-3.5 w-3.5" style={{ color: '#27a644' }} />
                           : <Plus className="h-3.5 w-3.5" style={{ color: 'var(--fh-t4)' }} />}
                       </div>
                       <div className="flex-1 min-w-0">
@@ -195,18 +195,18 @@ export default function OrchestratorPage() {
                 <span className="text-xs font-semibold" style={{ color: 'var(--fh-t2)' }}>
                   {phase === 'done' ? 'Оркестровка завершена' : 'Выполняется...'}
                 </span>
-                {phase === 'running' && <Loader2 className="h-3 w-3 animate-spin ml-auto" style={{ color: '#7170ff' }} />}
+                {phase === 'running' && <Loader2 className="h-3 w-3 animate-spin ml-auto" style={{ color: '#27a644' }} />}
               </div>
 
               {/* Sub-task plan */}
               {subtasks.length > 0 && (
-                <div className="px-4 py-3 border-b" style={{ background: 'rgba(113,112,255,0.04)', borderColor: 'var(--fh-border)' }}>
-                  <p className="text-xs font-semibold mb-2" style={{ color: '#7170ff' }}>ПЛАН ОРКЕСТРАЦИИ</p>
+                <div className="px-4 py-3 border-b" style={{ background: 'rgba(39,166,68,0.04)', borderColor: 'var(--fh-border)' }}>
+                  <p className="text-xs font-semibold mb-2" style={{ color: '#27a644' }}>ПЛАН ОРКЕСТРАЦИИ</p>
                   <div className="flex items-center gap-1.5 flex-wrap">
                     {subtasks.map((s, i) => (
                       <span key={i} className="flex items-center gap-1">
                         <span className="text-xs px-2 py-0.5 rounded-full"
-                          style={{ background: 'rgba(113,112,255,0.1)', color: '#7170ff', border: '1px solid rgba(113,112,255,0.2)' }}>
+                          style={{ background: 'rgba(39,166,68,0.1)', color: '#27a644', border: '1px solid rgba(39,166,68,0.2)' }}>
                           {s.agentName}
                         </span>
                         {i < subtasks.length - 1 && <ChevronRight className="h-3 w-3" style={{ color: 'var(--fh-t4)' }} />}
@@ -225,7 +225,7 @@ export default function OrchestratorPage() {
                 ))}
                 {phase === 'running' && (
                   <div className="flex items-center gap-2" style={{ color: 'var(--fh-t4)' }}>
-                    <Loader2 className="h-3 w-3 animate-spin" style={{ color: '#7170ff' }} /> Агенты работают...
+                    <Loader2 className="h-3 w-3 animate-spin" style={{ color: '#27a644' }} /> Агенты работают...
                   </div>
                 )}
               </div>
@@ -266,7 +266,7 @@ export default function OrchestratorPage() {
                 ))}
                 <div className="border-t pt-2 flex justify-between text-sm font-bold" style={{ borderColor: 'var(--fh-border)', color: 'var(--fh-t1)' }}>
                   <span>Итого</span>
-                  <span style={{ color: '#7170ff' }}>{totalCost.toLocaleString()} ₸</span>
+                  <span style={{ color: '#27a644' }}>{totalCost.toLocaleString()} ₸</span>
                 </div>
               </div>
             )}
@@ -277,7 +277,7 @@ export default function OrchestratorPage() {
             onClick={handleRun}
             disabled={phase === 'running' || !task.trim() || selectedIds.length === 0 || userLoading}
             className="w-full flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold transition-all disabled:opacity-40 disabled:cursor-not-allowed"
-            style={{ background: '#5e6ad2', color: '#fff' }}
+            style={{ background: '#27a644', color: '#fff' }}
           >
             {phase === 'running'
               ? <><Loader2 className="h-4 w-4 animate-spin" /> Оркестрирую...</>
@@ -305,7 +305,7 @@ export default function OrchestratorPage() {
               ].map((step, i) => (
                 <li key={i} className="flex items-start gap-2 text-xs" style={{ color: 'var(--fh-t4)' }}>
                   <span className="flex-shrink-0 h-4 w-4 rounded-full flex items-center justify-center text-[10px] font-bold"
-                    style={{ background: 'rgba(113,112,255,0.15)', color: '#7170ff' }}>
+                    style={{ background: 'rgba(39,166,68,0.15)', color: '#27a644' }}>
                     {i + 1}
                   </span>
                   {step}

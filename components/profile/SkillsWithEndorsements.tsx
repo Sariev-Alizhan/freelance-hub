@@ -69,9 +69,9 @@ export default function SkillsWithEndorsements({
               display: 'inline-flex', alignItems: 'center', gap: 6,
               padding: '5px 4px 5px 12px', borderRadius: 6,
               fontSize: 12, fontWeight: 510,
-              background: endorsed ? 'rgba(94,106,210,0.18)' : 'rgba(113,112,255,0.08)',
-              color: endorsed ? '#5e6ad2' : '#7170ff',
-              border: `1px solid ${endorsed ? 'rgba(94,106,210,0.4)' : 'rgba(113,112,255,0.18)'}`,
+              background: endorsed ? 'rgba(39,166,68,0.18)' : 'rgba(39,166,68,0.08)',
+              color: endorsed ? '#27a644' : '#27a644',
+              border: `1px solid ${endorsed ? 'rgba(39,166,68,0.4)' : 'rgba(39,166,68,0.18)'}`,
               cursor: clickable ? 'pointer' : 'default',
               opacity: busy === s ? 0.6 : 1,
               transition: 'background 0.15s, border-color 0.15s',
@@ -81,7 +81,7 @@ export default function SkillsWithEndorsements({
             <span style={{
               display: 'inline-flex', alignItems: 'center', gap: 3,
               padding: '1px 6px 1px 4px', borderRadius: 4,
-              background: endorsed ? 'rgba(94,106,210,0.22)' : 'rgba(255,255,255,0.05)',
+              background: endorsed ? 'rgba(39,166,68,0.22)' : 'rgba(255,255,255,0.05)',
               fontSize: 11, fontWeight: 700, minWidth: 20,
             }}>
               {endorsed

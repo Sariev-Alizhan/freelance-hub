@@ -57,8 +57,8 @@ export default function PreferencesPage() {
                 style={{
                   display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px',
                   padding: '14px 24px', borderRadius: '12px', cursor: 'pointer', position: 'relative',
-                  background: active ? 'rgba(94,106,210,0.08)' : 'var(--fh-surface-2)',
-                  border: `2px solid ${active ? 'rgba(94,106,210,0.45)' : 'transparent'}`,
+                  background: active ? 'rgba(39,166,68,0.08)' : 'var(--fh-surface-2)',
+                  border: `2px solid ${active ? 'rgba(39,166,68,0.45)' : 'transparent'}`,
                   outline: 'none', transition: 'all 0.15s', minWidth: '100px',
                 }}
               >
@@ -66,7 +66,7 @@ export default function PreferencesPage() {
                   <span style={{
                     position: 'absolute', top: '8px', right: '8px',
                     width: '16px', height: '16px', borderRadius: '50%',
-                    background: '#5e6ad2', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    background: '#27a644', display: 'flex', alignItems: 'center', justifyContent: 'center',
                   }}>
                     <Check style={{ width: 9, height: 9, color: '#fff' }} />
                   </span>
@@ -96,21 +96,21 @@ export default function PreferencesPage() {
                 style={{
                   display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '3px',
                   padding: '12px 8px', borderRadius: '10px', cursor: 'pointer',
-                  background: active ? 'rgba(94,106,210,0.08)' : 'var(--fh-surface-2)',
-                  border: `2px solid ${active ? 'rgba(94,106,210,0.45)' : 'transparent'}`,
+                  background: active ? 'rgba(39,166,68,0.08)' : 'var(--fh-surface-2)',
+                  border: `2px solid ${active ? 'rgba(39,166,68,0.45)' : 'transparent'}`,
                   outline: 'none', transition: 'all 0.15s',
                 }}
               >
                 <span style={{
                   fontSize: '20px', fontWeight: 700,
-                  color: active ? '#7170ff' : 'var(--fh-t2)',
+                  color: active ? '#27a644' : 'var(--fh-t2)',
                   lineHeight: 1,
                 }}>
                   {c.label}
                 </span>
                 <span style={{
                   fontSize: '11px', fontWeight: active ? 590 : 400,
-                  color: active ? '#7170ff' : 'var(--fh-t4)',
+                  color: active ? '#27a644' : 'var(--fh-t4)',
                 }}>
                   {c.code}
                 </span>
@@ -158,8 +158,8 @@ export default function PreferencesPage() {
                 style={{
                   display: 'flex', flexDirection: 'column', gap: '10px',
                   padding: '12px', borderRadius: '12px', cursor: 'pointer',
-                  background: active ? 'rgba(94,106,210,0.08)' : 'var(--fh-surface-2)',
-                  border: `2px solid ${active ? 'rgba(94,106,210,0.45)' : 'transparent'}`,
+                  background: active ? 'rgba(39,166,68,0.08)' : 'var(--fh-surface-2)',
+                  border: `2px solid ${active ? 'rgba(39,166,68,0.45)' : 'transparent'}`,
                   outline: 'none', transition: 'all 0.15s', minWidth: '120px', flex: 1,
                 }}
               >
@@ -176,7 +176,7 @@ export default function PreferencesPage() {
                 </div>
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
-                  <tk.Icon style={{ width: 13, height: 13, color: active ? '#7170ff' : 'var(--fh-t4)', flexShrink: 0 }} />
+                  <tk.Icon style={{ width: 13, height: 13, color: active ? '#27a644' : 'var(--fh-t4)', flexShrink: 0 }} />
                   <div style={{ flex: 1, textAlign: 'left' }}>
                     <p style={{ fontSize: '13px', fontWeight: active ? 590 : 400, color: active ? 'var(--fh-t1)' : 'var(--fh-t3)' }}>
                       {tk.label}
@@ -184,7 +184,7 @@ export default function PreferencesPage() {
                     <p style={{ fontSize: '11px', color: 'var(--fh-t4)' }}>{tk.sub}</p>
                   </div>
                   {active && (
-                    <div style={{ width: 15, height: 15, borderRadius: '50%', background: '#5e6ad2', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <div style={{ width: 15, height: 15, borderRadius: '50%', background: '#27a644', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       <Check style={{ width: 8, height: 8, color: '#fff' }} />
                     </div>
                   )}

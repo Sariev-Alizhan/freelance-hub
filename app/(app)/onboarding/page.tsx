@@ -93,7 +93,7 @@ export default function OnboardingPage() {
                 width: i === step ? '20px' : '6px',
                 height: '6px',
                 borderRadius: '3px',
-                background: i <= step ? '#7170ff' : 'rgba(255,255,255,0.12)',
+                background: i <= step ? '#27a644' : 'rgba(255,255,255,0.12)',
               }}
             />
           ))}
@@ -124,11 +124,11 @@ export default function OnboardingPage() {
                       onClick={() => setRole(value)}
                       className="flex flex-col gap-2 p-4 rounded-xl transition-all text-left"
                       style={{
-                        border: active ? '1.5px solid rgba(113,112,255,0.5)' : '1px solid var(--fh-border)',
-                        background: active ? 'rgba(113,112,255,0.08)' : 'var(--fh-surface-2)',
+                        border: active ? '1.5px solid rgba(39,166,68,0.5)' : '1px solid var(--fh-border)',
+                        background: active ? 'rgba(39,166,68,0.08)' : 'var(--fh-surface-2)',
                       }}
                     >
-                      <Icon className="h-5 w-5" style={{ color: active ? '#7170ff' : 'var(--fh-t4)' }} />
+                      <Icon className="h-5 w-5" style={{ color: active ? '#27a644' : 'var(--fh-t4)' }} />
                       <span style={{ fontSize: '13px', fontWeight: 650, color: active ? 'var(--fh-t1)' : 'var(--fh-t2)', letterSpacing: '-0.01em' }}>
                         {label}
                       </span>
@@ -140,9 +140,9 @@ export default function OnboardingPage() {
               <button
                 onClick={next}
                 className="w-full flex items-center justify-center gap-2 transition-all"
-                style={{ padding: '11px', borderRadius: '8px', background: '#5e6ad2', color: '#fff', fontSize: '14px', fontWeight: 590, letterSpacing: '-0.01em' }}
-                onMouseEnter={e => { e.currentTarget.style.background = '#828fff' }}
-                onMouseLeave={e => { e.currentTarget.style.background = '#5e6ad2' }}
+                style={{ padding: '11px', borderRadius: '8px', background: '#27a644', color: '#fff', fontSize: '14px', fontWeight: 590, letterSpacing: '-0.01em' }}
+                onMouseEnter={e => { e.currentTarget.style.background = '#1f8a37' }}
+                onMouseLeave={e => { e.currentTarget.style.background = '#27a644' }}
               >
                 Continue <ArrowRight className="h-4 w-4" />
               </button>
@@ -186,7 +186,7 @@ export default function OnboardingPage() {
                     letterSpacing: '0.04em',
                   }}
                   onFocus={e => {
-                    if (!birthYearShowError) e.currentTarget.style.borderColor = 'rgba(113,112,255,0.5)'
+                    if (!birthYearShowError) e.currentTarget.style.borderColor = 'rgba(39,166,68,0.5)'
                   }}
                   onBlur={e => {
                     if (!birthYearShowError) e.currentTarget.style.borderColor = 'var(--fh-border)'
@@ -204,9 +204,9 @@ export default function OnboardingPage() {
                 onClick={next}
                 disabled={!birthYearValid}
                 className="w-full flex items-center justify-center gap-2 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
-                style={{ padding: '11px', borderRadius: '8px', background: '#5e6ad2', color: '#fff', fontSize: '14px', fontWeight: 590, letterSpacing: '-0.01em' }}
-                onMouseEnter={e => { if (birthYearValid) e.currentTarget.style.background = '#828fff' }}
-                onMouseLeave={e => { e.currentTarget.style.background = '#5e6ad2' }}
+                style={{ padding: '11px', borderRadius: '8px', background: '#27a644', color: '#fff', fontSize: '14px', fontWeight: 590, letterSpacing: '-0.01em' }}
+                onMouseEnter={e => { if (birthYearValid) e.currentTarget.style.background = '#1f8a37' }}
+                onMouseLeave={e => { e.currentTarget.style.background = '#27a644' }}
               >
                 Continue <ArrowRight className="h-4 w-4" />
               </button>
@@ -244,7 +244,7 @@ export default function OnboardingPage() {
                       fontSize: '14px',
                       outline: 'none',
                     }}
-                    onFocus={e => { e.currentTarget.style.borderColor = 'rgba(113,112,255,0.5)' }}
+                    onFocus={e => { e.currentTarget.style.borderColor = 'rgba(39,166,68,0.5)' }}
                     onBlur={e => { e.currentTarget.style.borderColor = 'var(--fh-border)' }}
                   />
                 </div>
@@ -268,7 +268,7 @@ export default function OnboardingPage() {
                       fontSize: '14px',
                       outline: 'none',
                     }}
-                    onFocus={e => { e.currentTarget.style.borderColor = 'rgba(113,112,255,0.5)' }}
+                    onFocus={e => { e.currentTarget.style.borderColor = 'rgba(39,166,68,0.5)' }}
                     onBlur={e => { e.currentTarget.style.borderColor = 'var(--fh-border)' }}
                   />
                 </div>
@@ -277,9 +277,9 @@ export default function OnboardingPage() {
                 onClick={next}
                 disabled={name.trim().length < 2}
                 className="w-full flex items-center justify-center gap-2 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
-                style={{ padding: '11px', borderRadius: '8px', background: '#5e6ad2', color: '#fff', fontSize: '14px', fontWeight: 590, letterSpacing: '-0.01em' }}
-                onMouseEnter={e => { if (name.trim().length >= 2) e.currentTarget.style.background = '#828fff' }}
-                onMouseLeave={e => { e.currentTarget.style.background = '#5e6ad2' }}
+                style={{ padding: '11px', borderRadius: '8px', background: '#27a644', color: '#fff', fontSize: '14px', fontWeight: 590, letterSpacing: '-0.01em' }}
+                onMouseEnter={e => { if (name.trim().length >= 2) e.currentTarget.style.background = '#1f8a37' }}
+                onMouseLeave={e => { e.currentTarget.style.background = '#27a644' }}
               >
                 Continue <ArrowRight className="h-4 w-4" />
               </button>
@@ -307,15 +307,15 @@ export default function OnboardingPage() {
                     onClick={() => setGoal(option)}
                     className="w-full text-left p-3 rounded-lg transition-all flex items-center gap-3"
                     style={{
-                      border: goal === option ? '1.5px solid rgba(113,112,255,0.5)' : '1px solid var(--fh-border)',
-                      background: goal === option ? 'rgba(113,112,255,0.06)' : 'var(--fh-surface-2)',
+                      border: goal === option ? '1.5px solid rgba(39,166,68,0.5)' : '1px solid var(--fh-border)',
+                      background: goal === option ? 'rgba(39,166,68,0.06)' : 'var(--fh-surface-2)',
                     }}
                   >
                     <div
                       className="flex-shrink-0 w-4 h-4 rounded-full border flex items-center justify-center"
                       style={{
-                        borderColor: goal === option ? '#7170ff' : 'var(--fh-border)',
-                        background: goal === option ? '#7170ff' : 'transparent',
+                        borderColor: goal === option ? '#27a644' : 'var(--fh-border)',
+                        background: goal === option ? '#27a644' : 'transparent',
                       }}
                     >
                       {goal === option && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
@@ -330,9 +330,9 @@ export default function OnboardingPage() {
                 onClick={next}
                 disabled={!goal}
                 className="w-full flex items-center justify-center gap-2 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
-                style={{ padding: '11px', borderRadius: '8px', background: '#5e6ad2', color: '#fff', fontSize: '14px', fontWeight: 590, letterSpacing: '-0.01em' }}
-                onMouseEnter={e => { if (goal) e.currentTarget.style.background = '#828fff' }}
-                onMouseLeave={e => { e.currentTarget.style.background = '#5e6ad2' }}
+                style={{ padding: '11px', borderRadius: '8px', background: '#27a644', color: '#fff', fontSize: '14px', fontWeight: 590, letterSpacing: '-0.01em' }}
+                onMouseEnter={e => { if (goal) e.currentTarget.style.background = '#1f8a37' }}
+                onMouseLeave={e => { e.currentTarget.style.background = '#27a644' }}
               >
                 Continue <ArrowRight className="h-4 w-4" />
               </button>
@@ -345,9 +345,9 @@ export default function OnboardingPage() {
               <div className="flex justify-center mb-5">
                 <div
                   className="w-16 h-16 rounded-full flex items-center justify-center"
-                  style={{ background: 'rgba(113,112,255,0.1)', border: '2px solid rgba(113,112,255,0.3)' }}
+                  style={{ background: 'rgba(39,166,68,0.1)', border: '2px solid rgba(39,166,68,0.3)' }}
                 >
-                  <Sparkles className="h-7 w-7" style={{ color: '#7170ff' }} />
+                  <Sparkles className="h-7 w-7" style={{ color: '#27a644' }} />
                 </div>
               </div>
               <h2 style={{ fontSize: '22px', fontWeight: 650, color: 'var(--fh-t1)', letterSpacing: '-0.03em', marginBottom: '8px' }}>
@@ -384,9 +384,9 @@ export default function OnboardingPage() {
                 onClick={finish}
                 disabled={saving}
                 className="w-full flex items-center justify-center gap-2 transition-all disabled:opacity-60"
-                style={{ padding: '11px', borderRadius: '8px', background: '#5e6ad2', color: '#fff', fontSize: '14px', fontWeight: 590, letterSpacing: '-0.01em' }}
-                onMouseEnter={e => { if (!saving) e.currentTarget.style.background = '#828fff' }}
-                onMouseLeave={e => { e.currentTarget.style.background = '#5e6ad2' }}
+                style={{ padding: '11px', borderRadius: '8px', background: '#27a644', color: '#fff', fontSize: '14px', fontWeight: 590, letterSpacing: '-0.01em' }}
+                onMouseEnter={e => { if (!saving) e.currentTarget.style.background = '#1f8a37' }}
+                onMouseLeave={e => { e.currentTarget.style.background = '#27a644' }}
               >
                 {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
                 {role === 'freelancer' ? 'Go to Operations' : 'Start Hiring'} <ArrowRight className="h-4 w-4" />

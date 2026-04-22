@@ -95,7 +95,7 @@ export default function PromoteModal({ type, title, onClose }: Props) {
           {/* Pay instructions */}
           <p style={{ fontSize: '13px', color: 'var(--fh-t3)', fontWeight: 400 }}>
             Pay to a card below and message on Telegram{' '}
-            <a href="https://t.me/zhanmate_zhan" target="_blank" rel="noopener noreferrer" style={{ color: '#7170ff', fontWeight: 510 }}>
+            <a href="https://t.me/zhanmate_zhan" target="_blank" rel="noopener noreferrer" style={{ color: '#27a644', fontWeight: 510 }}>
               @zhanmate_zhan
             </a>{' '}
             with confirmation — we will activate within an hour.
@@ -137,15 +137,15 @@ export default function PromoteModal({ type, title, onClose }: Props) {
             className="flex items-center justify-center gap-2 w-full rounded-xl transition-all"
             style={{
               padding: '11px',
-              background: 'rgba(113,112,255,0.08)',
-              border: '1px solid rgba(113,112,255,0.2)',
-              color: '#7170ff',
+              background: 'rgba(39,166,68,0.08)',
+              border: '1px solid rgba(39,166,68,0.2)',
+              color: '#27a644',
               fontSize: '14px',
               fontWeight: 510,
               textDecoration: 'none',
             }}
-            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(113,112,255,0.14)' }}
-            onMouseLeave={e => { e.currentTarget.style.background = 'rgba(113,112,255,0.08)' }}
+            onMouseEnter={e => { e.currentTarget.style.background = 'rgba(39,166,68,0.14)' }}
+            onMouseLeave={e => { e.currentTarget.style.background = 'rgba(39,166,68,0.08)' }}
           >
             <MessageCircle className="h-4 w-4" />
             Message on Telegram after payment

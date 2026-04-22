@@ -85,7 +85,7 @@ export default function StoriesBar({ currentUserId }: Props) {
 
   // ── group ring color ───────────────────────────────────────────────────────
   const ringStyle = (g: StoryGroup) => {
-    if (g.has_unseen) return { borderColor: '#7170ff', boxShadow: '0 0 0 2px #7170ff33' }
+    if (g.has_unseen) return { borderColor: '#27a644', boxShadow: '0 0 0 2px #27a64433' }
     return { borderColor: 'var(--fh-border)' }
   }
 
@@ -243,7 +243,7 @@ function StoryAvatar({
           <div style={{
             position: 'absolute', bottom: -2, right: -2,
             width: 20, height: 20, borderRadius: '50%',
-            background: '#7170ff',
+            background: '#27a644',
             border: '2px solid var(--fh-surface)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}>

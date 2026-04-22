@@ -39,7 +39,7 @@ const STEPS: { id: keyof FormData; icon: React.ElementType; keyPrefix: StepKeyPr
 
 const LEVEL_COLORS: Record<string, string> = {
   new: '#8a8f98',
-  junior: '#5e6ad2',
+  junior: '#27a644',
   middle: '#0ea5e9',
   senior: '#22c55e',
   top: '#f59e0b',
@@ -141,9 +141,9 @@ export default function AIResumePage() {
           <div className="text-center mb-10">
             <div
               className="inline-flex items-center justify-center rounded-xl mb-5"
-              style={{ width: '52px', height: '52px', background: 'rgba(94,106,210,0.1)', border: '1px solid rgba(94,106,210,0.2)' }}
+              style={{ width: '52px', height: '52px', background: 'rgba(39,166,68,0.1)', border: '1px solid rgba(39,166,68,0.2)' }}
             >
-              <Sparkles className="h-6 w-6" style={{ color: '#7170ff' }} />
+              <Sparkles className="h-6 w-6" style={{ color: '#27a644' }} />
             </div>
             <h1 style={{ fontSize: 'clamp(22px,3.5vw,30px)', fontWeight: 510, letterSpacing: '-0.04em', color: 'var(--fh-t1)', marginBottom: '6px' }}>
               {td.resumeResultTitle}
@@ -198,8 +198,8 @@ export default function AIResumePage() {
                     key={skill}
                     style={{
                       fontSize: '12px', padding: '4px 10px', borderRadius: '6px',
-                      background: 'rgba(94,106,210,0.08)', border: '1px solid rgba(94,106,210,0.18)',
-                      color: '#7170ff', fontWeight: 510,
+                      background: 'rgba(39,166,68,0.08)', border: '1px solid rgba(39,166,68,0.18)',
+                      color: '#27a644', fontWeight: 510,
                     }}
                   >
                     {skill}
@@ -229,7 +229,7 @@ export default function AIResumePage() {
                 flex: 1, minWidth: '180px',
                 display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '7px',
                 padding: '12px 20px', borderRadius: '8px',
-                background: applied ? 'rgba(39,166,68,0.1)' : '#5e6ad2',
+                background: applied ? 'rgba(39,166,68,0.1)' : '#27a644',
                 border: applied ? '1px solid rgba(39,166,68,0.25)' : '1px solid transparent',
                 color: applied ? '#27a644' : '#fff',
                 fontSize: '14px', fontWeight: 510, cursor: applying || applied ? 'not-allowed' : 'pointer',
@@ -272,9 +272,9 @@ export default function AIResumePage() {
         <div className="text-center">
           <div
             className="inline-flex items-center justify-center rounded-2xl mb-6"
-            style={{ width: '64px', height: '64px', background: 'rgba(94,106,210,0.1)', border: '1px solid rgba(94,106,210,0.2)' }}
+            style={{ width: '64px', height: '64px', background: 'rgba(39,166,68,0.1)', border: '1px solid rgba(39,166,68,0.2)' }}
           >
-            <Sparkles className="h-7 w-7 animate-pulse" style={{ color: '#7170ff' }} />
+            <Sparkles className="h-7 w-7 animate-pulse" style={{ color: '#27a644' }} />
           </div>
           <h2 style={{ fontSize: '20px', fontWeight: 510, color: 'var(--fh-t1)', marginBottom: '8px', letterSpacing: '-0.03em' }}>
             {td.resumeBuildTitle}
@@ -288,7 +288,7 @@ export default function AIResumePage() {
                 key={i}
                 style={{
                   width: '8px', height: '8px', borderRadius: '50%',
-                  background: '#7170ff',
+                  background: '#27a644',
                   animation: `bounce 1.2s ${i * 0.2}s infinite ease-in-out`,
                 }}
               />
@@ -311,9 +311,9 @@ export default function AIResumePage() {
         <div className="text-center mb-10">
           <div
             className="inline-flex items-center justify-center rounded-xl mb-5"
-            style={{ width: '52px', height: '52px', background: 'rgba(94,106,210,0.1)', border: '1px solid rgba(94,106,210,0.2)' }}
+            style={{ width: '52px', height: '52px', background: 'rgba(39,166,68,0.1)', border: '1px solid rgba(39,166,68,0.2)' }}
           >
-            <Sparkles className="h-6 w-6" style={{ color: '#7170ff' }} />
+            <Sparkles className="h-6 w-6" style={{ color: '#27a644' }} />
           </div>
           <h1 style={{ fontSize: 'clamp(22px,3.5vw,28px)', fontWeight: 510, letterSpacing: '-0.04em', color: 'var(--fh-t1)', marginBottom: '6px' }}>
             {td.resumeTitle}
@@ -329,14 +329,14 @@ export default function AIResumePage() {
             <span style={{ fontSize: '12px', color: 'var(--fh-t4)' }}>
               {td.resumeStepPrefix} {step + 1} {td.resumeStepOf} {STEPS.length}
             </span>
-            <span style={{ fontSize: '12px', color: '#7170ff', fontWeight: 590 }}>
+            <span style={{ fontSize: '12px', color: '#27a644', fontWeight: 590 }}>
               {Math.round(progress)}%
             </span>
           </div>
           <div style={{ height: '4px', borderRadius: '2px', background: 'var(--fh-border)' }}>
             <div style={{
               height: '100%', borderRadius: '2px',
-              background: 'linear-gradient(90deg, #5e6ad2, #7170ff)',
+              background: 'linear-gradient(90deg, #27a644, #27a644)',
               width: `${progress}%`,
               transition: 'width 0.4s ease',
             }} />
@@ -351,7 +351,7 @@ export default function AIResumePage() {
                   width: i === step ? '20px' : '8px',
                   height: '8px',
                   borderRadius: '4px',
-                  background: i < step ? '#27a644' : i === step ? '#7170ff' : 'var(--fh-border)',
+                  background: i < step ? '#27a644' : i === step ? '#27a644' : 'var(--fh-border)',
                   border: 'none',
                   cursor: i < step ? 'pointer' : 'default',
                   transition: 'all 0.3s',
@@ -373,10 +373,10 @@ export default function AIResumePage() {
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '20px' }}>
             <div style={{
               width: '36px', height: '36px', borderRadius: '10px',
-              background: 'rgba(94,106,210,0.1)', border: '1px solid rgba(94,106,210,0.18)',
+              background: 'rgba(39,166,68,0.1)', border: '1px solid rgba(39,166,68,0.18)',
               display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
             }}>
-              <StepIcon className="h-4 w-4" style={{ color: '#7170ff' }} />
+              <StepIcon className="h-4 w-4" style={{ color: '#27a644' }} />
             </div>
             <div>
               <p style={{ fontSize: '11px', fontWeight: 590, color: 'var(--fh-t4)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '2px' }}>
@@ -406,7 +406,7 @@ export default function AIResumePage() {
               resize: 'vertical', outline: 'none', fontFamily: 'inherit',
               transition: 'border-color 0.15s',
             }}
-            onFocus={e => { e.currentTarget.style.border = '1px solid rgba(113,112,255,0.4)' }}
+            onFocus={e => { e.currentTarget.style.border = '1px solid rgba(39,166,68,0.4)' }}
             onBlur={e => { e.currentTarget.style.border = '1px solid var(--fh-border-2)' }}
           />
 
@@ -442,7 +442,7 @@ export default function AIResumePage() {
               flex: 1,
               display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '7px',
               padding: '12px 20px', borderRadius: '8px',
-              background: canProceed ? '#5e6ad2' : 'var(--fh-surface-2)',
+              background: canProceed ? '#27a644' : 'var(--fh-surface-2)',
               border: canProceed ? '1px solid transparent' : '1px solid var(--fh-border)',
               color: canProceed ? '#fff' : 'var(--fh-t4)',
               fontSize: '14px', fontWeight: 510,

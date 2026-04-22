@@ -9,8 +9,8 @@ const EmojiMartPicker = dynamic(() => import('@emoji-mart/react'), { ssr: false 
 
 // ── FreelanceHub exclusive sticker pack ──────────────────────────────────────
 export const FH_STICKERS = [
-  { id: 'deal',     emoji: '🤝', label: 'Deal!',       color: '#5e6ad2' },
-  { id: 'launch',   emoji: '🚀', label: "Let's go!",   color: '#7170ff' },
+  { id: 'deal',     emoji: '🤝', label: 'Deal!',       color: '#27a644' },
+  { id: 'launch',   emoji: '🚀', label: "Let's go!",   color: '#27a644' },
   { id: 'done',     emoji: '✅', label: 'Done!',        color: '#27a644' },
   { id: 'fire',     emoji: '🔥', label: 'Urgent!',      color: '#f97316' },
   { id: 'idea',     emoji: '💡', label: 'Great idea!',  color: '#f59e0b' },
@@ -20,7 +20,7 @@ export const FH_STICKERS = [
   { id: 'approve',  emoji: '💎', label: 'Quality!',     color: '#06b6d4' },
   { id: 'busy',     emoji: '😅', label: 'Busy rn',      color: '#8a8f98' },
   { id: 'think',    emoji: '🤔', label: 'Let me think', color: '#f59e0b' },
-  { id: 'hi',       emoji: '👋', label: 'Hello!',       color: '#5e6ad2' },
+  { id: 'hi',       emoji: '👋', label: 'Hello!',       color: '#27a644' },
 ]
 
 // Set of exact sticker texts so the bubble renderer can detect them
@@ -56,9 +56,9 @@ export default function EmojiPickerPopover({ onEmoji, onSticker, isDark }: Props
         className="flex-shrink-0 flex items-center justify-center transition-colors"
         style={{
           width: 36, height: 36, borderRadius: 18, cursor: 'pointer',
-          background: open ? 'rgba(113,112,255,0.12)' : 'var(--fh-surface-2)',
-          border: `1px solid ${open ? 'rgba(113,112,255,0.3)' : 'var(--fh-border)'}`,
-          color: open ? '#7170ff' : 'var(--fh-t4)',
+          background: open ? 'rgba(39,166,68,0.12)' : 'var(--fh-surface-2)',
+          border: `1px solid ${open ? 'rgba(39,166,68,0.3)' : 'var(--fh-border)'}`,
+          color: open ? '#27a644' : 'var(--fh-t4)',
         }}
         onMouseEnter={e => { if (!open) (e.currentTarget as HTMLElement).style.color = 'var(--fh-t2)' }}
         onMouseLeave={e => { if (!open) (e.currentTarget as HTMLElement).style.color = 'var(--fh-t4)' }}
@@ -97,8 +97,8 @@ export default function EmojiPickerPopover({ onEmoji, onSticker, isDark }: Props
                 style={{
                   flex: 1, padding: '11px 0', fontSize: 12, fontWeight: 600,
                   border: 'none', cursor: 'pointer', background: 'none',
-                  color: tab === t ? '#7170ff' : 'var(--fh-t4)',
-                  borderBottom: tab === t ? '2px solid #7170ff' : '2px solid transparent',
+                  color: tab === t ? '#27a644' : 'var(--fh-t4)',
+                  borderBottom: tab === t ? '2px solid #27a644' : '2px solid transparent',
                   marginBottom: -1,
                   transition: 'color 0.15s',
                 }}
@@ -134,7 +134,7 @@ export default function EmojiPickerPopover({ onEmoji, onSticker, isDark }: Props
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
                 <div style={{
                   width: 20, height: 20, borderRadius: 6,
-                  background: 'linear-gradient(135deg, #5e6ad2, #7170ff)',
+                  background: 'linear-gradient(135deg, #27a644, #27a644)',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   fontSize: 10, color: '#fff', fontWeight: 800,
                 }}>
@@ -198,7 +198,7 @@ export default function EmojiPickerPopover({ onEmoji, onSticker, isDark }: Props
               }}>
                 <div style={{
                   width: 14, height: 14, borderRadius: 4,
-                  background: 'linear-gradient(135deg, #5e6ad2, #7170ff)',
+                  background: 'linear-gradient(135deg, #27a644, #27a644)',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
                   fontSize: 7, color: '#fff', fontWeight: 800,
                 }}>FH</div>

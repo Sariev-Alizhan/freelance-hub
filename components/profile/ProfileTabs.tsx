@@ -52,7 +52,7 @@ export default function ProfileTabs({
                 fontSize: 13, fontWeight: isActive ? 590 : 510,
                 color: isActive ? 'var(--fh-t1)' : 'var(--fh-t4)',
                 background: 'transparent', border: 'none',
-                borderBottom: `2px solid ${isActive ? '#5e6ad2' : 'transparent'}`,
+                borderBottom: `2px solid ${isActive ? '#27a644' : 'transparent'}`,
                 cursor: 'pointer', whiteSpace: 'nowrap',
                 marginBottom: -1, transition: 'color 0.15s, border-color 0.15s',
               }}

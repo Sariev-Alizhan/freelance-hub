@@ -120,7 +120,7 @@ export default function FundEscrow({ orderId, freelancerAddress, amountUsdc, onF
         disabled={busy || phase === 'done'}
         style={{
           padding: '10px 16px', borderRadius: 8, border: 'none',
-          background: phase === 'done' ? '#34d399' : '#5e6ad2',
+          background: phase === 'done' ? '#34d399' : '#27a644',
           color: '#fff', fontSize: 13, fontWeight: 590,
           cursor: busy ? 'wait' : 'pointer',
           opacity: busy ? 0.7 : 1,

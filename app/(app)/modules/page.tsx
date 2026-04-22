@@ -30,7 +30,7 @@ const MODULES = [
     name:       'RP Game Dev',
     tagline:    'AI trained on PAWN, Lua, FiveM',
     price:      29,
-    color:      '#7170ff',
+    color:      '#27a644',
     emoji:      '🎮',
     popular:    true,
     features: [
@@ -226,16 +226,16 @@ export default function ModulesPage() {
         {/* ── BUNDLE ── */}
         <div style={{
           background: 'linear-gradient(135deg, var(--fh-surface) 0%, var(--fh-surface-2) 100%)',
-          border: '1px solid #7170ff50',
+          border: '1px solid #27a64450',
           borderRadius: 20, padding: 'clamp(28px, 4vw, 44px)',
-          boxShadow: '0 0 0 1px #7170ff20, 0 16px 48px #7170ff0a',
+          boxShadow: '0 0 0 1px #27a64420, 0 16px 48px #27a6440a',
           marginBottom: 56,
         }}>
           <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 24, flexWrap: 'wrap' }}>
             <div style={{ flex: 1, minWidth: 260 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
-                <Zap size={18} style={{ color: '#7170ff' }} />
-                <span style={{ fontSize: 11, fontWeight: 800, color: '#7170ff', letterSpacing: '0.06em', textTransform: 'uppercase' }}>Best Value</span>
+                <Zap size={18} style={{ color: '#27a644' }} />
+                <span style={{ fontSize: 11, fontWeight: 800, color: '#27a644', letterSpacing: '0.06em', textTransform: 'uppercase' }}>Best Value</span>
                 <span style={{ fontSize: 11, padding: '2px 8px', borderRadius: 4, background: '#22c55e18', color: '#22c55e', fontWeight: 700 }}>
                   Save ${BUNDLE.saving}/mo
                 </span>
@@ -247,20 +247,20 @@ export default function ModulesPage() {
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 8 }}>
                 {BUNDLE.features.map((f, i) => (
                   <div key={i} style={{ display: 'flex', gap: 8, fontSize: 13, color: 'var(--fh-t2)', alignItems: 'flex-start' }}>
-                    <Star size={12} style={{ color: '#7170ff', flexShrink: 0, marginTop: 3 }} />
+                    <Star size={12} style={{ color: '#27a644', flexShrink: 0, marginTop: 3 }} />
                     {f}
                   </div>
                 ))}
               </div>
             </div>
             <div style={{ flexShrink: 0, textAlign: 'center', minWidth: 180 }}>
-              <div style={{ fontSize: 48, fontWeight: 900, color: '#7170ff', lineHeight: 1, letterSpacing: '-0.04em' }}>${BUNDLE.price}</div>
+              <div style={{ fontSize: 48, fontWeight: 900, color: '#27a644', lineHeight: 1, letterSpacing: '-0.04em' }}>${BUNDLE.price}</div>
               <div style={{ fontSize: 13, color: 'var(--fh-t4)', marginBottom: 20 }}>per month · all modules</div>
               <Link
                 href="/premium?module=studio"
                 style={{
                   display: 'block', padding: '14px 32px', borderRadius: 12,
-                  background: '#7170ff', color: '#fff',
+                  background: '#27a644', color: '#fff',
                   fontSize: 14, fontWeight: 700, textDecoration: 'none',
                   marginBottom: 8,
                 }}

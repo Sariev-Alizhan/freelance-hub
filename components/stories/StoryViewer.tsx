@@ -154,7 +154,7 @@ export default function StoryViewer({
   // ── story background ───────────────────────────────────────────────────────
   const bgStyle: React.CSSProperties = story.type === 'image' && story.media_url
     ? { backgroundImage: `url(${story.media_url})`, backgroundSize: 'cover', backgroundPosition: 'center' }
-    : { background: story.bg_color ?? '#5e6ad2' }
+    : { background: story.bg_color ?? '#27a644' }
 
   const timeAgo = (() => {
     if (now === null) return ''

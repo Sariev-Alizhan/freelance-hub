@@ -105,20 +105,20 @@ export default function PrivacyPage() {
                 style={{
                   display: 'flex', alignItems: 'flex-start', gap: '12px',
                   padding: '12px 14px', borderRadius: '10px', cursor: 'pointer', textAlign: 'left',
-                  background: active ? 'rgba(94,106,210,0.06)' : 'var(--fh-surface-2)',
-                  border: `1.5px solid ${active ? 'rgba(94,106,210,0.35)' : 'transparent'}`,
+                  background: active ? 'rgba(39,166,68,0.06)' : 'var(--fh-surface-2)',
+                  border: `1.5px solid ${active ? 'rgba(39,166,68,0.35)' : 'transparent'}`,
                   outline: 'none', transition: 'all 0.15s',
                 }}
               >
                 {/* Radio dot */}
                 <div style={{
                   width: '18px', height: '18px', borderRadius: '50%', flexShrink: 0, marginTop: '1px',
-                  border: active ? '5px solid #5e6ad2' : '2px solid var(--fh-border-2)',
+                  border: active ? '5px solid #27a644' : '2px solid var(--fh-border-2)',
                   transition: 'all 0.15s', background: active ? 'transparent' : 'transparent',
                 }} />
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '2px' }}>
-                    <opt.icon style={{ width: 13, height: 13, color: active ? '#7170ff' : 'var(--fh-t4)', flexShrink: 0 }} />
+                    <opt.icon style={{ width: 13, height: 13, color: active ? '#27a644' : 'var(--fh-t4)', flexShrink: 0 }} />
                     <p style={{ fontSize: '13px', fontWeight: 510, color: 'var(--fh-t1)' }}>{opt.label}</p>
                   </div>
                   <p style={{ fontSize: '12px', color: 'var(--fh-t4)' }}>{opt.sub}</p>
@@ -201,14 +201,14 @@ export default function PrivacyPage() {
                 style={{
                   display: 'flex', alignItems: 'flex-start', gap: '12px',
                   padding: '12px 14px', borderRadius: '10px', cursor: 'pointer', textAlign: 'left',
-                  background: active ? 'rgba(94,106,210,0.06)' : 'var(--fh-surface-2)',
-                  border: `1.5px solid ${active ? 'rgba(94,106,210,0.35)' : 'transparent'}`,
+                  background: active ? 'rgba(39,166,68,0.06)' : 'var(--fh-surface-2)',
+                  border: `1.5px solid ${active ? 'rgba(39,166,68,0.35)' : 'transparent'}`,
                   outline: 'none', transition: 'all 0.15s',
                 }}
               >
                 <div style={{
                   width: '18px', height: '18px', borderRadius: '50%', flexShrink: 0, marginTop: '1px',
-                  border: active ? '5px solid #5e6ad2' : '2px solid var(--fh-border-2)',
+                  border: active ? '5px solid #27a644' : '2px solid var(--fh-border-2)',
                   transition: 'all 0.15s',
                 }} />
                 <div>
@@ -284,7 +284,7 @@ function ToggleRow({
         aria-pressed={value}
         style={{
           position: 'relative', width: '40px', height: '22px', borderRadius: '11px',
-          background: value ? '#5e6ad2' : 'var(--fh-surface-3)',
+          background: value ? '#27a644' : 'var(--fh-surface-3)',
           border: value ? 'none' : '1px solid var(--fh-border-2)',
           cursor: 'pointer', transition: 'background 0.2s', flexShrink: 0, padding: 0,
           outline: 'none',

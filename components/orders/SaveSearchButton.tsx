@@ -66,7 +66,7 @@ export default function SaveSearchButton({ keyword, category, urgentOnly }: Prop
           transition: 'color 0.15s, border-color 0.15s',
           whiteSpace: 'nowrap',
         }}
-        onMouseEnter={e => { e.currentTarget.style.color = '#5e6ad2'; e.currentTarget.style.borderColor = 'rgba(94,106,210,0.35)' }}
+        onMouseEnter={e => { e.currentTarget.style.color = '#27a644'; e.currentTarget.style.borderColor = 'rgba(39,166,68,0.35)' }}
         onMouseLeave={e => { e.currentTarget.style.color = 'var(--fh-t3)'; e.currentTarget.style.borderColor = 'var(--fh-border-2)' }}
       >
         <Bookmark className="h-4 w-4" />
@@ -129,7 +129,7 @@ export default function SaveSearchButton({ keyword, category, urgentOnly }: Prop
               disabled={saving || saved}
               style={{
                 width: '100%', padding: '8px', borderRadius: '7px',
-                background: saved ? '#27a644' : '#5e6ad2',
+                background: saved ? '#27a644' : '#27a644',
                 color: '#fff', fontSize: '12px', fontWeight: 590,
                 border: 'none', cursor: saving ? 'wait' : 'pointer',
                 display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px',

@@ -26,7 +26,7 @@ const STORAGE_KEY = 'fh-ai-search-history'
 const MAX_HISTORY = 6
 
 function ScoreRing({ score }: { score: number }) {
-  const color = score >= 80 ? '#27a644' : score >= 60 ? '#7170ff' : score >= 40 ? '#f59e0b' : '#8a8f98'
+  const color = score >= 80 ? '#27a644' : score >= 60 ? '#27a644' : score >= 40 ? '#f59e0b' : '#8a8f98'
   const pct = score / 100
   const r = 16, cx = 20, cy = 20, circumference = 2 * Math.PI * r
   return (
@@ -161,7 +161,7 @@ export default function AISearchPage() {
       {/* Hero search section */}
       <div style={{
         padding: 'clamp(40px,6vw,80px) 16px clamp(32px,4vw,48px)',
-        background: 'linear-gradient(180deg, rgba(94,106,210,0.04) 0%, transparent 100%)',
+        background: 'linear-gradient(180deg, rgba(39,166,68,0.04) 0%, transparent 100%)',
         borderBottom: hasResults || noResults ? '1px solid var(--fh-sep)' : 'none',
       }}>
         <div className="mx-auto max-w-2xl text-center">
@@ -169,8 +169,8 @@ export default function AISearchPage() {
           <div style={{
             display: 'inline-flex', alignItems: 'center', gap: '6px',
             padding: '4px 14px', borderRadius: '100px', marginBottom: '20px',
-            background: 'rgba(113,112,255,0.08)', border: '1px solid rgba(113,112,255,0.2)',
-            fontSize: '12px', fontWeight: 590, color: '#7170ff',
+            background: 'rgba(39,166,68,0.08)', border: '1px solid rgba(39,166,68,0.2)',
+            fontSize: '12px', fontWeight: 590, color: '#27a644',
           }}>
             <Sparkles className="h-3.5 w-3.5" />
             {td.searchBadge}
@@ -201,7 +201,7 @@ export default function AISearchPage() {
                 style={{
                   display: 'flex', alignItems: 'center', gap: '6px',
                   padding: '7px 18px', borderRadius: '7px',
-                  background: type === tk ? '#5e6ad2' : 'transparent',
+                  background: type === tk ? '#27a644' : 'transparent',
                   color: type === tk ? '#fff' : 'var(--fh-t3)',
                   fontSize: '13px', fontWeight: 510, border: 'none', cursor: 'pointer',
                   transition: 'all 0.2s',
@@ -259,7 +259,7 @@ export default function AISearchPage() {
                 style={{
                   flexShrink: 0, display: 'flex', alignItems: 'center', gap: '6px',
                   padding: '9px 18px', borderRadius: '9px',
-                  background: query.trim() && !loading ? '#5e6ad2' : 'var(--fh-surface-2)',
+                  background: query.trim() && !loading ? '#27a644' : 'var(--fh-surface-2)',
                   border: '1px solid transparent',
                   color: query.trim() && !loading ? '#fff' : 'var(--fh-t4)',
                   fontSize: '13px', fontWeight: 590, cursor: query.trim() && !loading ? 'pointer' : 'not-allowed',
@@ -323,7 +323,7 @@ export default function AISearchPage() {
                     transition: 'all 0.15s',
                     whiteSpace: 'nowrap',
                   }}
-                  onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(113,112,255,0.4)'; e.currentTarget.style.color = '#7170ff' }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(39,166,68,0.4)'; e.currentTarget.style.color = '#27a644' }}
                   onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--fh-border)'; e.currentTarget.style.color = 'var(--fh-t3)' }}
                 >
                   {ex}
@@ -340,7 +340,7 @@ export default function AISearchPage() {
         {loading && (
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '24px' }}>
-              <Loader2 className="h-4 w-4 animate-spin" style={{ color: '#7170ff' }} />
+              <Loader2 className="h-4 w-4 animate-spin" style={{ color: '#27a644' }} />
               <span style={{ fontSize: '13px', color: 'var(--fh-t3)' }}>
                 {td.searchAnalyzing}
               </span>
@@ -368,7 +368,7 @@ export default function AISearchPage() {
         {!loading && interpretation && (
           <div style={{ marginBottom: '20px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
-              <Sparkles className="h-3.5 w-3.5" style={{ color: '#7170ff' }} />
+              <Sparkles className="h-3.5 w-3.5" style={{ color: '#27a644' }} />
               <span style={{ fontSize: '12px', color: 'var(--fh-t4)', fontWeight: 590 }}>{td.searchInterpretedAs}</span>
             </div>
             <p style={{ fontSize: '14px', color: 'var(--fh-t2)', fontStyle: 'italic', paddingLeft: '20px' }}>
@@ -387,10 +387,10 @@ export default function AISearchPage() {
           <div style={{ textAlign: 'center', padding: '48px 16px' }}>
             <div style={{
               width: 56, height: 56, borderRadius: '14px', margin: '0 auto 16px',
-              background: 'rgba(94,106,210,0.08)', border: '1px solid rgba(94,106,210,0.2)',
+              background: 'rgba(39,166,68,0.08)', border: '1px solid rgba(39,166,68,0.2)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
             }}>
-              <Search className="h-6 w-6" style={{ color: '#7170ff' }} />
+              <Search className="h-6 w-6" style={{ color: '#27a644' }} />
             </div>
             <p style={{ fontSize: '15px', fontWeight: 510, color: 'var(--fh-t1)', marginBottom: '8px', letterSpacing: '-0.02em' }}>
               {td.searchNoTitle}
@@ -403,7 +403,7 @@ export default function AISearchPage() {
               style={{
                 display: 'inline-flex', alignItems: 'center', gap: '6px',
                 padding: '9px 20px', borderRadius: '8px',
-                background: '#5e6ad2', color: '#fff',
+                background: '#27a644', color: '#fff',
                 fontSize: '13px', fontWeight: 510, textDecoration: 'none',
               }}
             >
@@ -431,8 +431,8 @@ export default function AISearchPage() {
                   }}
                   onMouseEnter={e => {
                     const el = e.currentTarget
-                    el.style.borderColor = 'rgba(113,112,255,0.35)'
-                    el.style.boxShadow = '0 4px 16px rgba(94,106,210,0.08)'
+                    el.style.borderColor = 'rgba(39,166,68,0.35)'
+                    el.style.boxShadow = '0 4px 16px rgba(39,166,68,0.08)'
                   }}
                   onMouseLeave={e => {
                     const el = e.currentTarget
@@ -461,7 +461,7 @@ export default function AISearchPage() {
                       {item.subtitle}
                     </p>
                     <p style={{
-                      fontSize: '12px', color: '#7170ff', fontStyle: 'italic',
+                      fontSize: '12px', color: '#27a644', fontStyle: 'italic',
                       display: 'flex', alignItems: 'center', gap: '4px',
                     }}>
                       <Sparkles style={{ width: 10, height: 10, flexShrink: 0 }} />

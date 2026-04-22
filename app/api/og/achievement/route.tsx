@@ -62,7 +62,7 @@ export async function GET(req: NextRequest) {
         <div style={{
           position: 'absolute', top: '-80px', left: '-80px',
           width: '400px', height: '400px',
-          background: 'radial-gradient(circle, rgba(94,106,210,0.3) 0%, transparent 70%)',
+          background: 'radial-gradient(circle, rgba(39,166,68,0.3) 0%, transparent 70%)',
           borderRadius: '50%',
           display: 'flex',
         }} />
@@ -91,7 +91,7 @@ export async function GET(req: NextRequest) {
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <div style={{
               width: '40px', height: '40px', borderRadius: '10px',
-              background: '#5e6ad2', display: 'flex', alignItems: 'center', justifyContent: 'center',
+              background: '#27a644', display: 'flex', alignItems: 'center', justifyContent: 'center',
             }}>
               <span style={{ color: 'white', fontSize: '22px', fontWeight: 700 }}>F</span>
             </div>
@@ -104,16 +104,16 @@ export async function GET(req: NextRequest) {
               <img
                 src={avatarUrl}
                 width={100} height={100}
-                style={{ borderRadius: '50%', border: '3px solid rgba(94,106,210,0.5)', objectFit: 'cover' }}
+                style={{ borderRadius: '50%', border: '3px solid rgba(39,166,68,0.5)', objectFit: 'cover' }}
               />
             ) : (
               <div style={{
                 width: '100px', height: '100px', borderRadius: '50%',
-                background: 'rgba(94,106,210,0.2)',
-                border: '3px solid rgba(94,106,210,0.5)',
+                background: 'rgba(39,166,68,0.2)',
+                border: '3px solid rgba(39,166,68,0.5)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
               }}>
-                <span style={{ fontSize: '40px', color: '#5e6ad2' }}>👤</span>
+                <span style={{ fontSize: '40px', color: '#27a644' }}>👤</span>
               </div>
             )}
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
@@ -121,8 +121,8 @@ export async function GET(req: NextRequest) {
                 {name}
               </span>
               <span style={{
-                color: '#5e6ad2', fontSize: '16px', fontWeight: 600,
-                background: 'rgba(94,106,210,0.15)', border: '1px solid rgba(94,106,210,0.3)',
+                color: '#27a644', fontSize: '16px', fontWeight: 600,
+                background: 'rgba(39,166,68,0.15)', border: '1px solid rgba(39,166,68,0.3)',
                 padding: '4px 14px', borderRadius: '100px',
               }}>
                 {levelLabel} Freelancer

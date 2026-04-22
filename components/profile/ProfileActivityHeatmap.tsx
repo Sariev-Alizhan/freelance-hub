@@ -16,10 +16,10 @@ const MONTH_LABELS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct
 
 function intensity(n: number): { bg: string; ring: string } {
   if (n === 0) return { bg: 'var(--fh-surface-2)', ring: 'transparent' }
-  if (n === 1) return { bg: 'rgba(94,106,210,0.35)', ring: 'rgba(94,106,210,0.15)' }
-  if (n === 2) return { bg: 'rgba(94,106,210,0.6)',  ring: 'rgba(94,106,210,0.2)'  }
-  if (n <= 4)  return { bg: 'rgba(94,106,210,0.85)', ring: 'rgba(94,106,210,0.3)'  }
-  return { bg: '#5e6ad2', ring: 'rgba(94,106,210,0.4)' }
+  if (n === 1) return { bg: 'rgba(39,166,68,0.35)', ring: 'rgba(39,166,68,0.15)' }
+  if (n === 2) return { bg: 'rgba(39,166,68,0.6)',  ring: 'rgba(39,166,68,0.2)'  }
+  if (n <= 4)  return { bg: 'rgba(39,166,68,0.85)', ring: 'rgba(39,166,68,0.3)'  }
+  return { bg: '#27a644', ring: 'rgba(39,166,68,0.4)' }
 }
 
 export default function ProfileActivityHeatmap({ counts, totalCount }: HeatmapProps) {

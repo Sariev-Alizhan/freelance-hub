@@ -176,7 +176,7 @@ export default function PortfolioManager({ freelancerId }: { freelancerId: strin
           style={{
             display: 'flex', alignItems: 'center', gap: '6px',
             padding: '8px 14px', borderRadius: '8px',
-            background: '#5e6ad2', color: '#fff',
+            background: '#27a644', color: '#fff',
             fontSize: '13px', fontWeight: 590, border: 'none', cursor: 'pointer',
           }}
         >
@@ -349,7 +349,7 @@ export default function PortfolioManager({ freelancerId }: { freelancerId: strin
                 disabled={saving || uploading || !form.title.trim()}
                 style={{
                   padding: '8px 16px', borderRadius: '7px',
-                  background: saving || !form.title.trim() ? '#3d4494' : '#5e6ad2',
+                  background: saving || !form.title.trim() ? '#3d4494' : '#27a644',
                   color: '#fff', fontSize: '13px', fontWeight: 590,
                   border: 'none', cursor: saving || !form.title.trim() ? 'not-allowed' : 'pointer',
                   display: 'flex', alignItems: 'center', gap: '6px',
@@ -479,7 +479,7 @@ export default function PortfolioManager({ freelancerId }: { freelancerId: strin
                       href={item.project_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      style={{ color: '#5e6ad2', display: 'flex', alignItems: 'center', gap: '3px', fontSize: '10px' }}
+                      style={{ color: '#27a644', display: 'flex', alignItems: 'center', gap: '3px', fontSize: '10px' }}
                     >
                       <ExternalLink className="h-3 w-3" />
                     </a>

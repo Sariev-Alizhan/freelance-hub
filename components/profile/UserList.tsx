@@ -50,7 +50,7 @@ export default function UserList({ users, emptyLabel }: { users: UserListItem[];
                   overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {name}
                 </span>
-                {u.is_verified && <CheckCircle className="h-3.5 w-3.5" style={{ color: '#5e6ad2', flexShrink: 0 }} />}
+                {u.is_verified && <CheckCircle className="h-3.5 w-3.5" style={{ color: '#27a644', flexShrink: 0 }} />}
               </div>
               {u.username && (
                 <div style={{ fontSize: 12, color: 'var(--fh-t4)' }}>@{u.username}</div>

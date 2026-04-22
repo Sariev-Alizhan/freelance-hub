@@ -386,7 +386,7 @@ function StoryThumb({
 }) {
   const bg: React.CSSProperties = story.type === 'image' && story.media_url
     ? { backgroundImage: `url(${story.media_url})`, backgroundSize: 'cover', backgroundPosition: 'center' }
-    : { background: story.bg_color ?? '#5e6ad2' }
+    : { background: story.bg_color ?? '#27a644' }
   return (
     <button
       onClick={onClick}

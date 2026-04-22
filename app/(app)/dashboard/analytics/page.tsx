@@ -32,19 +32,19 @@ function Sparkline({ data }: { data: { day: string; count: number }[] }) {
     <svg viewBox={`0 0 ${W} ${H}`} className="w-full" style={{ height: '60px', overflow: 'visible' }}>
       <defs>
         <linearGradient id="sg" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#7170ff" stopOpacity="0.25" />
-          <stop offset="100%" stopColor="#7170ff" stopOpacity="0" />
+          <stop offset="0%" stopColor="#27a644" stopOpacity="0.25" />
+          <stop offset="100%" stopColor="#27a644" stopOpacity="0" />
         </linearGradient>
       </defs>
       <path d={area} fill="url(#sg)" />
-      <path d={line} fill="none" stroke="#7170ff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <path d={line} fill="none" stroke="#27a644" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
       {values.map((v, i) => (
         <circle
           key={i}
           cx={i * step}
           cy={H - (v / max) * H}
           r="3"
-          fill="#7170ff"
+          fill="#27a644"
           opacity={i === values.length - 1 ? 1 : 0.5}
         />
       ))}
@@ -57,7 +57,7 @@ function StatCard({
   label,
   value,
   sub,
-  color = '#7170ff',
+  color = '#27a644',
 }: {
   icon: React.ElementType
   label: string
@@ -128,9 +128,9 @@ export default function AnalyticsPage() {
       <div className="flex items-center gap-3 mb-8">
         <div
           className="h-10 w-10 rounded-xl flex items-center justify-center"
-          style={{ background: 'rgba(113,112,255,0.1)', border: '1px solid rgba(113,112,255,0.2)' }}
+          style={{ background: 'rgba(39,166,68,0.1)', border: '1px solid rgba(39,166,68,0.2)' }}
         >
-          <BarChart2 className="h-5 w-5" style={{ color: '#7170ff' }} />
+          <BarChart2 className="h-5 w-5" style={{ color: '#27a644' }} />
         </div>
         <div>
           <h1 style={{ fontSize: '20px', fontWeight: 590, color: 'var(--fh-t1)', letterSpacing: '-0.03em' }}>
@@ -162,7 +162,7 @@ export default function AnalyticsPage() {
               label="Views (7d)"
               value={data.views7.toLocaleString()}
               sub="Profile views"
-              color="#7170ff"
+              color="#27a644"
             />
             <StatCard
               icon={TrendingUp}

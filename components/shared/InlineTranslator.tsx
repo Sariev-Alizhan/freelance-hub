@@ -62,11 +62,11 @@ export default function InlineTranslator({ text, className }: Props) {
       {translated && (
         <div style={{
           marginTop: 10, padding: '10px 12px', borderRadius: 10,
-          background: 'rgba(113,112,255,0.06)', border: '1px solid rgba(113,112,255,0.2)',
+          background: 'rgba(39,166,68,0.06)', border: '1px solid rgba(39,166,68,0.2)',
           fontSize: 14, lineHeight: 1.7, color: 'var(--fh-t2)',
         }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
-            <span style={{ fontSize: 11, color: '#7170ff', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+            <span style={{ fontSize: 11, color: '#27a644', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
               {LANGS.find(l => l.code === targetLang)?.label?.split('—')[0].trim()}
             </span>
             <button onClick={reset} style={{ display: 'flex', alignItems: 'center', gap: 3, fontSize: 11, color: 'var(--fh-t4)', background: 'none', border: 'none', cursor: 'pointer' }}>
@@ -111,8 +111,8 @@ export default function InlineTranslator({ text, className }: Props) {
                 style={{
                   display: 'block', width: '100%', textAlign: 'left',
                   padding: '8px 14px', fontSize: 13, border: 'none', cursor: 'pointer',
-                  background: l.code === targetLang ? 'rgba(113,112,255,0.08)' : 'transparent',
-                  color: l.code === targetLang ? '#7170ff' : 'var(--fh-t2)',
+                  background: l.code === targetLang ? 'rgba(39,166,68,0.08)' : 'transparent',
+                  color: l.code === targetLang ? '#27a644' : 'var(--fh-t2)',
                   fontWeight: l.code === targetLang ? 600 : 400,
                 }}
                 onMouseEnter={e => { if (l.code !== targetLang) e.currentTarget.style.background = 'var(--fh-surface-2)' }}

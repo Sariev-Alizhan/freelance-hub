@@ -21,7 +21,7 @@ interface Match {
 }
 
 function ScoreRing({ score }: { score: number }) {
-  const color = score >= 80 ? '#27a644' : score >= 60 ? '#5e6ad2' : '#f59e0b'
+  const color = score >= 80 ? '#27a644' : score >= 60 ? '#27a644' : '#f59e0b'
   return (
     <div style={{
       width: '42px', height: '42px', borderRadius: '50%', flexShrink: 0,
@@ -68,8 +68,8 @@ export default function JobMatchWidget() {
       <div
         style={{
           borderRadius: '14px',
-          border: '1px solid rgba(113,112,255,0.2)',
-          background: 'linear-gradient(135deg, rgba(113,112,255,0.05), rgba(113,112,255,0.02))',
+          border: '1px solid rgba(39,166,68,0.2)',
+          background: 'linear-gradient(135deg, rgba(39,166,68,0.05), rgba(39,166,68,0.02))',
           padding: '20px',
           marginBottom: '24px',
         }}
@@ -77,10 +77,10 @@ export default function JobMatchWidget() {
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
           <div style={{
             width: '32px', height: '32px', borderRadius: '8px',
-            background: 'rgba(113,112,255,0.12)', border: '1px solid rgba(113,112,255,0.2)',
+            background: 'rgba(39,166,68,0.12)', border: '1px solid rgba(39,166,68,0.2)',
             display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
           }}>
-            <Sparkles className="h-4 w-4" style={{ color: '#7170ff' }} />
+            <Sparkles className="h-4 w-4" style={{ color: '#27a644' }} />
           </div>
           <div>
             <p style={{ fontSize: '13px', fontWeight: 590, color: 'var(--fh-t1)', margin: 0 }}>
@@ -102,7 +102,7 @@ export default function JobMatchWidget() {
           style={{
             display: 'flex', alignItems: 'center', gap: '6px',
             padding: '9px 16px', borderRadius: '8px',
-            background: loading ? 'rgba(113,112,255,0.3)' : '#5e6ad2',
+            background: loading ? 'rgba(39,166,68,0.3)' : '#27a644',
             color: '#fff', fontSize: '13px', fontWeight: 590,
             border: 'none', cursor: loading ? 'wait' : 'pointer',
           }}
@@ -121,15 +121,15 @@ export default function JobMatchWidget() {
     <div style={{ marginBottom: '24px' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '7px' }}>
-          <Sparkles className="h-4 w-4" style={{ color: '#7170ff' }} />
+          <Sparkles className="h-4 w-4" style={{ color: '#27a644' }} />
           <span style={{ fontSize: '13px', fontWeight: 590, color: 'var(--fh-t1)' }}>
             Recommended for you
           </span>
           {matches.length > 0 && (
             <span style={{
               fontSize: '10px', fontWeight: 700, padding: '1px 7px', borderRadius: '4px',
-              background: 'rgba(113,112,255,0.1)', color: '#7170ff',
-              border: '1px solid rgba(113,112,255,0.2)',
+              background: 'rgba(39,166,68,0.1)', color: '#27a644',
+              border: '1px solid rgba(39,166,68,0.2)',
             }}>
               {matches.length} match{matches.length !== 1 ? 'es' : ''}
             </span>
@@ -153,7 +153,7 @@ export default function JobMatchWidget() {
           <p style={{ fontSize: '13px', color: 'var(--fh-t3)', marginBottom: '8px' }}>
             No matching orders found right now
           </p>
-          <Link href="/orders" style={{ fontSize: '12px', color: '#7170ff' }}>
+          <Link href="/orders" style={{ fontSize: '12px', color: '#27a644' }}>
             Browse all orders →
           </Link>
         </div>
@@ -169,7 +169,7 @@ export default function JobMatchWidget() {
                 background: 'var(--fh-surface)', border: '1px solid var(--fh-border)',
                 textDecoration: 'none', transition: 'border-color 0.15s',
               }}
-              onMouseEnter={e => (e.currentTarget.style.borderColor = 'rgba(113,112,255,0.35)')}
+              onMouseEnter={e => (e.currentTarget.style.borderColor = 'rgba(39,166,68,0.35)')}
               onMouseLeave={e => (e.currentTarget.style.borderColor = 'var(--fh-border)')}
             >
               <ScoreRing score={m.score} />
@@ -194,7 +194,7 @@ export default function JobMatchWidget() {
                   )}
                 </div>
 
-                <p style={{ fontSize: '11px', color: '#7170ff', marginBottom: '3px', fontWeight: 510 }}>
+                <p style={{ fontSize: '11px', color: '#27a644', marginBottom: '3px', fontWeight: 510 }}>
                   {m.reason}
                 </p>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
@@ -224,7 +224,7 @@ export default function JobMatchWidget() {
               border: '1px dashed var(--fh-border)', color: 'var(--fh-t4)',
               fontSize: '12px', textDecoration: 'none', transition: 'color 0.15s',
             }}
-            onMouseEnter={e => (e.currentTarget.style.color = '#7170ff')}
+            onMouseEnter={e => (e.currentTarget.style.color = '#27a644')}
             onMouseLeave={e => (e.currentTarget.style.color = 'var(--fh-t4)')}
           >
             Browse all orders <ArrowRight className="h-3.5 w-3.5" />

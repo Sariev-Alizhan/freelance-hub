@@ -21,7 +21,7 @@ const LEVEL_LABELS: Record<string, string> = {
   new: 'Newcomer', junior: 'Junior', middle: 'Middle', senior: 'Senior', top: 'TOP',
 }
 const LEVEL_COLOR: Record<string, string> = {
-  new: '#62666d', junior: '#27a644', middle: '#5e6ad2', senior: '#7170ff', top: '#fbbf24',
+  new: '#62666d', junior: '#27a644', middle: '#27a644', senior: '#27a644', top: '#fbbf24',
 }
 
 function timeAgo(iso: string) {
@@ -100,13 +100,13 @@ export default function OrderStatusActions({ orderId, orderStatus, isOwner }: Pr
             background: status === 'completed'
               ? 'rgba(39,166,68,0.06)'
               : status === 'in_progress'
-              ? 'rgba(94,106,210,0.06)'
+              ? 'rgba(39,166,68,0.06)'
               : 'rgba(229,72,77,0.06)',
             border: `1px solid ${
               status === 'completed'
                 ? 'rgba(39,166,68,0.2)'
                 : status === 'in_progress'
-                ? 'rgba(94,106,210,0.2)'
+                ? 'rgba(39,166,68,0.2)'
                 : 'rgba(229,72,77,0.2)'
             }`,
           }}
@@ -114,14 +114,14 @@ export default function OrderStatusActions({ orderId, orderStatus, isOwner }: Pr
           {status === 'completed' ? (
             <CheckCheck className="h-4 w-4 flex-shrink-0" style={{ color: '#27a644' }} />
           ) : status === 'in_progress' ? (
-            <Clock className="h-4 w-4 flex-shrink-0" style={{ color: '#7170ff' }} />
+            <Clock className="h-4 w-4 flex-shrink-0" style={{ color: '#27a644' }} />
           ) : (
             <AlertCircle className="h-4 w-4 flex-shrink-0" style={{ color: '#e5484d' }} />
           )}
           <span style={{
             fontSize: '13px',
             fontWeight: 510,
-            color: status === 'completed' ? '#27a644' : status === 'in_progress' ? '#7170ff' : '#e5484d',
+            color: status === 'completed' ? '#27a644' : status === 'in_progress' ? '#27a644' : '#e5484d',
           }}>
             {status === 'completed' ? 'Order completed' : status === 'in_progress' ? 'In progress' : 'Order cancelled'}
           </span>
@@ -166,11 +166,11 @@ export default function OrderStatusActions({ orderId, orderStatus, isOwner }: Pr
                 className="rounded-full"
                 style={{
                   padding: '1px 8px',
-                  background: 'rgba(94,106,210,0.12)',
-                  border: '1px solid rgba(94,106,210,0.25)',
+                  background: 'rgba(39,166,68,0.12)',
+                  border: '1px solid rgba(39,166,68,0.25)',
                   fontSize: '11px',
                   fontWeight: 590,
-                  color: '#7170ff',
+                  color: '#27a644',
                 }}
               >
                 {pending.length} new
@@ -228,7 +228,7 @@ export default function OrderStatusActions({ orderId, orderStatus, isOwner }: Pr
                               : `/freelancers/${resp.profiles?.id ?? resp.id}`
                           }
                           style={{ fontSize: '13px', fontWeight: 590, color: '#f7f8f8', letterSpacing: '-0.01em' }}
-                          onMouseEnter={e => { e.currentTarget.style.color = '#7170ff' }}
+                          onMouseEnter={e => { e.currentTarget.style.color = '#27a644' }}
                           onMouseLeave={e => { e.currentTarget.style.color = '#f7f8f8' }}
                         >
                           {name}
@@ -266,7 +266,7 @@ export default function OrderStatusActions({ orderId, orderStatus, isOwner }: Pr
                       )}
 
                       {resp.proposed_price && (
-                        <p style={{ fontSize: '13px', fontWeight: 590, color: '#7170ff', marginBottom: '6px' }}>
+                        <p style={{ fontSize: '13px', fontWeight: 590, color: '#27a644', marginBottom: '6px' }}>
                           ${resp.proposed_price.toLocaleString()}
                         </p>
                       )}

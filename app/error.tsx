@@ -80,7 +80,7 @@ export default function GlobalError({
               gap: '7px',
               padding: '10px 20px',
               borderRadius: '8px',
-              background: '#5e6ad2',
+              background: '#27a644',
               color: '#fff',
               fontSize: '13px',
               fontWeight: 590,

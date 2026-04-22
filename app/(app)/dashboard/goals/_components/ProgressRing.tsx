@@ -1,4 +1,4 @@
-export default function ProgressRing({ pct: p, color = '#7170ff', size = 80, stroke = 7 }: {
+export default function ProgressRing({ pct: p, color = '#27a644', size = 80, stroke = 7 }: {
   pct: number; color?: string; size?: number; stroke?: number
 }) {
   const r = (size - stroke) / 2

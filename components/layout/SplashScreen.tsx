@@ -48,7 +48,7 @@ export default function SplashScreen() {
         <span
           style={{
             fontSize: 17, fontWeight: 700,
-            background: 'linear-gradient(135deg, #4338CA, #7170ff)',
+            background: 'linear-gradient(135deg, #4338CA, #27a644)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
             backgroundClip: 'text',

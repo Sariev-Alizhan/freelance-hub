@@ -79,7 +79,7 @@ export default function CreateSheet({ open, onClose }: Props) {
           body: JSON.stringify({
             type: imgUrl ? 'image' : 'text',
             content: caption.trim() || null,
-            bg_color: '#5e6ad2',
+            bg_color: '#27a644',
             media_url: imgUrl ?? null,
           }),
         })
@@ -216,7 +216,7 @@ export default function CreateSheet({ open, onClose }: Props) {
                     style={{
                       position: 'relative', width: '100%', textAlign: 'left',
                       borderRadius: 18, padding: 1, border: 'none', cursor: 'pointer',
-                      background: 'linear-gradient(135deg, #5e6ad2 0%, #7170ff 50%, #a855f7 100%)',
+                      background: 'linear-gradient(135deg, #27a644 0%, #27a644 50%, #a855f7 100%)',
                     }}
                   >
                     <div style={{
@@ -226,9 +226,9 @@ export default function CreateSheet({ open, onClose }: Props) {
                     }}>
                       <div style={{
                         flexShrink: 0, width: 56, height: 56, borderRadius: 16,
-                        background: 'linear-gradient(135deg, #5e6ad2, #a855f7)',
+                        background: 'linear-gradient(135deg, #27a644, #a855f7)',
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        boxShadow: '0 10px 24px rgba(94,106,210,0.35)',
+                        boxShadow: '0 10px 24px rgba(39,166,68,0.35)',
                       }}>
                         <Briefcase style={{ width: 26, height: 26, color: '#fff' }} strokeWidth={2.2} />
                       </div>

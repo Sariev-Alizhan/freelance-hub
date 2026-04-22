@@ -100,8 +100,8 @@ export default function ProfileProSection({
         <div
           style={{
             padding: '14px 18px', borderRadius: 10,
-            background: 'linear-gradient(135deg, #7170ff14 0%, #06b6d414 100%)',
-            border: '1px solid #7170ff30',
+            background: 'linear-gradient(135deg, #27a64414 0%, #06b6d414 100%)',
+            border: '1px solid #27a64430',
           }}
         >
           <p style={{ margin: 0, fontSize: 15, fontWeight: 590, color: 'var(--fh-t1)', letterSpacing: '-0.01em' }}>
@@ -124,7 +124,7 @@ export default function ProfileProSection({
                 rel="noopener noreferrer"
                 style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 14px', borderRadius: 8, background: 'var(--fh-surface-2)', border: '1px solid var(--fh-border)', textDecoration: 'none', transition: 'border-color 0.15s' }}
               >
-                <Globe size={15} style={{ color: '#7170ff', flexShrink: 0 }} />
+                <Globe size={15} style={{ color: '#27a644', flexShrink: 0 }} />
                 <span style={{ fontSize: 13, color: 'var(--fh-t1)', fontWeight: 510 }}>Portfolio Website</span>
                 <span style={{ fontSize: 12, color: 'var(--fh-t4)', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {portfolioWebsite.replace(/^https?:\/\//, '')}

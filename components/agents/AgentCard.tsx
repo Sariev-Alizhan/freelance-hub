@@ -30,7 +30,7 @@ export default function AgentCard({ agent: a }: Props) {
         style={{
           padding: '20px',
           background: 'var(--fh-surface)',
-          border: '1px solid rgba(113,112,255,0.2)',
+          border: '1px solid rgba(39,166,68,0.2)',
           borderRadius: '10px',
           position: 'relative',
           overflow: 'hidden',
@@ -42,7 +42,7 @@ export default function AgentCard({ agent: a }: Props) {
             position: 'absolute',
             top: 0, left: 0, right: 0,
             height: '1px',
-            background: 'linear-gradient(90deg, transparent, rgba(113,112,255,0.5), transparent)',
+            background: 'linear-gradient(90deg, transparent, rgba(39,166,68,0.5), transparent)',
           }}
         />
 
@@ -53,11 +53,11 @@ export default function AgentCard({ agent: a }: Props) {
             className="shrink-0 flex items-center justify-center rounded-lg"
             style={{
               width: 44, height: 44,
-              background: 'linear-gradient(135deg, rgba(113,112,255,0.15), rgba(113,112,255,0.05))',
-              border: '1px solid rgba(113,112,255,0.3)',
+              background: 'linear-gradient(135deg, rgba(39,166,68,0.15), rgba(39,166,68,0.05))',
+              border: '1px solid rgba(39,166,68,0.3)',
             }}
           >
-            <Bot className="h-5 w-5" style={{ color: '#7170ff' }} />
+            <Bot className="h-5 w-5" style={{ color: '#27a644' }} />
           </div>
 
           <div className="flex-1 min-w-0">
@@ -73,9 +73,9 @@ export default function AgentCard({ agent: a }: Props) {
                 style={{
                   fontSize: '9px', fontWeight: 700, letterSpacing: '0.06em',
                   padding: '1px 6px', borderRadius: '4px',
-                  background: 'rgba(113,112,255,0.12)',
-                  border: '1px solid rgba(113,112,255,0.25)',
-                  color: '#7170ff',
+                  background: 'rgba(39,166,68,0.12)',
+                  border: '1px solid rgba(39,166,68,0.25)',
+                  color: '#27a644',
                   textTransform: 'uppercase',
                 }}
               >
@@ -154,7 +154,7 @@ export default function AgentCard({ agent: a }: Props) {
             {a.pricePerTask > 0 && <span style={{ fontSize: '11px', color: 'var(--fh-t4)' }}> / task</span>}
           </div>
           <div className="flex items-center gap-1" style={{ color: 'var(--fh-t4)' }}>
-            <Zap className="h-3 w-3" style={{ color: '#7170ff' }} />
+            <Zap className="h-3 w-3" style={{ color: '#27a644' }} />
             <span style={{ fontSize: '11px', fontWeight: 400 }}>{a.responseTime}</span>
           </div>
         </div>
@@ -167,7 +167,7 @@ export default function AgentCard({ agent: a }: Props) {
             display: 'flex', alignItems: 'center', gap: '4px',
           }}
         >
-          <CheckCircle className="h-2.5 w-2.5" style={{ color: '#7170ff' }} />
+          <CheckCircle className="h-2.5 w-2.5" style={{ color: '#27a644' }} />
           Powered by {a.model} · by {a.creator}
         </div>
       </div>

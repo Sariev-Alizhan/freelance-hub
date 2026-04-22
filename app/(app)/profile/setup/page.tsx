@@ -11,11 +11,11 @@ export default function ProfileSetupPage() {
             style={{
               width: '52px',
               height: '52px',
-              background: 'rgba(94,106,210,0.1)',
-              border: '1px solid rgba(94,106,210,0.2)',
+              background: 'rgba(39,166,68,0.1)',
+              border: '1px solid rgba(39,166,68,0.2)',
             }}
           >
-            <UserCircle2 className="h-6 w-6" style={{ color: '#7170ff' }} />
+            <UserCircle2 className="h-6 w-6" style={{ color: '#27a644' }} />
           </div>
           <h1
             style={{

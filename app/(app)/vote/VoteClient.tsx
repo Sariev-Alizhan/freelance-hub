@@ -29,7 +29,7 @@ const CATEGORIES = [
 ]
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; border: string; icon: React.ElementType }> = {
-  proposed:    { label: 'Proposed',    color: '#7170ff', bg: 'rgba(113,112,255,0.08)', border: 'rgba(113,112,255,0.2)', icon: Lightbulb  },
+  proposed:    { label: 'Proposed',    color: '#27a644', bg: 'rgba(39,166,68,0.08)', border: 'rgba(39,166,68,0.2)', icon: Lightbulb  },
   planned:     { label: 'Planned',     color: '#f59e0b', bg: 'rgba(245,158,11,0.08)', border: 'rgba(245,158,11,0.2)',  icon: Clock       },
   in_progress: { label: 'Building',   color: '#3b82f6', bg: 'rgba(59,130,246,0.08)', border: 'rgba(59,130,246,0.2)',  icon: TrendingUp  },
   done:        { label: 'Shipped',     color: '#27a644', bg: 'rgba(39,166,68,0.08)',  border: 'rgba(39,166,68,0.2)',   icon: CheckCircle2 },
@@ -126,10 +126,10 @@ export default function VoteClient() {
       <div className="text-center mb-12">
         <div
           className="inline-flex items-center gap-2 rounded-full mb-5 px-4 py-1.5"
-          style={{ background: 'rgba(113,112,255,0.08)', border: '1px solid rgba(113,112,255,0.2)' }}
+          style={{ background: 'rgba(39,166,68,0.08)', border: '1px solid rgba(39,166,68,0.2)' }}
         >
-          <Users className="h-3.5 w-3.5" style={{ color: '#7170ff' }} />
-          <span style={{ fontSize: '12px', fontWeight: 590, color: '#7170ff', letterSpacing: '0.05em' }}>
+          <Users className="h-3.5 w-3.5" style={{ color: '#27a644' }} />
+          <span style={{ fontSize: '12px', fontWeight: 590, color: '#27a644', letterSpacing: '0.05em' }}>
             DEMOCRATIC ROADMAP
           </span>
         </div>
@@ -181,12 +181,12 @@ export default function VoteClient() {
                   key={r.id}
                   className="rounded-xl p-4 flex flex-col gap-2"
                   style={{
-                    background: i === 0 ? 'rgba(113,112,255,0.06)' : 'var(--fh-surface)',
-                    border: i === 0 ? '1px solid rgba(113,112,255,0.25)' : '1px solid var(--fh-border-2)',
+                    background: i === 0 ? 'rgba(39,166,68,0.06)' : 'var(--fh-surface)',
+                    border: i === 0 ? '1px solid rgba(39,166,68,0.25)' : '1px solid var(--fh-border-2)',
                   }}
                 >
                   <div className="flex items-center justify-between">
-                    <span style={{ fontSize: '22px', fontWeight: 700, color: i === 0 ? '#7170ff' : 'var(--fh-t3)', letterSpacing: '-0.03em' }}>
+                    <span style={{ fontSize: '22px', fontWeight: 700, color: i === 0 ? '#27a644' : 'var(--fh-t3)', letterSpacing: '-0.03em' }}>
                       #{i + 1}
                     </span>
                     <span style={{ fontSize: '18px', fontWeight: 700, color: 'var(--fh-t1)', letterSpacing: '-0.02em' }}>
@@ -219,8 +219,8 @@ export default function VoteClient() {
               className="transition-all"
               style={{
                 padding: '5px 12px', borderRadius: '6px', fontSize: '12px', fontWeight: 510,
-                background: category === c.slug ? '#5e6ad2' : 'var(--fh-surface-2)',
-                border: category === c.slug ? '1px solid rgba(113,112,255,0.3)' : '1px solid var(--fh-border)',
+                background: category === c.slug ? '#27a644' : 'var(--fh-surface-2)',
+                border: category === c.slug ? '1px solid rgba(39,166,68,0.3)' : '1px solid var(--fh-border)',
                 color: category === c.slug ? '#fff' : 'var(--fh-t3)',
               }}
             >
@@ -236,7 +236,7 @@ export default function VoteClient() {
             className="flex items-center gap-1.5 transition-all"
             style={{
               padding: '7px 16px', borderRadius: '6px', fontSize: '13px', fontWeight: 590,
-              background: showForm ? 'rgba(229,72,77,0.08)' : '#5e6ad2',
+              background: showForm ? 'rgba(229,72,77,0.08)' : '#27a644',
               border: showForm ? '1px solid rgba(229,72,77,0.2)' : 'none',
               color: showForm ? '#e5484d' : '#fff',
             }}
@@ -247,7 +247,7 @@ export default function VoteClient() {
           <Link
             href="/auth/login?next=/vote"
             className="flex items-center gap-1.5 transition-all"
-            style={{ padding: '7px 16px', borderRadius: '6px', fontSize: '13px', fontWeight: 590, background: '#5e6ad2', color: '#fff' }}
+            style={{ padding: '7px 16px', borderRadius: '6px', fontSize: '13px', fontWeight: 590, background: '#27a644', color: '#fff' }}
           >
             <Plus className="h-3.5 w-3.5" /> Submit idea
           </Link>
@@ -263,9 +263,9 @@ export default function VoteClient() {
             className="transition-all"
             style={{
               padding: '4px 10px', borderRadius: '5px', fontSize: '11px', fontWeight: 510,
-              background: statusFilter === s.slug ? 'rgba(113,112,255,0.1)' : 'transparent',
-              border: statusFilter === s.slug ? '1px solid rgba(113,112,255,0.25)' : '1px solid var(--fh-border)',
-              color: statusFilter === s.slug ? '#7170ff' : 'var(--fh-t4)',
+              background: statusFilter === s.slug ? 'rgba(39,166,68,0.1)' : 'transparent',
+              border: statusFilter === s.slug ? '1px solid rgba(39,166,68,0.25)' : '1px solid var(--fh-border)',
+              color: statusFilter === s.slug ? '#27a644' : 'var(--fh-t4)',
             }}
           >
             {s.label}
@@ -277,7 +277,7 @@ export default function VoteClient() {
       {showForm && (
         <div
           className="rounded-2xl p-5 mb-6"
-          style={{ background: 'rgba(113,112,255,0.04)', border: '1px solid rgba(113,112,255,0.2)' }}
+          style={{ background: 'rgba(39,166,68,0.04)', border: '1px solid rgba(39,166,68,0.2)' }}
         >
           <p style={{ fontSize: '13px', fontWeight: 590, color: 'var(--fh-t1)', marginBottom: '14px' }}>
             💡 Submit your idea
@@ -326,7 +326,7 @@ export default function VoteClient() {
                 className="flex items-center gap-1.5 transition-all disabled:opacity-50"
                 style={{
                   padding: '8px 20px', borderRadius: '6px', fontSize: '13px', fontWeight: 590,
-                  background: '#5e6ad2', color: '#fff',
+                  background: '#27a644', color: '#fff',
                 }}
               >
                 {submitting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Rocket className="h-3.5 w-3.5" />}
@@ -360,8 +360,8 @@ export default function VoteClient() {
                 key={req.id}
                 className="flex items-start gap-4 rounded-2xl p-5 transition-all"
                 style={{
-                  background: req.hasVoted ? 'rgba(113,112,255,0.04)' : 'var(--fh-surface)',
-                  border: req.hasVoted ? '1px solid rgba(113,112,255,0.2)' : '1px solid var(--fh-border-2)',
+                  background: req.hasVoted ? 'rgba(39,166,68,0.04)' : 'var(--fh-surface)',
+                  border: req.hasVoted ? '1px solid rgba(39,166,68,0.2)' : '1px solid var(--fh-border-2)',
                 }}
               >
                 {/* Vote button */}
@@ -372,15 +372,15 @@ export default function VoteClient() {
                   title={isLoggedIn ? (req.hasVoted ? 'Remove vote' : 'Vote') : 'Sign in to vote'}
                   style={{
                     padding: '8px 12px', borderRadius: '10px', minWidth: '56px',
-                    background: req.hasVoted ? 'rgba(113,112,255,0.12)' : 'var(--fh-surface-2)',
-                    border: req.hasVoted ? '1px solid rgba(113,112,255,0.3)' : '1px solid var(--fh-border-2)',
+                    background: req.hasVoted ? 'rgba(39,166,68,0.12)' : 'var(--fh-surface-2)',
+                    border: req.hasVoted ? '1px solid rgba(39,166,68,0.3)' : '1px solid var(--fh-border-2)',
                   }}
                 >
                   {isVoting
-                    ? <Loader2 className="h-4 w-4 animate-spin" style={{ color: '#7170ff' }} />
-                    : <ChevronUp className="h-4 w-4" style={{ color: req.hasVoted ? '#7170ff' : 'var(--fh-t4)' }} />
+                    ? <Loader2 className="h-4 w-4 animate-spin" style={{ color: '#27a644' }} />
+                    : <ChevronUp className="h-4 w-4" style={{ color: req.hasVoted ? '#27a644' : 'var(--fh-t4)' }} />
                   }
-                  <span style={{ fontSize: '14px', fontWeight: 700, color: req.hasVoted ? '#7170ff' : 'var(--fh-t2)', letterSpacing: '-0.02em' }}>
+                  <span style={{ fontSize: '14px', fontWeight: 700, color: req.hasVoted ? '#27a644' : 'var(--fh-t2)', letterSpacing: '-0.02em' }}>
                     {req.votes_count}
                   </span>
                 </button>
@@ -434,9 +434,9 @@ export default function VoteClient() {
       {!isLoggedIn && (
         <div
           className="mt-8 rounded-xl px-5 py-4 flex items-center gap-4"
-          style={{ background: 'rgba(113,112,255,0.04)', border: '1px solid rgba(113,112,255,0.15)' }}
+          style={{ background: 'rgba(39,166,68,0.04)', border: '1px solid rgba(39,166,68,0.15)' }}
         >
-          <Users className="h-5 w-5 flex-shrink-0" style={{ color: '#7170ff' }} />
+          <Users className="h-5 w-5 flex-shrink-0" style={{ color: '#27a644' }} />
           <div className="flex-1">
             <p style={{ fontSize: '13px', fontWeight: 590, color: 'var(--fh-t1)', marginBottom: '2px' }}>
               Sign in to vote and submit ideas
@@ -450,7 +450,7 @@ export default function VoteClient() {
             className="flex-shrink-0 transition-all"
             style={{
               padding: '7px 16px', borderRadius: '6px', fontSize: '13px', fontWeight: 590,
-              background: '#5e6ad2', color: '#fff',
+              background: '#27a644', color: '#fff',
             }}
           >
             Sign in

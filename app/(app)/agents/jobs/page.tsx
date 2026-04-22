@@ -16,7 +16,7 @@ interface Job {
 const STATUS_CONFIG: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
   pending:            { label: 'Ожидание',     color: '#f59e0b', icon: <Clock className="h-3.5 w-3.5" /> },
   running:            { label: 'Выполняется',  color: '#3b82f6', icon: <Loader2 className="h-3.5 w-3.5 animate-spin" /> },
-  awaiting_approval:  { label: 'Ждёт проверки', color: '#7170ff', icon: <AlertCircle className="h-3.5 w-3.5" /> },
+  awaiting_approval:  { label: 'Ждёт проверки', color: '#27a644', icon: <AlertCircle className="h-3.5 w-3.5" /> },
   approved:           { label: 'Одобрено',     color: '#10b981', icon: <CheckCircle className="h-3.5 w-3.5" /> },
   rejected:           { label: 'Отклонено',    color: '#e5484d', icon: <XCircle className="h-3.5 w-3.5" /> },
   failed:             { label: 'Ошибка',       color: '#e5484d', icon: <XCircle className="h-3.5 w-3.5" /> },
@@ -73,7 +73,7 @@ export default function JobsPage() {
         </Link>
         <h1 className="text-xl font-bold" style={{ color: 'var(--fh-t1)' }}>Мои задачи</h1>
         <span className="ml-auto text-xs px-2.5 py-1 rounded-full font-semibold"
-          style={{ background: 'rgba(113,112,255,0.1)', color: '#7170ff', border: '1px solid rgba(113,112,255,0.2)' }}>
+          style={{ background: 'rgba(39,166,68,0.1)', color: '#27a644', border: '1px solid rgba(39,166,68,0.2)' }}>
           {jobs.length} задач
         </span>
       </div>
@@ -99,8 +99,8 @@ export default function JobsPage() {
                 style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border-2)' }}>
                 {/* Icon */}
                 <div className="h-10 w-10 rounded-xl flex items-center justify-center flex-shrink-0"
-                  style={{ background: 'rgba(113,112,255,0.1)', border: '1px solid rgba(113,112,255,0.15)' }}>
-                  <Bot className="h-5 w-5" style={{ color: '#7170ff' }} />
+                  style={{ background: 'rgba(39,166,68,0.1)', border: '1px solid rgba(39,166,68,0.15)' }}>
+                  <Bot className="h-5 w-5" style={{ color: '#27a644' }} />
                 </div>
 
                 {/* Info */}

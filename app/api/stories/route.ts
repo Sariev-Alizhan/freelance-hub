@@ -125,7 +125,7 @@ export async function POST(req: NextRequest) {
     user_id: user.id,
     type,
     content: content ?? null,
-    bg_color: bg_color ?? '#5e6ad2',
+    bg_color: bg_color ?? '#27a644',
     media_url: media_url ?? null,
   }).select().single()
 

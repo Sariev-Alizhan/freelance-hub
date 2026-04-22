@@ -124,7 +124,7 @@ export default function PrivacyPage() {
         <Link
           href="/terms"
           className="hover:underline"
-          style={{ fontSize: '13px', color: '#7170ff', fontWeight: 510, textDecoration: 'none' }}
+          style={{ fontSize: '13px', color: '#27a644', fontWeight: 510, textDecoration: 'none' }}
         >
           Terms of Service →
         </Link>

@@ -64,10 +64,10 @@ export default function PortfolioLightbox({ items, index, onClose, onPrev, onNex
                 rel="noopener noreferrer"
                 className="flex items-center gap-1.5 transition-opacity hover:opacity-70"
                 style={{
-                  fontSize: '12px', color: '#7170ff', fontWeight: 510,
+                  fontSize: '12px', color: '#27a644', fontWeight: 510,
                   padding: '5px 10px', borderRadius: '6px',
-                  background: 'rgba(113,112,255,0.12)',
-                  border: '1px solid rgba(113,112,255,0.25)',
+                  background: 'rgba(39,166,68,0.12)',
+                  border: '1px solid rgba(39,166,68,0.25)',
                 }}
               >
                 <ExternalLink className="h-3 w-3" /> Open project
@@ -150,7 +150,7 @@ export default function PortfolioLightbox({ items, index, onClose, onPrev, onNex
                   width: i === index ? '20px' : '6px',
                   height: '6px',
                   borderRadius: '3px',
-                  background: i === index ? '#7170ff' : 'rgba(255,255,255,0.25)',
+                  background: i === index ? '#27a644' : 'rgba(255,255,255,0.25)',
                   transition: 'all 0.2s',
                 }}
               />

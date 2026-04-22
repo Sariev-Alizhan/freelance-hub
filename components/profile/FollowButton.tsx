@@ -66,7 +66,7 @@ export default function FollowButton({ targetUserId }: { targetUserId: string })
 
   if (!state.iFollow) return (
     <button onClick={follow} disabled={busy}
-      style={{ ...base, background: '#5e6ad2', color: '#fff' }}>
+      style={{ ...base, background: '#27a644', color: '#fff' }}>
       <UserPlus className="h-4 w-4" />
       {state.followsMe ? 'Follow back' : 'Follow'}
     </button>

@@ -252,7 +252,7 @@ function Toggle({
         aria-pressed={value}
         style={{
           position: 'relative', width: '40px', height: '22px', borderRadius: '11px',
-          background: value ? '#5e6ad2' : 'var(--fh-surface-3)',
+          background: value ? '#27a644' : 'var(--fh-surface-3)',
           border: value ? 'none' : '1px solid var(--fh-border-2)',
           cursor: 'pointer', transition: 'background 0.2s', flexShrink: 0, padding: 0,
           outline: 'none',

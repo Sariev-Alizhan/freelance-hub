@@ -75,4 +75,4 @@ export const TYPE_ICONS: Record<Goal['type'], React.ReactNode> = {
   hours:  createElement(Clock,        { className: 'h-4 w-4' }),
 }
 
-export const BLOCK_COLORS = ['#7170ff', '#22c55e', '#f59e0b', '#ef4444', '#06b6d4', '#8b5cf6']
+export const BLOCK_COLORS = ['#27a644', '#22c55e', '#f59e0b', '#ef4444', '#06b6d4', '#8b5cf6']

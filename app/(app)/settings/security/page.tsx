@@ -83,8 +83,8 @@ function TwoFactorSection() {
       {/* Section header */}
       <div className="flex items-center gap-3 mb-5">
         <div className="h-10 w-10 rounded-xl flex items-center justify-center"
-          style={{ background: 'rgba(113,112,255,0.1)' }}>
-          <Smartphone className="h-5 w-5" style={{ color: '#7170ff' }} />
+          style={{ background: 'rgba(39,166,68,0.1)' }}>
+          <Smartphone className="h-5 w-5" style={{ color: '#27a644' }} />
         </div>
         <div>
           <h2 className="font-semibold text-sm">{td.twoFaTitle}</h2>
@@ -121,9 +121,9 @@ function TwoFactorSection() {
         <button
           onClick={startSetup}
           className="w-full py-3 rounded-xl text-white font-semibold text-sm transition-colors"
-          style={{ background: '#7170ff' }}
+          style={{ background: '#27a644' }}
           onMouseEnter={e => { e.currentTarget.style.background = '#8280ff' }}
-          onMouseLeave={e => { e.currentTarget.style.background = '#7170ff' }}
+          onMouseLeave={e => { e.currentTarget.style.background = '#27a644' }}
         >
           {td.setupBtn}
         </button>
@@ -206,9 +206,9 @@ function TwoFactorSection() {
               onClick={verifyAndSave}
               disabled={token.length !== 6}
               className="w-full py-3 rounded-xl text-white font-semibold text-sm transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-              style={{ background: '#7170ff' }}
+              style={{ background: '#27a644' }}
               onMouseEnter={e => { if (token.length === 6) e.currentTarget.style.background = '#8280ff' }}
-              onMouseLeave={e => { e.currentTarget.style.background = '#7170ff' }}
+              onMouseLeave={e => { e.currentTarget.style.background = '#27a644' }}
             >
               {td.confirmBtn}
             </button>
@@ -433,8 +433,8 @@ export default function SecuritySettingsPage() {
 
       <div className="flex items-center gap-3 mb-8">
         <div className="h-12 w-12 rounded-2xl flex items-center justify-center"
-          style={{ background: 'rgba(113,112,255,0.1)' }}>
-          <Shield className="h-6 w-6" style={{ color: '#7170ff' }} />
+          style={{ background: 'rgba(39,166,68,0.1)' }}>
+          <Shield className="h-6 w-6" style={{ color: '#27a644' }} />
         </div>
         <div>
           <h1 className="text-xl font-bold">{td.secPageTitle}</h1>

@@ -235,7 +235,7 @@ function CopyCard({ card, copyTitle }: { card: typeof DONATE_CARDS[0]; copyTitle
   }
   return (
     <div
-      className="flex items-center justify-between rounded-xl p-4"
+      className="flex items-center justify-between rounded-none p-4"
       style={{ background: card.bg, border: `1px solid ${card.border}` }}
     >
       <div>
@@ -300,7 +300,7 @@ export default function AboutContent() {
 
       {/* Editorial hero */}
       <div
-        className="rounded-2xl p-8 mb-6 relative overflow-hidden"
+        className="rounded-none p-8 mb-6 relative overflow-hidden"
         style={{ background: 'var(--card)', border: '1px solid var(--fh-border)' }}
       >
         <div
@@ -380,7 +380,7 @@ export default function AboutContent() {
         {c.story.map((s) => {
           const Icon = s.icon
           return (
-            <div key={s.title} className="rounded-xl p-5" style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border)' }}>
+            <div key={s.title} className="rounded-none p-5" style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border)' }}>
               <div className="h-9 w-9 rounded-lg flex items-center justify-center mb-4" style={{ background: s.bg }}>
                 <Icon className="h-4 w-4" style={{ color: s.color }} />
               </div>
@@ -392,7 +392,7 @@ export default function AboutContent() {
       </div>
 
       {/* Values / Manifesto */}
-      <div className="rounded-xl p-6 mb-6" style={{ background: 'rgba(39,166,68,0.04)', border: '1px solid rgba(39,166,68,0.15)' }}>
+      <div className="rounded-none p-6 mb-6" style={{ background: 'rgba(39,166,68,0.04)', border: '1px solid rgba(39,166,68,0.15)' }}>
         <div className="flex items-center gap-2 mb-3">
           <Shield className="h-4 w-4" style={{ color: '#27a644' }} />
           <h2 style={{ fontSize: '14px', fontWeight: 590, color: 'var(--fh-t1)', letterSpacing: '-0.02em' }}>{c.sectionValues}</h2>
@@ -435,7 +435,7 @@ export default function AboutContent() {
           const Icon = ROLE_ICONS[i]
           const { color, bg } = ROLE_COLORS[i]
           return (
-            <div key={r.org} className="rounded-xl p-5 flex flex-col gap-3" style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border)' }}>
+            <div key={r.org} className="rounded-none p-5 flex flex-col gap-3" style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border)' }}>
               <div className="h-10 w-10 rounded-lg flex items-center justify-center" style={{ background: bg }}>
                 <Icon className="h-5 w-5" style={{ color }} />
               </div>
@@ -450,7 +450,7 @@ export default function AboutContent() {
       </div>
 
       {/* ── Founder Section ───────────────────────────────────────────── */}
-      <div className="rounded-2xl p-6 mb-6" style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border-2)' }}>
+      <div className="rounded-none p-6 mb-6" style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border-2)' }}>
         <p className="mb-4 px-1" style={{ fontSize: '11px', fontWeight: 590, color: 'var(--fh-t4)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
           {c.founderTitle}
         </p>
@@ -543,7 +543,7 @@ export default function AboutContent() {
       </div>
 
       {/* Tech stack */}
-      <div className="rounded-xl p-5 mb-6" style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border)' }}>
+      <div className="rounded-none p-5 mb-6" style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border)' }}>
         <p className="mb-3" style={{ fontSize: '11px', fontWeight: 590, color: 'var(--fh-t4)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
           {c.sectionStack}
         </p>
@@ -557,7 +557,7 @@ export default function AboutContent() {
       </div>
 
       {/* Contacts */}
-      <div className="rounded-xl p-5 mb-6" style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border)' }}>
+      <div className="rounded-none p-5 mb-6" style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border)' }}>
         <p className="mb-3" style={{ fontSize: '11px', fontWeight: 590, color: 'var(--fh-t4)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
           {c.contacts}
         </p>
@@ -577,7 +577,7 @@ export default function AboutContent() {
 
       {/* Donate */}
       <div
-        className="rounded-xl p-6 mb-6"
+        className="rounded-none p-6 mb-6"
         style={{ background: 'rgba(251,191,36,0.04)', border: '1px solid rgba(251,191,36,0.15)' }}
       >
         <div className="flex items-center gap-2 mb-2">

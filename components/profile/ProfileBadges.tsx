@@ -24,7 +24,7 @@ export default function ProfileBadges(p: ProfileBadgesProps) {
   const badges: Badge[] = []
 
   if (p.isVerified) {
-    badges.push({ icon: CheckCircle, label: 'Verified', color: '#5e6ad2', tint: 'rgba(94,106,210,0.1)' })
+    badges.push({ icon: CheckCircle, label: 'Verified', color: '#27a644', tint: 'rgba(39,166,68,0.1)' })
   }
   if (p.isPremium) {
     badges.push({ icon: Crown, label: 'Premium', color: '#fbbf24', tint: 'rgba(251,191,36,0.12)' })

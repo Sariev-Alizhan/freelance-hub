@@ -80,7 +80,7 @@ export default function ProfilePosts({ userId, isOwner }: { userId: string; isOw
                 <div className="flex flex-wrap gap-1 mt-2">
                   {post.tags.map(t => (
                     <span key={t} className="rounded-full px-2 py-0.5 text-[11px]"
-                      style={{ background: 'rgba(113,112,255,0.08)', color: '#7170ff' }}>
+                      style={{ background: 'rgba(39,166,68,0.08)', color: '#27a644' }}>
                       #{t}
                     </span>
                   ))}

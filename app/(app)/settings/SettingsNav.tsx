@@ -61,7 +61,7 @@ export function SettingsSidebar() {
             >
               <item.icon style={{
                 width: '14px', height: '14px',
-                color: active ? '#7170ff' : 'var(--fh-t4)',
+                color: active ? '#27a644' : 'var(--fh-t4)',
                 flexShrink: 0,
               }} />
               {item.label}
@@ -96,7 +96,7 @@ export function SettingsMobileNav() {
               padding: '7px 13px', borderRadius: '100px', whiteSpace: 'nowrap',
               fontSize: '13px', fontWeight: active ? 590 : 400,
               color: active ? '#fff' : 'var(--fh-t3)',
-              background: active ? '#5e6ad2' : 'var(--fh-surface-2)',
+              background: active ? '#27a644' : 'var(--fh-surface-2)',
               border: `1px solid ${active ? 'transparent' : 'var(--fh-border)'}`,
               textDecoration: 'none', flexShrink: 0, transition: 'all 0.15s',
             }}

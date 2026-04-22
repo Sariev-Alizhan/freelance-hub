@@ -71,8 +71,8 @@ export default function NewsPage() {
         <div className="flex items-center gap-3 mb-3">
           <div style={{
             width: 44, height: 44, borderRadius: '12px',
-            background: 'linear-gradient(135deg, #7170ff20, #27a64420)',
-            border: '1px solid rgba(113,112,255,0.25)',
+            background: 'linear-gradient(135deg, #27a64420, #27a64420)',
+            border: '1px solid rgba(39,166,68,0.25)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             fontSize: '22px',
           }}>
@@ -120,9 +120,9 @@ export default function NewsPage() {
                   style={{
                     display: 'flex', alignItems: 'center', gap: '6px',
                     padding: '6px 12px', borderRadius: '8px', fontSize: '12px', fontWeight: 600,
-                    border: `1px solid ${category === c.id ? '#7170ff' : 'var(--fh-border)'}`,
-                    background: category === c.id ? 'rgba(113,112,255,0.1)' : 'transparent',
-                    color: category === c.id ? '#7170ff' : 'var(--fh-t4)',
+                    border: `1px solid ${category === c.id ? '#27a644' : 'var(--fh-border)'}`,
+                    background: category === c.id ? 'rgba(39,166,68,0.1)' : 'transparent',
+                    color: category === c.id ? '#27a644' : 'var(--fh-t4)',
                     cursor: 'pointer',
                   }}
                 >
@@ -171,7 +171,7 @@ export default function NewsPage() {
                     transition: 'all 0.15s',
                   }}
                   onMouseEnter={e => {
-                    e.currentTarget.style.borderColor = 'rgba(113,112,255,0.4)'
+                    e.currentTarget.style.borderColor = 'rgba(39,166,68,0.4)'
                     e.currentTarget.style.background = 'var(--fh-surface-2)'
                   }}
                   onMouseLeave={e => {
@@ -182,8 +182,8 @@ export default function NewsPage() {
                   {/* Rank */}
                   <div style={{
                     minWidth: '28px', height: '28px', borderRadius: '8px',
-                    background: idx < 3 ? 'rgba(113,112,255,0.12)' : 'var(--fh-surface-2)',
-                    color: idx < 3 ? '#7170ff' : 'var(--fh-t4)',
+                    background: idx < 3 ? 'rgba(39,166,68,0.12)' : 'var(--fh-surface-2)',
+                    color: idx < 3 ? '#27a644' : 'var(--fh-t4)',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     fontSize: '12px', fontWeight: 700, flexShrink: 0,
                   }}>
@@ -233,9 +233,9 @@ export default function NewsPage() {
           {/* Future Dept Header */}
           <div
             className="rounded-2xl p-6 mb-6"
-            style={{ background: 'linear-gradient(135deg, rgba(113,112,255,0.08), rgba(39,166,68,0.05))', border: '1px solid rgba(113,112,255,0.2)' }}
+            style={{ background: 'linear-gradient(135deg, rgba(39,166,68,0.08), rgba(39,166,68,0.05))', border: '1px solid rgba(39,166,68,0.2)' }}
           >
-            <p style={{ fontSize: '13px', fontWeight: 700, color: '#7170ff', marginBottom: '6px' }}>
+            <p style={{ fontSize: '13px', fontWeight: 700, color: '#27a644', marginBottom: '6px' }}>
               🛸 Department from the Year 2100
             </p>
             <p style={{ fontSize: '13px', color: 'var(--fh-t3)', lineHeight: 1.65 }}>
@@ -245,8 +245,8 @@ export default function NewsPage() {
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             {FUTURE_DEPT_NOTES.map((note, i) => {
-              const colors = { critical: '#ef4444', high: '#f59e0b', medium: '#7170ff', low: '#27a644' }
-              const color = colors[note.priority as keyof typeof colors] || '#7170ff'
+              const colors = { critical: '#ef4444', high: '#f59e0b', medium: '#27a644', low: '#27a644' }
+              const color = colors[note.priority as keyof typeof colors] || '#27a644'
               return (
                 <div
                   key={i}
@@ -291,7 +291,7 @@ export default function NewsPage() {
                 <div key={r.year} style={{ display: 'flex', gap: '14px', alignItems: 'flex-start' }}>
                   <span style={{
                     minWidth: '44px', fontSize: '11px', fontWeight: 700,
-                    color: r.done ? '#27a644' : '#7170ff',
+                    color: r.done ? '#27a644' : '#27a644',
                     paddingTop: '2px',
                   }}>
                     {r.year}

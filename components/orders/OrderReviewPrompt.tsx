@@ -56,8 +56,8 @@ export default function OrderReviewPrompt({ orderId, orderTitle, isClient }: Pro
     <div
       className="rounded-2xl p-5"
       style={{
-        background: status === 'done' ? 'rgba(39,166,68,0.04)' : 'rgba(113,112,255,0.04)',
-        border: status === 'done' ? '1px solid rgba(39,166,68,0.15)' : '1px solid rgba(113,112,255,0.2)',
+        background: status === 'done' ? 'rgba(39,166,68,0.04)' : 'rgba(39,166,68,0.04)',
+        border: status === 'done' ? '1px solid rgba(39,166,68,0.15)' : '1px solid rgba(39,166,68,0.2)',
       }}
     >
       {status === 'done' ? (
@@ -148,7 +148,7 @@ export default function OrderReviewPrompt({ orderId, orderTitle, isClient }: Pro
               className="flex items-center gap-1.5 transition-all disabled:opacity-40"
               style={{
                 padding: '8px 18px', borderRadius: '8px', fontSize: '13px', fontWeight: 590,
-                background: '#5e6ad2', color: '#fff',
+                background: '#27a644', color: '#fff',
               }}
             >
               {submitting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Send className="h-3.5 w-3.5" />}

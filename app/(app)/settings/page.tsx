@@ -131,7 +131,7 @@ export default function AccountSettings() {
           </div>
           <div>
             <p style={{ fontSize: '11px', color: 'var(--fh-t4)', marginBottom: '2px' }}>{td.plan}</p>
-            <p style={{ fontSize: '13px', fontWeight: 590, color: isPremium ? '#7170ff' : 'var(--fh-t3)' }}>
+            <p style={{ fontSize: '13px', fontWeight: 590, color: isPremium ? '#27a644' : 'var(--fh-t3)' }}>
               {isPremium === null ? '—' : isPremium ? td.planPremium : td.planFree}
               {isPremium === false && (
                 <Link href="/premium" style={{ color: 'var(--fh-primary)', textDecoration: 'none', marginLeft: '8px', fontSize: '12px', fontWeight: 400 }}>

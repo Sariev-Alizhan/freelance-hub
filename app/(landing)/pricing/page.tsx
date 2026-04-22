@@ -228,9 +228,9 @@ export default function PricingPage() {
           {/* ── FREE ── */}
           <div style={{
             display: 'flex', flexDirection: 'column',
-            borderRadius: 20, padding: '28px 28px 24px',
-            background: 'var(--fh-surface)',
-            border: '1px solid var(--fh-border)',
+            borderRadius: 0, padding: '28px 28px 24px',
+            background: 'var(--fh-canvas)',
+            border: '1px solid var(--fh-sep)',
           }}>
             <div>
               <p style={{ fontSize: 11, fontWeight: 700, color: 'var(--fh-t4)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 10 }}>
@@ -278,18 +278,11 @@ export default function PricingPage() {
           {/* ── PREMIUM ── */}
           <div style={{
             display: 'flex', flexDirection: 'column',
-            borderRadius: 20, padding: '28px 28px 24px',
-            background: 'linear-gradient(145deg, rgba(39,166,68,0.07) 0%, rgba(39,166,68,0.03) 100%)',
-            border: '1.5px solid rgba(39,166,68,0.3)',
+            borderRadius: 0, padding: '28px 28px 24px',
+            background: 'var(--fh-canvas)',
+            border: '1px solid var(--fh-t1)',
             position: 'relative', overflow: 'hidden',
           }}>
-            {/* Glow */}
-            <div style={{
-              position: 'absolute', top: -40, right: -40,
-              width: 200, height: 200,
-              background: 'radial-gradient(circle, rgba(39,166,68,0.12) 0%, transparent 70%)',
-              pointerEvents: 'none',
-            }} />
 
             {/* Popular badge */}
             <div style={{
@@ -367,25 +360,29 @@ export default function PricingPage() {
           </div>
         </div>
 
-        {/* ── Stats row ── */}
-        <div style={{
-          display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(110px,1fr))',
-          gap: 12, marginBottom: 72,
-        }}>
+        {/* ── Specimen-label metadata strip ── */}
+        <div
+          style={{
+            display: 'flex', flexWrap: 'wrap', gap: '20px',
+            padding: '20px 0', marginBottom: 72,
+            borderTop: '1px solid var(--fh-sep)',
+            borderBottom: '1px solid var(--fh-sep)',
+            fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace',
+            fontSize: 11, letterSpacing: '0.14em', textTransform: 'uppercase',
+            color: 'var(--fh-t3)',
+          }}
+        >
           {[
-            { n: '0%',  label: 'комиссии с заказов' },
-            { n: '25+', label: 'функций в Premium'   },
-            { n: '10',  label: 'валют поддерживается' },
-            { n: '3',   label: 'языка интерфейса'    },
-          ].map(({ n, label }) => (
-            <div key={n} style={{
-              textAlign: 'center', padding: '20px 12px',
-              background: 'var(--fh-surface)', border: '1px solid var(--fh-border)',
-              borderRadius: 16,
-            }}>
-              <p style={{ fontSize: 30, fontWeight: 700, color: '#27a644', letterSpacing: '-0.04em', marginBottom: 4 }}>{n}</p>
-              <p style={{ fontSize: 12, color: 'var(--fh-t4)', lineHeight: 1.4 }}>{label}</p>
-            </div>
+            { n: '0%',  label: 'комиссии' },
+            { n: '25+', label: 'фич в Premium' },
+            { n: '10',  label: 'валют' },
+            { n: '3',   label: 'языка' },
+          ].map(({ n, label }, i) => (
+            <span key={n} style={{ display: 'inline-flex', gap: 10, alignItems: 'center' }}>
+              {i > 0 && <span style={{ color: 'var(--fh-t4)' }}>—</span>}
+              <span style={{ color: 'var(--fh-t1)' }}>{n}</span>
+              <span>{label}</span>
+            </span>
           ))}
         </div>
 
@@ -397,7 +394,7 @@ export default function PricingPage() {
           Что входит в каждый план
         </h2>
 
-        <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' as never, borderRadius: 18, border: '1px solid var(--fh-border)' }}>
+        <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch' as never, borderRadius: 0, border: '1px solid var(--fh-sep)' }}>
           <div style={{ minWidth: 360 }}>
           {/* Table header */}
           <div style={{
@@ -435,9 +432,10 @@ export default function PricingPage() {
         <div style={{
           marginTop: 64, textAlign: 'center',
           padding: 'clamp(36px,5vw,56px) 24px',
-          borderRadius: 24,
-          background: 'linear-gradient(135deg, rgba(39,166,68,0.07) 0%, rgba(39,166,68,0.03) 100%)',
-          border: '1px solid rgba(39,166,68,0.2)',
+          borderRadius: 0,
+          background: 'var(--fh-canvas)',
+          borderTop: '1px solid var(--fh-sep)',
+          borderBottom: '1px solid var(--fh-sep)',
         }}>
           <Crown className="h-10 w-10 mx-auto mb-4" style={{ color: '#27a644' }} />
           <h2 style={{ fontSize: 'clamp(20px,3vw,30px)', fontWeight: 700, color: 'var(--fh-t1)', marginBottom: 12, letterSpacing: '-0.04em' }}>

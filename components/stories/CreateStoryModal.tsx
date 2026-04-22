@@ -4,7 +4,7 @@ import { X, Type, Image as ImageIcon, Loader2 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 
 const BG_COLORS = [
-  '#5e6ad2', '#7170ff', '#e5484d', '#f97316',
+  '#27a644', '#27a644', '#e5484d', '#f97316',
   '#f59e0b', '#27a644', '#06b6d4', '#a855f7',
   '#ec4899', '#0ea5e9', '#1a1a2e', '#374151',
 ]
@@ -129,9 +129,9 @@ export default function CreateStoryModal({ onClose, onCreate }: Props) {
                   onClick={() => setTab(t)}
                   style={{
                     flex: 1, padding: '8px 0', borderRadius: 10, fontWeight: 600, fontSize: 13,
-                    border: `1.5px solid ${tab === t ? '#7170ff' : 'var(--fh-border)'}`,
-                    background: tab === t ? 'rgba(113,112,255,0.1)' : 'var(--fh-surface-2)',
-                    color: tab === t ? '#7170ff' : 'var(--fh-t3)',
+                    border: `1.5px solid ${tab === t ? '#27a644' : 'var(--fh-border)'}`,
+                    background: tab === t ? 'rgba(39,166,68,0.1)' : 'var(--fh-surface-2)',
+                    color: tab === t ? '#27a644' : 'var(--fh-t3)',
                     cursor: 'pointer',
                     display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
                   }}
@@ -220,7 +220,7 @@ export default function CreateStoryModal({ onClose, onCreate }: Props) {
               style={{
                 marginTop: 'auto',
                 padding: '12px', borderRadius: 12,
-                background: 'linear-gradient(135deg, #5e6ad2, #7170ff)',
+                background: 'linear-gradient(135deg, #27a644, #27a644)',
                 border: 'none', cursor: 'pointer', color: '#fff', fontWeight: 700, fontSize: 14,
                 display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
                 opacity: (busy || (tab === 'text' ? !text.trim() : !imgUrl)) ? 0.6 : 1,

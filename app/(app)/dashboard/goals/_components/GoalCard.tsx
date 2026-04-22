@@ -18,7 +18,7 @@ export default function GoalCard({ goal, onDelete }: { goal: Goal; onDelete: (id
   const PERIOD_LABELS = { week: td.periodWeek, month: td.periodMonth, custom: td.periodCustom } as const
   const p      = pct(goal.progress ?? 0, goal.target)
   const done   = p >= 100
-  const color  = done ? '#22c55e' : p > 50 ? '#7170ff' : '#f59e0b'
+  const color  = done ? '#22c55e' : p > 50 ? '#27a644' : '#f59e0b'
   const today  = isoToday()
   const days   = Math.max(0, Math.ceil((new Date(goal.end_date).getTime() - new Date(today).getTime()) / 86400_000))
   const fmt    = (n: number) => fmtGoal(n, goal.type, goal.currency, currency as Currency, rates, td)
@@ -28,7 +28,7 @@ export default function GoalCard({ goal, onDelete }: { goal: Goal; onDelete: (id
       <div className="flex items-start justify-between mb-4">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span style={{ color: '#7170ff' }}>{TYPE_ICONS[goal.type]}</span>
+            <span style={{ color: '#27a644' }}>{TYPE_ICONS[goal.type]}</span>
             <span className="text-xs font-medium text-muted-foreground">{TYPE_LABELS[goal.type]} · {PERIOD_LABELS[goal.period_type]}</span>
           </div>
           <p className="font-semibold text-sm">{goal.title ?? `${TYPE_LABELS[goal.type]} — ${fmt(goal.target)}`}</p>

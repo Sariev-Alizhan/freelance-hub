@@ -14,11 +14,11 @@ export default function PremiumSuccessPage() {
           <div
             className="w-20 h-20 rounded-2xl flex items-center justify-center"
             style={{
-              background: 'linear-gradient(135deg, rgba(94,106,210,0.15), rgba(113,112,255,0.08))',
-              border: '2px solid rgba(113,112,255,0.3)',
+              background: 'linear-gradient(135deg, rgba(39,166,68,0.15), rgba(39,166,68,0.08))',
+              border: '2px solid rgba(39,166,68,0.3)',
             }}
           >
-            <Crown className="h-9 w-9" style={{ color: '#7170ff' }} />
+            <Crown className="h-9 w-9" style={{ color: '#27a644' }} />
           </div>
         </div>
 
@@ -41,7 +41,7 @@ export default function PremiumSuccessPage() {
         {/* What's unlocked */}
         <div
           className="rounded-2xl p-5 mb-8 text-left space-y-3"
-          style={{ background: 'var(--fh-surface)', border: '1px solid rgba(113,112,255,0.2)' }}
+          style={{ background: 'var(--fh-surface)', border: '1px solid rgba(39,166,68,0.2)' }}
         >
           {[
             'Unlimited proposals per month',
@@ -65,7 +65,7 @@ export default function PremiumSuccessPage() {
             style={{
               padding: '12px 20px',
               borderRadius: '10px',
-              background: '#5e6ad2',
+              background: '#27a644',
               color: '#fff',
               fontSize: '14px',
               fontWeight: 590,

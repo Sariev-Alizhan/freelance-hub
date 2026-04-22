@@ -34,7 +34,7 @@ function AnimatedNumber({ target }: { target: number }) {
 
 export default function StatsClient({ stats }: { stats: Stats }) {
   const tiles = [
-    { icon: Users,         label: 'Пользователей',     value: stats.users,           color: '#7170ff' },
+    { icon: Users,         label: 'Пользователей',     value: stats.users,           color: '#27a644' },
     { icon: Code2,         label: 'Фрилансеров',        value: stats.freelancers,     color: '#22c55e' },
     { icon: Briefcase,     label: 'Открытых заказов',   value: stats.openOrders,      color: '#f59e0b' },
     { icon: CheckCircle,   label: 'Выполнено заказов',  value: stats.completedOrders, color: '#38bdf8' },
@@ -47,9 +47,9 @@ export default function StatsClient({ stats }: { stats: Stats }) {
       <div style={{ textAlign: 'center', marginBottom: 48 }}>
         <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, marginBottom: 12,
           padding: '4px 12px', borderRadius: 20,
-          background: 'rgba(113,112,255,0.08)', border: '1px solid rgba(113,112,255,0.2)' }}>
-          <TrendingUp size={13} style={{ color: '#7170ff' }} />
-          <span style={{ fontSize: 12, color: '#7170ff', fontWeight: 700, letterSpacing: '0.05em', textTransform: 'uppercase' }}>Live Platform Stats</span>
+          background: 'rgba(39,166,68,0.08)', border: '1px solid rgba(39,166,68,0.2)' }}>
+          <TrendingUp size={13} style={{ color: '#27a644' }} />
+          <span style={{ fontSize: 12, color: '#27a644', fontWeight: 700, letterSpacing: '0.05em', textTransform: 'uppercase' }}>Live Platform Stats</span>
         </div>
         <h1 style={{ fontSize: 'clamp(26px, 5vw, 40px)', fontWeight: 800, letterSpacing: '-0.03em', color: 'var(--fh-t1)', marginBottom: 10 }}>
           FreelanceHub в цифрах
@@ -108,7 +108,7 @@ export default function StatsClient({ stats }: { stats: Stats }) {
                   <div style={{ flex: 1, height: 6, borderRadius: 3, background: 'var(--fh-surface-2)', overflow: 'hidden' }}>
                     <div style={{
                       height: '100%', width: `${pct}%`, borderRadius: 3,
-                      background: cat?.color ?? '#7170ff',
+                      background: cat?.color ?? '#27a644',
                       transition: 'width 1s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
                     }} />
                   </div>
@@ -126,7 +126,7 @@ export default function StatsClient({ stats }: { stats: Stats }) {
           href="/orders"
           style={{
             padding: '12px 24px', borderRadius: 12, fontSize: 14, fontWeight: 700,
-            background: '#7170ff', color: '#fff', textDecoration: 'none',
+            background: '#27a644', color: '#fff', textDecoration: 'none',
           }}
         >
           Смотреть заказы

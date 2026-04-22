@@ -82,7 +82,7 @@ export default function ConnectWallet({ currentDid }: { currentDid: string | nul
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
         <div style={{
           width: 36, height: 36, borderRadius: 10,
-          background: 'linear-gradient(135deg,#5e6ad2,#a855f7)',
+          background: 'linear-gradient(135deg,#27a644,#a855f7)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
         }}>
           <Wallet style={{ width: 18, height: 18, color: '#fff' }} strokeWidth={2.2} />

@@ -94,7 +94,7 @@ export default function AgentsPage() {
           <span
             style={{
               padding: '2px 8px',
-              borderRadius: 999,
+              borderRadius: 0,
               border: '1px solid rgba(39,166,68,0.35)',
               color: '#27a644',
               fontSize: 10,
@@ -198,7 +198,7 @@ export default function AgentsPage() {
               className="transition-all"
               style={{
                 padding: '7px 14px',
-                borderRadius: 999,
+                borderRadius: 0,
                 fontSize: 13,
                 fontWeight: active ? 590 : 510,
                 background: active ? 'var(--fh-t1)' : 'var(--fh-surface-2)',
@@ -235,7 +235,7 @@ export default function AgentsPage() {
 
       {/* CTA: become an agent creator */}
       <div
-        className="mt-12 rounded-2xl p-6 sm:p-8"
+        className="mt-12 rounded-none p-6 sm:p-8"
         style={{
           background: 'var(--card)',
           border: '1px solid var(--fh-border)',
@@ -280,7 +280,7 @@ export default function AgentsPage() {
             className="shrink-0 transition-all"
             style={{
               padding: '12px 22px',
-              borderRadius: 999,
+              borderRadius: 0,
               background: 'var(--fh-t1)',
               color: 'var(--fh-canvas)',
               fontSize: 13,

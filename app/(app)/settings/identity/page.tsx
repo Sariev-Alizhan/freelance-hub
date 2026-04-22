@@ -80,7 +80,7 @@ export default async function IdentityPage() {
 
 function VcCard({ vc, credentialSuffix, issuedBy }: { vc: VerificationRow; credentialSuffix: string; issuedBy: string }) {
   const color =
-    vc.credential_type === 'identity' ? '#7170ff' :
+    vc.credential_type === 'identity' ? '#27a644' :
     vc.credential_type === 'skill'    ? '#34d399' :
     vc.credential_type === 'company'  ? '#fb923c' :
     '#8a8f98'

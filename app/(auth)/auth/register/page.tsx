@@ -145,7 +145,7 @@ export default function RegisterPage() {
 
         <div
           style={{
-            borderRadius: 16,
+            borderRadius: 0,
             padding: 22,
             background: 'var(--card)',
             border: '1px solid var(--fh-border)',
@@ -215,7 +215,7 @@ export default function RegisterPage() {
                       alignItems: 'flex-start',
                       gap: 8,
                       padding: '14px 14px',
-                      borderRadius: 12,
+                      borderRadius: 0,
                       cursor: 'pointer',
                       borderWidth: 1,
                       borderStyle: 'solid',
@@ -263,7 +263,7 @@ export default function RegisterPage() {
               alignItems: 'flex-start',
               gap: 10,
               padding: '12px 14px',
-              borderRadius: 10,
+              borderRadius: 0,
               background: ageConfirmed
                 ? 'rgba(39,166,68,0.08)'
                 : 'var(--fh-surface-2)',

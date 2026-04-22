@@ -108,7 +108,7 @@ export default function TermsPage() {
 
       {/* Intro callout */}
       <div
-        className="mb-10 rounded-xl p-4"
+        className="mb-10 rounded-none p-4"
         style={{ background: 'rgba(39,166,68,0.05)', border: '1px solid rgba(39,166,68,0.15)' }}
       >
         <p style={{ fontSize: '13px', color: 'var(--fh-t3)', lineHeight: 1.7 }}>

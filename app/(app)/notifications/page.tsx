@@ -61,7 +61,7 @@ function NotifRow({ notif, onRead, onDelete }: {
         alignItems: 'flex-start',
         gap: 12,
         padding: '14px 16px',
-        background: !notif.is_read ? 'rgba(94,106,210,0.04)' : 'transparent',
+        background: !notif.is_read ? 'rgba(39,166,68,0.05)' : 'transparent',
         borderBottom: '0.5px solid var(--fh-sep)',
         cursor: 'pointer',
         position: 'relative',
@@ -251,15 +251,56 @@ export default function NotificationsPage() {
 
       <div style={{ maxWidth: 640, margin: '0 auto' }}>
 
-        {/* ── Header row ── */}
-        <div style={{
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          padding: '14px 16px 10px',
-        }}>
-          <h1 style={{ fontSize: 20, fontWeight: 700, color: 'var(--fh-t1)', letterSpacing: '-0.03em', margin: 0 }}>
-            Notifications
-          </h1>
-          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+        {/* ── Editorial header ── */}
+        <div style={{ padding: '24px 16px 14px' }}>
+          <div
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 12,
+              marginBottom: 10,
+              fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace',
+              fontSize: 11,
+              letterSpacing: '0.18em',
+              textTransform: 'uppercase',
+              color: 'var(--fh-t3)',
+            }}
+          >
+            <span
+              aria-hidden
+              style={{
+                width: 24, height: 2, borderRadius: 2,
+                background: '#27a644',
+                boxShadow: '0 0 12px rgba(39,166,68,0.55)',
+              }}
+            />
+            <Bell size={12} />
+            <span>Activity</span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'end', justifyContent: 'space-between', gap: 16 }}>
+            <h1
+              style={{
+                fontSize: 'clamp(28px, 4.5vw, 40px)',
+                fontWeight: 700,
+                letterSpacing: '-0.035em',
+                color: 'var(--fh-t1)',
+                margin: 0,
+                lineHeight: 1.0,
+                fontFeatureSettings: '"cv01", "ss03"',
+              }}
+            >
+              Your{' '}
+              <span
+                style={{
+                  fontFamily: 'var(--font-serif-display), ui-serif, Georgia, "Times New Roman", serif',
+                  fontStyle: 'italic',
+                  fontWeight: 400,
+                  letterSpacing: '-0.01em',
+                }}
+              >
+                notifications.
+              </span>
+            </h1>
             {notifications.length > 0 && (
               <button onClick={clearAll} style={{
                 display: 'flex', alignItems: 'center', gap: 4,
@@ -327,7 +368,7 @@ export default function NotificationsPage() {
             ) : (
               <button onClick={subscribe} style={{
                 fontSize: 13, color: 'var(--fh-primary)', fontWeight: 600,
-                background: 'rgba(113,112,255,0.1)', border: 'none',
+                background: 'rgba(39,166,68,0.1)', border: 'none',
                 borderRadius: 8, padding: '6px 12px', cursor: 'pointer',
               }}>
                 Включить

@@ -78,16 +78,54 @@ export default function DashboardPage() {
 
   return (
     <div className="page-shell page-shell--wide">
-      <div className="mb-5 sm:mb-6">
-        <h1 style={{
-          fontSize: 'clamp(20px, 3.5vw, 28px)', fontWeight: 510,
-          letterSpacing: '-0.03em', color: 'var(--fh-t1)', marginBottom: 2,
-        }}>
-          {td.heading}
+      {/* Editorial header */}
+      <div className="mb-6 sm:mb-8">
+        <div
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 12,
+            marginBottom: 12,
+            fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace',
+            fontSize: 11,
+            letterSpacing: '0.18em',
+            textTransform: 'uppercase',
+            color: 'var(--fh-t3)',
+          }}
+        >
+          <span
+            aria-hidden
+            style={{
+              width: 24, height: 2, borderRadius: 2,
+              background: '#27a644',
+              boxShadow: '0 0 12px rgba(39,166,68,0.55)',
+            }}
+          />
+          <span>{td.heading}</span>
+        </div>
+        <h1
+          style={{
+            fontSize: 'clamp(28px, 4.5vw, 44px)',
+            fontWeight: 700,
+            letterSpacing: '-0.035em',
+            color: 'var(--fh-t1)',
+            margin: 0,
+            lineHeight: 1.0,
+            fontFeatureSettings: '"cv01", "ss03"',
+          }}
+        >
+          {td.subtitle.split(' ').slice(0, -1).join(' ')}{' '}
+          <span
+            style={{
+              fontFamily: 'var(--font-serif-display), ui-serif, Georgia, "Times New Roman", serif',
+              fontStyle: 'italic',
+              fontWeight: 400,
+              letterSpacing: '-0.01em',
+            }}
+          >
+            {td.subtitle.split(' ').slice(-1)[0]}
+          </span>
         </h1>
-        <p style={{ fontSize: 13, color: 'var(--fh-t3)' }}>
-          {td.subtitle}
-        </p>
       </div>
 
       <div className="flex gap-2 mb-6 border-b border-subtle overflow-x-auto">

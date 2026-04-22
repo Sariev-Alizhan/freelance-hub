@@ -218,7 +218,7 @@ function HighlightViewer({
 
   const bg: React.CSSProperties = item.type === 'image' && item.media_url
     ? { backgroundImage: `url(${item.media_url})`, backgroundSize: 'cover', backgroundPosition: 'center' }
-    : { background: item.bg_color ?? '#5e6ad2' }
+    : { background: item.bg_color ?? '#27a644' }
 
   return (
     <div
@@ -324,8 +324,8 @@ function HighlightViewer({
 function ringGradient(i: number): string {
   const palettes = [
     'linear-gradient(45deg, #feda75 0%, #d62976 50%, #4f5bd5 100%)',
-    'linear-gradient(45deg, #5e6ad2 0%, #a855f7 50%, #ec4899 100%)',
-    'linear-gradient(45deg, #27a644 0%, #5e6ad2 100%)',
+    'linear-gradient(45deg, #27a644 0%, #a855f7 50%, #ec4899 100%)',
+    'linear-gradient(45deg, #27a644 0%, #27a644 100%)',
     'linear-gradient(45deg, #f59e0b 0%, #ef4444 100%)',
     'linear-gradient(45deg, #06b6d4 0%, #8b5cf6 100%)',
   ]

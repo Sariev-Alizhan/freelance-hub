@@ -23,7 +23,7 @@ export default function UpdateCard({ reactions, onReact, user, profile }: {
     <CardShell itemId={itemId} reactions={reactions} onReact={onReact} user={user} profile={profile}>
       <div className="flex items-center gap-2 mb-2">
         <div className="h-7 w-7 rounded-lg flex items-center justify-center text-base flex-shrink-0"
-          style={{ background: 'var(--fh-primary-muted)', border: '1px solid rgba(113,112,255,0.2)' }}>
+          style={{ background: 'var(--fh-primary-muted)', border: '1px solid rgba(39,166,68,0.2)' }}>
           🚀
         </div>
         <div>

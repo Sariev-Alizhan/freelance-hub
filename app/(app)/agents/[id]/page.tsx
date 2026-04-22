@@ -24,26 +24,26 @@ function SMMForm({ onRun }: { onRun: (input: object) => void }) {
         <label className="block text-xs font-semibold mb-1.5" style={{ color: 'var(--fh-t3)' }}>Brand / product *</label>
         <input value={form.brand} onChange={e => setForm(f => ({ ...f, brand: e.target.value }))}
           placeholder="FreelanceHub, Nike..."
-          className="w-full px-3 py-2.5 rounded-xl text-sm bg-background border border-subtle focus:outline-none focus:border-primary/50 transition-colors" />
+          className="w-full px-3 py-2.5 rounded-none text-sm bg-background border border-subtle focus:outline-none focus:border-primary/50 transition-colors" />
       </div>
       <div>
         <label className="block text-xs font-semibold mb-1.5" style={{ color: 'var(--fh-t3)' }}>Target audience *</label>
         <input value={form.audience} onChange={e => setForm(f => ({ ...f, audience: e.target.value }))}
           placeholder="Freelancers 25–35 years old..."
-          className="w-full px-3 py-2.5 rounded-xl text-sm bg-background border border-subtle focus:outline-none focus:border-primary/50 transition-colors" />
+          className="w-full px-3 py-2.5 rounded-none text-sm bg-background border border-subtle focus:outline-none focus:border-primary/50 transition-colors" />
       </div>
       <div className="grid grid-cols-2 gap-3">
         <div>
           <label className="block text-xs font-semibold mb-1.5" style={{ color: 'var(--fh-t3)' }}>Platform</label>
           <select value={form.platform} onChange={e => setForm(f => ({ ...f, platform: e.target.value }))}
-            className="w-full px-3 py-2.5 rounded-xl text-sm bg-background border border-subtle focus:outline-none focus:border-primary/50">
+            className="w-full px-3 py-2.5 rounded-none text-sm bg-background border border-subtle focus:outline-none focus:border-primary/50">
             {platforms.map(p => <option key={p}>{p}</option>)}
           </select>
         </div>
         <div>
           <label className="block text-xs font-semibold mb-1.5" style={{ color: 'var(--fh-t3)' }}>Tone</label>
           <select value={form.tone} onChange={e => setForm(f => ({ ...f, tone: e.target.value }))}
-            className="w-full px-3 py-2.5 rounded-xl text-sm bg-background border border-subtle focus:outline-none focus:border-primary/50">
+            className="w-full px-3 py-2.5 rounded-none text-sm bg-background border border-subtle focus:outline-none focus:border-primary/50">
             {tones.map(t => <option key={t}>{t}</option>)}
           </select>
         </div>
@@ -55,7 +55,7 @@ function SMMForm({ onRun }: { onRun: (input: object) => void }) {
           className="w-full accent-primary" />
       </div>
       <button disabled={!form.brand || !form.audience} onClick={() => onRun(form)}
-        className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-primary text-white text-sm font-semibold hover:bg-primary/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
+        className="w-full flex items-center justify-center gap-2 py-3 rounded-none bg-primary text-white text-sm font-semibold hover:bg-primary/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
         <Send className="h-4 w-4" /> Run Agent
       </button>
     </div>
@@ -71,28 +71,28 @@ function LandingForm({ onRun }: { onRun: (input: object) => void }) {
         <label className="block text-xs font-semibold mb-1.5" style={{ color: 'var(--fh-t3)' }}>Product *</label>
         <input value={form.product} onChange={e => setForm(f => ({ ...f, product: e.target.value }))}
           placeholder="FreelanceHub Pro..."
-          className="w-full px-3 py-2.5 rounded-xl text-sm bg-background border border-subtle focus:outline-none focus:border-primary/50 transition-colors" />
+          className="w-full px-3 py-2.5 rounded-none text-sm bg-background border border-subtle focus:outline-none focus:border-primary/50 transition-colors" />
       </div>
       <div>
         <label className="block text-xs font-semibold mb-1.5" style={{ color: 'var(--fh-t3)' }}>Description *</label>
         <textarea value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
           placeholder="What is it, how does it work..." rows={3}
-          className="w-full px-3 py-2.5 rounded-xl text-sm bg-background border border-subtle focus:outline-none focus:border-primary/50 transition-colors resize-none" />
+          className="w-full px-3 py-2.5 rounded-none text-sm bg-background border border-subtle focus:outline-none focus:border-primary/50 transition-colors resize-none" />
       </div>
       <div>
         <label className="block text-xs font-semibold mb-1.5" style={{ color: 'var(--fh-t3)' }}>Audience *</label>
         <input value={form.audience} onChange={e => setForm(f => ({ ...f, audience: e.target.value }))}
           placeholder="Small business, startups..."
-          className="w-full px-3 py-2.5 rounded-xl text-sm bg-background border border-subtle focus:outline-none focus:border-primary/50 transition-colors" />
+          className="w-full px-3 py-2.5 rounded-none text-sm bg-background border border-subtle focus:outline-none focus:border-primary/50 transition-colors" />
       </div>
       <div>
         <label className="block text-xs font-semibold mb-1.5" style={{ color: 'var(--fh-t3)' }}>CTA button</label>
         <input value={form.cta} onChange={e => setForm(f => ({ ...f, cta: e.target.value }))}
           placeholder="Get started for free..."
-          className="w-full px-3 py-2.5 rounded-xl text-sm bg-background border border-subtle focus:outline-none focus:border-primary/50 transition-colors" />
+          className="w-full px-3 py-2.5 rounded-none text-sm bg-background border border-subtle focus:outline-none focus:border-primary/50 transition-colors" />
       </div>
       <button disabled={!form.product || !form.description || !form.audience} onClick={() => onRun(form)}
-        className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-primary text-white text-sm font-semibold hover:bg-primary/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
+        className="w-full flex items-center justify-center gap-2 py-3 rounded-none bg-primary text-white text-sm font-semibold hover:bg-primary/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
         <Send className="h-4 w-4" /> Run Agent
       </button>
     </div>
@@ -102,7 +102,7 @@ function LandingForm({ onRun }: { onRun: (input: object) => void }) {
 // ── Log panel ──────────────────────────────────────────────────
 function LogPanel({ logs, done, jobId }: { logs: LogLine[]; done: boolean; jobId: string | null }) {
   return (
-    <div className="rounded-xl border border-subtle overflow-hidden">
+    <div className="rounded-none border border-subtle overflow-hidden">
       <div className="px-4 py-2.5 border-b border-subtle flex items-center gap-2" style={{ background: 'var(--fh-surface)' }}>
         <div className={`h-2 w-2 rounded-full ${done ? 'bg-green-400' : 'bg-amber-400 animate-pulse'}`} />
         <span className="text-xs font-semibold" style={{ color: 'var(--fh-t2)' }}>
@@ -126,7 +126,7 @@ function LogPanel({ logs, done, jobId }: { logs: LogLine[]; done: boolean; jobId
       {done && jobId && (
         <div className="px-4 py-3 border-t border-subtle" style={{ background: 'var(--fh-surface)' }}>
           <Link href={`/agents/jobs/${jobId}`}
-            className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-primary text-white text-sm font-semibold hover:bg-primary/90 transition-colors">
+            className="flex items-center justify-center gap-2 w-full py-2.5 rounded-none bg-primary text-white text-sm font-semibold hover:bg-primary/90 transition-colors">
             <CheckCircle className="h-4 w-4" /> View result <ChevronRight className="h-4 w-4" />
           </Link>
         </div>
@@ -149,13 +149,13 @@ function CustomForm({ agentName, onRun }: { agentName: string; onRun: (input: ob
           onChange={e => setTask(e.target.value)}
           placeholder="Describe what you need the agent to do..."
           rows={5}
-          className="w-full px-3 py-2.5 rounded-xl text-sm bg-background border border-subtle focus:outline-none focus:border-primary/50 transition-colors resize-none"
+          className="w-full px-3 py-2.5 rounded-none text-sm bg-background border border-subtle focus:outline-none focus:border-primary/50 transition-colors resize-none"
         />
       </div>
       <button
         disabled={!task.trim()}
         onClick={() => onRun({ task })}
-        className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-primary text-white text-sm font-semibold hover:bg-primary/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+        className="w-full flex items-center justify-center gap-2 py-3 rounded-none bg-primary text-white text-sm font-semibold hover:bg-primary/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
       >
         <Send className="h-4 w-4" /> Run Agent
       </button>
@@ -297,9 +297,9 @@ export default function AgentDetailPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Agent info */}
         <div className="lg:col-span-2 space-y-5">
-          <div className="rounded-2xl p-6" style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border-2)' }}>
+          <div className="rounded-none p-6" style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border-2)' }}>
             <div className="flex items-start gap-4">
-              <div className="h-14 w-14 rounded-2xl flex items-center justify-center flex-shrink-0"
+              <div className="h-14 w-14 rounded-none flex items-center justify-center flex-shrink-0"
                 style={{ background: 'rgba(39,166,68,0.12)', border: '1px solid rgba(39,166,68,0.2)' }}>
                 <Bot className="h-7 w-7" style={{ color: '#27a644' }} />
               </div>
@@ -307,9 +307,9 @@ export default function AgentDetailPage() {
                 <div className="flex flex-wrap items-center gap-2 mb-1">
                   <h1 className="text-xl font-bold" style={{ color: 'var(--fh-t1)' }}>{agent.name}</h1>
                   {(agent.badges ?? []).map(b => (
-                    <span key={b} className="text-xs px-2 py-0.5 rounded-full font-semibold"
-                      style={{ background: `${badgeColor[b] ?? '#27a644'}18`, color: badgeColor[b] ?? '#27a644', border: `1px solid ${badgeColor[b] ?? '#27a644'}30` }}>
-                      {b}
+                    <span key={b} className="text-xs px-2 py-0.5 rounded-none font-semibold uppercase tracking-wider"
+                      style={{ background: 'transparent', color: 'var(--fh-t4)', border: '1px solid var(--fh-sep)' }}>
+                      [{b}]
                     </span>
                   ))}
                 </div>
@@ -325,7 +325,7 @@ export default function AgentDetailPage() {
             <p className="mt-4 text-sm leading-relaxed" style={{ color: 'var(--fh-t3)' }}>{agent.description}</p>
             <div className="flex flex-wrap gap-2 mt-4">
               {agent.skills.map((s: string) => (
-                <span key={s} className="text-xs px-2.5 py-1 rounded-full"
+                <span key={s} className="text-xs px-2.5 py-1 rounded-none"
                   style={{ background: 'var(--fh-surface-2)', color: 'var(--fh-t3)', border: '1px solid var(--fh-border)' }}>
                   {s}
                 </span>
@@ -337,7 +337,7 @@ export default function AgentDetailPage() {
             <LogPanel logs={logs} done={phase === 'done'} jobId={jobId} />
           )}
           {runError && (
-            <div className="rounded-xl px-4 py-3 text-sm"
+            <div className="rounded-none px-4 py-3 text-sm"
               style={{ background: 'rgba(229,72,77,0.08)', border: '1px solid rgba(229,72,77,0.2)', color: '#e5484d' }}>
               {runError}
             </div>
@@ -347,13 +347,13 @@ export default function AgentDetailPage() {
         {/* Sidebar */}
         <div className="space-y-4">
           <Link href="/agents/jobs"
-            className="flex items-center gap-2 px-4 py-3 rounded-xl text-sm font-medium transition-colors"
+            className="flex items-center gap-2 px-4 py-3 rounded-none text-sm font-medium transition-colors"
             style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border-2)', color: 'var(--fh-t2)' }}>
             <List className="h-4 w-4" /> My tasks
             <ChevronRight className="h-3.5 w-3.5 ml-auto" style={{ color: 'var(--fh-t4)' }} />
           </Link>
 
-          <div className="rounded-2xl p-5" style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border-2)' }}>
+          <div className="rounded-none p-5" style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border-2)' }}>
             <h2 className="text-sm font-bold mb-4" style={{ color: 'var(--fh-t1)' }}>
               {phase === 'form' ? 'New task' : phase === 'running' ? 'Running...' : 'Done'}
             </h2>
@@ -363,7 +363,7 @@ export default function AgentDetailPage() {
                 : !user
                   ? <div className="text-center py-4">
                       <p className="text-sm mb-3" style={{ color: 'var(--fh-t3)' }}>Sign in to run the agent</p>
-                      <Link href="/auth/login" className="px-4 py-2 rounded-xl bg-primary text-white text-sm font-semibold">Sign in</Link>
+                      <Link href="/auth/login" className="px-4 py-2 rounded-none bg-primary text-white text-sm font-semibold">Sign in</Link>
                     </div>
                   : agentType === 'custom'
                     ? <CustomForm agentName={agent.name} onRun={handleRun} />
@@ -384,7 +384,7 @@ export default function AgentDetailPage() {
                 </div>
                 <p className="text-sm font-medium" style={{ color: 'var(--fh-t1)' }}>Задача выполнена!</p>
                 <Link href={`/agents/jobs/${jobId}`}
-                  className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-primary text-white text-sm font-semibold hover:bg-primary/90 transition-colors">
+                  className="w-full flex items-center justify-center gap-2 py-2.5 rounded-none bg-primary text-white text-sm font-semibold hover:bg-primary/90 transition-colors">
                   Посмотреть результат
                 </Link>
                 <button onClick={() => { setPhase('form'); setLogs([]); setJobId(null) }}
@@ -395,7 +395,7 @@ export default function AgentDetailPage() {
             )}
           </div>
 
-          <div className="rounded-xl p-4" style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border-2)' }}>
+          <div className="rounded-none p-4" style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border-2)' }}>
             <div className="text-xs space-y-2" style={{ color: 'var(--fh-t4)' }}>
               <div className="flex justify-between"><span>Per task</span><span className="font-bold" style={{ color: '#27a644' }}>{agent.pricePerTask === 0 ? 'Free' : `${agent.pricePerTask.toLocaleString()} ₸`}</span></div>
               <div className="flex justify-between"><span>Speed</span><span>{agent.responseTime}</span></div>

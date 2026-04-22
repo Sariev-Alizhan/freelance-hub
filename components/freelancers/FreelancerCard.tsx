@@ -78,7 +78,7 @@ export default function FreelancerCard({ freelancer: f }: Props) {
                 {f.isPremium && (
                   <span className="flex items-center gap-0.5 shrink-0" style={{
                     padding: '1px 6px', borderRadius: '4px',
-                    background: 'var(--fh-primary-muted)', border: '1px solid rgba(94,106,210,0.25)',
+                    background: 'var(--fh-primary-muted)', border: '1px solid rgba(39,166,68,0.25)',
                     fontSize: '10px', fontWeight: 590, color: 'var(--fh-primary)', letterSpacing: '0.03em',
                   }}>
                     <Crown className="h-2.5 w-2.5" /> Pro

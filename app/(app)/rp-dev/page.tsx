@@ -27,7 +27,7 @@ const STACKS = [
     name: 'FiveM (GTA5)',
     desc: 'Modern GTA5 multiplayer framework with 3M+ concurrent players. Lua + C# + JavaScript.',
     lang: 'Lua / C#',
-    color: '#7170ff',
+    color: '#27a644',
     tags: ['Lua', 'C#', 'JavaScript', 'ESX', 'QBCore', 'oxmysql'],
     demand: 'Critical',
     example: 'ESX servers, QBCore, custom frameworks',
@@ -95,11 +95,11 @@ export default function RPDevPage() {
         {/* Background grid */}
         <div style={{
           position: 'absolute', inset: 0, opacity: 0.04,
-          backgroundImage: 'linear-gradient(#7170ff 1px, transparent 1px), linear-gradient(90deg, #7170ff 1px, transparent 1px)',
+          backgroundImage: 'linear-gradient(#27a644 1px, transparent 1px), linear-gradient(90deg, #27a644 1px, transparent 1px)',
           backgroundSize: '40px 40px',
         }} />
         {/* Glow */}
-        <div style={{ position: 'absolute', top: -100, left: '50%', transform: 'translateX(-50%)', width: 600, height: 600, background: 'radial-gradient(circle, #7170ff18 0%, transparent 70%)', pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', top: -100, left: '50%', transform: 'translateX(-50%)', width: 600, height: 600, background: 'radial-gradient(circle, #27a64418 0%, transparent 70%)', pointerEvents: 'none' }} />
 
         <div style={{ maxWidth: 820, margin: '0 auto', position: 'relative' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
@@ -129,7 +129,7 @@ export default function RPDevPage() {
               href="/freelancers?category=rp-dev"
               style={{
                 display: 'inline-flex', alignItems: 'center', gap: 8,
-                padding: '14px 28px', borderRadius: 10, background: '#7170ff',
+                padding: '14px 28px', borderRadius: 10, background: '#27a644',
                 color: '#fff', fontSize: 14, fontWeight: 700, textDecoration: 'none',
               }}
             >
@@ -156,7 +156,7 @@ export default function RPDevPage() {
               { v: 'AI', u: 'Co-pilot', s: 'PAWN, Lua, C# — trained on RP code' },
             ].map(s => (
               <div key={s.u}>
-                <span style={{ fontSize: 28, fontWeight: 800, color: '#7170ff' }}>{s.v}</span>
+                <span style={{ fontSize: 28, fontWeight: 800, color: '#27a644' }}>{s.v}</span>
                 <span style={{ fontSize: 13, color: '#8b8bbb', marginLeft: 6 }}>{s.u}</span>
                 <div style={{ fontSize: 11, color: '#4b4b7a', marginTop: 2 }}>{s.s}</div>
               </div>
@@ -231,7 +231,7 @@ export default function RPDevPage() {
                 <div>
                   <p style={{ margin: '0 0 4px', fontSize: 13, fontWeight: 600, color: '#e0e0ff' }}>{r.role}</p>
                   <p style={{ margin: '0 0 6px', fontSize: 11, color: '#6b6b9b', lineHeight: 1.5 }}>{r.desc}</p>
-                  <span style={{ fontSize: 12, fontWeight: 700, color: '#7170ff' }}>{r.price}</span>
+                  <span style={{ fontSize: 12, fontWeight: 700, color: '#27a644' }}>{r.price}</span>
                 </div>
               </Link>
             ))}
@@ -245,8 +245,8 @@ export default function RPDevPage() {
             border: '1px solid #2e2060', borderRadius: 20, padding: 'clamp(24px, 4vw, 44px)',
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
-              <Zap size={18} style={{ color: '#7170ff' }} />
-              <span style={{ fontSize: 12, fontWeight: 700, color: '#7170ff', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+              <Zap size={18} style={{ color: '#27a644' }} />
+              <span style={{ fontSize: 12, fontWeight: 700, color: '#27a644', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
                 AI Co-Pilot — RP Dev Pro
               </span>
             </div>
@@ -263,7 +263,7 @@ export default function RPDevPage() {
                 <div key={f.title} style={{ background: '#ffffff08', borderRadius: 12, padding: '16px 18px', border: '1px solid #ffffff10' }}>
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
                     <span style={{ fontSize: 13, fontWeight: 600, color: '#e0e0ff' }}>{f.title}</span>
-                    <span style={{ fontSize: 10, padding: '1px 6px', borderRadius: 4, background: '#7170ff20', color: '#9090ff' }}>{f.tag}</span>
+                    <span style={{ fontSize: 10, padding: '1px 6px', borderRadius: 4, background: '#27a64420', color: '#9090ff' }}>{f.tag}</span>
                   </div>
                   <p style={{ margin: 0, fontSize: 12, color: '#6b6b9b', lineHeight: 1.6 }}>{f.desc}</p>
                 </div>
@@ -275,7 +275,7 @@ export default function RPDevPage() {
                 href="/premium?module=rp-dev"
                 style={{
                   display: 'inline-flex', alignItems: 'center', gap: 8,
-                  padding: '12px 24px', borderRadius: 10, background: '#7170ff',
+                  padding: '12px 24px', borderRadius: 10, background: '#27a644',
                   color: '#fff', fontSize: 14, fontWeight: 700, textDecoration: 'none',
                 }}
               >
@@ -295,7 +295,7 @@ export default function RPDevPage() {
           </h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 16 }}>
             {[
-              { step: '01', icon: <MessageSquare size={20} />, title: 'Describe your task', desc: 'Post a job: "Need SA:MP faction system, PAWN, MySQL. Budget 30,000₸"', color: '#7170ff' },
+              { step: '01', icon: <MessageSquare size={20} />, title: 'Describe your task', desc: 'Post a job: "Need SA:MP faction system, PAWN, MySQL. Budget 30,000₸"', color: '#27a644' },
               { step: '02', icon: <Users size={20} />, title: 'Get responses', desc: 'Verified RP developers respond within 2 hours. Compare portfolios and rates.', color: '#06b6d4' },
               { step: '03', icon: <Code2 size={20} />, title: 'Work with AI', desc: 'Use AI co-pilot alongside your developer. Speed up development 3×.', color: '#22c55e' },
               { step: '04', icon: <Shield size={20} />, title: 'Pay safely', desc: 'Escrow holds payment. Released only when you approve the work.', color: '#f59e0b' },
@@ -333,7 +333,7 @@ export default function RPDevPage() {
               href="/auth/register"
               style={{
                 display: 'inline-flex', alignItems: 'center', gap: 8,
-                padding: '14px 32px', borderRadius: 10, background: '#7170ff',
+                padding: '14px 32px', borderRadius: 10, background: '#27a644',
                 color: '#fff', fontSize: 15, fontWeight: 700, textDecoration: 'none',
               }}
             >

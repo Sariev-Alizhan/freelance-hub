@@ -18,7 +18,7 @@ export default function ProfileStickyActions({ targetUserId }: { targetUserId: s
       <Link href={`/messages?open=${targetUserId}`} style={{
         flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
         padding: '11px 10px', borderRadius: 8,
-        background: '#5e6ad2', color: '#fff',
+        background: '#27a644', color: '#fff',
         fontSize: 13, fontWeight: 590, textDecoration: 'none',
       }}>
         <MessageCircle className="h-4 w-4" /> Message

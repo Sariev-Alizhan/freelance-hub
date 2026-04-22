@@ -31,27 +31,27 @@ export default function FounderCard() {
     <div
       style={{
         borderRadius: 20, overflow: 'hidden',
-        border: '1px solid rgba(113,112,255,0.25)',
-        background: 'linear-gradient(135deg, rgba(113,112,255,0.04) 0%, rgba(56,189,248,0.03) 100%)',
+        border: '1px solid rgba(39,166,68,0.25)',
+        background: 'linear-gradient(135deg, rgba(39,166,68,0.04) 0%, rgba(56,189,248,0.03) 100%)',
       }}
     >
       {/* Header banner */}
       <div style={{
         padding: '18px 24px',
-        background: 'linear-gradient(135deg, rgba(113,112,255,0.12) 0%, rgba(39,166,68,0.07) 100%)',
-        borderBottom: '1px solid rgba(113,112,255,0.15)',
+        background: 'linear-gradient(135deg, rgba(39,166,68,0.12) 0%, rgba(39,166,68,0.07) 100%)',
+        borderBottom: '1px solid rgba(39,166,68,0.15)',
         display: 'flex', alignItems: 'center', gap: 12,
       }}>
         <div style={{
           width: 36, height: 36, borderRadius: 10, flexShrink: 0,
-          background: 'linear-gradient(135deg, #7170ff, #27a644)',
+          background: 'linear-gradient(135deg, #27a644, #27a644)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           fontSize: 18,
         }}>
           🚀
         </div>
         <div>
-          <p style={{ fontSize: 13, fontWeight: 700, color: '#7170ff', letterSpacing: '-0.01em', margin: 0 }}>
+          <p style={{ fontSize: 13, fontWeight: 700, color: '#27a644', letterSpacing: '-0.01em', margin: 0 }}>
             Founder of FreelanceHub
           </p>
           <p style={{ fontSize: 12, color: 'var(--fh-t4)', margin: 0 }}>
@@ -74,15 +74,15 @@ export default function FounderCard() {
           </p>
           <div style={{ position: 'relative', paddingLeft: 18 }}>
             {/* Vertical line */}
-            <div style={{ position: 'absolute', left: 5, top: 10, bottom: 10, width: 1, background: 'rgba(113,112,255,0.2)' }} />
+            <div style={{ position: 'absolute', left: 5, top: 10, bottom: 10, width: 1, background: 'rgba(39,166,68,0.2)' }} />
             <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
               {TIMELINE.map((entry, i) => (
                 <div key={i} style={{ position: 'relative' }}>
                   {/* Dot */}
                   <div style={{
                     position: 'absolute', left: -14, top: 6, width: 8, height: 8, borderRadius: '50%',
-                    background: i === 0 ? '#7170ff' : 'var(--fh-surface-2)',
-                    border: `2px solid ${i === 0 ? '#7170ff' : 'rgba(113,112,255,0.3)'}`,
+                    background: i === 0 ? '#27a644' : 'var(--fh-surface-2)',
+                    border: `2px solid ${i === 0 ? '#27a644' : 'rgba(39,166,68,0.3)'}`,
                   }} />
                   <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
                     <span style={{ fontSize: 16, lineHeight: 1, flexShrink: 0, marginTop: 1 }}>{entry.icon}</span>
@@ -92,9 +92,9 @@ export default function FounderCard() {
                           {entry.label}
                         </span>
                         <span style={{
-                          fontSize: 11, fontWeight: 700, color: i === 0 ? '#7170ff' : 'var(--fh-t4)',
+                          fontSize: 11, fontWeight: 700, color: i === 0 ? '#27a644' : 'var(--fh-t4)',
                           padding: '1px 7px', borderRadius: 4,
-                          background: i === 0 ? 'rgba(113,112,255,0.12)' : 'var(--fh-surface-2)',
+                          background: i === 0 ? 'rgba(39,166,68,0.12)' : 'var(--fh-surface-2)',
                         }}>
                           {entry.year}
                         </span>
@@ -119,8 +119,8 @@ export default function FounderCard() {
             {SKILLS.map(s => (
               <span key={s} style={{
                 padding: '4px 10px', borderRadius: 7, fontSize: 12, fontWeight: 510,
-                background: 'rgba(113,112,255,0.08)', color: '#7170ff',
-                border: '1px solid rgba(113,112,255,0.2)',
+                background: 'rgba(39,166,68,0.08)', color: '#27a644',
+                border: '1px solid rgba(39,166,68,0.2)',
               }}>
                 {s}
               </span>

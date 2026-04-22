@@ -437,7 +437,7 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
             </p>
             {item.url && (
               <a href={item.url} target="_blank" rel="noopener noreferrer"
-                style={{ fontSize: 10, color: '#5e6ad2', display: 'flex', alignItems: 'center', gap: 3 }}>
+                style={{ fontSize: 10, color: '#27a644', display: 'flex', alignItems: 'center', gap: 3 }}>
                 <ExternalLink className="h-2.5 w-2.5" /> {tp.view}
               </a>
             )}
@@ -541,7 +541,7 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
           <div className="hidden md:flex" style={{ gap: 8 }}>
             <Link href={`/messages?open=${p.userId}`} style={{
               flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-              padding: '11px 16px', borderRadius: 8, background: '#5e6ad2', color: '#fff',
+              padding: '11px 16px', borderRadius: 8, background: '#27a644', color: '#fff',
               fontSize: 13, fontWeight: 590, textDecoration: 'none',
             }}>
               <MessageCircle className="h-4 w-4" /> {tp.sendMessage}

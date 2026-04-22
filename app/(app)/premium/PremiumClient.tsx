@@ -180,32 +180,70 @@ export default function PremiumClient() {
   return (
     <div style={{ background: 'var(--fh-canvas)', minHeight: 'calc(100vh - 52px)' }}>
 
-      {/* ── Hero ── */}
+      {/* ── Editorial hero ── */}
       <div style={{
-        padding: 'clamp(48px,6vw,88px) 16px 0',
+        padding: 'clamp(64px,8vw,112px) 16px 0',
         textAlign: 'center',
-        background: 'linear-gradient(180deg, rgba(94,106,210,0.05) 0%, transparent 100%)',
+        background: 'linear-gradient(180deg, rgba(39,166,68,0.05) 0%, transparent 100%)',
       }}>
-        <div style={{
-          display: 'inline-flex', alignItems: 'center', gap: '6px',
-          padding: '4px 14px', borderRadius: '100px', marginBottom: '20px',
-          background: 'rgba(113,112,255,0.08)', border: '1px solid rgba(113,112,255,0.2)',
-          fontSize: '12px', fontWeight: 590, color: '#7170ff',
-        }}>
-          <Crown className="h-3.5 w-3.5" /> FreelanceHub Premium
+        <div
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 12,
+            marginBottom: 22,
+            fontFamily: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace',
+            fontSize: 11,
+            letterSpacing: '0.18em',
+            textTransform: 'uppercase',
+            color: 'var(--fh-t3)',
+          }}
+        >
+          <span
+            aria-hidden
+            style={{
+              width: 24, height: 2, borderRadius: 2,
+              background: '#27a644',
+              boxShadow: '0 0 12px rgba(39,166,68,0.55)',
+            }}
+          />
+          <Crown className="h-3 w-3" />
+          <span>FreelanceHub Premium</span>
         </div>
 
         <h1 style={{
-          fontSize: 'clamp(28px,5vw,50px)', fontWeight: 510,
-          letterSpacing: '-0.05em', color: 'var(--fh-t1)',
-          marginBottom: '14px', lineHeight: 1.05,
+          fontSize: 'clamp(34px,6.5vw,72px)', fontWeight: 700,
+          letterSpacing: '-0.045em', color: 'var(--fh-t1)',
+          lineHeight: 0.95, margin: '0 0 18px',
           fontFeatureSettings: '"cv01", "ss03"',
         }}>
-          More orders.<br />
-          <span style={{ color: '#7170ff' }}>Stand out from the crowd.</span>
+          More{' '}
+          <span
+            style={{
+              fontFamily: 'var(--font-serif-display), ui-serif, Georgia, "Times New Roman", serif',
+              fontStyle: 'italic',
+              fontWeight: 400,
+              letterSpacing: '-0.01em',
+            }}
+          >
+            orders.
+          </span>
+          <br />
+          Stand{' '}
+          <span
+            style={{
+              fontFamily: 'var(--font-serif-display), ui-serif, Georgia, "Times New Roman", serif',
+              fontStyle: 'italic',
+              fontWeight: 400,
+              letterSpacing: '-0.01em',
+              color: '#27a644',
+            }}
+          >
+            out.
+          </span>
         </h1>
-        <p style={{ fontSize: '16px', color: 'var(--fh-t3)', maxWidth: '480px', margin: '0 auto 40px', lineHeight: 1.6 }}>
-          Unlimited proposals, top search ranking, and a Premium badge — clients will choose you first.
+        <p style={{ fontSize: 16, color: 'var(--fh-t3)', maxWidth: 520, margin: '0 auto 40px', lineHeight: 1.65 }}>
+          Unlimited proposals, top search ranking, and a Premium badge — clients choose you first.
         </p>
       </div>
 
@@ -224,8 +262,8 @@ export default function PremiumClient() {
                 position: 'relative',
                 display: 'flex', flexDirection: 'column', alignItems: 'center',
                 padding: '14px 24px', borderRadius: '12px', minWidth: '130px',
-                background: selectedPlan === p.id ? 'rgba(94,106,210,0.08)' : 'var(--fh-surface)',
-                border: selectedPlan === p.id ? '2px solid rgba(94,106,210,0.4)' : '1px solid var(--fh-border)',
+                background: selectedPlan === p.id ? 'rgba(39,166,68,0.08)' : 'var(--fh-surface)',
+                border: selectedPlan === p.id ? '2px solid rgba(39,166,68,0.4)' : '1px solid var(--fh-border)',
                 cursor: 'pointer', transition: 'all 0.2s',
               }}
             >
@@ -233,7 +271,7 @@ export default function PremiumClient() {
                 <span style={{
                   position: 'absolute', top: '-10px',
                   fontSize: '10px', fontWeight: 700, padding: '2px 10px',
-                  borderRadius: '100px', background: '#5e6ad2', color: '#fff',
+                  borderRadius: '100px', background: '#27a644', color: '#fff',
                   letterSpacing: '0.04em',
                 }}>
                   POPULAR
@@ -284,22 +322,22 @@ export default function PremiumClient() {
           {/* Premium */}
           <div style={{
             borderRadius: '16px', padding: '24px',
-            background: 'linear-gradient(135deg, rgba(94,106,210,0.06) 0%, rgba(113,112,255,0.04) 100%)',
-            border: '1.5px solid rgba(94,106,210,0.35)',
+            background: 'linear-gradient(135deg, rgba(39,166,68,0.06) 0%, rgba(39,166,68,0.04) 100%)',
+            border: '1.5px solid rgba(39,166,68,0.35)',
             position: 'relative', overflow: 'hidden',
           }}>
             <div style={{
               position: 'absolute', top: 0, right: 0,
               width: '160px', height: '160px',
-              background: 'radial-gradient(circle, rgba(113,112,255,0.12) 0%, transparent 70%)',
+              background: 'radial-gradient(circle, rgba(39,166,68,0.12) 0%, transparent 70%)',
               pointerEvents: 'none',
             }} />
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-              <p style={{ fontSize: '12px', fontWeight: 590, color: '#7170ff', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+              <p style={{ fontSize: '12px', fontWeight: 590, color: '#27a644', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
                 Premium
               </p>
-              <Crown className="h-3.5 w-3.5" style={{ color: '#7170ff' }} />
+              <Crown className="h-3.5 w-3.5" style={{ color: '#27a644' }} />
             </div>
             <p style={{ fontSize: '28px', fontWeight: 590, color: 'var(--fh-t1)', marginBottom: '4px', letterSpacing: '-0.03em' }}>
               {fmt(plan.priceUsd, currency, rates)}
@@ -314,7 +352,7 @@ export default function PremiumClient() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '20px' }}>
               {PREMIUM_FEATURES.map(({ icon: Icon, label, highlight }) => (
                 <div key={label} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <Icon className="h-3.5 w-3.5 flex-shrink-0" style={{ color: highlight ? '#7170ff' : '#27a644' }} />
+                  <Icon className="h-3.5 w-3.5 flex-shrink-0" style={{ color: highlight ? '#27a644' : '#27a644' }} />
                   <span style={{ fontSize: '13px', color: highlight ? 'var(--fh-t1)' : 'var(--fh-t2)', fontWeight: highlight ? 510 : 400 }}>
                     {label}
                   </span>
@@ -327,14 +365,14 @@ export default function PremiumClient() {
               style={{
                 width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
                 padding: '13px 20px', borderRadius: '10px',
-                background: '#5e6ad2', color: '#fff',
+                background: '#27a644', color: '#fff',
                 fontSize: '15px', fontWeight: 590,
                 border: 'none', cursor: 'pointer',
-                boxShadow: '0 0 0 1px rgba(113,112,255,0.3), 0 4px 16px rgba(94,106,210,0.25)',
+                boxShadow: '0 0 0 1px rgba(39,166,68,0.3), 0 4px 16px rgba(39,166,68,0.25)',
                 transition: 'all 0.2s',
               }}
-              onMouseEnter={e => { e.currentTarget.style.background = '#828fff' }}
-              onMouseLeave={e => { e.currentTarget.style.background = '#5e6ad2' }}
+              onMouseEnter={e => { e.currentTarget.style.background = '#34c759' }}
+              onMouseLeave={e => { e.currentTarget.style.background = '#27a644' }}
             >
               {user
                 ? <><CreditCard className="h-4 w-4" /> Get Premium <ArrowRight className="h-4 w-4" /></>
@@ -360,7 +398,7 @@ export default function PremiumClient() {
               background: 'var(--fh-surface)', border: '1px solid var(--fh-border)',
               borderRadius: '12px', minWidth: '130px',
             }}>
-              <p style={{ fontSize: '24px', fontWeight: 590, color: '#7170ff', letterSpacing: '-0.04em', marginBottom: '4px' }}>{stat}</p>
+              <p style={{ fontSize: '24px', fontWeight: 590, color: '#27a644', letterSpacing: '-0.04em', marginBottom: '4px' }}>{stat}</p>
               <p style={{ fontSize: '12px', color: 'var(--fh-t4)' }}>{label}</p>
             </div>
           ))}
@@ -441,7 +479,7 @@ export default function PremiumClient() {
         <div style={{ textAlign: 'center' }}>
           <p style={{ fontSize: '13px', color: 'var(--fh-t4)', marginBottom: '12px' }}>
             Questions?{' '}
-            <Link href="/messages" style={{ color: '#7170ff' }}>Contact support</Link>
+            <Link href="/messages" style={{ color: '#27a644' }}>Contact support</Link>
           </p>
           {!user && (
             <Link
@@ -486,7 +524,7 @@ export default function PremiumClient() {
               display: 'flex', alignItems: 'center', justifyContent: 'space-between',
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <CreditCard className="h-5 w-5" style={{ color: '#7170ff' }} />
+                <CreditCard className="h-5 w-5" style={{ color: '#27a644' }} />
                 <span style={{ fontSize: '16px', fontWeight: 590, color: 'var(--fh-t1)', letterSpacing: '-0.02em' }}>
                   Pay for Premium
                 </span>
@@ -544,7 +582,7 @@ export default function PremiumClient() {
                   {/* Plan summary */}
                   <div style={{
                     padding: '12px 14px', borderRadius: '10px', marginBottom: '20px',
-                    background: 'rgba(94,106,210,0.06)', border: '1px solid rgba(94,106,210,0.2)',
+                    background: 'rgba(39,166,68,0.06)', border: '1px solid rgba(39,166,68,0.2)',
                     display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                   }}>
                     <div>
@@ -554,7 +592,7 @@ export default function PremiumClient() {
                       </div>
                     </div>
                     <div style={{ textAlign: 'right' }}>
-                      <div style={{ fontSize: '22px', fontWeight: 700, color: '#7170ff', letterSpacing: '-0.04em' }}>
+                      <div style={{ fontSize: '22px', fontWeight: 700, color: '#27a644', letterSpacing: '-0.04em' }}>
                         {fmt(plan.totalUsd, currency, rates)}
                       </div>
                       <span style={{ fontSize: '11px', color: 'var(--fh-t4)' }}>to transfer</span>
@@ -569,7 +607,7 @@ export default function PremiumClient() {
                     <div style={{
                       borderRadius: '12px', padding: '16px',
                       background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)',
-                      border: '1px solid rgba(113,112,255,0.2)',
+                      border: '1px solid rgba(39,166,68,0.2)',
                       position: 'relative',
                     }}>
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
@@ -650,7 +688,7 @@ export default function PremiumClient() {
                           padding: '32px 20px', textAlign: 'center', cursor: 'pointer',
                           transition: 'border-color 0.2s',
                         }}
-                        onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(113,112,255,0.4)' }}
+                        onMouseEnter={e => { e.currentTarget.style.borderColor = 'rgba(39,166,68,0.4)' }}
                         onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--fh-border-2)' }}
                       >
                         <Upload className="h-8 w-8 mx-auto mb-3" style={{ color: 'var(--fh-t4)' }} />
@@ -690,7 +728,7 @@ export default function PremiumClient() {
                     style={{
                       width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
                       padding: '13px 20px', borderRadius: '10px',
-                      background: screenshot ? '#5e6ad2' : 'var(--fh-surface-2)',
+                      background: screenshot ? '#27a644' : 'var(--fh-surface-2)',
                       color: screenshot ? '#fff' : 'var(--fh-t4)',
                       fontSize: '14px', fontWeight: 590,
                       border: 'none', cursor: submitting || !screenshot ? 'not-allowed' : 'pointer',

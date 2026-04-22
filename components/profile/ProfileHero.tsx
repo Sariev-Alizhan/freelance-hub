@@ -14,7 +14,7 @@ const LEVEL_LABELS: Record<string, string> = {
   new: 'Newcomer', junior: 'Junior', middle: 'Middle', senior: 'Senior', top: 'TOP',
 }
 const LEVEL_COLORS: Record<string, string> = {
-  new: '#62666d', junior: '#27a644', middle: '#5e6ad2', senior: '#7170ff', top: '#fbbf24',
+  new: '#62666d', junior: '#27a644', middle: '#27a644', senior: '#27a644', top: '#fbbf24',
 }
 
 /** Deterministic gradient from username for the cover banner. */
@@ -52,7 +52,7 @@ export default function ProfileHero(p: ProfileHeroProps) {
   const av = AVAILABILITY[p.availability ?? 'open']
   const pct = Math.max(0, Math.min(100, p.completionPct ?? 0))
   const showRing = pct > 0 && pct < 100
-  const ringColor = pct < 50 ? '#f59e0b' : pct < 80 ? '#5e6ad2' : '#27a644'
+  const ringColor = pct < 50 ? '#f59e0b' : pct < 80 ? '#27a644' : '#27a644'
 
   return (
     <div style={{
@@ -120,12 +120,12 @@ export default function ProfileHero(p: ProfileHeroProps) {
           <h1 style={{ fontSize: 24, fontWeight: 590, color: 'var(--fh-t1)', letterSpacing: '-0.03em' }}>
             {p.name}
           </h1>
-          {p.isVerified && <CheckCircle className="h-5 w-5" style={{ color: '#5e6ad2', flexShrink: 0 }} />}
+          {p.isVerified && <CheckCircle className="h-5 w-5" style={{ color: '#27a644', flexShrink: 0 }} />}
           {p.isPremium && (
             <span style={{
               display: 'inline-flex', alignItems: 'center', gap: 4,
               fontSize: 11, fontWeight: 590, padding: '2px 8px', borderRadius: 20,
-              background: 'rgba(94,106,210,0.1)', color: '#5e6ad2', border: '1px solid rgba(94,106,210,0.25)',
+              background: 'rgba(39,166,68,0.1)', color: '#27a644', border: '1px solid rgba(39,166,68,0.25)',
             }}>
               <Crown className="h-3 w-3" /> Premium
             </span>

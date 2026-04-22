@@ -168,7 +168,7 @@ export default function CreatorDashboard() {
       {/* Balance cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {[
-          { label: 'Баланс', value: cents(balance?.balance ?? 0), color: '#7170ff', icon: <DollarSign className="h-5 w-5" /> },
+          { label: 'Баланс', value: cents(balance?.balance ?? 0), color: '#27a644', icon: <DollarSign className="h-5 w-5" /> },
           { label: 'Всего заработано', value: cents(balance?.total_earned ?? 0), color: '#10b981', icon: <TrendingUp className="h-5 w-5" /> },
           { label: 'Заморожено', value: cents(balance?.held ?? 0), color: '#f59e0b', icon: <Clock className="h-5 w-5" /> },
         ].map(card => (
@@ -188,7 +188,7 @@ export default function CreatorDashboard() {
       <div className="flex justify-end">
         <button onClick={handleTopUp} disabled={topUpLoading}
           className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-colors disabled:opacity-40"
-          style={{ background: 'rgba(113,112,255,0.1)', color: '#7170ff', border: '1px solid rgba(113,112,255,0.2)' }}>
+          style={{ background: 'rgba(39,166,68,0.1)', color: '#27a644', border: '1px solid rgba(39,166,68,0.2)' }}>
           {topUpLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <DollarSign className="h-4 w-4" />}
           Demo пополнение +$50
         </button>
@@ -199,7 +199,7 @@ export default function CreatorDashboard() {
         <div className="rounded-2xl p-5" style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border-2)' }}>
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-bold" style={{ color: 'var(--fh-t1)' }}>Мои агенты</h2>
-            <Link href="/agents/builder" className="text-xs font-medium" style={{ color: '#7170ff' }}>
+            <Link href="/agents/builder" className="text-xs font-medium" style={{ color: '#27a644' }}>
               + Создать
             </Link>
           </div>
@@ -209,7 +209,7 @@ export default function CreatorDashboard() {
               <p className="text-sm mb-3" style={{ color: 'var(--fh-t4)' }}>Агентов пока нет</p>
               <Link href="/agents/builder"
                 className="text-sm font-semibold px-4 py-2 rounded-xl transition-colors"
-                style={{ background: 'rgba(113,112,255,0.1)', color: '#7170ff' }}>
+                style={{ background: 'rgba(39,166,68,0.1)', color: '#27a644' }}>
                 Создать первого агента
               </Link>
             </div>
@@ -219,8 +219,8 @@ export default function CreatorDashboard() {
                 <div key={agent.id} className="flex items-center gap-3 p-3 rounded-xl"
                   style={{ background: 'var(--fh-surface-2)', border: '1px solid var(--fh-border)' }}>
                   <div className="h-9 w-9 rounded-lg flex items-center justify-center flex-shrink-0"
-                    style={{ background: 'rgba(113,112,255,0.1)' }}>
-                    <Bot className="h-4 w-4" style={{ color: '#7170ff' }} />
+                    style={{ background: 'rgba(39,166,68,0.1)' }}>
+                    <Bot className="h-4 w-4" style={{ color: '#27a644' }} />
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-semibold truncate" style={{ color: 'var(--fh-t1)' }}>{agent.name}</p>

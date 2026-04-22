@@ -6,7 +6,7 @@ export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
 
 const LEVEL_COLORS: Record<string, string> = {
-  new: '#62666d', junior: '#27a644', middle: '#5e6ad2', senior: '#7170ff', top: '#fbbf24',
+  new: '#62666d', junior: '#27a644', middle: '#27a644', senior: '#27a644', top: '#fbbf24',
 }
 const LEVEL_LABELS: Record<string, string> = {
   new: 'Newcomer', junior: 'Junior', middle: 'Middle', senior: 'Senior', top: 'TOP',
@@ -63,14 +63,14 @@ export default async function Image({ params }: { params: Promise<{ username: st
         <div style={{
           position: 'absolute', top: '-150px', right: '-150px',
           width: '500px', height: '500px', borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(113,112,255,0.12) 0%, transparent 70%)',
+          background: 'radial-gradient(circle, rgba(39,166,68,0.12) 0%, transparent 70%)',
         }} />
 
         {/* Header */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '60px' }}>
           <div style={{
             width: '32px', height: '32px', borderRadius: '7px',
-            background: 'linear-gradient(135deg, #5e6ad2, #7170ff)',
+            background: 'linear-gradient(135deg, #27a644, #27a644)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             fontSize: '16px', fontWeight: 700, color: '#fff',
           }}>F</div>
@@ -82,7 +82,7 @@ export default async function Image({ params }: { params: Promise<{ username: st
           {/* Avatar */}
           <div style={{
             width: '140px', height: '140px', borderRadius: '24px', flexShrink: 0,
-            background: 'linear-gradient(135deg, #5e6ad2, #7170ff)',
+            background: 'linear-gradient(135deg, #27a644, #27a644)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             fontSize: '52px', fontWeight: 700, color: '#fff',
           }}>
@@ -120,8 +120,8 @@ export default async function Image({ params }: { params: Promise<{ username: st
           <div style={{ fontSize: '16px', color: '#4a4f57' }}>freelance-hub.kz/u/{username}</div>
           <div style={{
             padding: '8px 20px', borderRadius: '8px',
-            background: 'rgba(113,112,255,0.1)', border: '1px solid rgba(113,112,255,0.2)',
-            fontSize: '15px', fontWeight: 600, color: '#7170ff',
+            background: 'rgba(39,166,68,0.1)', border: '1px solid rgba(39,166,68,0.2)',
+            fontSize: '15px', fontWeight: 600, color: '#27a644',
           }}>
             Hire on FreelanceHub
           </div>

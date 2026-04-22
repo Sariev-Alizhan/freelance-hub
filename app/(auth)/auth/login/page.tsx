@@ -160,7 +160,7 @@ export default function LoginPage() {
         {/* Card */}
         <div
           style={{
-            borderRadius: 16,
+            borderRadius: 0,
             padding: 22,
             background: 'var(--card)',
             border: '1px solid var(--fh-border)',
@@ -225,7 +225,7 @@ export default function LoginPage() {
           {sent ? (
             <div
               style={{
-                borderRadius: 10,
+                borderRadius: 0,
                 padding: 16,
                 textAlign: 'center',
                 background: 'rgba(39,166,68,0.08)',
@@ -261,7 +261,7 @@ export default function LoginPage() {
                 required
                 style={{
                   padding: '13px 14px',
-                  borderRadius: 10,
+                  borderRadius: 0,
                   background: 'var(--fh-surface-2)',
                   border: '1px solid var(--fh-border)',
                   color: 'var(--fh-t1)',
@@ -288,7 +288,7 @@ export default function LoginPage() {
                   justifyContent: 'center',
                   gap: 8,
                   padding: '13px 18px',
-                  borderRadius: 10,
+                  borderRadius: 0,
                   background: 'var(--fh-t1)',
                   color: 'var(--fh-canvas)',
                   border: '1px solid var(--fh-t1)',
