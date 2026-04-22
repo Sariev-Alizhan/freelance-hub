@@ -51,7 +51,6 @@ export default function BottomNav() {
     { href: '/ai-assistant',         icon: Brain,           label: 'AI Chat'        },
     { href: '/freelancers',          icon: Users,           label: t.nav.freelancers},
     { href: '/contracts',            icon: FileText,        label: t.nav.contracts  },
-    { href: '/ai-tools',             icon: Zap,             label: 'AI Tools'       },
     { href: '/pricing',              icon: Star,            label: t.nav.pricing    },
     { href: '/dashboard/analytics',  icon: BarChart3,       label: t.auth.analytics },
     { href: '/settings',             icon: Settings,        label: t.auth.settings  },

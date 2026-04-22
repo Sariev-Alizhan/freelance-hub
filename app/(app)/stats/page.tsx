@@ -1,13 +1,19 @@
 import type { Metadata } from 'next'
+import { redirect } from 'next/navigation'
 import { createClient } from '@supabase/supabase-js'
 import StatsClient from './StatsClient'
 
 export const metadata: Metadata = {
   title: 'Platform Stats — FreelanceHub',
   description: 'Live statistics: users, orders, freelancers and top categories on FreelanceHub Kazakhstan.',
+  robots: { index: false, follow: false },
 }
 
 export const revalidate = 86400 // refresh once per day (ISR)
+
+// Hide page until platform has meaningful traction.
+// Showing "13 users, 0 completed orders" kills trust for first-time visitors.
+const PUBLIC_STATS_THRESHOLD = 100
 
 async function fetchStats() {
   const db = createClient(
@@ -53,5 +59,7 @@ async function fetchStats() {
 
 export default async function StatsPage() {
   const stats = await fetchStats()
+  // Ghost-town guard: redirect to /about until we hit meaningful traction
+  if (stats.users < PUBLIC_STATS_THRESHOLD) redirect('/about')
   return <StatsClient stats={stats} />
 }

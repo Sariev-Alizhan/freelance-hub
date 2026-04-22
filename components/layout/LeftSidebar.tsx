@@ -71,7 +71,6 @@ export default function LeftSidebar() {
     { href: '/dashboard/goals',       icon: Target,     label: t.auth.goals      },
     { href: '/dashboard/calculator',  icon: Calculator, label: t.auth.calculator },
     { href: '/ai-assistant',          icon: Bot,        label: t.nav.ai          },
-    { href: '/ai-tools',              icon: Zap,        label: 'AI Tools'        },
     { href: '/agents',                icon: Bot,        label: t.nav.agents      },
     { href: '/contracts',             icon: FileText,   label: t.nav.contracts   },
     { href: '/pricing',               icon: Tag,        label: t.nav.pricing ?? 'Pricing' },

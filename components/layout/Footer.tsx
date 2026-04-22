@@ -11,7 +11,6 @@ const PLATFORM = [
   { href: '/dashboard',   ru: 'Операции',      kz: 'Операциялар',    en: 'Operations'     },
   { href: '/premium',     ru: 'Premium',        kz: 'Premium',         en: 'Premium'        },
   { href: '/updates',     ru: 'Обновления',    kz: 'Жаңартулар',     en: 'Updates'        },
-  { href: '/vote',        ru: 'Голосование',   kz: 'Дауыс',          en: 'Vote'           },
 ]
 
 const AI_TOOLS = [
@@ -19,8 +18,6 @@ const AI_TOOLS = [
   { href: '/ai-search',    ru: 'AI Поиск',      kz: 'AI Іздеу',       en: 'AI Search'      },
   { href: '/ai-assistant', ru: 'AI Подбор',     kz: 'AI Таңдау',      en: 'AI Match'       },
   { href: '/contracts',    ru: 'AI Контракты',  kz: 'AI Келісім',     en: 'AI Contracts'   },
-  { href: '/news',         ru: 'AI Новости',    kz: 'AI Жаңалықтар',  en: 'AI News'        },
-  { href: '/play',         ru: 'Игра',             kz: 'Ойын',            en: 'Game'            },
 ]
 
 const COMPANY = [
