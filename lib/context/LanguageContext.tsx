@@ -23,24 +23,22 @@ function writeLangCookie(l: Lang) {
   } catch {}
 }
 
-export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [lang, setLangState] = useState<Lang>('en')
+export function LanguageProvider({ children, initialLang = 'ru' }: { children: React.ReactNode; initialLang?: Lang }) {
+  const [lang, setLangState] = useState<Lang>(initialLang)
 
   useEffect(() => {
     try {
       const saved = localStorage.getItem('fh-lang') as Lang | null
       if (saved && (saved === 'ru' || saved === 'en' || saved === 'kz')) {
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        setLangState(saved)
+        if (saved !== initialLang) setLangState(saved)
         writeLangCookie(saved)
-        return
+      } else {
+        // First-time visitor without a localStorage pick — persist the server's
+        // detection so subsequent navigations skip detection and SSR is stable.
+        writeLangCookie(initialLang)
       }
-      const nav = typeof navigator !== 'undefined' ? navigator.language.toLowerCase() : ''
-      if (nav.startsWith('ru'))                              { setLangState('ru'); writeLangCookie('ru') }
-      else if (nav.startsWith('kk') || nav.startsWith('kz')) { setLangState('kz'); writeLangCookie('kz') }
-      else                                                   { writeLangCookie('en') }
     } catch {}
-  }, [])
+  }, [initialLang])
 
   const setLang = (l: Lang) => {
     try { localStorage.setItem('fh-lang', l) } catch {}

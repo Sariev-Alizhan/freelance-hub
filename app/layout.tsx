@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 import { Inter, Instrument_Serif } from 'next/font/google'
-import { headers } from 'next/headers'
+import { headers, cookies } from 'next/headers'
 import './globals.css'
 import { Analytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
@@ -9,6 +9,24 @@ import { ToastProvider } from '@/lib/context/ToastContext'
 import { ThemeProvider } from '@/lib/context/ThemeContext'
 import { LanguageProvider } from '@/lib/context/LanguageContext'
 import { ProfileProvider } from '@/lib/context/ProfileContext'
+import type { Lang } from '@/lib/i18n/dict'
+import type { Currency } from '@/lib/types'
+
+// KZ-domain default = ru. EN is an opt-in via the language picker.
+// Precedence: fh-lang cookie > Accept-Language header > ru.
+function detectLang(cookieLang: string | undefined, acceptLanguage: string): Lang {
+  if (cookieLang === 'ru' || cookieLang === 'en' || cookieLang === 'kz') return cookieLang
+  const al = acceptLanguage.toLowerCase()
+  if (al.startsWith('kk') || al.startsWith('kz')) return 'kz'
+  if (al.startsWith('en')) return 'en'
+  return 'ru'
+}
+
+function detectCurrency(cookieCurrency: string | undefined, lang: Lang): Currency {
+  const valid: Currency[] = ['KZT', 'RUB', 'USD', 'EUR', 'GBP', 'USDT', 'UAH', 'CNY', 'AED', 'TRY']
+  if (cookieCurrency && valid.includes(cookieCurrency as Currency)) return cookieCurrency as Currency
+  return lang === 'en' ? 'USD' : 'KZT'
+}
 import Toaster from '@/components/ui/Toaster'
 import MotionProvider from '@/components/providers/MotionProvider'
 import DeferredUI from '@/components/providers/DeferredUI'
@@ -96,9 +114,13 @@ const swScript = `(function(){
 })();`
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const nonce = (await headers()).get('x-nonce') ?? ''
+  const h = await headers()
+  const c = await cookies()
+  const nonce = h.get('x-nonce') ?? ''
+  const initialLang = detectLang(c.get('fh-lang')?.value, h.get('accept-language') ?? '')
+  const initialCurrency = detectCurrency(c.get('fh-currency')?.value, initialLang)
   return (
-    <html lang="en" className="" suppressHydrationWarning nonce={nonce}>
+    <html lang={initialLang} className="" suppressHydrationWarning nonce={nonce}>
       <head>
         {/* Anti-FOUC — must run synchronously before any render */}
         <script nonce={nonce} dangerouslySetInnerHTML={{ __html: themeScript }} />
@@ -121,9 +143,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <body className={`${inter.variable} ${instrumentSerif.variable} font-sans antialiased min-h-screen flex flex-col`}>
         <MotionProvider>
         <ThemeProvider>
-          <LanguageProvider>
+          <LanguageProvider initialLang={initialLang}>
           <ToastProvider>
-            <CurrencyProvider>
+            <CurrencyProvider initialCurrency={initialCurrency}>
               <ProfileProvider>
                 {children}
                 <Toaster />

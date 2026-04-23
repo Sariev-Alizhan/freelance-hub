@@ -15,25 +15,31 @@ const CurrencyContext = createContext<CurrencyContextValue>({
   rates: EXCHANGE_RATES,
 })
 
-export function CurrencyProvider({ children }: { children: ReactNode }) {
-  const [currency, setCurrencyState] = useState<Currency>('USD')
+export function CurrencyProvider({ children, initialCurrency = 'KZT' }: { children: ReactNode; initialCurrency?: Currency }) {
+  const [currency, setCurrencyState] = useState<Currency>(initialCurrency)
   const [rates, setRates] = useState<Record<string, number>>(EXCHANGE_RATES)
 
   useEffect(() => {
     try {
       const saved = localStorage.getItem('fh-currency') as Currency | null
-      if (saved) setCurrencyState(saved)
+      if (saved && saved !== initialCurrency) setCurrencyState(saved)
+      else if (!saved) {
+        // Persist server's detection so subsequent SSR sees the cookie.
+        document.cookie = `fh-currency=${initialCurrency}; max-age=${60 * 60 * 24 * 365}; path=/; samesite=lax`
+      }
     } catch {}
 
-    // Fetch live exchange rates (cached 1 h by the route handler)
     fetch('/api/rates')
       .then(r => r.ok ? r.json() : null)
       .then(d => { if (d?.rates) setRates(d.rates) })
       .catch(() => {})
-  }, [])
+  }, [initialCurrency])
 
   const setCurrency = (c: Currency) => {
-    try { localStorage.setItem('fh-currency', c) } catch {}
+    try {
+      localStorage.setItem('fh-currency', c)
+      document.cookie = `fh-currency=${c}; max-age=${60 * 60 * 24 * 365}; path=/; samesite=lax`
+    } catch {}
     setCurrencyState(c)
   }
 

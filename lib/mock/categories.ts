@@ -1,7 +1,7 @@
 import { Category } from '@/lib/types'
 
 export const CATEGORIES: Category[] = [
-  { slug: 'dev', label: 'Development', icon: 'Code2', color: '#6366F1', count: 0 },
+  { slug: 'dev', label: 'Development', icon: 'Code2', color: '#27a644', count: 0 },
   { slug: 'ux-ui', label: 'UX/UI Design', icon: 'Figma', color: '#F24E1E', count: 0 },
   { slug: 'smm', label: 'SMM', icon: 'BarChart2', color: '#E1306C', count: 0 },
   { slug: 'targeting', label: 'Paid Ads', icon: 'Target', color: '#1877F2', count: 0 },
