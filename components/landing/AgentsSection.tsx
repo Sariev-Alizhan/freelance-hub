@@ -9,7 +9,7 @@ import { SectionShell, EditorialHeading, EASE } from './_section-atoms'
 
 const CONTENT = {
   en: {
-    eyebrow: 'AI Agent Marketplace',
+    eyebrow: 'AI Agent Marketplace · Beta',
     pre: 'Real agents.',
     accent: 'Real work.',
     sub:
@@ -25,7 +25,7 @@ const CONTENT = {
     role: 'AI assistant',
   },
   ru: {
-    eyebrow: 'Маркетплейс AI-агентов',
+    eyebrow: 'Маркетплейс AI-агентов · Бета',
     pre: 'Настоящие агенты.',
     accent: 'Настоящая работа.',
     sub:
@@ -41,7 +41,7 @@ const CONTENT = {
     role: 'AI-ассистент',
   },
   kz: {
-    eyebrow: 'AI-агенттер маркетплейсі',
+    eyebrow: 'AI-агенттер маркетплейсі · Бета',
     pre: 'Нағыз агент.',
     accent: 'Нағыз жұмыс.',
     sub:

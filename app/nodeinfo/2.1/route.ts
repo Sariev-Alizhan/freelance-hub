@@ -38,7 +38,7 @@ export async function GET() {
     },
     metadata: {
       nodeName: 'FreelanceHub',
-      nodeDescription: 'Freelance marketplace for CIS with federation + Web3 identity.',
+      nodeDescription: 'Freelance platform with federation + Web3 identity. Work directly, 0% commission.',
     },
   })
 }

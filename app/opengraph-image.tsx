@@ -1,6 +1,6 @@
 import { ImageResponse } from 'next/og'
 
-export const alt = 'FreelanceHub — Freelance marketplace for CIS'
+export const alt = 'FreelanceHub — A freelance platform you can own'
 export const size = { width: 1200, height: 630 }
 export const contentType = 'image/png'
 
@@ -81,7 +81,7 @@ export default function Image() {
             maxWidth: '800px',
           }}
         >
-          Find top freelancers in Kazakhstan & CIS
+          Find top freelancers in Kazakhstan & beyond
         </div>
 
         {/* Subtitle */}

@@ -37,7 +37,7 @@ export default function ReferralWidget({ username }: Props) {
 
   function shareVia(channel: 'telegram' | 'twitter' | 'whatsapp') {
     if (!referralLink) return
-    const text = encodeURIComponent(`Join me on FreelanceHub — the best freelance platform for CIS! ${referralLink}`)
+    const text = encodeURIComponent(`Join me on FreelanceHub — work directly, 0% commission, pay any way you want. ${referralLink}`)
     const urls: Record<string, string> = {
       telegram:  `https://t.me/share/url?url=${encodeURIComponent(referralLink)}&text=${text}`,
       twitter:   `https://twitter.com/intent/tweet?text=${text}`,

@@ -47,40 +47,68 @@ const instrumentSerif = Instrument_Serif({
   display: 'swap',
 })
 
-export const metadata: Metadata = {
-  metadataBase: new URL('https://www.freelance-hub.kz'),
-  title: {
-    default: 'FreelanceHub — A freelance platform you can own',
-    template: '%s | FreelanceHub',
+const META_COPY: Record<Lang, { title: string; desc: string; descShort: string; ogLocale: string; twShort: string }> = {
+  en: {
+    title:     'FreelanceHub — A freelance platform you can own',
+    desc:      'Work directly. No fees, no middlemen. Pay any way you want. Built in Kazakhstan, open to the world.',
+    descShort: 'Work directly. 0% commission. Built in Kazakhstan, open to the world.',
+    ogLocale:  'en_US',
+    twShort:   '0% commission forever. Work directly from any country.',
   },
-  description:
-    'Work directly. No fees, no middlemen. Pay any way you want. Built in Kazakhstan, open to the world.',
-  keywords: ['freelance', 'freelancers', 'remote work', 'Kazakhstan', 'jobs', 'hire', 'SITS', 'Sariyev IT Solutions', 'фриланс'],
-  authors: [{ name: 'Alizhan Sariyev · SITS Sariyev IT Solutions' }],
-  creator: 'SITS Sariyev IT Solutions',
-  robots: { index: true, follow: true, googleBot: { index: true, follow: true } },
-  manifest: '/manifest.json',
-  appleWebApp: { capable: true, statusBarStyle: 'black-translucent', title: 'FreelanceHub' },
-  icons: {
-    icon: [
-      { url: '/favicon.ico',  sizes: 'any' },
-      { url: '/logo-icon.png', type: 'image/png', sizes: '512x512' },
-      { url: '/icon-192.png',  type: 'image/png', sizes: '192x192' },
-    ],
-    apple: '/apple-touch-icon.png',
-    shortcut: '/favicon.ico',
+  ru: {
+    title:     'FreelanceHub — Фриланс-платформа, которой ты владеешь',
+    desc:      'Работай напрямую. Без комиссий, без посредников. Плати как удобно — Kaspi, USDT, перевод. Создано в Казахстане для всего мира.',
+    descShort: 'Работай напрямую. 0% комиссии. Создано в Казахстане для всего мира.',
+    ogLocale:  'ru_RU',
+    twShort:   '0% комиссии навсегда. Работай напрямую из любой страны.',
   },
-  openGraph: {
-    title: 'FreelanceHub — A freelance platform you can own',
-    description: 'Work directly. 0% commission. Built in Kazakhstan, open to the world.',
-    type: 'website', locale: 'en_US', siteName: 'FreelanceHub',
-    url: 'https://www.freelance-hub.kz',
+  kz: {
+    title:     'FreelanceHub — Өзіңізге тиесілі фриланс-платформа',
+    desc:      'Тікелей жұмыс жасаңыз. Комиссия жоқ, делдал жоқ. Қалағаныңызша төлеңіз — Kaspi, USDT, аударым. Қазақстанда жасалған.',
+    descShort: 'Тікелей жұмыс жасаңыз. 0% комиссия. Қазақстанда жасалған.',
+    ogLocale:  'kk_KZ',
+    twShort:   '0% комиссия мәңгілік. Кез келген елден тікелей жұмыс.',
   },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'FreelanceHub — A freelance platform you can own',
-    description: '0% commission forever. Work directly from any country.',
-  },
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  const h = await headers()
+  const c = await cookies()
+  const lang = detectLang(c.get('fh-lang')?.value, h.get('accept-language') ?? '')
+  const m = META_COPY[lang]
+  return {
+    metadataBase: new URL('https://www.freelance-hub.kz'),
+    title: { default: m.title, template: '%s | FreelanceHub' },
+    description: m.desc,
+    keywords: ['freelance', 'freelancers', 'remote work', 'Kazakhstan', 'jobs', 'hire', 'SITS', 'Sariyev IT Solutions', 'фриланс', 'фрилансер', 'фрилансер Казахстан', 'қашықтан жұмыс'],
+    authors: [{ name: 'Alizhan Sariyev · SITS Sariyev IT Solutions' }],
+    creator: 'SITS Sariyev IT Solutions',
+    robots: { index: true, follow: true, googleBot: { index: true, follow: true } },
+    manifest: '/manifest.json',
+    appleWebApp: { capable: true, statusBarStyle: 'black-translucent', title: 'FreelanceHub' },
+    icons: {
+      icon: [
+        { url: '/favicon.ico',  sizes: 'any' },
+        { url: '/logo-icon.png', type: 'image/png', sizes: '512x512' },
+        { url: '/icon-192.png',  type: 'image/png', sizes: '192x192' },
+      ],
+      apple: '/apple-touch-icon.png',
+      shortcut: '/favicon.ico',
+    },
+    openGraph: {
+      title:       m.title,
+      description: m.descShort,
+      type:        'website',
+      locale:      m.ogLocale,
+      siteName:    'FreelanceHub',
+      url:         'https://www.freelance-hub.kz',
+    },
+    twitter: {
+      card:        'summary_large_image',
+      title:       m.title,
+      description: m.twShort,
+    },
+  }
 }
 
 export const viewport: Viewport = {
