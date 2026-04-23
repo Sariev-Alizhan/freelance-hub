@@ -2,6 +2,12 @@ import type { Metadata, Viewport } from 'next'
 import { Inter, Instrument_Serif } from 'next/font/google'
 import { headers, cookies } from 'next/headers'
 import './globals.css'
+
+// Force runtime rendering so generateMetadata() below actually reads the
+// request's cookie + Accept-Language. Without this, Next.js 16 prerenders
+// metadata with build-time defaults (all English) even when the body tree
+// is dynamic via headers() — `generateMetadata` has its own static-check.
+export const dynamic = 'force-dynamic'
 import { Analytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
 import { CurrencyProvider } from '@/lib/context/CurrencyContext'
