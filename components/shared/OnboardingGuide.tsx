@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { usePathname } from 'next/navigation'
 import { X, ArrowRight, ArrowLeft, Sparkles, Search, Bot, MessageCircle, CreditCard } from 'lucide-react'
 import { useLang } from '@/lib/context/LanguageContext'
+import { useUser } from '@/lib/hooks/useUser'
 
 const STORAGE_KEY = 'fh_tour_v2'
 
@@ -28,9 +29,9 @@ const STEPS: Step[] = [
     titleRu: 'Добро пожаловать в FreelanceHub!',
     titleEn: 'Welcome to FreelanceHub!',
     titleKz: 'FreelanceHub-қа қош келдіңіз!',
-    descRu: 'Первая децентрализованная фриланс-платформа СНГ. 0% комиссии навсегда. Работайте напрямую, платите как удобно — Kaspi, USDT, перевод.',
-    descEn: 'The first decentralized freelance platform for CIS. 0% commission forever. Work directly, pay any way you want — Kaspi, USDT, bank transfer.',
-    descKz: 'БДТ-ның бірінші орталықтандырылмаған фриланс-платформасы. 0% комиссия мәңгілік. Тікелей жұмыс жасаңыз, қалағаныңызша төлеңіз.',
+    descRu: 'Фриланс-платформа, которой ты владеешь. 0% комиссии навсегда. Работай напрямую, плати как удобно — Kaspi, USDT, перевод.',
+    descEn: 'A freelance platform you can own. 0% commission forever. Work directly, pay any way you want — Kaspi, USDT, bank transfer.',
+    descKz: 'Өзіңізге тиесілі фриланс-платформа. 0% комиссия мәңгілік. Тікелей жұмыс жасаңыз, қалағаныңызша төлеңіз — Kaspi, USDT, аударым.',
   },
   {
     icon: <Search className="h-6 w-6" />,
@@ -103,11 +104,14 @@ function shouldSkipTour(pathname: string | null): boolean {
 
 export default function OnboardingGuide() {
   const { lang } = useLang()
+  const { user, loading } = useUser()
   const pathname = usePathname()
   const [visible, setVisible] = useState(false)
   const [step, setStep] = useState(0)
 
-  const allowed = !shouldSkipTour(pathname)
+  // Tour is for authenticated users only — anonymous visitors landing on /orders
+  // or /freelancers came to browse, not to sit through 5 onboarding steps.
+  const allowed = !!user && !loading && !shouldSkipTour(pathname)
 
   useEffect(() => {
     if (!allowed) return

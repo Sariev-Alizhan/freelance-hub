@@ -23,7 +23,7 @@ export interface PriceAdvice {
 }
 
 export const CATEGORIES = [
-  { slug: 'dev',         label: 'Development',    icon: Code2,     color: '#6366F1', desc: 'Websites, apps, bots' },
+  { slug: 'dev',         label: 'Development',    icon: Code2,     color: '#27a644', desc: 'Websites, apps, bots' },
   { slug: 'ux-ui',       label: 'UX/UI Design',   icon: PenSquare, color: '#F24E1E', desc: 'Interfaces, prototypes' },
   { slug: 'smm',         label: 'SMM',             icon: BarChart2, color: '#E1306C', desc: 'Social media, content' },
   { slug: 'targeting',   label: 'Targeting',       icon: Target,    color: '#1877F2', desc: 'Ads, leads' },

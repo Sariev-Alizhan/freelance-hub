@@ -5,7 +5,7 @@ import {
 import type { CategorySlug, FreelancerLevel } from '@/lib/supabase/types'
 
 export const CATEGORIES = [
-  { slug: 'dev',         label: 'Development',  icon: Code2,     color: '#6366F1' },
+  { slug: 'dev',         label: 'Development',  icon: Code2,     color: '#27a644' },
   { slug: 'ux-ui',       label: 'UX/UI Design', icon: PenSquare, color: '#F24E1E' },
   { slug: 'smm',         label: 'SMM',           icon: BarChart2, color: '#E1306C' },
   { slug: 'targeting',   label: 'Targeting',     icon: Target,    color: '#1877F2' },

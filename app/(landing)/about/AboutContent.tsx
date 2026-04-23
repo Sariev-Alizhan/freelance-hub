@@ -83,7 +83,7 @@ const CONTENT = {
     founderName: 'Alizhan Sariyev',
     founderBio: 'Developer, entrepreneur, and AI enthusiast from Almaty, Kazakhstan. Building tools that give everyone equal access to digital opportunity — regardless of geography, language, or currency.',
     founderTimeline: [
-      { year: '2026', label: 'FreelanceHub', desc: 'Launched a global decentralized freelance platform built entirely solo. 0% commission, AI-powered, designed for the world.' },
+      { year: '2026', label: 'FreelanceHub', desc: 'Launched a global freelance platform built entirely solo. 0% commission, AI-powered, designed for the world.' },
       { year: '2025', label: 'GrandGames', desc: 'Deputy Director at GrandGames (Almaty). Game development and company growth strategy.' },
       { year: '2024', label: 'RedPadGames — Dustland', desc: 'Frontend Game Developer at RedPadGames (Almaty). Built gameplay UI for Dustland using Unreal Engine 5.' },
       { year: '2023', label: 'SITS & AI Journey', desc: 'Founded Sariyev IT Solutions. Began deep dive into AI: Claude, GPT, prompt engineering, Telegram bots, automation.' },
@@ -173,7 +173,7 @@ const CONTENT = {
     founderName: 'Алижан Сариев',
     founderBio: 'Разработчик, предприниматель и AI-энтузиаст из Алматы, Казахстан. Создаёт инструменты, дающие каждому равный доступ к цифровым возможностям — вне зависимости от географии, языка или валюты.',
     founderTimeline: [
-      { year: '2026', label: 'FreelanceHub', desc: 'Запустил глобальную децентрализованную фриланс-платформу полностью самостоятельно. 0% комиссии, AI-функции, рассчитана на весь мир.' },
+      { year: '2026', label: 'FreelanceHub', desc: 'Запустил глобальную фриланс-платформу полностью самостоятельно. 0% комиссии, AI-функции, рассчитана на весь мир.' },
       { year: '2025', label: 'GrandGames', desc: 'Заместитель директора в GrandGames (Алматы). Разработка игр и стратегия развития компании.' },
       { year: '2024', label: 'RedPadGames — Dustland', desc: 'Frontend Game Developer в RedPadGames (Алматы). Разработка игрового UI для Dustland на Unreal Engine 5.' },
       { year: '2023', label: 'SITS & путь в AI', desc: 'Основал Sariyev IT Solutions. Начал глубокое погружение в AI: Claude, GPT, промпт-инжиниринг, Telegram-боты, автоматизация.' },

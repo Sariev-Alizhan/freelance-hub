@@ -174,15 +174,43 @@ export default function InstallPrompt() {
   useEffect(() => {
     if (!allowed) return
 
+    // Show banner only after the user has scrolled past first viewport AND
+    // spent meaningful time on the page (30s). This stops the install card from
+    // overlapping the hero CTA on first impression — when nobody has earned the
+    // right to ask "want to install our app?".
+    let scrolledEnough = false
+    let timerElapsed = false
+    let shown = false
+    let timerId: ReturnType<typeof setTimeout> | null = null
+
+    const tryShow = () => {
+      if (scrolledEnough && timerElapsed && !shown) {
+        shown = true
+        setVisible(true)
+      }
+    }
+
+    const startTimer = () => {
+      if (timerId != null) return
+      timerId = setTimeout(() => { timerElapsed = true; tryShow() }, 30_000)
+    }
+
+    const onScroll = () => {
+      if (window.scrollY > window.innerHeight * 0.5) {
+        scrolledEnough = true
+        window.removeEventListener('scroll', onScroll)
+        tryShow()
+      }
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+
     // Android / Chrome / Edge: native install prompt
     const handler = (e: Event) => {
-      // Skip preventDefault when we won't show our banner — otherwise Chrome
-      // logs "Banner not shown: preventDefault called" for no reason.
       if (isDismissed()) return
       e.preventDefault()
       setPwaEvent(e as BeforeInstallPromptEvent)
       setMode('pwa')
-      setTimeout(() => setVisible(true), 12_000)
+      startTimer()
     }
     window.addEventListener('beforeinstallprompt', handler)
 
@@ -190,10 +218,14 @@ export default function InstallPrompt() {
     const detected = detectMode()
     if (detected) {
       setMode(detected)
-      setTimeout(() => setVisible(true), 15_000)
+      startTimer()
     }
 
-    return () => window.removeEventListener('beforeinstallprompt', handler)
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handler)
+      window.removeEventListener('scroll', onScroll)
+      if (timerId != null) clearTimeout(timerId)
+    }
   }, [allowed])
 
 
