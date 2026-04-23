@@ -41,7 +41,7 @@ const STYLES: Record<OAuthProvider, { bg: string; color?: string; border?: strin
   google:  { bg: '#ffffff', color: '#1f1f1f', border: '1px solid #dadce0' },
   github:  { bg: '#24292e' },
   apple:   { bg: '#000000' },
-  discord: { bg: '#5865F2' },
+  discord: { bg: '#000000' },
 }
 
 interface Props {
