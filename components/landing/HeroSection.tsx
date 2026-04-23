@@ -1,11 +1,14 @@
 'use client'
 import Link from 'next/link'
-import { motion } from 'framer-motion'
 import { useLang } from '@/lib/context/LanguageContext'
 import { SECONDARY_LINK_STYLE } from './_section-atoms'
 
-const EASE_OUT_EXPO: [number, number, number, number] = [0.16, 1, 0.3, 1]
-const EASE_OUT_SOFT: [number, number, number, number] = [0.22, 1, 0.36, 1]
+// Hero used to pull framer-motion (~80KB) into the LCP critical path for 6
+// entry-fade animations. Ripped out in favour of inlined CSS keyframes —
+// framer-motion now only loads after hero paints, as part of the below-fold
+// dynamic chunks. Easings preserved from EASE_OUT_EXPO / EASE_OUT_SOFT.
+const EASE_EXPO = 'cubic-bezier(0.16,1,0.3,1)'
+const EASE_SOFT = 'cubic-bezier(0.22,1,0.36,1)'
 
 // Rolling ticker items — regions + payment methods + skill verticals
 const TICKER = [
@@ -42,6 +45,13 @@ export default function HeroSection() {
         @keyframes fh-pulse-dot {
           0%,100% { opacity: 1; transform: scale(1); }
           50%      { opacity: 0.35; transform: scale(0.7); }
+        }
+        /* Entry animations — replace framer-motion to keep it out of LCP path. */
+        @keyframes fh-in-top { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fh-in-mid { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fh-in-big { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: translateY(0); } }
+        @media (prefers-reduced-motion: reduce) {
+          .fh-anim-top, .fh-anim-mid, .fh-anim-big { animation: none !important; opacity: 1 !important; transform: none !important; }
         }
         /* Grain: SVG noise with monochrome channel. Opacity + blend mode
            flip between modes so it stays visible but not harsh on light. */
@@ -180,11 +190,10 @@ export default function HeroSection() {
           }}
         >
           {/* Top meta row: live badge + locale/geo micro-label */}
-          <motion.div
-            initial={{ opacity: 0, y: -6 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.55, ease: EASE_OUT_EXPO }}
+          <div
+            className="fh-anim-top"
             style={{
+              animation: `fh-in-top 0.55s ${EASE_EXPO} both`,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
@@ -210,16 +219,15 @@ export default function HeroSection() {
               <span style={{ color: 'var(--fh-t1)' }}>{h.early}</span>
             </span>
             <span style={{ color: 'var(--fh-t4)' }}>{h.badge1}</span>
-          </motion.div>
+          </div>
 
           {/* Headline block */}
           <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <motion.h1
+            <h1
               lang={langAttr}
-              initial={{ opacity: 0, y: 28 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.75, ease: EASE_OUT_EXPO }}
+              className="fh-anim-big"
               style={{
+                animation: `fh-in-big 0.75s ${EASE_EXPO} both`,
                 fontSize: 'clamp(40px, 11vw, 152px)',
                 lineHeight: 0.9,
                 hyphens: 'auto',
@@ -232,13 +240,12 @@ export default function HeroSection() {
               }}
             >
               {h.h1a}
-            </motion.h1>
+            </h1>
 
-            <motion.div
-              initial={{ opacity: 0, y: 28 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.75, delay: 0.1, ease: EASE_OUT_EXPO }}
+            <div
+              className="fh-anim-big"
               style={{
+                animation: `fh-in-big 0.75s ${EASE_EXPO} 0.1s both`,
                 display: 'flex',
                 alignItems: 'baseline',
                 gap: 'clamp(12px, 2vw, 28px)',
@@ -274,7 +281,7 @@ export default function HeroSection() {
                   borderRadius: 2,
                 }}
               />
-            </motion.div>
+            </div>
           </div>
 
           {/* Sub + CTA + stats — asymmetric two-column */}
@@ -293,11 +300,10 @@ export default function HeroSection() {
                 gap: 'clamp(24px, 3vh, 32px)',
               }}
             >
-              <motion.p
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.24, ease: EASE_OUT_SOFT }}
+              <p
+                className="fh-anim-mid"
                 style={{
+                  animation: `fh-in-mid 0.6s ${EASE_SOFT} 0.24s both`,
                   maxWidth: 560,
                   fontSize: 'clamp(16px, 1.6vw, 19px)',
                   lineHeight: 1.55,
@@ -307,13 +313,14 @@ export default function HeroSection() {
                 }}
               >
                 {h.sub}
-              </motion.p>
+              </p>
 
-              <motion.div
-                initial={{ opacity: 0, y: 14 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.55, delay: 0.32, ease: EASE_OUT_SOFT }}
-                style={{ display: 'flex', flexWrap: 'wrap', gap: 24, alignItems: 'center' }}
+              <div
+                className="fh-anim-mid"
+                style={{
+                  animation: `fh-in-mid 0.55s ${EASE_SOFT} 0.32s both`,
+                  display: 'flex', flexWrap: 'wrap', gap: 24, alignItems: 'center',
+                }}
               >
                 <Link
                   href="/auth/register"
@@ -337,15 +344,14 @@ export default function HeroSection() {
                 <Link href="/orders" style={SECONDARY_LINK_STYLE}>
                   {h.cta2}
                 </Link>
-              </motion.div>
+              </div>
             </div>
 
             {/* Specimen-label metadata strip — replaces stats grid */}
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.42, ease: EASE_OUT_SOFT }}
+            <div
+              className="fh-anim-mid"
               style={{
+                animation: `fh-in-mid 0.6s ${EASE_SOFT} 0.42s both`,
                 display: 'flex',
                 flexWrap: 'wrap',
                 gap: 'clamp(20px, 3vw, 40px)',
@@ -369,7 +375,7 @@ export default function HeroSection() {
               <span>Federated identity</span>
               <span style={{ color: 'var(--fh-t4)' }}>—</span>
               <span>Kaspi · USDT · bank</span>
-            </motion.div>
+            </div>
           </div>
         </div>
 
