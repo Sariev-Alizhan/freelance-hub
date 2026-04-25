@@ -1,16 +1,3 @@
-export interface NewsItem {
-  id: string
-  title: string
-  url: string | null
-  author: string
-  points: number
-  num_comments: number
-  created_at: string
-  source: string
-  source_label: string
-  hn_url: string
-}
-
 export interface UserPost {
   id: string
   content: string

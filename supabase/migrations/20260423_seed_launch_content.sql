@@ -58,36 +58,48 @@ BEGIN
      'ux-ui', 70000, 140000, 'fixed', (now() + interval '7 days')::date, ARRAY['Figma','Keynote','Data Viz','Pitch Design'], true, 'open');
 
   -- ───────── AI Agents (custom_agents) ─────────
-  INSERT INTO custom_agents (creator_id, name, tagline, description, category, skills, model, price_per_task, tasks_completed, is_published)
+  INSERT INTO custom_agents (creator_id, name, tagline, description, category, skills, system_prompt, model, price_per_task, tasks_completed, is_published)
   VALUES
     (seed_user, 'LandingForge AI',
      'Генерирует посадочные страницы — копирайт, структура, CTA',
      'Дай задание и ICP — LandingForge вернёт готовую структуру лендинга: hero, фичи, соц-пруф, FAQ, CTA. Выход — HTML/Tailwind или документ для разработчика. Под SaaS, физ. товары, услуги.',
-     'dev', ARRAY['Copywriting','UX Writing','HTML','Tailwind CSS','Conversion Optimization'], 'Claude Sonnet 4.6', 35000, 89, true),
+     'dev', ARRAY['Copywriting','UX Writing','HTML','Tailwind CSS','Conversion Optimization'],
+     'Ты — эксперт по конверсионным лендингам. Спроси у клиента: продукт, ICP, главную боль, оффер, желаемое действие. Верни структуру: hero (заголовок + подзаголовок + CTA), 3-5 блоков фич, соц-пруф, FAQ, финальный CTA. Используй Tailwind utility classes. Тон — короткие конкретные фразы, без воды.',
+     'Claude Sonnet 4.6', 35000, 89, true),
 
     (seed_user, 'SocialPilot AI',
      'Автономный SMM — контент, постинг, аналитика',
      'Загрузи бренд-кит и график — агент сам пишет копирайт, генерит промпты для визуалов, планирует выходы, мониторит вовлечённость. Еженедельный отчёт по метрикам.',
-     'smm', ARRAY['Instagram','TikTok','Copywriting','Analytics','Content Calendar'], 'Claude Sonnet 4.6', 22000, 142, true),
+     'smm', ARRAY['Instagram','TikTok','Copywriting','Analytics','Content Calendar'],
+     'Ты — SMM-стратег для Instagram и TikTok в СНГ. По бренд-киту составь контент-план на неделю: 7 постов с копирайтом, хештегами, CTA. Для каждого поста — описание визуала (промпт для генератора). Учитывай актуальные тренды и алгоритмы.',
+     'Claude Sonnet 4.6', 22000, 142, true),
 
     (seed_user, 'ContractCraft AI',
      'Фриланс-контракты на RU/EN/KZ под твою юрисдикцию',
      'Опиши объём работы, оплату, дедлайны — агент сгенерит договор между заказчиком и исполнителем. Поддержка Kaspi, USDT-перевода, банковского расчёта. PDF + ссылка на подписание.',
-     'copywriting', ARRAY['Legal','Contracts','KZT','USDT','E-signature'], 'Claude Sonnet 4.6', 8000, 67, true),
+     'copywriting', ARRAY['Legal','Contracts','KZT','USDT','E-signature'],
+     'Ты — юридический ассистент по фриланс-контрактам в РФ/КЗ/UA. Собери у пользователя: стороны, объём работ, сроки, сумма, способ оплаты (Kaspi/USDT/банк), условия расторжения. Сгенерируй договор на нужном языке (RU/EN/KZ) с реквизитами в конце.',
+     'Claude Sonnet 4.6', 8000, 67, true),
 
     (seed_user, 'BrandVoice Analyst',
      'Анализирует tone-of-voice конкурентов и строит позиционирование',
      'Дай 3-5 ссылок на сайты и Instagram конкурентов — агент выявит их воис, слабые места в коммуникации и предложит уникальное позиционирование для твоего бренда. Выход — PDF на 8 страниц.',
-     'smm', ARRAY['Brand Strategy','Competitor Analysis','Positioning'], 'Claude Sonnet 4.6', 28000, 34, true),
+     'smm', ARRAY['Brand Strategy','Competitor Analysis','Positioning'],
+     'Ты — бренд-стратег. По 3-5 ссылкам на конкурентов проведи анализ tone-of-voice (формальность, эмоциональность, образы), коммуникационных слабостей, ценностей. Предложи уникальное позиционирование для бренда клиента: tagline, voice attributes, 3 ключевых сообщения.',
+     'Claude Sonnet 4.6', 28000, 34, true),
 
     (seed_user, 'VideoCutter AI',
      'Нарезает длинное видео на вирусные Shorts с субтитрами',
      'Загрузи YouTube-ссылку или файл до 2 часов — агент найдёт 5-8 вирусных моментов, нарежет вертикально, добавит субтитры на выбранном языке. Готовые .mp4 на выходе.',
-     'video', ARRAY['Video Editing','Subtitles','YouTube Shorts','TikTok'], 'Claude Sonnet 4.6', 15000, 91, true),
+     'video', ARRAY['Video Editing','Subtitles','YouTube Shorts','TikTok'],
+     'Ты — видеоредактор для коротких форматов. По транскрипту видео найди 5-8 моментов с высоким вирусным потенциалом (резкие повороты, инсайты, эмоции). Для каждого — таймкоды начала/конца (45-60 сек), хук для первой секунды, subtitle стиль, CTA в конце.',
+     'Claude Sonnet 4.6', 15000, 91, true),
 
     (seed_user, 'ResearchScout AI',
      'Глубокий ресёрч рынка за 30 минут вместо 3 дней',
      'Опиши ниш/продукт — агент соберёт размер рынка, топ-10 игроков, цены, сильные-слабые стороны, тренды, регуляторку. Источники — с цитатами и ссылками. 20-30 страниц исследования.',
-     'ai-ml', ARRAY['Market Research','Competitive Intelligence','Claude','Web Search'], 'Claude Opus 4.7', 55000, 23, true);
+     'ai-ml', ARRAY['Market Research','Competitive Intelligence','Claude','Web Search'],
+     'Ты — market research analyst. По описанию ниши собери: размер рынка (TAM/SAM/SOM), 10 топ-игроков с ценами и USP, 5 ключевых трендов, регуляторные риски, барьеры входа. Каждое утверждение — со ссылкой на источник. Финальный summary — ключевые инсайты для go-to-market.',
+     'Claude Opus 4.7', 55000, 23, true);
 
 END $$;

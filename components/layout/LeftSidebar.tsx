@@ -58,11 +58,11 @@ export default function LeftSidebar() {
   }, [])
 
   const mainNav = [
-    { href: '/feed',         icon: Home,         label: 'Home'        },
+    { href: '/feed',         icon: Home,         label: t.nav.home    },
     { href: '/orders',      icon: Briefcase,    label: t.nav.orders  },
     { href: '/freelancers', icon: Users,         label: t.nav.freelancers },
     { href: '/messages',    icon: MessageSquare, label: t.auth.messages },
-    { href: '/ai-search',   icon: Sparkles,      label: 'AI Search'  },
+    { href: '/ai-search',   icon: Sparkles,      label: t.nav.aiSearch },
   ]
 
   const moreNav = [
@@ -229,7 +229,7 @@ export default function LeftSidebar() {
               <Plus style={{ width: 11, height: 11, color: '#fff' }} />
             </span>
           </span>
-          <span style={labelStyle}>Post a Job</span>
+          <span style={labelStyle}>{t.nav.postJob}</span>
         </Link>
       </div>
 

@@ -31,7 +31,7 @@ export default function AppFooter() {
         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
           <span style={{ width: 5, height: 5, borderRadius: '50%', background: '#27a644', display: 'block', flexShrink: 0 }} />
           <span style={{ fontSize: 12, color: 'var(--fh-t4)' }}>
-            © 2025{' '}
+            © 2026{' '}
             <span style={{ color: 'var(--fh-t3)', fontWeight: 600 }}>FreelanceHub</span>
             {' '}· SITS
           </span>

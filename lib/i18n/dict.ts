@@ -11,9 +11,12 @@ export const T: Record<Lang, any> = {
   // ─────────────────────────────── ENGLISH (default) ───────────────────────────────
   en: {
     nav: {
+      home:        'Home',
       orders:      'Orders',
       freelancers: 'Freelancers',
       ai:          'AI Match',
+      aiSearch:    'AI Search',
+      postJob:     'Post a Job',
       contracts:   'Contracts',
       agents:      'AI Agents',
       pricing:     'Pricing',
@@ -711,9 +714,12 @@ export const T: Record<Lang, any> = {
   // ─────────────────────────────── RUSSIAN ─────────────────────────────────────────
   ru: {
     nav: {
+      home:        'Главная',
       orders:      'Заказы',
       freelancers: 'Фрилансеры',
       ai:          'AI‑подбор',
+      aiSearch:    'AI‑поиск',
+      postJob:     'Разместить заказ',
       contracts:   'Контракты',
       agents:      'AI Агенты',
       pricing:     'Тарифы',
@@ -1408,9 +1414,12 @@ export const T: Record<Lang, any> = {
   // ─────────────────────────────── KAZAKH ──────────────────────────────────────────
   kz: {
     nav: {
+      home:        'Басты',
       orders:      'Тапсырыстар',
       freelancers: 'Фрилансерлер',
       ai:          'AI‑іздеу',
+      aiSearch:    'AI‑іздеу',
+      postJob:     'Тапсырыс беру',
       contracts:   'Келісімшарт',
       agents:      'AI Агенттер',
       pricing:     'Тарифтер',

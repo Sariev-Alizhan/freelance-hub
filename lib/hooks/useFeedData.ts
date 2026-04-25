@@ -3,10 +3,9 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { CURRENT_RELEASE } from '@/lib/company-report'
 import { FEED_RELEASES, EDITOR_POSTS, type FeedRelease, type EditorPost } from '@/lib/feed-content'
 import { useToastHelpers } from '@/lib/context/ToastContext'
-import type { NewsItem, UserPost, Reactions } from '@/components/feed/types'
+import type { UserPost, Reactions } from '@/components/feed/types'
 
 export type FeedItem =
-  | { kind: 'news';    data: NewsItem }
   | { kind: 'post';    data: UserPost }
   | { kind: 'update' }
   | { kind: 'release'; data: FeedRelease }
@@ -27,7 +26,6 @@ export function useFeedData({
 }) {
   const { success: toastOk, error: toastErr, info: toastInfo } = useToastHelpers()
 
-  const [news,       setNews]       = useState<NewsItem[]>([])
   const [userPosts,  setUserPosts]  = useState<UserPost[]>([])
   const [reactions,  setReactions]  = useState<Record<string, Reactions>>({})
   const [loading,    setLoading]    = useState(true)
@@ -36,18 +34,13 @@ export function useFeedData({
   const load = useCallback(async (isRefresh = false) => {
     if (isRefresh) setRefreshing(true); else setLoading(true)
     try {
-      const [newsRes, postsRes] = await Promise.all([
-        fetch('/api/ai/news'),
-        fetch('/api/feed/posts?limit=60'),
-      ])
-      const [newsData, postsData] = await Promise.all([newsRes.json(), postsRes.json()])
-      const items: NewsItem[] = newsData.items ?? []
+      const postsRes = await fetch('/api/feed/posts?limit=60')
+      const postsData = await postsRes.json()
       const posts: UserPost[] = postsData.posts ?? []
-      setNews(items)
       setUserPosts(posts)
 
       const updateId = `update-v${CURRENT_RELEASE.version}`
-      const ids = [updateId, ...items.map(i => i.id), ...posts.map(p => p.id)]
+      const ids = [updateId, ...posts.map(p => p.id)]
       if (ids.length) {
         const rRes = await fetch(`/api/feed/react?item_ids=${ids.join(',')}`)
         const rData: Record<string, Reactions> = await rRes.json()
@@ -103,10 +96,6 @@ export function useFeedData({
   const feedItems: FeedItem[] = useMemo(() => {
     const q = query.toLowerCase()
 
-    const filteredNews = q
-      ? news.filter(n => n.title.toLowerCase().includes(q) || n.author.toLowerCase().includes(q) || n.source_label.toLowerCase().includes(q))
-      : news
-
     const filteredPosts = q
       ? userPosts.filter(p => p.content.toLowerCase().includes(q) || p.tags?.some(t => t.toLowerCase().includes(q)) || (p.profiles?.full_name ?? '').toLowerCase().includes(q))
       : userPosts
@@ -125,17 +114,12 @@ export function useFeedData({
     ]
 
     let pi = 0
-    let ni = 0
     let ci = 0
     let pos = 0
 
-    while (ni < filteredNews.length || pi < filteredPosts.length || ci < curated.length) {
+    while (pi < filteredPosts.length || ci < curated.length) {
       if (pos > 0 && pos % 4 === 0 && ci < curated.length) {
         items.push(curated[ci++])
-      } else if (pos % 6 === 0 && pi < filteredPosts.length) {
-        items.push({ kind: 'post', data: filteredPosts[pi++] })
-      } else if (ni < filteredNews.length) {
-        items.push({ kind: 'news', data: filteredNews[ni++] })
       } else if (pi < filteredPosts.length) {
         items.push({ kind: 'post', data: filteredPosts[pi++] })
       } else if (ci < curated.length) {
@@ -145,7 +129,7 @@ export function useFeedData({
     }
 
     return items
-  }, [news, userPosts, query])
+  }, [userPosts, query])
 
   return {
     loading, refreshing, load,

@@ -1,7 +1,7 @@
 'use client'
 import { useState } from 'react'
 import Link from 'next/link'
-import { Briefcase, Code2 } from 'lucide-react'
+import { Briefcase, Code2, ArrowRight, Loader2 } from 'lucide-react'
 import Logo from '@/components/ui/Logo'
 import { createClient } from '@/lib/supabase/client'
 import { useLang } from '@/lib/context/LanguageContext'
@@ -14,10 +14,13 @@ type Provider = OAuthProvider
 export default function RegisterPage() {
   const { t } = useLang()
   const tr = t.registerPage
+  const tl = t.loginPage
   const [loading, setLoading] = useState<string | null>(null)
   const [role, setRole] = useState<UserRole>('client')
   const [authError, setAuthError] = useState<string | null>(null)
   const [ageConfirmed, setAgeConfirmed] = useState(false)
+  const [email, setEmail] = useState('')
+  const [sent, setSent] = useState(false)
   const supabase = createClient()
 
   async function signUp(provider: Provider) {
@@ -38,6 +41,29 @@ export default function RegisterPage() {
     if (error) {
       setAuthError(error.message)
       setLoading(null)
+    }
+  }
+
+  async function signUpWithEmail(e: React.FormEvent) {
+    e.preventDefault()
+    if (!email.trim()) return
+    if (!ageConfirmed) {
+      setAuthError(tr.mustBe18)
+      return
+    }
+    setAuthError(null)
+    setLoading('email')
+    track('signup_attempt', { provider: 'email', role })
+    const { error } = await supabase.auth.signInWithOtp({
+      email: email.trim(),
+      options: { emailRedirectTo: `${window.location.origin}/auth/callback?role=${role}` },
+    })
+    setLoading(null)
+    if (error) {
+      setAuthError(error.message)
+    } else {
+      setSent(true)
+      track('auth_otp_sent', { email_domain: email.trim().split('@')[1] })
     }
   }
 
@@ -293,6 +319,86 @@ export default function RegisterPage() {
               {tr.age18Suffix}
             </span>
           </label>
+
+          {/* Email magic-link */}
+          {sent ? (
+            <div
+              style={{
+                padding: '14px 16px',
+                borderRadius: 0,
+                textAlign: 'center',
+                background: 'rgba(39,166,68,0.08)',
+                border: '1px solid rgba(39,166,68,0.3)',
+              }}
+            >
+              <p style={{ fontSize: 14, fontWeight: 590, color: '#27a644', margin: '0 0 4px', letterSpacing: '-0.01em' }}>
+                {tl.checkEmail}
+              </p>
+              <p style={{ fontSize: 12, color: 'var(--fh-t4)', margin: 0 }}>
+                {tl.linkSentTo} <strong style={{ color: 'var(--fh-t2)' }}>{email}</strong>
+              </p>
+            </div>
+          ) : (
+            <form
+              onSubmit={signUpWithEmail}
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 8,
+                opacity: ageConfirmed ? 1 : 0.5,
+                pointerEvents: ageConfirmed ? 'auto' : 'none',
+              }}
+            >
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="your@email.com"
+                required
+                style={{
+                  padding: '13px 14px',
+                  borderRadius: 0,
+                  background: 'var(--fh-surface-2)',
+                  border: '1px solid var(--fh-border)',
+                  color: 'var(--fh-t1)',
+                  fontSize: 14,
+                  outline: 'none',
+                  width: '100%',
+                  boxSizing: 'border-box',
+                  minHeight: 44,
+                }}
+              />
+              <button
+                type="submit"
+                disabled={loading !== null || !email.trim()}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 8,
+                  padding: '13px 18px',
+                  borderRadius: 0,
+                  background: 'var(--fh-t1)',
+                  color: 'var(--fh-canvas)',
+                  border: '1px solid var(--fh-t1)',
+                  fontSize: 14,
+                  fontWeight: 590,
+                  letterSpacing: '-0.01em',
+                  minHeight: 44,
+                  cursor: loading !== null || !email.trim() ? 'not-allowed' : 'pointer',
+                  opacity: loading !== null || !email.trim() ? 0.5 : 1,
+                  width: '100%',
+                }}
+              >
+                {loading === 'email' ? (
+                  <Loader2 style={{ width: 16, height: 16, animation: 'spin 1s linear infinite' }} />
+                ) : (
+                  <ArrowRight style={{ width: 15, height: 15 }} />
+                )}
+                {tl.sendEmailLink}
+              </button>
+            </form>
+          )}
 
           {/* Divider */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>

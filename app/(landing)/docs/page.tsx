@@ -85,13 +85,11 @@ const SECTIONS = [
   {
     icon: Star,
     color: '#f97316',
-    title: 'Premium & Modules',
+    title: 'Premium',
     id: 'premium',
     items: [
       { title: 'Premium benefits', desc: 'Unlimited order responses (free: 5/month), profile promoted in search, verified badge priority, advanced analytics dashboard.' },
-      { title: 'AI Modules', desc: '/modules — subscribe to domain-specific AI: Legal ($19/mo), RP Game Dev ($29), SMM ($19), Mobile Dev ($39), E-commerce ($29), Web3 ($49).' },
-      { title: 'Pro Studio bundle', desc: 'All 6 AI modules + priority AI + team sharing (3 users) for $89/month. Save $94/mo vs individual.' },
-      { title: 'RP Game Dev module', desc: 'AI trained on PAWN, Lua, FiveM, Unity C#. Write RP game code, debug .pwn files, optimize MySQL schemas for SA:MP/CRMP/GrandMobile.' },
+      { title: 'Pricing', desc: 'Monthly / quarterly / annual plans on /premium — pay via Kaspi card transfer or LemonSqueezy.' },
     ],
   },
   {

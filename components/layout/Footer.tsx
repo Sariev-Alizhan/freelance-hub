@@ -95,7 +95,7 @@ export default function Footer() {
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
             <span className="pulse-green" style={{ display: 'block', width: 5, height: 5, borderRadius: '50%', background: '#27a644', flexShrink: 0 }} />
-            <span style={{ fontSize: 11, color: 'var(--fh-t4)' }}>© 2025 FreelanceHub · SITS</span>
+            <span style={{ fontSize: 11, color: 'var(--fh-t4)' }}>© 2026 FreelanceHub · SITS</span>
           </div>
           <span style={{ fontSize: 11, color: 'var(--fh-t4)' }}>{t.footer.made}</span>
         </div>
@@ -162,7 +162,7 @@ export default function Footer() {
           <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
             <span className="pulse-green" style={{ display: 'block', width: 5, height: 5, borderRadius: '50%', background: '#27a644', flexShrink: 0 }} />
             <span style={{ fontSize: 11, color: 'var(--fh-t4)' }}>
-              © 2025 FreelanceHub by{' '}
+              © 2026 FreelanceHub by{' '}
               <a href="https://www.instagram.com/sariyev.it.solutions/?hl=ru" target="_blank" rel="noopener noreferrer" style={{ color: '#27a644', textDecoration: 'none' }}>SITS</a>
             </span>
           </div>

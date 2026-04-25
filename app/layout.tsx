@@ -84,7 +84,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const m = META_COPY[lang]
   return {
     metadataBase: new URL('https://www.freelance-hub.kz'),
-    title: { default: m.title, template: '%s | FreelanceHub' },
+    title: { default: m.title, template: '%s' },
     description: m.desc,
     keywords: ['freelance', 'freelancers', 'remote work', 'Kazakhstan', 'jobs', 'hire', 'SITS', 'Sariyev IT Solutions', 'фриланс', 'фрилансер', 'фрилансер Казахстан', 'қашықтан жұмыс'],
     authors: [{ name: 'Alizhan Sariyev · SITS Sariyev IT Solutions' }],
