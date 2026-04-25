@@ -1,11 +1,11 @@
 import type { Metadata } from 'next'
-import { redirect } from 'next/navigation'
+import { notFound } from 'next/navigation'
 import Script from 'next/script'
 import { getSessionUser } from '@/lib/auth/getSessionUser'
 import NexusClient from './NexusClient'
 
 export const metadata: Metadata = {
-  title: 'NEXUS Mission Control — FreelanceHub',
+  title: 'FreelanceHub',
   robots: { index: false, follow: false },
 }
 
@@ -13,7 +13,7 @@ export default async function NexusPage() {
   const user = await getSessionUser()
   const adminEmail = process.env.ADMIN_EMAIL
   if (!user || (adminEmail && user.email !== adminEmail)) {
-    redirect('/auth/login')
+    notFound()
   }
 
   return (
