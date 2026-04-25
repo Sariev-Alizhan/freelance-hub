@@ -290,7 +290,9 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
   }
   const totalActivity = (postRows ?? []).length
 
-  const category = p.category ? CATEGORIES.find(c => c.slug === p.category) : null
+  const tc = t.createOrder as unknown as Record<string, string>
+  const catRaw = p.category ? CATEGORIES.find(c => c.slug === p.category) : null
+  const category = catRaw ? { ...catRaw, label: catRaw.labelKey && tc[catRaw.labelKey] ? tc[catRaw.labelKey] : catRaw.label } : null
   const profileUrl = `${SITE_URL}/u/${username}`
 
   // Completion % for own profile only — drives avatar ring

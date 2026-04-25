@@ -8,11 +8,11 @@ export const runtime = 'nodejs'
 export const revalidate = 300 // 5 min ISR — fresh enough for a public landing feed
 
 export const metadata: Metadata = {
-  title: 'Explore — FreelanceHub',
-  description: 'Короткие видео, услуги и посты от фрилансеров СНГ. Найдите специалиста или закажите работу за минуты.',
+  title: 'Обзор — FreelanceHub',
+  description: 'Услуги, посты и заказы от фрилансеров СНГ. Найдите специалиста или закажите работу за минуты.',
   openGraph: {
-    title: 'FreelanceHub Explore',
-    description: 'Трендовые видео, услуги и посты от фрилансеров СНГ',
+    title: 'FreelanceHub — Обзор',
+    description: 'Услуги, посты и свежие заказы от фрилансеров СНГ',
     type: 'website',
   },
 }
@@ -177,8 +177,8 @@ export default async function ExplorePage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-10">
           {orders.map(o => {
             const budget = o.budget_min && o.budget_max
-              ? `${o.budget_min.toLocaleString()}–${o.budget_max.toLocaleString()} ₸`
-              : o.budget_min ? `от ${o.budget_min.toLocaleString()} ₸` : null
+              ? `${o.budget_min.toLocaleString('ru-RU')}–${o.budget_max.toLocaleString('ru-RU')} ₸`
+              : o.budget_min ? `от ${o.budget_min.toLocaleString('ru-RU')} ₸` : null
             return (
               <Link
                 key={o.id}

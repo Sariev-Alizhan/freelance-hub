@@ -103,6 +103,8 @@ export interface Order {
 export interface Category {
   slug: CategorySlug
   label: string
+  /** i18n key in `t.createOrder` for the localized label. Falls back to `label`. */
+  labelKey?: string
   icon: string
   color: string
   count: number

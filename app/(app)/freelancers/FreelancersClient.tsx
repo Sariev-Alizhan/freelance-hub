@@ -7,9 +7,9 @@ import {
 } from 'lucide-react'
 import FreelancerCard from '@/components/freelancers/FreelancerCard'
 import FeaturedRow from '@/components/freelancers/FeaturedRow'
-import { CATEGORIES } from '@/lib/mock'
 import { Freelancer, CategorySlug, AvailabilityStatus } from '@/lib/types'
 import { useLang } from '@/lib/context/LanguageContext'
+import { localizedCategories } from '@/lib/i18n/category'
 
 // CATEGORIES.icon references Figma (not in lucide-react) — alias to Palette.
 const CATEGORY_ICONS: Record<string, React.ComponentType<{ className?: string; style?: React.CSSProperties }>> = {
@@ -35,6 +35,8 @@ interface Props {
 export default function FreelancersClient({ realFreelancers = [], defaultCategory }: Props) {
   const { t } = useLang()
   const p = t.pages.freelancers
+  const tc = t.createOrder as unknown as Record<string, string>
+  const CATEGORIES = useMemo(() => localizedCategories(tc), [tc])
   const router   = useRouter()
   const pathname = usePathname()
   const sp       = useSearchParams()

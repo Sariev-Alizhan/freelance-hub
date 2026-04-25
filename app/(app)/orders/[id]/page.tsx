@@ -117,7 +117,8 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
   ])
   if (!order) notFound()
 
-  const category = CATEGORIES.find((c) => c.slug === order.category)
+  const catRaw = CATEGORIES.find((c) => c.slug === order.category)
+  const category = catRaw ? { ...catRaw, label: catRaw.labelKey && tc[catRaw.labelKey] ? tc[catRaw.labelKey] : catRaw.label } : null
   const isOwner  = !!user && user.id === order.client.id
   const deadlineLabel = localizeDeadline(order.deadline, tc, order.deadline ?? '')
   const clientOrdersWord = plural(lang, order.client.ordersPosted, {

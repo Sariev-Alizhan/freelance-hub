@@ -17,7 +17,8 @@ export default function OrderCard({ order: o, currentUserId }: Props) {
   const { t } = useLang()
   const to = t.ordersPage
   const tc = t.createOrder as unknown as Record<string, string>
-  const category = CATEGORIES.find((c) => c.slug === o.category)
+  const cat = CATEGORIES.find((c) => c.slug === o.category)
+  const category = cat ? { ...cat, label: cat.labelKey && tc[cat.labelKey] ? tc[cat.labelKey] : cat.label } : null
   const [showPromote, setShowPromote] = useState(false)
   const isOwner = !!currentUserId && currentUserId === o.client.id
   const deadlineLabel = localizeDeadline(o.deadline, tc, o.deadline ?? '')

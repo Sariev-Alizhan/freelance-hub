@@ -5,9 +5,9 @@ import { Search, Zap, Plus, ChevronDown, SlidersHorizontal, X } from 'lucide-rea
 import Link from 'next/link'
 import OrderCard from '@/components/orders/OrderCard'
 import SaveSearchButton from '@/components/orders/SaveSearchButton'
-import { CATEGORIES } from '@/lib/mock'
 import { CategorySlug, Order } from '@/lib/types'
 import { useLang } from '@/lib/context/LanguageContext'
+import { localizedCategories } from '@/lib/i18n/category'
 
 const PAGE_SIZE = 12
 
@@ -19,6 +19,8 @@ interface Props {
 export default function OrdersClient({ realOrders = [], currentUserId }: Props) {
   const { t } = useLang()
   const to = t.ordersPage
+  const tc = t.createOrder as unknown as Record<string, string>
+  const CATEGORIES = useMemo(() => localizedCategories(tc), [tc])
   const router    = useRouter()
   const pathname  = usePathname()
   const sp        = useSearchParams()
