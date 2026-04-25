@@ -24,6 +24,12 @@
 .DS_Store
 *.pem
 
+# claude code transient state
+/.claude/scheduled_tasks.lock
+
+# personal files placed alongside the repo
+/owner/
+
 # debug
 npm-debug.log*
 yarn-debug.log*
