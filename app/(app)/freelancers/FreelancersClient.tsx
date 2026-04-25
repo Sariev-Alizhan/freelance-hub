@@ -9,6 +9,7 @@ import FreelancerCard from '@/components/freelancers/FreelancerCard'
 import FeaturedRow from '@/components/freelancers/FeaturedRow'
 import { CATEGORIES } from '@/lib/mock'
 import { Freelancer, CategorySlug, AvailabilityStatus } from '@/lib/types'
+import { useLang } from '@/lib/context/LanguageContext'
 
 // CATEGORIES.icon references Figma (not in lucide-react) — alias to Palette.
 const CATEGORY_ICONS: Record<string, React.ComponentType<{ className?: string; style?: React.CSSProperties }>> = {
@@ -32,6 +33,8 @@ interface Props {
 }
 
 export default function FreelancersClient({ realFreelancers = [], defaultCategory }: Props) {
+  const { t } = useLang()
+  const p = t.pages.freelancers
   const router   = useRouter()
   const pathname = usePathname()
   const sp       = useSearchParams()
@@ -163,7 +166,7 @@ export default function FreelancersClient({ realFreelancers = [], defaultCategor
               boxShadow: '0 0 12px rgba(39,166,68,0.55)',
             }}
           />
-          <span>Talent pool</span>
+          <span>{p.eyebrow}</span>
         </div>
         <h1
           style={{
@@ -176,7 +179,7 @@ export default function FreelancersClient({ realFreelancers = [], defaultCategor
             fontFeatureSettings: '"cv01", "ss03"',
           }}
         >
-          Find your{' '}
+          {p.headlineLead}{' '}
           <span
             style={{
               fontFamily:
@@ -186,11 +189,11 @@ export default function FreelancersClient({ realFreelancers = [], defaultCategor
               letterSpacing: '-0.01em',
             }}
           >
-            specialist.
+            {p.headlineItalic}
           </span>
         </h1>
         <p style={{ fontSize: 14, color: 'var(--fh-t3)', marginTop: 10 }}>
-          Find the perfect specialist for your project
+          {p.subtitle}
         </p>
       </div>
 
@@ -219,7 +222,7 @@ export default function FreelancersClient({ realFreelancers = [], defaultCategor
             <input
               value={inputVal}
               onChange={(e) => setInputVal(e.target.value)}
-              placeholder="Name or skills…"
+              placeholder={p.searchPlaceholder}
               className="w-full outline-none transition-all"
               style={{
                 padding: '10px 14px 10px 36px', borderRadius: '8px',
@@ -270,9 +273,9 @@ export default function FreelancersClient({ realFreelancers = [], defaultCategor
                 color: 'var(--fh-t2)', fontSize: '13px', fontWeight: 500,
               }}
             >
-              <option value="rating">Rating</option>
-              <option value="price">Price</option>
-              <option value="orders">Orders</option>
+              <option value="rating">{p.sortRating}</option>
+              <option value="price">{p.sortPrice}</option>
+              <option value="orders">{p.sortOrders}</option>
             </select>
             <button
               onClick={() => setShowFilters(p => !p)}
@@ -371,7 +374,7 @@ export default function FreelancersClient({ realFreelancers = [], defaultCategor
       {!(aiMode && aiResults) && (
         <div className="overflow-x-auto scrollbar-none -mx-4 px-4 sm:mx-0 sm:px-0 mb-5 sm:mb-8">
           <div className="flex gap-1.5" style={{ width: 'max-content', paddingBottom: 4 }}>
-            {[{ slug: 'all' as const, label: 'All', icon: 'Sparkles', color: 'var(--fh-primary)' }, ...CATEGORIES].map((cat) => {
+            {[{ slug: 'all' as const, label: p.catAll, icon: 'Sparkles', color: 'var(--fh-primary)' }, ...CATEGORIES].map((cat) => {
               const active = category === cat.slug
               const Icon = CATEGORY_ICONS[cat.icon]
               const count = categoryCounts[cat.slug] ?? 0
@@ -460,7 +463,7 @@ export default function FreelancersClient({ realFreelancers = [], defaultCategor
         <>
           {!aiMode && (
             <div className="mb-4" style={{ fontSize: '13px', color: 'var(--fh-t4)' }}>
-              Found: <span style={{ color: 'var(--fh-t1)', fontWeight: 590 }}>{filtered.length}</span> freelancers
+              {p.foundN}: <span style={{ color: 'var(--fh-t1)', fontWeight: 590 }}>{filtered.length}</span> {p.freelancersWord}
             </div>
           )}
           {filtered.length === 0 ? (

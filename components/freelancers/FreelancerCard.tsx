@@ -1,3 +1,4 @@
+'use client'
 import Link from 'next/link'
 import Image from 'next/image'
 import { MapPin, CheckCircle, Clock, TrendingUp, Crown } from 'lucide-react'
@@ -5,6 +6,7 @@ import RatingStars from '@/components/shared/RatingStars'
 import PriceDisplay from '@/components/shared/PriceDisplay'
 import FavoriteButton from '@/components/shared/FavoriteButton'
 import { Freelancer } from '@/lib/types'
+import { useLang } from '@/lib/context/LanguageContext'
 
 const LEVEL_LABELS = {
   new:    { label: 'Newcomer', color: 'var(--fh-skill-bg)',    text: 'var(--fh-t3)'  },
@@ -23,6 +25,8 @@ const AVAILABILITY_LABELS = {
 interface Props { freelancer: Freelancer }
 
 export default function FreelancerCard({ freelancer: f }: Props) {
+  const { t } = useLang()
+  const p = t.pages.freelancers
   const level = LEVEL_LABELS[f.level]
 
   return (
@@ -81,7 +85,7 @@ export default function FreelancerCard({ freelancer: f }: Props) {
                     background: 'var(--fh-primary-muted)', border: '1px solid rgba(39,166,68,0.25)',
                     fontSize: '10px', fontWeight: 590, color: 'var(--fh-primary)', letterSpacing: '0.03em',
                   }}>
-                    <Crown className="h-2.5 w-2.5" /> Pro
+                    <Crown className="h-2.5 w-2.5" /> {p.badgePro}
                   </span>
                 )}
                 {f.isPromoted && !f.isPremium && (
@@ -90,7 +94,7 @@ export default function FreelancerCard({ freelancer: f }: Props) {
                     background: 'rgba(251,191,36,0.1)', border: '1px solid rgba(251,191,36,0.25)',
                     fontSize: '10px', fontWeight: 590, color: '#fbbf24', letterSpacing: '0.03em',
                   }}>
-                    <TrendingUp className="h-2.5 w-2.5" /> TOP
+                    <TrendingUp className="h-2.5 w-2.5" /> {p.badgeTop}
                   </span>
                 )}
               </div>
@@ -115,7 +119,7 @@ export default function FreelancerCard({ freelancer: f }: Props) {
             {f.reviewsCount > 0 ? (
               <RatingStars rating={f.rating} count={f.reviewsCount} />
             ) : (
-              <span style={{ fontSize: '12px', color: 'var(--fh-t4)', fontWeight: 400 }}>New member</span>
+              <span style={{ fontSize: '12px', color: 'var(--fh-t4)', fontWeight: 400 }}>{p.newMember}</span>
             )}
             <div className="flex items-center gap-1" style={{ color: 'var(--fh-t4)' }}>
               <MapPin className="h-3 w-3" />
@@ -166,13 +170,13 @@ export default function FreelancerCard({ freelancer: f }: Props) {
           {(() => {
             const badges: { icon: string; label: string; color: string; bg: string }[] = []
             if (f.rating >= 4.8 && f.reviewsCount >= 5)
-              badges.push({ icon: '🏆', label: 'Top rated', color: '#f59e0b', bg: 'rgba(245,158,11,0.08)' })
+              badges.push({ icon: '🏆', label: p.badgeTopRated, color: '#f59e0b', bg: 'rgba(245,158,11,0.08)' })
             if (f.responseTime && (f.responseTime.includes('1 hour') || f.responseTime.includes('4 hours')))
-              badges.push({ icon: '⚡', label: 'Fast reply', color: 'var(--fh-primary)', bg: 'var(--fh-primary-muted)' })
+              badges.push({ icon: '⚡', label: p.badgeFastReply, color: 'var(--fh-primary)', bg: 'var(--fh-primary-muted)' })
             if (f.completedOrders >= 50)
-              badges.push({ icon: '🔥', label: 'Pro', color: '#ef4444', bg: 'rgba(239,68,68,0.08)' })
+              badges.push({ icon: '🔥', label: p.badgePro, color: '#ef4444', bg: 'rgba(239,68,68,0.08)' })
             if (f.reviewsCount >= 20)
-              badges.push({ icon: '💬', label: 'Trusted', color: '#27a644', bg: 'rgba(39,166,68,0.08)' })
+              badges.push({ icon: '💬', label: p.badgeTrusted, color: '#27a644', bg: 'rgba(39,166,68,0.08)' })
             if (!badges.length) return null
             return (
               <div className="flex flex-wrap gap-1.5" style={{ marginTop: '-4px' }}>
@@ -196,7 +200,7 @@ export default function FreelancerCard({ freelancer: f }: Props) {
           >
             <div>
               <PriceDisplay amountRub={f.priceFrom} prefix="from " size="sm" className="font-medium" />
-              <span style={{ fontSize: '11px', color: 'var(--fh-t4)' }}> / hr</span>
+              <span style={{ fontSize: '11px', color: 'var(--fh-t4)' }}>{' '}{p.perHour}</span>
             </div>
             <div className="flex items-center gap-1" style={{ color: 'var(--fh-t4)' }}>
               <Clock className="h-3 w-3" />

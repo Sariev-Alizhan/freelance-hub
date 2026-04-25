@@ -3,24 +3,30 @@ import { Suspense } from 'react'
 import FreelancersClient from './FreelancersClient'
 import { createClient } from '@/lib/supabase/server'
 import { Freelancer } from '@/lib/types'
+import { getServerT, getServerLang } from '@/lib/i18n/server'
 
-export const metadata: Metadata = {
-  title: 'Freelancers — FreelanceHub',
-  description:
-    'Find the best specialist for your project. Developers, designers, marketers and other freelancers from Kazakhstan, Russia, Ukraine and worldwide.',
-  openGraph: {
-    title: 'Freelancers — FreelanceHub',
-    description: 'Top freelancers worldwide: developers, designers, marketers',
-    type: 'website',
-    locale: 'en_US',
-    siteName: 'FreelanceHub',
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Freelancers — FreelanceHub',
-    description: 'Top freelancers worldwide: developers, designers, marketers',
-  },
-  alternates: { canonical: '/freelancers' },
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getServerT()
+  const lang = await getServerLang()
+  const localeMap: Record<string, string> = { ru: 'ru_RU', kz: 'kk_KZ', en: 'en_US' }
+  const p = t.pages.freelancers
+  return {
+    title:       p.title,
+    description: p.metaDesc,
+    openGraph: {
+      title:       p.title,
+      description: p.metaDesc,
+      type:        'website',
+      locale:      localeMap[lang] ?? 'ru_RU',
+      siteName:    'FreelanceHub',
+    },
+    twitter: {
+      card:        'summary_large_image',
+      title:       p.title,
+      description: p.metaDesc,
+    },
+    alternates: { canonical: '/freelancers' },
+  }
 }
 
 async function fetchRealFreelancers(): Promise<Freelancer[]> {

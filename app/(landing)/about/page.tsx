@@ -1,10 +1,14 @@
 import type { Metadata } from 'next'
 import AboutContent from './AboutContent'
+import { getServerT } from '@/lib/i18n/server'
 
-export const metadata: Metadata = {
-  title: 'About Us — FreelanceHub',
-  description:
-    'FreelanceHub is a global freelance platform built to remove barriers: no commissions, no complex registrations, no regional restrictions. Built in Almaty, open to the world.',
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getServerT()
+  return {
+    title:       t.pages.about.title,
+    description: t.pages.about.metaDesc,
+    alternates:  { canonical: '/about' },
+  }
 }
 
 export default function AboutPage() {

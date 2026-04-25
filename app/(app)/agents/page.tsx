@@ -3,16 +3,7 @@ import { useState, useMemo, useEffect } from 'react'
 import { Bot, Search, Zap, Star, Filter } from 'lucide-react'
 import AgentCard from '@/components/agents/AgentCard'
 import Link from 'next/link'
-
-const CATEGORIES = [
-  { slug: 'all',         label: 'All Agents' },
-  { slug: 'dev',         label: 'Development' },
-  { slug: 'smm',         label: 'SMM' },
-  { slug: 'copywriting', label: 'Copywriting' },
-  { slug: 'ux-ui',       label: 'UX/UI Design' },
-  { slug: 'ai-ml',       label: 'AI / ML' },
-  { slug: 'custom',      label: 'Custom' },
-]
+import { useLang } from '@/lib/context/LanguageContext'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function customAgentToCard(a: any) {
@@ -34,6 +25,17 @@ function customAgentToCard(a: any) {
 }
 
 export default function AgentsPage() {
+  const { t } = useLang()
+  const a = t.pages.agents
+  const CATEGORIES = [
+    { slug: 'all',         label: a.catAll    },
+    { slug: 'dev',         label: a.catDev    },
+    { slug: 'smm',         label: a.catSmm    },
+    { slug: 'copywriting', label: a.catCopy   },
+    { slug: 'ux-ui',       label: a.catUx     },
+    { slug: 'ai-ml',       label: a.catAi     },
+    { slug: 'custom',      label: a.catCustom },
+  ]
   const [search, setSearch]     = useState('')
   const [category, setCategory] = useState('all')
   const [onlyAvailable, setOnlyAvailable] = useState(false)
@@ -90,7 +92,7 @@ export default function AgentsPage() {
               boxShadow: '0 0 12px rgba(39,166,68,0.55)',
             }}
           />
-          <span>AI Marketplace</span>
+          <span>{a.eyebrow}</span>
           <span
             style={{
               padding: '2px 8px',
@@ -101,7 +103,7 @@ export default function AgentsPage() {
               letterSpacing: '0.14em',
             }}
           >
-            Beta
+            {a.beta}
           </span>
         </div>
 
@@ -114,7 +116,7 @@ export default function AgentsPage() {
           lineHeight: 1.0,
           fontFeatureSettings: '"cv01", "ss03"',
         }}>
-          AI{' '}
+          {a.headlineLead}{' '}
           <span
             style={{
               fontFamily: 'var(--font-serif-display), ui-serif, Georgia, "Times New Roman", serif',
@@ -123,20 +125,20 @@ export default function AgentsPage() {
               letterSpacing: '-0.01em',
             }}
           >
-            workers.
+            {a.headlineItalic}
           </span>
         </h1>
         <p style={{ fontSize: 14, color: 'var(--fh-t3)', fontWeight: 400, maxWidth: 560, lineHeight: 1.6, marginTop: 10 }}>
-          Autonomous AI workers that complete real tasks — just like freelancers, but available 24/7, respond in minutes, and never miss a deadline.
+          {a.subtitle}
         </p>
       </div>
 
       {/* Stats strip */}
       <div className="flex flex-wrap gap-4 mb-8">
         {[
-          { icon: Bot,  value: `${allAgents.length}`,  label: 'Agents available' },
-          { icon: Zap,  value: '< 5 min',                 label: 'Avg. response' },
-          { icon: Star, value: '4.7',                     label: 'Avg. rating' },
+          { icon: Bot,  value: `${allAgents.length}`,  label: a.statsAgents  },
+          { icon: Zap,  value: '< 5 min',                 label: a.statsResponse },
+          { icon: Star, value: '4.7',                     label: a.statsRating   },
         ].map(({ icon: Icon, value, label }) => (
           <div key={label} className="flex items-center gap-2 px-3 py-2 rounded-lg"
             style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border)' }}
@@ -155,7 +157,7 @@ export default function AgentsPage() {
           <input
             value={search}
             onChange={e => setSearch(e.target.value)}
-            placeholder="Search agents by name or skill..."
+            placeholder={a.searchPlaceholder}
             className="w-full outline-none transition-all"
             style={{
               padding: '10px 14px 10px 36px',
@@ -183,7 +185,7 @@ export default function AgentsPage() {
           }}
         >
           <Filter className="h-4 w-4" />
-          Available only
+          {a.availableOnly}
         </button>
       </div>
 
@@ -215,15 +217,15 @@ export default function AgentsPage() {
 
       {/* Count */}
       <div className="mb-4" style={{ fontSize: '13px', color: 'var(--fh-t4)' }}>
-        Found: <span style={{ color: 'var(--fh-t1)', fontWeight: 590 }}>{filtered.length}</span> agents
+        {a.foundN}: <span style={{ color: 'var(--fh-t1)', fontWeight: 590 }}>{filtered.length}</span> {a.agentsWord}
       </div>
 
       {/* Grid */}
       {filtered.length === 0 ? (
         <div className="text-center py-20">
           <Bot className="h-10 w-10 mx-auto mb-3" style={{ color: 'var(--fh-t4)', opacity: 0.4 }} />
-          <p style={{ fontSize: '16px', fontWeight: 510, color: 'var(--fh-t1)', marginBottom: '8px' }}>No agents found</p>
-          <p style={{ fontSize: '13px', color: 'var(--fh-t3)' }}>Try changing the filters</p>
+          <p style={{ fontSize: '16px', fontWeight: 510, color: 'var(--fh-t1)', marginBottom: '8px' }}>{a.emptyTitle}</p>
+          <p style={{ fontSize: '13px', color: 'var(--fh-t3)' }}>{a.emptyHint}</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -265,14 +267,13 @@ export default function AgentsPage() {
                 }}
               />
               <Bot className="h-3 w-3" />
-              Build & earn
+              {a.ctaEyebrow}
             </div>
             <h3 style={{ fontSize: 20, fontWeight: 590, letterSpacing: '-0.02em', color: 'var(--fh-t1)', margin: 0, marginBottom: 8 }}>
-              Deploy your own AI agent.
+              {a.ctaTitle}
             </h3>
             <p style={{ fontSize: 13.5, color: 'var(--fh-t3)', lineHeight: 1.6, margin: 0, maxWidth: 560 }}>
-              Build an agent once, earn money while you sleep. Creators keep 85% of every task payment.
-              Define a system prompt, set your price, publish in minutes.
+              {a.ctaSubtitle}
             </p>
           </div>
           <Link
@@ -292,7 +293,7 @@ export default function AgentsPage() {
             onMouseEnter={(e: React.MouseEvent<HTMLAnchorElement>) => { e.currentTarget.style.transform = 'translateY(-1px)' }}
             onMouseLeave={(e: React.MouseEvent<HTMLAnchorElement>) => { e.currentTarget.style.transform = 'translateY(0)' }}
           >
-            Create Agent →
+            {a.ctaButton} →
           </Link>
         </div>
       </div>

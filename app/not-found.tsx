@@ -1,7 +1,10 @@
 import Link from 'next/link'
 import { Search, Home } from 'lucide-react'
+import { getServerT } from '@/lib/i18n/server'
 
-export default function NotFound() {
+export default async function NotFound() {
+  const t = await getServerT()
+  const nf = t.pages.notFound
   return (
     <div
       style={{
@@ -13,7 +16,6 @@ export default function NotFound() {
       }}
     >
       <div style={{ maxWidth: '440px', width: '100%', textAlign: 'center' }}>
-        {/* 404 big number */}
         <div
           style={{
             fontSize: 'clamp(80px, 15vw, 120px)',
@@ -39,7 +41,7 @@ export default function NotFound() {
             marginBottom: '10px',
           }}
         >
-          Page not found
+          {nf.heading}
         </h1>
         <p
           style={{
@@ -49,10 +51,9 @@ export default function NotFound() {
             marginBottom: '32px',
           }}
         >
-          The page you&apos;re looking for doesn&apos;t exist or has been moved.
+          {nf.subtitle}
         </p>
 
-        {/* Quick links */}
         <div
           style={{
             display: 'grid',
@@ -62,10 +63,10 @@ export default function NotFound() {
           }}
         >
           {[
-            { href: '/freelancers', label: 'Browse freelancers' },
-            { href: '/orders',      label: 'Browse orders' },
-            { href: '/agents',      label: 'AI Agents' },
-            { href: '/ai-assistant',label: 'AI Search' },
+            { href: '/freelancers', label: nf.qBrowseFreelancers },
+            { href: '/orders',      label: nf.qBrowseOrders      },
+            { href: '/agents',      label: nf.qAgents            },
+            { href: '/ai-assistant',label: nf.qAiSearch          },
           ].map(({ href, label }) => (
             <Link
               key={href}
@@ -105,7 +106,7 @@ export default function NotFound() {
             }}
           >
             <Home className="h-3.5 w-3.5" />
-            Go home
+            {nf.goHome}
           </Link>
           <Link
             href="/ai-assistant"
@@ -124,7 +125,7 @@ export default function NotFound() {
             }}
           >
             <Search className="h-3.5 w-3.5" />
-            AI Search
+            {nf.aiSearch}
           </Link>
         </div>
       </div>
