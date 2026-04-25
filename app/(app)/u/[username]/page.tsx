@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
+import { cache } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import {
@@ -74,7 +75,11 @@ interface PageProfile {
   paymentMethods?: PaymentMethod[]
 }
 
-async function getProfile(username: string, fallbacks: { user: string; cis: string }): Promise<PageProfile | null> {
+// Deduplicate within a single request: generateMetadata() and the page itself
+// both call getProfile(). Without React.cache the request makes ~6 sequential
+// Supabase round-trips just for profile/freelancer/portfolio (plus 7 parallel
+// downstream). cache() collapses that to ~3.
+const getProfile = cache(async function getProfile(username: string, fallbacks: { user: string; cis: string }): Promise<PageProfile | null> {
   try {
     const supabase = await createClient()
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -105,30 +110,32 @@ async function getProfile(username: string, fallbacks: { user: string; cis: stri
       paymentMethods: Array.isArray(profile.payment_methods) ? profile.payment_methods : [],
     }
 
-    // 2. Check if they have a freelancer profile
-    const { data: fp } = await db
-      .from('freelancer_profiles')
-      .select(`
-        id, title, category, skills, level, rating, reviews_count,
-        completed_orders, price_from, price_to, response_time,
-        is_verified, is_premium, premium_until, availability_status, languages,
-        headline, portfolio_website, github_url, linkedin_url,
-        resume_url, resume_filename,
-        telegram_url, instagram_url, twitter_url, youtube_url, tiktok_url
-      `)
-      .eq('user_id', profile.id)
-      .single()
+    // 2 + 3 in parallel: freelancer_profile + portfolio_items both keyed by
+    // profile.id. Skipping portfolio when fp is null is just extra rows we
+    // throw away — cheaper than a second sequential round-trip.
+    const [{ data: fp }, { data: portfolioData }] = await Promise.all([
+      db
+        .from('freelancer_profiles')
+        .select(`
+          id, title, category, skills, level, rating, reviews_count,
+          completed_orders, price_from, price_to, response_time,
+          is_verified, is_premium, premium_until, availability_status, languages,
+          headline, portfolio_website, github_url, linkedin_url,
+          resume_url, resume_filename,
+          telegram_url, instagram_url, twitter_url, youtube_url, tiktok_url
+        `)
+        .eq('user_id', profile.id)
+        .single(),
+      db
+        .from('portfolio_items')
+        .select('id, title, image_url, category, project_url, description, is_featured, featured_position')
+        .eq('freelancer_id', profile.id)
+        .order('is_featured',       { ascending: false })
+        .order('featured_position', { ascending: true, nullsFirst: false })
+        .order('created_at',        { ascending: false }),
+    ])
 
     if (!fp) return base
-
-    // 3. Load portfolio — featured first
-    const { data: portfolioData } = await db
-      .from('portfolio_items')
-      .select('id, title, image_url, category, project_url, description, is_featured, featured_position')
-      .eq('freelancer_id', profile.id)
-      .order('is_featured',       { ascending: false })
-      .order('featured_position', { ascending: true, nullsFirst: false })
-      .order('created_at',        { ascending: false })
 
     type PortfolioRow = {
       id: string; title: string; image_url: string | null
@@ -190,7 +197,7 @@ async function getProfile(username: string, fallbacks: { user: string; cis: stri
   } catch {
     return null
   }
-}
+})
 
 export async function generateMetadata({
   params,
