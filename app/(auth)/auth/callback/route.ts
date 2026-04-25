@@ -32,13 +32,14 @@ export async function GET(request: Request & { cookies?: { getAll(): { name: str
           return request.cookies?.getAll() ?? []
         },
         setAll(cookiesToSet) {
-          // Write auth cookies directly onto the redirect response
+          // Write auth cookies directly onto the redirect response.
+          // Do NOT force httpOnly — @supabase/ssr's browser client reads
+          // these via document.cookie, which can't access httpOnly cookies.
+          // We trust whatever options Supabase provides (httpOnly defaults to false).
           cookiesToSet.forEach(({ name, value, options }) => {
             redirectResponse.cookies.set(name, value, {
               ...options,
-              // Ensure cookies are accessible from the browser for SSR refresh
               sameSite: options?.sameSite ?? 'lax',
-              httpOnly: options?.httpOnly ?? true,
               secure:   process.env.NODE_ENV === 'production',
               path:     options?.path ?? '/',
             })
@@ -98,11 +99,11 @@ export async function GET(request: Request & { cookies?: { getAll(): { name: str
       const onboardingResponse = NextResponse.redirect(
         `${SITE_URL}/welcome?next=${encodeURIComponent('/onboarding')}`
       )
-      // Copy auth cookies to the onboarding redirect too
+      // Copy auth cookies to the onboarding redirect too.
+      // Do not set httpOnly — browser client reads these via document.cookie.
       redirectResponse.cookies.getAll().forEach(c => {
         onboardingResponse.cookies.set(c.name, c.value, {
           sameSite: 'lax',
-          httpOnly: true,
           secure:   process.env.NODE_ENV === 'production',
           path:     '/',
         })
