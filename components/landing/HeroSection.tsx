@@ -110,6 +110,14 @@ export default function HeroSection() {
           .dark .fh-grain { opacity: 0.35; }
         }
 
+        /* Specimen meta strip — desktop-only typographic flourish.
+           On <768px it's three lines of decorative caps that push the
+           CTA off-screen and duplicate info already in the subtitle
+           ("Kaspi · USDT · bank"). Hidden on mobile. */
+        @media (max-width: 767px) {
+          .fh-hero-meta { display: none !important; }
+        }
+
         /* Hero local design tokens — flipped per theme */
         .fh-hero {
           --fh-scan-line: rgba(0,0,0,0.03);
@@ -349,7 +357,7 @@ export default function HeroSection() {
 
             {/* Specimen-label metadata strip — replaces stats grid */}
             <div
-              className="fh-anim-mid"
+              className="fh-anim-mid fh-hero-meta"
               style={{
                 animation: `fh-in-mid 0.6s ${EASE_SOFT} 0.42s both`,
                 display: 'flex',
