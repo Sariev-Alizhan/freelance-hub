@@ -2,8 +2,10 @@ import Link from 'next/link'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import Logo from '@/components/ui/Logo'
+import { getServerT } from '@/lib/i18n/server'
 
-export default function LandingLayout({ children }: { children: React.ReactNode }) {
+export default async function LandingLayout({ children }: { children: React.ReactNode }) {
+  const t = await getServerT()
   return (
     <div
       className="flex flex-col min-h-screen"
@@ -53,7 +55,7 @@ export default function LandingLayout({ children }: { children: React.ReactNode 
               letterSpacing: '-0.01em',
             }}
           >
-            Sign In
+            {t.mobileNav.signIn}
           </Link>
           <Link
             href="/auth/register"
@@ -69,7 +71,7 @@ export default function LandingLayout({ children }: { children: React.ReactNode 
               letterSpacing: '-0.01em',
             }}
           >
-            Get Started
+            {t.mobileNav.getStarted}
           </Link>
         </div>
       </nav>
