@@ -8,6 +8,7 @@ interface ProfileSnapshot {
   full_name:     string | null
   username:      string | null
   role:          'client' | 'freelancer'
+  active_mode:   'client' | 'freelancer' | 'auto'
   is_freelancer: boolean
 }
 
@@ -34,12 +35,27 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
     const supabase = createClient()
     const { data } = await supabase
       .from('profiles')
-      .select('avatar_url, full_name, username, role')
+      .select('avatar_url, full_name, username, role, active_mode')
       .eq('id', userId)
       .single()
     if (data) {
-      const d = data as { avatar_url: string | null; full_name: string | null; username: string | null; role: 'client' | 'freelancer' }
-      setProfile({ ...d, is_freelancer: d.role === 'freelancer' })
+      const d = data as {
+        avatar_url:  string | null
+        full_name:   string | null
+        username:    string | null
+        role:        'client' | 'freelancer'
+        active_mode: 'client' | 'freelancer' | 'auto' | null
+      }
+      const activeMode = d.active_mode ?? 'auto'
+      const effectiveRole = activeMode === 'auto' ? d.role : activeMode
+      setProfile({
+        avatar_url:    d.avatar_url,
+        full_name:     d.full_name,
+        username:      d.username,
+        role:          d.role,
+        active_mode:   activeMode,
+        is_freelancer: effectiveRole === 'freelancer',
+      })
     }
   }, [userId])
 

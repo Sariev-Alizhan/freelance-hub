@@ -10,7 +10,8 @@ import { useRouter } from 'next/navigation'
 type Mode = 'client' | 'freelancer'
 type Variant = 'default' | 'mobile'
 
-function getMode(role: string | undefined, cookieMode: string | null): Mode {
+function getMode(role: string | undefined, activeMode: string | undefined, cookieMode: string | null): Mode {
+  if (activeMode === 'client' || activeMode === 'freelancer') return activeMode
   if (cookieMode === 'client' || cookieMode === 'freelancer') return cookieMode
   return role === 'freelancer' ? 'freelancer' : 'client'
 }
@@ -25,13 +26,13 @@ export default function RoleSwitcher({ variant = 'default' }: { variant?: Varian
   const { profile, refreshProfile } = useProfile()
   const { t } = useLang()
   const router   = useRouter()
-  const [mode, setMode]       = useState<Mode>(() => getMode(profile?.role, null))
+  const [mode, setMode]       = useState<Mode>(() => getMode(profile?.role, profile?.active_mode, null))
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     const cookie = readCookie('fh-mode')
-    setMode(getMode(profile?.role, cookie))
-  }, [profile?.role])
+    setMode(getMode(profile?.role, profile?.active_mode, cookie))
+  }, [profile?.role, profile?.active_mode])
 
   if (!profile) return null
 
@@ -39,11 +40,18 @@ export default function RoleSwitcher({ variant = 'default' }: { variant?: Varian
     if (next === mode || loading) return
     setLoading(true)
     try {
-      await fetch('/api/profile/switch-mode', {
+      const res = await fetch('/api/profile/switch-mode', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ mode: next }),
       })
+      if (!res.ok) {
+        // Surface the server error so the user sees what went wrong instead of
+        // a silent UI revert. Toggle stays on the previous mode.
+        const body = await res.json().catch(() => ({}))
+        console.error('[RoleSwitcher] switch failed', res.status, body)
+        return
+      }
       setMode(next)
       await refreshProfile()
       router.refresh()
