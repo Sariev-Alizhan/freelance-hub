@@ -43,17 +43,32 @@ export default function Header() {
           paddingTop: 'env(safe-area-inset-top)',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 52, padding: '0 16px' }}>
-          <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: 8, textDecoration: 'none' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 52, padding: '0 16px', gap: 8 }}>
+          <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: 8, textDecoration: 'none', minWidth: 0 }}>
             <Logo size={26} showWordmark={false} />
-            <span style={{ fontSize: 16, fontWeight: 700, color: 'var(--fh-t1)', letterSpacing: '-0.02em' }}>FreelanceHub</span>
+            <span style={{ fontSize: 16, fontWeight: 700, color: 'var(--fh-t1)', letterSpacing: '-0.02em', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>FreelanceHub</span>
           </Link>
-          <Link href="/auth/login" style={{
-            padding: '7px 16px', borderRadius: 8, fontSize: 13, fontWeight: 600,
-            color: 'var(--fh-canvas)', background: 'var(--fh-t1)', textDecoration: 'none',
-          }}>
-            {t.auth.login}
-          </Link>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+            <Link href="/auth/login" style={{
+              minHeight: 36,
+              display: 'inline-flex', alignItems: 'center',
+              padding: '0 14px', borderRadius: 999, fontSize: 13, fontWeight: 600,
+              color: 'var(--fh-t2)', background: 'var(--fh-surface-2)',
+              border: '1px solid var(--fh-border)', textDecoration: 'none',
+              whiteSpace: 'nowrap',
+            }}>
+              {t.auth.login}
+            </Link>
+            <Link href="/auth/register" style={{
+              minHeight: 36,
+              display: 'inline-flex', alignItems: 'center',
+              padding: '0 14px', borderRadius: 999, fontSize: 13, fontWeight: 590,
+              color: 'var(--fh-canvas)', background: 'var(--fh-t1)', textDecoration: 'none',
+              whiteSpace: 'nowrap', letterSpacing: '-0.01em',
+            }}>
+              {t.auth.register}
+            </Link>
+          </div>
         </div>
       </header>
     )

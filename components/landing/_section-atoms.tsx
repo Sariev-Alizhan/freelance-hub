@@ -4,10 +4,14 @@ import type { CSSProperties, ReactNode } from 'react'
 
 export const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1]
 
-/** Mono uppercase underline link — used as secondary CTA next to the primary button */
+/** Mono uppercase underline link — used as secondary CTA next to the primary button.
+ *  minHeight 44 enforces WCAG mobile tap-target size (the underlined glyphs are only
+ *  ~17px tall otherwise). Padding cancels visual height growth via line-height. */
 export const SECONDARY_LINK_STYLE: CSSProperties = {
   display: 'inline-flex',
   alignItems: 'center',
+  minHeight: 44,
+  padding: '0 4px',
   fontFamily:
     'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace',
   fontSize: 11,

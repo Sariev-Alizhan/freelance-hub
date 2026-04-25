@@ -80,10 +80,21 @@ const nextConfig: NextConfig = {
         headers: SECURITY_HEADERS,
       },
       {
-        // HTML pages — never cache in browser
+        // HTML pages — never cache in browser by default. Authenticated routes
+        // (dashboard, messages, settings, etc.) keep this; public marketing
+        // routes override below with edge-cacheable directives.
         source: '/((?!_next/static|_next/image|favicon.ico).*)',
         headers: [
           { key: 'Cache-Control', value: 'no-cache, no-store, must-revalidate' },
+        ],
+      },
+      {
+        // Public marketing/landing pages — edge-cache 5min, serve stale up to 1 day.
+        // Vary on cookie ensures the language switcher (fh-lang cookie) busts cache.
+        source: '/:path(|about|pricing|docs|terms|privacy|updates|freelancers|agents)',
+        headers: [
+          { key: 'Cache-Control', value: 'public, max-age=0, s-maxage=300, stale-while-revalidate=86400' },
+          { key: 'Vary',          value: 'Cookie, Accept-Language' },
         ],
       },
     ]

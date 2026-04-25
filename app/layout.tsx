@@ -114,6 +114,15 @@ export async function generateMetadata(): Promise<Metadata> {
       title:       m.title,
       description: m.twShort,
     },
+    alternates: {
+      canonical: 'https://www.freelance-hub.kz',
+      languages: {
+        'ru-RU':     'https://www.freelance-hub.kz',
+        'kk-KZ':     'https://www.freelance-hub.kz',
+        'en-US':     'https://www.freelance-hub.kz',
+        'x-default': 'https://www.freelance-hub.kz',
+      },
+    },
   }
 }
 
@@ -173,6 +182,44 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <meta name="apple-mobile-web-app-title" content="FreelanceHub" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
         <link rel="manifest" href="/manifest.json" />
+        {/* JSON-LD: Organization + WebSite */}
+        <script
+          type="application/ld+json"
+          nonce={nonce}
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@graph': [
+                {
+                  '@type': 'Organization',
+                  '@id': 'https://www.freelance-hub.kz#org',
+                  name: 'FreelanceHub',
+                  alternateName: 'SITS Sariyev IT Solutions',
+                  url: 'https://www.freelance-hub.kz',
+                  logo: 'https://www.freelance-hub.kz/logo-icon.png',
+                  founder: { '@type': 'Person', name: 'Alizhan Sariyev' },
+                  foundingLocation: { '@type': 'Place', name: 'Almaty, Kazakhstan' },
+                  sameAs: [
+                    'https://github.com/Sariev-Alizhan/freelance-hub',
+                  ],
+                },
+                {
+                  '@type': 'WebSite',
+                  '@id': 'https://www.freelance-hub.kz#website',
+                  url: 'https://www.freelance-hub.kz',
+                  name: 'FreelanceHub',
+                  publisher: { '@id': 'https://www.freelance-hub.kz#org' },
+                  inLanguage: ['ru', 'kk', 'en'],
+                  potentialAction: {
+                    '@type': 'SearchAction',
+                    target: 'https://www.freelance-hub.kz/freelancers?q={search_term_string}',
+                    'query-input': 'required name=search_term_string',
+                  },
+                },
+              ],
+            }),
+          }}
+        />
       </head>
       <body className={`${inter.variable} ${instrumentSerif.variable} font-sans antialiased min-h-screen flex flex-col`}>
         <MotionProvider>
