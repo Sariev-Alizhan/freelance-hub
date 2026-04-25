@@ -27,6 +27,7 @@ interface Props { freelancer: Freelancer }
 export default function FreelancerCard({ freelancer: f }: Props) {
   const { t } = useLang()
   const p = t.pages.freelancers
+  const tc = t.createOrder as unknown as Record<string, string>
   const level = LEVEL_LABELS[f.level]
 
   return (
@@ -199,7 +200,7 @@ export default function FreelancerCard({ freelancer: f }: Props) {
             style={{ borderTop: '1px solid var(--fh-sep)' }}
           >
             <div>
-              <PriceDisplay amountRub={f.priceFrom} prefix="from " size="sm" className="font-medium" />
+              <PriceDisplay amountRub={f.priceFrom} prefix={`${tc.fromPrice} `} size="sm" className="font-medium" />
               <span style={{ fontSize: '11px', color: 'var(--fh-t4)' }}>{' '}{p.perHour}</span>
             </div>
             <div className="flex items-center gap-1" style={{ color: 'var(--fh-t4)' }}>
