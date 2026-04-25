@@ -12,7 +12,7 @@ export default function ProfileStickyActions({ targetUserId }: { targetUserId: s
       background: 'var(--fh-surface)',
       borderTop: '1px solid var(--fh-border-2)',
       backdropFilter: 'blur(12px)',
-      display: 'flex', gap: 8,
+      gap: 8,
       zIndex: 40,
     }}>
       <Link href={`/messages?open=${targetUserId}`} style={{

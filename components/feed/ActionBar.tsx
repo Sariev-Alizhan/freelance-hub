@@ -23,6 +23,26 @@ export default function ActionBar({ reactions, onReact, commentsOpen, onToggleCo
 
   return (
     <div>
+      <style>{`
+        .fh-action-bar { display: flex; align-items: center; border-top: 0.5px solid var(--fh-sep); padding: 2px 4px; }
+        .fh-action-btn {
+          flex: 1; display: flex; align-items: center; justify-content: center;
+          gap: 5px; padding: 8px 4px; background: none; border: none; border-radius: 8px;
+          font-weight: 500; font-size: 13px; color: var(--fh-t4);
+          white-space: nowrap; min-width: 0; overflow: hidden;
+          transition: background 0.12s;
+        }
+        .fh-action-btn .fh-action-label {
+          overflow: hidden; text-overflow: ellipsis; min-width: 0;
+        }
+        .fh-action-btn:hover { background: var(--fh-surface-2); }
+        @media (max-width: 420px) {
+          .fh-action-btn { font-size: 12px; gap: 4px; padding: 8px 2px; }
+        }
+        @media (max-width: 360px) {
+          .fh-action-btn .fh-action-label { display: none; }
+        }
+      `}</style>
       {(totalLikes > 0 || reactions.reposts > 0) && (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '6px 16px', borderTop: '0.5px solid var(--fh-sep)' }}>
           {totalLikes > 0 && (
@@ -37,34 +57,30 @@ export default function ActionBar({ reactions, onReact, commentsOpen, onToggleCo
           )}
         </div>
       )}
-      <div style={{ display: 'flex', alignItems: 'center', borderTop: '0.5px solid var(--fh-sep)', padding: '2px 4px' }}>
+      <div className="fh-action-bar">
         <button onClick={() => onReact('like')}
-          style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5, padding: '8px 4px', background: 'none', border: 'none', cursor: user ? 'pointer' : 'default', borderRadius: 8, color: liked ? '#27a644' : 'var(--fh-t4)', fontWeight: liked ? 700 : 500, fontSize: 13, transition: 'background 0.12s' }}
-          onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'var(--fh-surface-2)' }}
-          onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'none' }}>
-          <ThumbsUp style={{ width: 16, height: 16 }} />
-          <span>{fc.like}</span>
+          className="fh-action-btn"
+          style={{ cursor: user ? 'pointer' : 'default', color: liked ? '#27a644' : undefined, fontWeight: liked ? 700 : undefined }}>
+          <ThumbsUp style={{ width: 16, height: 16, flexShrink: 0 }} />
+          <span className="fh-action-label">{fc.like}</span>
         </button>
         <button onClick={onToggleComments}
-          style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5, padding: '8px 4px', background: 'none', border: 'none', cursor: 'pointer', borderRadius: 8, color: commentsOpen ? 'var(--fh-primary)' : 'var(--fh-t4)', fontWeight: commentsOpen ? 700 : 500, fontSize: 13, transition: 'background 0.12s' }}
-          onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'var(--fh-surface-2)' }}
-          onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'none' }}>
-          <MessageCircle style={{ width: 16, height: 16 }} />
-          <span>{fc.comment}</span>
+          className="fh-action-btn"
+          style={{ cursor: 'pointer', color: commentsOpen ? 'var(--fh-primary)' : undefined, fontWeight: commentsOpen ? 700 : undefined }}>
+          <MessageCircle style={{ width: 16, height: 16, flexShrink: 0 }} />
+          <span className="fh-action-label">{fc.comment}</span>
         </button>
         <button onClick={() => onReact('repost')}
-          style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5, padding: '8px 4px', background: 'none', border: 'none', cursor: 'pointer', borderRadius: 8, color: 'var(--fh-t4)', fontWeight: 500, fontSize: 13, transition: 'background 0.12s' }}
-          onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'var(--fh-surface-2)' }}
-          onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'none' }}>
-          <Share2 style={{ width: 16, height: 16 }} />
-          <span>{fc.share}</span>
+          className="fh-action-btn"
+          style={{ cursor: 'pointer' }}>
+          <Share2 style={{ width: 16, height: 16, flexShrink: 0 }} />
+          <span className="fh-action-label">{fc.share}</span>
         </button>
         <button onClick={() => onReact('save')}
-          style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 5, padding: '8px 4px', background: 'none', border: 'none', cursor: 'pointer', borderRadius: 8, color: saved ? '#f59e0b' : 'var(--fh-t4)', fontWeight: saved ? 700 : 500, fontSize: 13, transition: 'background 0.12s' }}
-          onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'var(--fh-surface-2)' }}
-          onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'none' }}>
-          <Bookmark style={{ width: 16, height: 16 }} />
-          <span>{fc.save}</span>
+          className="fh-action-btn"
+          style={{ cursor: 'pointer', color: saved ? '#f59e0b' : undefined, fontWeight: saved ? 700 : undefined }}>
+          <Bookmark style={{ width: 16, height: 16, flexShrink: 0 }} />
+          <span className="fh-action-label">{fc.save}</span>
         </button>
       </div>
     </div>
