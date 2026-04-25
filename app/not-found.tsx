@@ -1,6 +1,12 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Search, Home } from 'lucide-react'
 import { getServerT } from '@/lib/i18n/server'
+
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getServerT()
+  return { title: t.pages.notFound.title, robots: { index: false, follow: false } }
+}
 
 export default async function NotFound() {
   const t = await getServerT()

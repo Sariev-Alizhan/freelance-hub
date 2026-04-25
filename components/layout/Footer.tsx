@@ -49,7 +49,7 @@ export default function Footer() {
   const { lang, t } = useLang()
 
   return (
-    <footer className="hidden md:block" style={{ borderTop: '1px solid var(--fh-sep)', background: 'var(--fh-footer-bg)', marginTop: 60 }}>
+    <footer style={{ borderTop: '1px solid var(--fh-sep)', background: 'var(--fh-footer-bg)', marginTop: 60 }}>
       {/* Accent gradient line */}
       <div style={{ height: 1, background: 'linear-gradient(90deg, transparent 0%, color-mix(in srgb, #27a644 40%, transparent) 40%, color-mix(in srgb, #27a644 40%, transparent) 60%, transparent 100%)' }} />
 
