@@ -15,18 +15,12 @@ interface Props {
   myResponseStatus?: 'pending' | 'accepted' | 'rejected' | null
 }
 
-const STATUS_TEXT = {
-  accepted: { en: 'Application accepted', ru: 'Заявка принята',        kz: 'Өтінім қабылданды'    },
-  rejected: { en: 'Not selected',         ru: 'Не выбраны',            kz: 'Таңдалмады'            },
-  pending:  { en: 'Applied — awaiting review', ru: 'Отклик отправлен — ожидает рассмотрения', kz: 'Өтінім жіберілді — қаралуда' },
-  apply:    { en: 'Apply',                ru: 'Откликнуться',          kz: 'Өтінім беру'           },
-}
-
 export default function RespondButton({
   orderId, orderTitle, orderDescription, category, budgetMin, budgetMax, myResponseStatus = null
 }: Props) {
   const [open, setOpen] = useState(false)
-  const { lang } = useLang()
+  const { t } = useLang()
+  const tr = t.respond
 
   if (myResponseStatus === 'accepted') {
     return (
@@ -35,7 +29,7 @@ export default function RespondButton({
         style={{ background: 'rgba(39,166,68,0.1)', border: '1px solid rgba(39,166,68,0.25)', color: '#27a644' }}
       >
         <CheckCircle className="h-4 w-4" />
-        {STATUS_TEXT.accepted[lang]}
+        {tr.statusAccepted}
       </div>
     )
   }
@@ -47,7 +41,7 @@ export default function RespondButton({
         style={{ background: 'var(--fh-surface-2)', border: '1px solid var(--fh-border)', color: 'var(--fh-t4)' }}
       >
         <XCircle className="h-4 w-4" />
-        {STATUS_TEXT.rejected[lang]}
+        {tr.statusRejected}
       </div>
     )
   }
@@ -59,7 +53,7 @@ export default function RespondButton({
         style={{ background: 'var(--fh-primary-muted)', border: '1px solid rgba(39,166,68,0.25)', color: 'var(--fh-primary)' }}
       >
         <Clock className="h-4 w-4" />
-        {STATUS_TEXT.pending[lang]}
+        {tr.statusPending}
       </div>
     )
   }
@@ -70,7 +64,7 @@ export default function RespondButton({
         onClick={() => setOpen(true)}
         className="w-full py-3 rounded-xl bg-primary text-white font-semibold hover:bg-primary/90 transition-colors"
       >
-        {STATUS_TEXT.apply[lang]}
+        {tr.apply}
       </button>
 
       <AnimatePresence>
