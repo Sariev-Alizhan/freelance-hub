@@ -469,17 +469,15 @@ export default function FreelancersClient({ realFreelancers = [], defaultCategor
           {filtered.length === 0 ? (
             <div className="text-center py-20">
               <p style={{ fontSize: '16px', fontWeight: 510, color: 'var(--fh-t1)', marginBottom: '8px' }}>
-                {search || category !== 'all' ? 'Nothing found' : 'No freelancers yet'}
+                {search || category !== 'all' ? p.empty.notFoundTitle : p.empty.noYetTitle}
               </p>
-              <p style={{ fontSize: '13px', color: 'var(--fh-t3)', maxWidth: '320px', margin: '0 auto', lineHeight: 1.6 }}>
-                {search || category !== 'all'
-                  ? 'Try changing the filters or search query.'
-                  : 'The platform just launched. Register as a freelancer and be one of the first!'}
+              <p style={{ fontSize: '13px', color: 'var(--fh-t3)', maxWidth: '380px', margin: '0 auto', lineHeight: 1.6 }}>
+                {search || category !== 'all' ? p.empty.notFoundSub : p.empty.noYetSub}
               </p>
               {!search && category === 'all' && (
-                <a href="/auth/register" className="inline-block mt-4 active:scale-[0.97] transition-all"
+                <a href="/founders" className="inline-block mt-4 active:scale-[0.97] transition-all"
                   style={{ padding: '12px 26px', borderRadius: 999, background: 'var(--fh-t1)', color: 'var(--fh-canvas)', fontSize: 14, fontWeight: 590, letterSpacing: '-0.01em', textDecoration: 'none' }}>
-                  Register for free
+                  {p.empty.cta}
                 </a>
               )}
             </div>

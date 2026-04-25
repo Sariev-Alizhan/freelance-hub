@@ -709,6 +709,10 @@ export const T: Record<Lang, any> = {
       rsGoalPh:            'e.g. Long-term SaaS products, brand design for startups, data science for healthcare...',
       rsGoalHint:          'This helps the AI tailor your profile to attract the right clients.',
     },
+    foundersPage: {
+      metaTitle: 'Founders 100',
+      metaDesc:  'The first 100 freelancers on FreelanceHub get free Pro for life, a "Founder" badge, top placement, and a direct line to the founder. 0% commission locked in writing.',
+    },
     pages: {
       freelancers: {
         title:            'Freelancers — FreelanceHub',
@@ -733,6 +737,13 @@ export const T: Record<Lang, any> = {
         perHour:          '/ hr',
         responseHr:       '< 1 hour',
         aiButton:         'AI search',
+        empty: {
+          notFoundTitle:  'Nothing found',
+          notFoundSub:    'Try different filters or a different search query.',
+          noYetTitle:     'The platform just launched',
+          noYetSub:       'The first 100 freelancers get free Pro for life, a "Founder" badge, and top placement. Apply for a spot.',
+          cta:            'Apply for Founders 100',
+        },
       },
       agents: {
         title:            'AI Agents Marketplace — FreelanceHub',
@@ -1479,6 +1490,10 @@ export const T: Record<Lang, any> = {
       rsGoalPh:            'например, долгосрочные SaaS-продукты, брендинг для стартапов, data science в медицине...',
       rsGoalHint:          'Это поможет AI настроить профиль под нужных клиентов.',
     },
+    foundersPage: {
+      metaTitle: 'Founders 100',
+      metaDesc:  'Первые 100 фрилансеров на FreelanceHub получают бесплатный Pro навсегда, бейдж «Founder», топ в поиске и прямой контакт с фаундером. 0% комиссии закреплено письменно.',
+    },
     pages: {
       freelancers: {
         title:            'Фрилансеры — FreelanceHub',
@@ -1503,6 +1518,13 @@ export const T: Record<Lang, any> = {
         perHour:          '/ час',
         responseHr:       '< 1 часа',
         aiButton:         'AI-поиск',
+        empty: {
+          notFoundTitle:  'Ничего не найдено',
+          notFoundSub:    'Попробуйте изменить фильтры или поисковый запрос.',
+          noYetTitle:     'Платформа только запустилась',
+          noYetSub:       'Первые 100 фрилансеров получают Pro бесплатно навсегда, бейдж «Founder» и топ в поиске. Подайте заявку.',
+          cta:            'Подать заявку в Founders 100',
+        },
       },
       agents: {
         title:            'AI-агенты — FreelanceHub',
@@ -2249,6 +2271,10 @@ export const T: Record<Lang, any> = {
       rsGoalPh:            'мысалы: ұзақ мерзімді SaaS өнімдер, стартаптарға брендинг, медицинада data science...',
       rsGoalHint:          'Бұл AI-ға профильді дұрыс клиенттерді тарту үшін баптауға көмектеседі.',
     },
+    foundersPage: {
+      metaTitle: 'Founders 100',
+      metaDesc:  'FreelanceHub-тағы алғашқы 100 фрилансер тегін Pro, «Founder» бейджі, іздеуде жоғарғы орын және фаундермен тікелей байланыс алады. 0% комиссия жазбаша бекітілген.',
+    },
     pages: {
       freelancers: {
         title:            'Фрилансерлер — FreelanceHub',
@@ -2273,6 +2299,13 @@ export const T: Record<Lang, any> = {
         perHour:          '/ сағ',
         responseHr:       '< 1 сағат',
         aiButton:         'AI-іздеу',
+        empty: {
+          notFoundTitle:  'Ештеңе табылмады',
+          notFoundSub:    'Сүзгілер мен іздеу сұранысын өзгертіп көріңіз.',
+          noYetTitle:     'Платформа жаңа ғана іске қосылды',
+          noYetSub:       'Алғашқы 100 фрилансер Pro-ны мәңгілік тегін алады, «Founder» бейджі және іздеуде жоғарғы орын. Өтінім жасаңыз.',
+          cta:            'Founders 100-ге өтінім беру',
+        },
       },
       agents: {
         title:            'AI-агенттер — FreelanceHub',

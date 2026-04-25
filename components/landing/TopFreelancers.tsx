@@ -28,11 +28,11 @@ const CONTENT = {
         text: 'Client and freelancer work directly — no middlemen in between.',
       },
     ],
-    ctaBadge: 'Just launched',
-    ctaTitle: 'Be among the first',
+    ctaBadge: 'Founders 100 — open',
+    ctaTitle: 'Be one of the first 100',
     ctaSub:
-      'Early members get priority in search results and a "Pioneer" badge on their profile.',
-    ctaBtn1: 'Join now',
+      'Lifetime free Pro, "Founder" badge, top placement in search, direct line to the founder. While the first 100 spots are open.',
+    ctaBtn1: 'See the offer',
     ctaBtn2: 'Browse freelancers',
   },
   ru: {
@@ -57,11 +57,11 @@ const CONTENT = {
         text: 'Клиент и фрилансер общаются напрямую — посредников нет.',
       },
     ],
-    ctaBadge: 'Только запустились',
-    ctaTitle: 'Будь среди первых',
+    ctaBadge: 'Founders 100 — открыто',
+    ctaTitle: 'Стань одним из первых 100',
     ctaSub:
-      'Ранние участники получают приоритет в поиске и значок «Первопроходец» в профиле.',
-    ctaBtn1: 'Присоединиться',
+      'Pro бесплатно навсегда, бейдж «Founder», топ-позиция в поиске, прямой контакт с фаундером. Пока открыты первые 100 мест.',
+    ctaBtn1: 'Смотреть оффер',
     ctaBtn2: 'Смотреть фрилансеров',
   },
   kz: {
@@ -86,10 +86,10 @@ const CONTENT = {
         text: 'Клиент пен фрилансер тікелей сөйлеседі — делдал жоқ.',
       },
     ],
-    ctaBadge: 'Жаңа іске қосылды',
-    ctaTitle: 'Бірінші болыңыз',
-    ctaSub: 'Алғашқы қатысушылар іздеуде басымдыққа ие және профильге «Pioneer» бейджі беріледі.',
-    ctaBtn1: 'Қосылу',
+    ctaBadge: 'Founders 100 — ашық',
+    ctaTitle: 'Алғашқы 100-дің бірі бол',
+    ctaSub: 'Pro мәңгі тегін, «Founder» бейджі, іздеуде жоғарғы орын, фаундермен тікелей байланыс. Алғашқы 100 орын ашық тұрғанда.',
+    ctaBtn1: 'Офферді көру',
     ctaBtn2: 'Фрилансерлер',
   },
 }
@@ -245,7 +245,7 @@ export default function TopFreelancers() {
           </div>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
             <Link
-              href="/auth/register"
+              href="/founders"
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
