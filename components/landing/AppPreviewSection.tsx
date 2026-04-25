@@ -206,7 +206,7 @@ function PhoneScreen({ labelFeed }: { labelFeed: string }) {
           gridTemplateColumns: 'repeat(5, 1fr)',
         }}
       >
-        {['🏠', '🔍', '＋', '💬', '👤'].map((icon, i) => (
+        {['🏠', '💼', '＋', '💬', '👤'].map((icon, i) => (
           <div key={i} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
             <div
               style={{
