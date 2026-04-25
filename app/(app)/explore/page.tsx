@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { Briefcase, Film, Package, Sparkles, Play, Star, ArrowRight } from 'lucide-react'
+import { Briefcase, Package, Sparkles, Star, ArrowRight } from 'lucide-react'
 import { createClient as createServiceClient } from '@supabase/supabase-js'
 import type { Metadata } from 'next'
 
@@ -25,11 +25,6 @@ function serviceClient() {
   )
 }
 
-interface ReelRow {
-  id: string; user_id: string; caption: string | null
-  thumbnail_url: string | null; video_url: string
-  views: number | null; created_at: string
-}
 interface ServiceRow {
   id: string; freelancer_id: string; title: string
   category: string | null; cover_image: string | null
@@ -52,13 +47,7 @@ export default async function ExplorePage() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const db = serviceClient() as any
 
-  // Pull four buckets in parallel.
-  const [reelsRes, servicesRes, postsRes, ordersRes] = await Promise.all([
-    db.from('reels')
-      .select('id, user_id, caption, thumbnail_url, video_url, views, created_at')
-      .order('views', { ascending: false, nullsFirst: false })
-      .order('created_at', { ascending: false })
-      .limit(9),
+  const [servicesRes, postsRes, ordersRes] = await Promise.all([
     db.from('services')
       .select('id, freelancer_id, title, category, cover_image, purchases_count')
       .eq('is_active', true)
@@ -76,14 +65,11 @@ export default async function ExplorePage() {
       .limit(6),
   ])
 
-  const reels = (reelsRes.data ?? []) as ReelRow[]
   const services = (servicesRes.data ?? []) as ServiceRow[]
   const posts = (postsRes.data ?? []) as PostRow[]
   const orders = (ordersRes.data ?? []) as OrderRow[]
 
-  // Hydrate author profiles
   const authorIds = new Set<string>()
-  reels.forEach(r => authorIds.add(r.user_id))
   services.forEach(s => authorIds.add(s.freelancer_id))
   posts.forEach(p => authorIds.add(p.user_id))
 
@@ -136,47 +122,6 @@ export default async function ExplorePage() {
           </Link>
         </div>
       </section>
-
-      {reels.length > 0 && (
-        <SectionHeader icon={Film} title="Трендовые видео" href="/reels" />
-      )}
-      {reels.length > 0 && (
-        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2 mb-10">
-          {reels.map(r => {
-            const prof = profMap[r.user_id]
-            return (
-              <Link
-                key={r.id}
-                href={`/reels/${r.id}`}
-                className="relative block rounded-xl overflow-hidden"
-                style={{ aspectRatio: '9 / 16', background: 'var(--fh-surface-2)' }}
-              >
-                {r.thumbnail_url ? (
-                  <Image src={r.thumbnail_url} alt={r.caption ?? ''} fill className="object-cover" unoptimized />
-                ) : (
-                  <div className="h-full w-full flex items-center justify-center">
-                    <Play className="h-6 w-6 text-muted-foreground" />
-                  </div>
-                )}
-                <div
-                  className="absolute inset-0 flex flex-col justify-between p-2"
-                  style={{ background: 'linear-gradient(180deg, rgba(0,0,0,0.35) 0%, transparent 40%, transparent 60%, rgba(0,0,0,0.75) 100%)' }}
-                >
-                  <div className="flex items-center gap-1 text-white text-xs font-semibold">
-                    <Play className="h-3 w-3" />
-                    {(r.views ?? 0).toLocaleString()}
-                  </div>
-                  {prof && (
-                    <div className="text-white text-xs truncate">
-                      @{prof.username ?? prof.full_name ?? 'user'}
-                    </div>
-                  )}
-                </div>
-              </Link>
-            )
-          })}
-        </div>
-      )}
 
       {services.length > 0 && (
         <SectionHeader icon={Package} title="Популярные услуги" href="/freelancers" />

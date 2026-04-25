@@ -22,7 +22,6 @@ import ProfileTabs from '@/components/profile/ProfileTabs'
 import ProfileStickyActions from '@/components/profile/ProfileStickyActions'
 import ProfileOwnerActions from '@/components/profile/ProfileOwnerActions'
 import ProfileBadges from '@/components/profile/ProfileBadges'
-import ProfileStoryHighlights, { type Highlight as HighlightRow } from '@/components/profile/ProfileStoryHighlights'
 import ProfileActivityHeatmap from '@/components/profile/ProfileActivityHeatmap'
 import SkillsWithEndorsements from '@/components/profile/SkillsWithEndorsements'
 import ProfileProSection from '@/components/freelancers/ProfileProSection'
@@ -30,8 +29,6 @@ import FounderCard from '@/components/freelancers/FounderCard'
 import ProfileExperienceTimeline, { type WorkEntry } from '@/components/profile/ProfileExperienceTimeline'
 import ProfileServices, { type Service as ServiceCard } from '@/components/profile/ProfileServices'
 import ProfileRecommendations, { type Recommendation } from '@/components/profile/ProfileRecommendations'
-import ProfileReels from '@/components/profile/ProfileReels'
-import type { Reel } from '@/components/reels/ReelPlayer'
 import ProfileFeaturedWork, { type FeaturedItem } from '@/components/profile/ProfileFeaturedWork'
 import ProfilePaymentMethods, { type PaymentMethod } from '@/components/profile/ProfilePaymentMethods'
 
@@ -249,9 +246,7 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
     { data: postRows },
     { data: experienceRows },
     { data: serviceRows },
-    { data: highlightRows },
     { data: recRows },
-    { data: reelRows },
   ] = await Promise.all([
     db.from('follows').select('follower',  { count: 'exact', head: true }).eq('following', p.userId),
     db.from('follows').select('following', { count: 'exact', head: true }).eq('follower',  p.userId),
@@ -269,27 +264,16 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
           tiers:service_tiers(id, tier, title, price, delivery_days, revisions, description, features)
         `).eq('freelancer_id', p.userId).eq('is_active', true).order('created_at', { ascending: false })
       : Promise.resolve({ data: [] }),
-    db.from('story_highlights').select(`
-      id, title, cover_url, position,
-      items:story_highlight_items(id, type, content, bg_color, media_url, position)
-    `).eq('user_id', p.userId).order('position', { ascending: true }),
     db.from('recommendations').select(`
       id, author_id, author_title, relationship, body, created_at,
       author:author_id ( full_name, username, avatar_url, is_verified )
     `).eq('recipient_id', p.userId).eq('status', 'approved')
       .order('created_at', { ascending: false }),
-    db.from('reels').select('id, user_id, video_url, thumbnail_url, caption, duration_seconds, aspect_ratio, views, created_at')
-      .eq('user_id', p.userId).order('created_at', { ascending: false }).limit(12),
   ])
 
   const experience: WorkEntry[] = (experienceRows ?? []) as WorkEntry[]
   const services:   ServiceCard[] = (serviceRows ?? []) as ServiceCard[]
-  const highlights: HighlightRow[] = ((highlightRows ?? []) as HighlightRow[]).map(h => ({
-    ...h,
-    items: [...(h.items ?? [])].sort((a, b) => a.position - b.position),
-  }))
   const recommendations: Recommendation[] = (recRows ?? []) as Recommendation[]
-  const reels: Reel[] = ((reelRows ?? []) as Omit<Reel, 'author'>[]).map(r => ({ ...r, author: null }))
 
   // Bucket posts by day for activity heatmap
   const activityCounts: Record<string, number> = {}
@@ -384,8 +368,6 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
           viewerLoggedIn={!!user}
         />
       )}
-
-      <ProfileReels reels={reels} isOwner={isOwnProfile} />
 
       <ProfileRecommendations
         recipientId={p.userId}
@@ -541,10 +523,6 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
             items={p.featured ?? []}
             isOwner={isOwnProfile}
           />
-        )}
-
-        {(highlights.length > 0 || isOwnProfile) && (
-          <ProfileStoryHighlights highlights={highlights} isOwnProfile={isOwnProfile} />
         )}
 
         {/* Inline desktop action bar — only for other users (own sees gear/pencil on cover) */}

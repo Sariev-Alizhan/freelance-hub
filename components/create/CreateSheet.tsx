@@ -4,16 +4,12 @@ import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, ImagePlus, Loader2, Hash, Briefcase, Users, Search, ArrowRight } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
-import { useLang } from '@/lib/context/LanguageContext'
 
-type Tab = 'post' | 'story' | 'work' | 'reel' | 'live'
+type Tab = 'post' | 'work'
 
 const TABS: { id: Tab; label: string }[] = [
-  { id: 'post',  label: 'POST'  },
-  { id: 'story', label: 'STORY' },
-  { id: 'work',  label: 'WORK'  },
-  { id: 'reel',  label: 'REEL'  },
-  { id: 'live',  label: 'LIVE'  },
+  { id: 'post', label: 'POST' },
+  { id: 'work', label: 'WORK' },
 ]
 
 interface Props {
@@ -29,8 +25,6 @@ export default function CreateSheet({ open, onClose }: Props) {
   const [publishing, setPublishing] = useState(false)
   const fileRef = useRef<HTMLInputElement>(null)
   const router = useRouter()
-  const { t } = useLang()
-  const tn = t.mobileNav
 
   const reset = useCallback(() => {
     setCaption(''); setImgUrl(null); setUploading(false); setPublishing(false)
@@ -43,7 +37,7 @@ export default function CreateSheet({ open, onClose }: Props) {
     setUploading(true)
     const supabase = createClient()
     const ext  = file.name.split('.').pop() ?? 'jpg'
-    const path = `${tab === 'story' ? 'stories' : 'posts'}/${crypto.randomUUID()}.${ext}`
+    const path = `posts/${crypto.randomUUID()}.${ext}`
     const { error } = await supabase.storage.from('media').upload(path, file, { upsert: false })
     if (!error) {
       const { data } = supabase.storage.from('media').getPublicUrl(path)
@@ -58,7 +52,6 @@ export default function CreateSheet({ open, onClose }: Props) {
 
     try {
       if (tab === 'post') {
-        // Posts: text + optional image (image URL encoded as trailing line; renderer picks it up)
         const body = imgUrl
           ? `${caption.trim()}\n\n${imgUrl}`
           : caption.trim()
@@ -67,21 +60,6 @@ export default function CreateSheet({ open, onClose }: Props) {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ content: body }),
-        })
-        if (!res.ok) return
-      }
-
-      if (tab === 'story') {
-        if (!imgUrl && !caption.trim()) return
-        const res = await fetch('/api/stories', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            type: imgUrl ? 'image' : 'text',
-            content: caption.trim() || null,
-            bg_color: '#27a644',
-            media_url: imgUrl ?? null,
-          }),
         })
         if (!res.ok) return
       }
@@ -95,8 +73,6 @@ export default function CreateSheet({ open, onClose }: Props) {
 
   const canPublish = tab === 'post'
     ? (!!caption.trim() || !!imgUrl) && !publishing && !uploading
-    : tab === 'story'
-    ? (!!imgUrl || !!caption.trim()) && !publishing && !uploading
     : false
 
   return (
@@ -125,7 +101,6 @@ export default function CreateSheet({ open, onClose }: Props) {
               paddingBottom: 'env(safe-area-inset-bottom)',
             }}
           >
-            {/* Top bar */}
             <div style={{
               display: 'flex', alignItems: 'center', justifyContent: 'space-between',
               padding: '14px 16px', borderBottom: '0.5px solid rgba(255,255,255,0.1)',
@@ -147,13 +122,11 @@ export default function CreateSheet({ open, onClose }: Props) {
               </button>
             </div>
 
-            {/* Content */}
             <div style={{ flex: 1, overflowY: 'auto', WebkitOverflowScrolling: 'touch' }}>
-              {(tab === 'post' || tab === 'story') && (
+              {tab === 'post' && (
                 <>
-                  {/* Preview / picker */}
                   <div style={{
-                    aspectRatio: tab === 'story' ? '9 / 16' : '1 / 1',
+                    aspectRatio: '1 / 1',
                     maxHeight: '60vh',
                     margin: 16, borderRadius: 12, overflow: 'hidden',
                     background: '#151520', border: '1px dashed rgba(255,255,255,0.15)',
@@ -180,13 +153,12 @@ export default function CreateSheet({ open, onClose }: Props) {
                     />
                   </div>
 
-                  {/* Caption */}
                   <div style={{ padding: '0 16px 24px' }}>
                     <textarea
                       value={caption}
                       onChange={e => setCaption(e.target.value)}
-                      placeholder={tab === 'story' ? 'Add a line of text (optional)…' : 'Write a caption…'}
-                      maxLength={tab === 'post' ? 1900 : 200}
+                      placeholder="Write a caption…"
+                      maxLength={1900}
                       rows={3}
                       style={{
                         width: '100%', background: '#151520', border: 'none',
@@ -195,22 +167,19 @@ export default function CreateSheet({ open, onClose }: Props) {
                         borderRadius: 10,
                       }}
                     />
-                    {tab === 'post' && (
-                      <div style={{
-                        display: 'flex', alignItems: 'center', gap: 6,
-                        marginTop: 8, fontSize: 11, color: 'rgba(255,255,255,0.4)',
-                      }}>
-                        <Hash style={{ width: 12, height: 12 }} />
-                        Use #tags in your caption
-                      </div>
-                    )}
+                    <div style={{
+                      display: 'flex', alignItems: 'center', gap: 6,
+                      marginTop: 8, fontSize: 11, color: 'rgba(255,255,255,0.4)',
+                    }}>
+                      <Hash style={{ width: 12, height: 12 }} />
+                      Use #tags in your caption
+                    </div>
                   </div>
                 </>
               )}
 
               {tab === 'work' && (
                 <div style={{ padding: 16, display: 'flex', flexDirection: 'column', gap: 14 }}>
-                  {/* Hero card — Post a job */}
                   <button
                     onClick={() => { close(); router.push('/orders/new') }}
                     style={{
@@ -244,7 +213,6 @@ export default function CreateSheet({ open, onClose }: Props) {
                     </div>
                   </button>
 
-                  {/* Find freelancers */}
                   <button
                     onClick={() => { close(); router.push('/freelancers') }}
                     style={{
@@ -272,7 +240,6 @@ export default function CreateSheet({ open, onClose }: Props) {
                     <ArrowRight style={{ width: 18, height: 18, color: 'rgba(255,255,255,0.4)', flexShrink: 0 }} />
                   </button>
 
-                  {/* Browse jobs */}
                   <button
                     onClick={() => { close(); router.push('/orders') }}
                     style={{
@@ -299,70 +266,10 @@ export default function CreateSheet({ open, onClose }: Props) {
                     </div>
                     <ArrowRight style={{ width: 18, height: 18, color: 'rgba(255,255,255,0.4)', flexShrink: 0 }} />
                   </button>
-
-                  <div style={{
-                    marginTop: 6, padding: '12px 4px',
-                    fontSize: 11, color: 'rgba(255,255,255,0.35)', textAlign: 'center',
-                    letterSpacing: '0.02em',
-                  }}>
-                    Unique to FreelanceHub — work your network can&apos;t do on Instagram or LinkedIn.
-                  </div>
-                </div>
-              )}
-
-              {tab === 'reel' && (
-                <div style={{
-                  flex: 1, display: 'flex', flexDirection: 'column',
-                  alignItems: 'center', justifyContent: 'center',
-                  padding: 40, gap: 14, minHeight: '50vh',
-                }}>
-                  <div style={{
-                    width: 64, height: 64, borderRadius: 20,
-                    background: 'var(--fh-primary-muted)',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: 26,
-                  }}>
-                    🎬
-                  </div>
-                  <div style={{ fontSize: 17, fontWeight: 600 }}>{tn.video}</div>
-                  <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.55)', textAlign: 'center', maxWidth: 280 }}>
-                    {tn.videoShort}
-                  </div>
-                  <button
-                    onClick={() => { close(); router.push('/reels') }}
-                    style={{
-                      marginTop: 6, padding: '12px 22px', borderRadius: 12,
-                      background: 'var(--fh-primary)',
-                      border: 'none', cursor: 'pointer',
-                      color: '#fff', fontWeight: 700, fontSize: 14,
-                    }}
-                  >
-                    {tn.openVideo}
-                  </button>
-                </div>
-              )}
-
-              {tab === 'live' && (
-                <div style={{
-                  flex: 1, display: 'flex', flexDirection: 'column',
-                  alignItems: 'center', justifyContent: 'center',
-                  padding: 40, gap: 12, minHeight: '50vh',
-                }}>
-                  <div style={{
-                    width: 64, height: 64, borderRadius: 20,
-                    background: 'rgba(255,255,255,0.06)',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontSize: 24,
-                  }}>📡</div>
-                  <div style={{ fontSize: 17, fontWeight: 600 }}>Live coming soon</div>
-                  <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)', textAlign: 'center', maxWidth: 280 }}>
-                    Live broadcasting from the browser — planned.
-                  </div>
                 </div>
               )}
             </div>
 
-            {/* Bottom tab switcher (pill) */}
             <div style={{
               display: 'flex', justifyContent: 'center',
               padding: '12px 16px 20px',

@@ -24,8 +24,6 @@ function PhoneScreen({ labelFeed }: { labelFeed: string }) {
       verified: true,
     },
   ]
-  const stories = ['A', 'D', 'M', 'E', 'S', 'R']
-
   return (
     <div
       style={{
@@ -112,53 +110,6 @@ function PhoneScreen({ labelFeed }: { labelFeed: string }) {
             <Zap size={12} color="rgba(255,255,255,0.5)" />
           </div>
         </div>
-      </div>
-
-      <div style={{ display: 'flex', gap: 10, padding: '6px 14px 12px', overflowX: 'hidden' }}>
-        <div style={{ flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
-          <div
-            style={{
-              width: 44,
-              height: 44,
-              borderRadius: '50%',
-              background: 'rgba(244,244,246,0.06)',
-              border: '1.5px dashed rgba(244,244,246,0.3)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: 18,
-              color: 'rgba(244,244,246,0.6)',
-            }}
-          >
-            +
-          </div>
-          <span style={{ fontSize: 8, color: 'rgba(255,255,255,0.3)' }}>+</span>
-        </div>
-        {stories.map((s, i) => (
-          <div
-            key={i}
-            style={{ flexShrink: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}
-          >
-            <div
-              style={{
-                width: 44,
-                height: 44,
-                borderRadius: '50%',
-                background: `hsl(0, 0%, ${18 + i * 5}%)`,
-                border: i < 2 ? '2px solid #27a644' : '2px solid rgba(255,255,255,0.12)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: 16,
-                fontWeight: 700,
-                color: '#fff',
-              }}
-            >
-              {s}
-            </div>
-            <span style={{ fontSize: 8, color: 'rgba(255,255,255,0.3)' }}>User {i + 1}</span>
-          </div>
-        ))}
       </div>
 
       <div
@@ -292,13 +243,13 @@ const CONTENT = {
     eyebrow: 'The app',
     pre: 'Everything you need,',
     accent: 'one app.',
-    sub: 'A freelance platform with a feed, stories, messenger, and AI — like a social network, but for work.',
+    sub: 'A freelance platform with messaging, AI matching, and direct payments. Built for getting hired and paid.',
     feed: 'Feed · Kazakhstan',
     features: [
       { kv: '01', title: '0% commission', sub: 'No hidden fees. Ever.' },
-      { kv: '02', title: 'Messenger', sub: 'Reactions, stories, typing indicator.' },
+      { kv: '02', title: 'Messenger', sub: 'Reactions, real-time, typing indicator.' },
       { kv: '03', title: 'Ratings & reviews', sub: 'Real clients only.' },
-      { kv: '04', title: 'Social feed', sub: 'Posts, stories, follows.' },
+      { kv: '04', title: 'Direct payments', sub: 'Kaspi, USDT, IBAN, cash — your call.' },
       { kv: '05', title: 'AI matchmaking', sub: 'Right freelancer in 3 seconds.' },
       { kv: '06', title: 'Verified profiles', sub: 'Badge for proven freelancers.' },
     ],
@@ -307,13 +258,13 @@ const CONTENT = {
     eyebrow: 'Приложение',
     pre: 'Всё что нужно —',
     accent: 'одно приложение.',
-    sub: 'Фриланс-платформа с лентой, сторис, мессенджером и AI. Как соцсеть — только для работы.',
+    sub: 'Фриланс-платформа с мессенджером, AI-подбором и прямыми выплатами. Сделано чтобы находить работу и получать оплату.',
     feed: 'Лента · Казахстан',
     features: [
       { kv: '01', title: '0% комиссий', sub: 'Никаких скрытых платежей. Никогда.' },
-      { kv: '02', title: 'Мессенджер', sub: 'Реакции, стори, typing-индикатор.' },
+      { kv: '02', title: 'Мессенджер', sub: 'Реакции, реалтайм, typing-индикатор.' },
       { kv: '03', title: 'Рейтинг и отзывы', sub: 'Только реальные клиенты.' },
-      { kv: '04', title: 'Социальная лента', sub: 'Посты, стори, подписки.' },
+      { kv: '04', title: 'Прямые выплаты', sub: 'Kaspi, USDT, IBAN, наличка — на ваш выбор.' },
       { kv: '05', title: 'AI-подбор', sub: 'Нужный специалист за 3 секунды.' },
       { kv: '06', title: 'Верификация', sub: 'Бейдж для проверенных.' },
     ],
@@ -322,13 +273,13 @@ const CONTENT = {
     eyebrow: 'Қосымша',
     pre: 'Керек нәрсенің бәрі —',
     accent: 'бір қосымшада.',
-    sub: 'Лента, сторис, мессенджер және AI бар фриланс-платформа. Әлеуметтік желі, бірақ жұмысқа арналған.',
+    sub: 'Мессенджер, AI-сұрыптау және тікелей төлемдері бар фриланс-платформа. Жұмыс табу және ақы алу үшін жасалған.',
     feed: 'Лента · Қазақстан',
     features: [
       { kv: '01', title: '0% комиссия', sub: 'Жасырын төлем жоқ. Ешқашан.' },
-      { kv: '02', title: 'Мессенджер', sub: 'Реакция, стори, typing көрсеткіш.' },
+      { kv: '02', title: 'Мессенджер', sub: 'Реакция, реалтайм, typing көрсеткіш.' },
       { kv: '03', title: 'Рейтинг және пікірлер', sub: 'Тек нақты клиенттер.' },
-      { kv: '04', title: 'Әлеуметтік лента', sub: 'Посттар, стори, жазылу.' },
+      { kv: '04', title: 'Тікелей төлемдер', sub: 'Kaspi, USDT, IBAN, қолма-қол — өзіңіз шешесіз.' },
       { kv: '05', title: 'AI-сұрыптау', sub: '3 секундта сізге қажет маман.' },
       { kv: '06', title: 'Верификация', sub: 'Тексерілген мамандарға бейдж.' },
     ],

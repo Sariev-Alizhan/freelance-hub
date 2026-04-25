@@ -1,4 +1,4 @@
-// Global search across orders, freelancers, reels, services.
+// Global search across orders, freelancers, services.
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 
@@ -14,10 +14,6 @@ interface FreelancerRow {
   user_id: string; title: string | null; category: string | null
   price_from: number | null; price_to: number | null; rating: number | null
 }
-interface ReelRow {
-  id: string; user_id: string; caption: string | null
-  thumbnail_url: string | null; video_url: string; views: number | null
-}
 interface ServiceRow {
   id: string; freelancer_id: string; title: string; category: string | null
   cover_image: string | null
@@ -28,7 +24,7 @@ interface ProfileRow {
   is_verified: boolean | null
 }
 
-// GET /api/search?q=<query>&type=<all|orders|people|reels|services>&limit=<n>
+// GET /api/search?q=<query>&type=<all|orders|people|services>&limit=<n>
 export async function GET(req: NextRequest) {
   const q = (req.nextUrl.searchParams.get('q') ?? '').trim()
   const type = req.nextUrl.searchParams.get('type') ?? 'all'
@@ -36,7 +32,7 @@ export async function GET(req: NextRequest) {
 
   if (!q || q.length < 2) {
     return NextResponse.json({
-      orders: [], people: [], reels: [], services: [],
+      orders: [], people: [], services: [],
     })
   }
 
@@ -51,7 +47,6 @@ export async function GET(req: NextRequest) {
 
   const want = (k: string) => type === 'all' || type === k
 
-  // Orders
   if (want('orders')) {
     tasks.push(
       db.from('orders')
@@ -63,7 +58,6 @@ export async function GET(req: NextRequest) {
     )
   } else tasks.push(Promise.resolve({ data: [] }))
 
-  // People (freelancer_profiles + profiles)
   if (want('people')) {
     tasks.push(
       db.from('freelancer_profiles')
@@ -73,18 +67,6 @@ export async function GET(req: NextRequest) {
     )
   } else tasks.push(Promise.resolve({ data: [] }))
 
-  // Reels (caption)
-  if (want('reels')) {
-    tasks.push(
-      db.from('reels')
-        .select('id, user_id, caption, thumbnail_url, video_url, views')
-        .ilike('caption', pat)
-        .order('created_at', { ascending: false })
-        .limit(limit)
-    )
-  } else tasks.push(Promise.resolve({ data: [] }))
-
-  // Services (title + description)
   if (want('services')) {
     tasks.push(
       db.from('services')
@@ -96,19 +78,16 @@ export async function GET(req: NextRequest) {
     )
   } else tasks.push(Promise.resolve({ data: [] }))
 
-  const [ordersR, fpR, reelsR, servicesR] = await Promise.all(tasks) as [
+  const [ordersR, fpR, servicesR] = await Promise.all(tasks) as [
     { data: OrderRow[] | null },
     { data: FreelancerRow[] | null },
-    { data: ReelRow[] | null },
     { data: ServiceRow[] | null },
   ]
 
   const orders = ordersR.data ?? []
   const fps = fpR.data ?? []
-  const reels = reelsR.data ?? []
   const services = servicesR.data ?? []
 
-  // Also search profiles directly (by name/username) for people results
   let nameHits: FreelancerRow[] = []
   if (want('people')) {
     const { data } = await db
@@ -133,10 +112,8 @@ export async function GET(req: NextRequest) {
 
   const allFps = [...fps, ...nameHits]
 
-  // Hydrate author profiles for people/reels/services
   const authorIds = new Set<string>()
   allFps.forEach(f => authorIds.add(f.user_id))
-  reels.forEach(r => authorIds.add(r.user_id))
   services.forEach(s => authorIds.add(s.freelancer_id))
 
   let profMap: Record<string, ProfileRow> = {}
@@ -159,11 +136,6 @@ export async function GET(req: NextRequest) {
     profile: profMap[f.user_id] ?? null,
   })).slice(0, limit)
 
-  const reelsOut = reels.map(r => ({
-    ...r,
-    profile: profMap[r.user_id] ?? null,
-  }))
-
   const servicesOut = services.map(s => ({
     ...s,
     profile: profMap[s.freelancer_id] ?? null,
@@ -172,7 +144,6 @@ export async function GET(req: NextRequest) {
   return NextResponse.json({
     orders,
     people,
-    reels: reelsOut,
     services: servicesOut,
   })
 }

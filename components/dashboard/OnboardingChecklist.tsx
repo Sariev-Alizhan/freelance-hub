@@ -1,14 +1,13 @@
 'use client'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { Check, UserCircle2, Briefcase, Star, Package, Film, X } from 'lucide-react'
+import { Check, UserCircle2, Briefcase, Star, Package, X } from 'lucide-react'
 
 type Steps = {
   profile: boolean
   experience: boolean
   featured: boolean
   service: boolean
-  reel: boolean
 }
 
 type Data = {
@@ -54,13 +53,6 @@ const ITEMS: Item[] = [
     title: 'Создайте услугу',
     hint: 'Фикс-прайс пакет для клиентов',
     href: '/dashboard/services',
-  },
-  {
-    key: 'reel',
-    icon: Film,
-    title: 'Загрузите Reel',
-    hint: 'Короткое видео про вашу работу',
-    href: '/reels',
   },
 ]
 

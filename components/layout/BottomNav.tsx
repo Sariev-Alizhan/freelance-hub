@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import {
   Home, Briefcase, Plus, User, LogOut,
   Settings, BarChart3,
-  Search, Zap, FileText, Film, Sparkles,
+  Search, Zap, FileText, Sparkles,
   LayoutDashboard, Brain, Star, Users, MessageSquare,
 } from 'lucide-react'
 import { useState, useCallback } from 'react'
@@ -18,15 +18,14 @@ import { useLang } from '@/lib/context/LanguageContext'
 import { createClient } from '@/lib/supabase/client'
 import RoleSwitcher from '@/components/layout/RoleSwitcher'
 
-// ── Tab definition — Feed | Video | Create (+) | Messages | Profile ──────────
+// ── Tab definition — Feed | Orders | Create (+) | Messages | Profile ─────────
 //
-// Orders is reachable from the Navigate grid inside the profile sheet, from
-// the feed, and from the desktop sidebar. Making Video a primary tab matches
-// how people actually browse on mobile (Instagram/TikTok pattern) while
-// keeping Create and Messages one tap away.
+// Orders is the transactional core. Surfacing it as a primary tab matches
+// what users actually do on the platform (12 orders / 0 reels in 9 days of
+// data). Create and Messages stay one tap away.
 const TABS = [
   { id: 'feed',          href: '/feed',          icon: Home,         matchPrefix: '/feed'          },
-  { id: 'video',         href: '/reels',         icon: Film,         matchPrefix: '/reels'         },
+  { id: 'orders',        href: '/orders',        icon: Briefcase,    matchPrefix: '/orders'        },
   { id: 'create',        href: '/orders/new',    icon: Plus,         isCenter: true                },
   { id: 'messages',      href: '/messages',      icon: MessageSquare,matchPrefix: '/messages'      },
   { id: 'profile',       href: null,             icon: User,         isProfile: true               },

@@ -19,13 +19,12 @@ export async function GET() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const db = serviceClient() as any
 
-  const [profRow, expCount, featuredCount, servicesCount, reelsCount] = await Promise.all([
+  const [profRow, expCount, featuredCount, servicesCount] = await Promise.all([
     db.from('profiles').select('avatar_url,bio').eq('id', user.id).single(),
     db.from('work_experience').select('id', { count: 'exact', head: true }).eq('user_id', user.id),
     db.from('portfolio_items').select('id', { count: 'exact', head: true })
       .eq('freelancer_id', user.id).eq('is_featured', true),
     db.from('services').select('id', { count: 'exact', head: true }).eq('freelancer_id', user.id),
-    db.from('reels').select('id', { count: 'exact', head: true }).eq('user_id', user.id),
   ])
 
   const hasAvatar = !!profRow.data?.avatar_url
@@ -36,7 +35,6 @@ export async function GET() {
     experience: (expCount.count ?? 0) > 0,
     featured: (featuredCount.count ?? 0) > 0,
     service: (servicesCount.count ?? 0) > 0,
-    reel: (reelsCount.count ?? 0) > 0,
   }
 
   const done = Object.values(steps).filter(Boolean).length

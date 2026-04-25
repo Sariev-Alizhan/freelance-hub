@@ -3,9 +3,9 @@ import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { useSearchParams, useRouter } from 'next/navigation'
 import Image from 'next/image'
-import { Search, Film, Package, Briefcase, User, Play, Star } from 'lucide-react'
+import { Search, Package, Briefcase, User, Star } from 'lucide-react'
 
-type Tab = 'all' | 'orders' | 'people' | 'reels' | 'services'
+type Tab = 'all' | 'orders' | 'people' | 'services'
 
 interface Profile {
   id: string; username: string | null; full_name: string | null
@@ -23,10 +23,6 @@ interface PersonHit {
   price_from: number | null; price_to: number | null; rating: number | null
   profile: Profile | null
 }
-interface ReelHit {
-  id: string; caption: string | null; thumbnail_url: string | null
-  video_url: string; views: number | null; profile: Profile | null
-}
 interface ServiceHit {
   id: string; title: string; category: string | null
   cover_image: string | null; profile: Profile | null
@@ -35,7 +31,6 @@ interface ServiceHit {
 interface Results {
   orders: OrderHit[]
   people: PersonHit[]
-  reels: ReelHit[]
   services: ServiceHit[]
 }
 
@@ -44,7 +39,6 @@ const TABS: { key: Tab; label: string; icon: typeof Search }[] = [
   { key: 'orders', label: 'Заказы', icon: Briefcase },
   { key: 'people', label: 'Люди', icon: User },
   { key: 'services', label: 'Услуги', icon: Package },
-  { key: 'reels', label: 'Видео', icon: Film },
 ]
 
 export default function SearchPage() {
@@ -58,7 +52,6 @@ export default function SearchPage() {
   const [data, setData] = useState<Results | null>(null)
   const [loading, setLoading] = useState(false)
 
-  // Debounced fetch
   const query = q.trim()
   const shortQuery = query.length < 2
 
@@ -79,7 +72,6 @@ export default function SearchPage() {
     return () => { ctrl.abort(); clearTimeout(t) }
   }, [query, tab, shortQuery])
 
-  // Sync URL on blur/change (don't spam history)
   useEffect(() => {
     const query = q.trim()
     const qs = new URLSearchParams()
@@ -91,7 +83,7 @@ export default function SearchPage() {
 
   const totalCount = useMemo(() => {
     if (!data) return 0
-    return data.orders.length + data.people.length + data.reels.length + data.services.length
+    return data.orders.length + data.people.length + data.services.length
   }, [data])
 
   return (
@@ -106,7 +98,7 @@ export default function SearchPage() {
             autoFocus
             value={q}
             onChange={e => setQ(e.target.value)}
-            placeholder="Поиск заказов, людей, услуг, видео…"
+            placeholder="Поиск заказов, людей, услуг…"
             className="flex-1 bg-transparent outline-none text-sm"
             style={{ color: 'var(--fh-t1)' }}
           />
@@ -163,13 +155,6 @@ export default function SearchPage() {
               {data.services.map(s => <ServiceCard key={s.id} s={s} />)}
             </Section>
           )}
-          {data && data.reels.length > 0 && (tab === 'all' || tab === 'reels') && (
-            <Section title="Reels" icon={Film} count={data.reels.length}>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                {data.reels.map(r => <ReelTile key={r.id} r={r} />)}
-              </div>
-            </Section>
-          )}
         </div>
       )}
     </div>
@@ -197,7 +182,7 @@ function EmptyPrompt() {
       <Search className="h-8 w-8 mx-auto mb-3" style={{ color: 'var(--fh-t4)' }} />
       <div className="text-sm font-medium mb-1">Что ищете?</div>
       <div className="text-xs text-muted-foreground">
-        Введите минимум 2 символа — ищем среди заказов, людей, услуг и Reels
+        Введите минимум 2 символа — ищем среди заказов, людей и услуг
       </div>
     </div>
   )
@@ -275,33 +260,6 @@ function ServiceCard({ s }: { s: ServiceHit }) {
         <div className="font-medium text-sm line-clamp-1">{s.title}</div>
         <div className="text-xs text-muted-foreground">
           {prof?.full_name ?? prof?.username ?? ''} {s.category && `· ${s.category}`}
-        </div>
-      </div>
-    </Link>
-  )
-}
-
-function ReelTile({ r }: { r: ReelHit }) {
-  return (
-    <Link
-      href={`/reels/${r.id}`}
-      className="block relative rounded-xl overflow-hidden"
-      style={{ aspectRatio: '9 / 16', background: 'var(--fh-surface-2)' }}
-    >
-      {r.thumbnail_url ? (
-        <Image src={r.thumbnail_url} alt="" fill className="object-cover" unoptimized />
-      ) : (
-        <div className="h-full w-full flex items-center justify-center">
-          <Play className="h-6 w-6 text-muted-foreground" />
-        </div>
-      )}
-      <div
-        className="absolute inset-0 flex items-end p-2"
-        style={{ background: 'linear-gradient(180deg, transparent 60%, rgba(0,0,0,0.7))' }}
-      >
-        <div className="text-white text-xs flex items-center gap-1">
-          <Play className="h-3 w-3" />
-          {r.views ?? 0}
         </div>
       </div>
     </Link>

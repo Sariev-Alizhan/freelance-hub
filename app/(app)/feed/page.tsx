@@ -7,7 +7,6 @@ import { useLang } from '@/lib/context/LanguageContext'
 import { useUser } from '@/lib/hooks/useUser'
 import { useFeedData } from '@/lib/hooks/useFeedData'
 import { usePullToRefresh } from '@/lib/hooks/usePullToRefresh'
-import StoriesBar from '@/components/stories/StoriesBar'
 import PostCard from '@/components/feed/PostCard'
 import UpdateCard from '@/components/feed/UpdateCard'
 import ReleaseCard from '@/components/feed/ReleaseCard'
@@ -56,19 +55,12 @@ export default function FeedPage() {
             {search && <button onClick={() => { setSearch(''); setQuery('') }} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--fh-t4)', padding: 0 }}><X className="h-3.5 w-3.5" /></button>}
           </div>
         </div>
-        {!query && <div style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border)', borderRadius: 18, padding: '4px 12px', marginBottom: 12, overflow: 'hidden' }}><StoriesBar currentUserId={user?.id} /></div>}
         {loading ? <div className="space-y-3">{[...Array(6)].map((_, i) => <div key={i} className="rounded-2xl animate-pulse" style={{ background: 'var(--fh-surface)', border: '1px solid var(--fh-border)', height: 140 }} />)}</div> : feedItems.length === 0 ? <div className="flex flex-col items-center justify-center py-20 gap-3 text-center"><Search className="h-8 w-8" style={{ color: 'var(--fh-t4)', opacity: 0.3 }} /><p style={{ fontSize: 14, color: 'var(--fh-t4)' }}>{tf.emptyFound}</p><button onClick={() => { setSearch(''); setQuery('') }} style={{ fontSize: 13, color: 'var(--fh-primary)', background: 'none', border: 'none', cursor: 'pointer' }}>{tf.clear}</button></div> : <div className="space-y-3">{feedItems.map((item) => { if (item.kind === 'update') return <UpdateCard key="update" reactions={getR(`update-v${CURRENT_RELEASE.version}`)} onReact={handleReact} user={user} profile={profile} />; if (item.kind === 'release') return <ReleaseCard key={`rel-${item.data.version}`} release={item.data} reactions={getR(`rel-${item.data.version}`)} onReact={handleReact} user={user} profile={profile} />; if (item.kind === 'editor') return <EditorCard key={`ed-${item.data.id}`} post={item.data} reactions={getR(`ed-${item.data.id}`)} onReact={handleReact} user={user} profile={profile} />; if (item.kind === 'post') return <PostCard key={item.data.id} post={item.data} reactions={getR(item.data.id)} onReact={handleReact} user={user} profile={profile} onDelete={handleDeletePost} />; return null })}</div>}
         <div className="h-8" />
       </div>
 
       {/* Mobile: edge-to-edge Instagram layout */}
       <div className="sm:hidden">
-        {!query && (
-          <div style={{ borderBottom: '0.5px solid var(--fh-sep)', paddingBottom: 2 }}>
-            <StoriesBar currentUserId={user?.id} />
-          </div>
-        )}
-
         {query && (
           <div style={{ padding: '10px 16px', borderBottom: '0.5px solid var(--fh-sep)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, background: 'var(--fh-surface-2)', borderRadius: 12, padding: '10px 14px' }}>
