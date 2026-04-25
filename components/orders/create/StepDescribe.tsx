@@ -1,6 +1,7 @@
 'use client'
 import { motion } from 'framer-motion'
 import { Loader2, Wand2, Mic, MicOff } from 'lucide-react'
+import { useLang } from '@/lib/context/LanguageContext'
 import { slide, type FormData } from './types'
 
 export default function StepDescribe({
@@ -15,18 +16,20 @@ export default function StepDescribe({
   voiceParsing: boolean
   onToggleVoice: () => void
 }) {
+  const { t } = useLang()
+  const tc = t.createOrder
   return (
     <motion.div key="step1" {...slide} className="space-y-5">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <h2 className="text-lg font-bold mb-1">Describe the task</h2>
-          <p className="text-sm text-muted-foreground">The more detail, the better we match you with a specialist</p>
+          <h2 className="text-lg font-bold mb-1">{tc.describeTitle}</h2>
+          <p className="text-sm text-muted-foreground">{tc.describeSub}</p>
         </div>
         <button
           type="button"
           onClick={onToggleVoice}
           disabled={voiceParsing}
-          title={voiceRecording ? 'Stop recording' : 'Describe by voice'}
+          title={voiceRecording ? tc.voiceStop : tc.voiceStart}
           className="flex-shrink-0 flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium transition-all disabled:opacity-50"
           style={{
             background: voiceRecording ? 'rgba(239,68,68,0.1)' : 'var(--fh-primary-muted)',
@@ -40,21 +43,21 @@ export default function StepDescribe({
               ? <MicOff className="h-4 w-4" />
               : <Mic className="h-4 w-4" />
           }
-          {voiceParsing ? 'Parsing…' : voiceRecording ? 'Stop' : 'Voice'}
+          {voiceParsing ? tc.voiceParsing : voiceRecording ? tc.voiceLabelStop : tc.voiceLabel}
         </button>
       </div>
 
       <div>
-        <label className="text-sm font-medium mb-2 block">Job title</label>
+        <label className="text-sm font-medium mb-2 block">{tc.titleLabel}</label>
         <input
           value={form.title}
           onChange={e => onSet('title', e.target.value)}
-          placeholder="E.g.: Build an e-commerce store with Next.js"
+          placeholder={tc.titlePlaceholder}
           maxLength={120}
           className="w-full px-4 py-3 rounded-xl bg-background border border-subtle text-sm placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 transition-colors"
         />
         <div className="flex justify-between mt-1">
-          <span className="text-xs text-muted-foreground">Minimum 10 characters</span>
+          <span className="text-xs text-muted-foreground">{tc.titleMinChars}</span>
           <span className={`text-xs ${form.title.length >= 10 ? 'text-green-400' : 'text-muted-foreground'}`}>
             {form.title.length}/120
           </span>
@@ -63,7 +66,7 @@ export default function StepDescribe({
 
       <div>
         <div className="flex items-center justify-between mb-2">
-          <label className="text-sm font-medium">Description</label>
+          <label className="text-sm font-medium">{tc.descLabel}</label>
           <button
             onClick={onGenerateDescription}
             disabled={aiLoading || form.title.trim().length < 10}
@@ -73,20 +76,20 @@ export default function StepDescribe({
               ? <Loader2 className="h-3 w-3 animate-spin" />
               : <Wand2 className="h-3 w-3" />
             }
-            AI fill
+            {tc.aiFill}
           </button>
         </div>
         <textarea
           value={form.description}
           onChange={e => onSet('description', e.target.value)}
-          placeholder="Describe in detail what needs to be done, what result you expect, any special requirements..."
+          placeholder={tc.descPlaceholder}
           rows={6}
           className="w-full px-4 py-3 rounded-xl bg-background border border-subtle text-sm placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 transition-colors resize-none"
         />
         <div className="flex justify-between mt-1">
-          <span className="text-xs text-muted-foreground">Minimum 30 characters</span>
+          <span className="text-xs text-muted-foreground">{tc.descMinChars}</span>
           <span className={`text-xs ${form.description.length >= 30 ? 'text-green-400' : 'text-muted-foreground'}`}>
-            {form.description.length} chars
+            {form.description.length} {tc.chars}
           </span>
         </div>
       </div>

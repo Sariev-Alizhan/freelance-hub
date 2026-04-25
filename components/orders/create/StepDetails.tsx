@@ -1,6 +1,7 @@
 'use client'
 import { motion } from 'framer-motion'
 import { Tag, DollarSign, Clock, X, Loader2, Wand2, Zap, Check } from 'lucide-react'
+import { useLang } from '@/lib/context/LanguageContext'
 import { BUDGET_RANGES, DEADLINES, slide, type FormData, type PriceAdvice } from './types'
 
 export default function StepDetails({
@@ -18,18 +19,20 @@ export default function StepDetails({
   onGetPriceAdvice: () => void
   onApplyPriceAdvice: () => void
 }) {
+  const { t } = useLang()
+  const tc = t.createOrder
   return (
     <motion.div key="step2" {...slide} className="space-y-6">
       <div>
-        <h2 className="text-lg font-bold mb-1">Order details</h2>
-        <p className="text-sm text-muted-foreground">Skills, budget and timeline</p>
+        <h2 className="text-lg font-bold mb-1">{tc.detailsTitle}</h2>
+        <p className="text-sm text-muted-foreground">{tc.detailsSub}</p>
       </div>
 
       <div>
         <label className="text-sm font-medium mb-2 flex items-center gap-1.5 block">
           <Tag className="h-3.5 w-3.5 text-muted-foreground" />
-          Required skills
-          <span className="text-muted-foreground font-normal">(optional)</span>
+          {tc.skillsLabel}
+          <span className="text-muted-foreground font-normal">{tc.skillsOptional}</span>
         </label>
         <div className="flex flex-wrap gap-2 min-h-[36px] mb-2">
           {form.skills.map(skill => (
@@ -48,7 +51,7 @@ export default function StepDetails({
             onKeyDown={e => {
               if (e.key === 'Enter' || e.key === ',') { e.preventDefault(); onAddSkill(skillInput) }
             }}
-            placeholder="React, Figma, Python... (Enter to add)"
+            placeholder={tc.skillsPlaceholder}
             className="flex-1 px-4 py-2.5 rounded-xl bg-background border border-subtle text-sm placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 transition-colors"
           />
           <button
@@ -64,7 +67,7 @@ export default function StepDetails({
       <div>
         <label className="text-sm font-medium mb-3 flex items-center gap-1.5 block">
           <DollarSign className="h-3.5 w-3.5 text-muted-foreground" />
-          Payment type
+          {tc.paymentLabel}
         </label>
         <div className="grid grid-cols-2 gap-3 mb-4">
           {(['fixed', 'hourly'] as const).map(type => (
@@ -77,7 +80,7 @@ export default function StepDetails({
                   : 'border-subtle text-muted-foreground hover:border-white/20'
               }`}
             >
-              {type === 'fixed' ? '💰 Fixed price' : '⏱️ Hourly rate'}
+              {type === 'fixed' ? tc.paymentFixed : tc.paymentHourly}
             </button>
           ))}
         </div>
@@ -93,21 +96,21 @@ export default function StepDetails({
               ? <Loader2 className="h-3 w-3 animate-spin" />
               : <Wand2 className="h-3 w-3" />
             }
-            AI price suggestion
+            {tc.aiPriceBtn}
           </button>
 
           {priceAdvice && (
             <div className="mt-2 p-3 rounded-xl border border-primary/20 bg-primary/5">
               <div className="flex items-center justify-between mb-1.5">
                 <span className="text-xs font-semibold text-primary">
-                  AI suggests: {priceAdvice.min.toLocaleString()} – {priceAdvice.max.toLocaleString()} ₸
+                  {tc.aiPriceSuggests}: {priceAdvice.min.toLocaleString()} – {priceAdvice.max.toLocaleString()} ₸
                 </span>
                 <button
                   type="button"
                   onClick={onApplyPriceAdvice}
                   className="text-xs px-2 py-0.5 rounded-md bg-primary text-white font-medium hover:bg-primary/90 transition-colors"
                 >
-                  Use
+                  {tc.aiPriceUse}
                 </button>
               </div>
               <p className="text-xs text-muted-foreground leading-relaxed">{priceAdvice.explanation}</p>
@@ -118,7 +121,7 @@ export default function StepDetails({
         <div className="grid grid-cols-3 gap-2 mb-3">
           {BUDGET_RANGES.map(range => (
             <button
-              key={range.label}
+              key={range.labelKey}
               onClick={() => { onSet('budgetMin', range.min); onSet('budgetMax', range.max) }}
               className={`py-2 px-3 rounded-lg text-xs font-medium border transition-all ${
                 form.budgetMin === range.min && form.budgetMax === range.max
@@ -126,14 +129,14 @@ export default function StepDetails({
                   : 'border-subtle text-muted-foreground hover:border-white/20 hover:text-foreground'
               }`}
             >
-              {range.label}
+              {tc[range.labelKey]}
             </button>
           ))}
         </div>
 
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="text-xs text-muted-foreground mb-1 block">From (₸)</label>
+            <label className="text-xs text-muted-foreground mb-1 block">{tc.budgetFromLabel}</label>
             <input
               type="number"
               value={form.budgetMin}
@@ -143,7 +146,7 @@ export default function StepDetails({
             />
           </div>
           <div>
-            <label className="text-xs text-muted-foreground mb-1 block">To (₸)</label>
+            <label className="text-xs text-muted-foreground mb-1 block">{tc.budgetToLabel}</label>
             <input
               type="number"
               value={form.budgetMax}
@@ -158,7 +161,7 @@ export default function StepDetails({
       <div>
         <label className="text-sm font-medium mb-3 flex items-center gap-1.5 block">
           <Clock className="h-3.5 w-3.5 text-muted-foreground" />
-          Timeline
+          {tc.timelineLabel}
         </label>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
           {DEADLINES.map(d => (
@@ -166,7 +169,7 @@ export default function StepDetails({
               key={d.value}
               onClick={() => {
                 onSet('deadline', d.value)
-                onSet('isUrgent', d.value.includes('Urgent'))
+                onSet('isUrgent', d.value === 'urgent')
               }}
               className={`flex items-center gap-2.5 p-3 rounded-xl border-2 text-left transition-all ${
                 form.deadline === d.value
@@ -176,15 +179,15 @@ export default function StepDetails({
             >
               <span className="text-lg">{d.icon}</span>
               <div>
-                <div className={`text-xs font-semibold ${form.deadline === d.value ? 'text-primary' : ''}`}>{d.label}</div>
-                <div className="text-xs text-muted-foreground">{d.sub}</div>
+                <div className={`text-xs font-semibold ${form.deadline === d.value ? 'text-primary' : ''}`}>{tc[d.labelKey]}</div>
+                <div className="text-xs text-muted-foreground">{tc[d.subKey]}</div>
               </div>
             </button>
           ))}
         </div>
       </div>
 
-      {!form.deadline.includes('Urgent') && (
+      {form.deadline !== 'urgent' && (
         <button
           onClick={() => onSet('isUrgent', !form.isUrgent)}
           className={`w-full flex items-center gap-3 p-4 rounded-xl border-2 transition-all ${
@@ -199,9 +202,9 @@ export default function StepDetails({
           <div className="text-left">
             <div className="flex items-center gap-2 text-sm font-medium">
               <Zap className={`h-3.5 w-3.5 ${form.isUrgent ? 'text-red-400' : 'text-muted-foreground'}`} />
-              Urgent order
+              {tc.urgentTitle}
             </div>
-            <div className="text-xs text-muted-foreground">Get responses faster</div>
+            <div className="text-xs text-muted-foreground">{tc.urgentSub}</div>
           </div>
         </button>
       )}

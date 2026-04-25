@@ -12,7 +12,9 @@ import MilestoneTracker from '@/components/orders/MilestoneTracker'
 import OrderReviewPrompt from '@/components/orders/OrderReviewPrompt'
 import { createClient } from '@/lib/supabase/server'
 import { Order } from '@/lib/types'
-import { getServerT } from '@/lib/i18n/server'
+import { getServerT, getServerLang } from '@/lib/i18n/server'
+import { localizeDeadline } from '@/lib/i18n/deadline'
+import { plural } from '@/lib/i18n/plural'
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.freelance-hub.kz'
 
@@ -106,7 +108,9 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
   const { id } = await params
   const supabase = await createClient()
   const t = await getServerT()
+  const lang = await getServerLang()
   const to = t.ordersPage
+  const tc = t.createOrder as unknown as Record<string, string>
   const [order, { data: { user } }] = await Promise.all([
     getOrder(id, to.clientFallback),
     supabase.auth.getUser(),
@@ -115,6 +119,12 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
 
   const category = CATEGORIES.find((c) => c.slug === order.category)
   const isOwner  = !!user && user.id === order.client.id
+  const deadlineLabel = localizeDeadline(order.deadline, tc, order.deadline ?? '')
+  const clientOrdersWord = plural(lang, order.client.ordersPosted, {
+    one:  to.clientOrdersOne,
+    few:  to.clientOrdersFew,
+    many: to.clientOrdersMany,
+  })
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const db = supabase as any
@@ -230,7 +240,7 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
                 <div style={{ fontSize: '11px', color: 'var(--fh-t4)', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 510 }}>
                   {to.timeline}
                 </div>
-                <div style={{ fontSize: '14px', fontWeight: 510, color: 'var(--fh-t1)', letterSpacing: '-0.01em' }}>{order.deadline}</div>
+                <div style={{ fontSize: '14px', fontWeight: 510, color: 'var(--fh-t1)', letterSpacing: '-0.01em' }}>{deadlineLabel}</div>
               </div>
               <div>
                 <div style={{ fontSize: '11px', color: 'var(--fh-t4)', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 510 }}>
@@ -369,7 +379,7 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
             >
               <div className="flex items-center gap-2" style={{ color: 'var(--fh-t4)' }}>
                 <Clock className="h-3.5 w-3.5 flex-shrink-0" />
-                <span style={{ fontSize: '12px', fontWeight: 400 }}>{order.deadline}</span>
+                <span style={{ fontSize: '12px', fontWeight: 400 }}>{deadlineLabel}</span>
               </div>
               <div className="flex items-center gap-2" style={{ color: 'var(--fh-t4)' }}>
                 <Users className="h-3.5 w-3.5 flex-shrink-0" />
@@ -390,7 +400,7 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
               <Image src={order.client.avatar} alt={order.client.name} width={38} height={38} className="rounded-lg" unoptimized />
               <div>
                 <div style={{ fontSize: '13px', fontWeight: 590, color: 'var(--fh-t1)' }}>{order.client.name}</div>
-                <div style={{ fontSize: '11px', color: 'var(--fh-t4)', fontWeight: 400 }}>{order.client.ordersPosted} {to.clientOrders}</div>
+                <div style={{ fontSize: '11px', color: 'var(--fh-t4)', fontWeight: 400 }}>{order.client.ordersPosted} {clientOrdersWord}</div>
               </div>
             </div>
             {order.client.rating > 0 && <RatingStars rating={order.client.rating} />}

@@ -2,16 +2,19 @@
 import { motion } from 'framer-motion'
 import { Check } from 'lucide-react'
 import type { CategorySlug } from '@/lib/supabase/types'
+import { useLang } from '@/lib/context/LanguageContext'
 import { CATEGORIES, slide, type FormData } from './types'
 
 export default function StepCategory({ form, onSet }: {
   form: FormData
   onSet: <K extends keyof FormData>(key: K, value: FormData[K]) => void
 }) {
+  const { t } = useLang()
+  const tc = t.createOrder
   return (
     <motion.div key="step0" {...slide}>
-      <h2 className="text-lg font-bold mb-1">Choose a category</h2>
-      <p className="text-sm text-muted-foreground mb-5">What area do you need help with?</p>
+      <h2 className="text-lg font-bold mb-1">{tc.catTitle}</h2>
+      <p className="text-sm text-muted-foreground mb-5">{tc.catSub}</p>
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
         {CATEGORIES.map(cat => {
           const Icon = cat.icon
@@ -32,8 +35,8 @@ export default function StepCategory({ form, onSet }: {
               >
                 <Icon className="h-5 w-5" style={{ color: cat.color }} />
               </div>
-              <div className="text-sm font-semibold">{cat.label}</div>
-              <div className="text-xs text-muted-foreground mt-0.5">{cat.desc}</div>
+              <div className="text-sm font-semibold">{tc[cat.labelKey]}</div>
+              <div className="text-xs text-muted-foreground mt-0.5">{tc[cat.descKey]}</div>
               {selected && (
                 <div className="absolute top-2.5 right-2.5 h-5 w-5 rounded-full bg-primary flex items-center justify-center">
                   <Check className="h-3 w-3 text-white" />

@@ -22,38 +22,42 @@ export interface PriceAdvice {
   explanation: string
 }
 
+// Slug + labelKey + descKey + visual props. Labels are looked up in i18n
+// (t.createOrder[labelKey]) so the form is fully localized.
 export const CATEGORIES = [
-  { slug: 'dev',         label: 'Development',    icon: Code2,     color: '#27a644', desc: 'Websites, apps, bots' },
-  { slug: 'ux-ui',       label: 'UX/UI Design',   icon: PenSquare, color: '#F24E1E', desc: 'Interfaces, prototypes' },
-  { slug: 'smm',         label: 'SMM',             icon: BarChart2, color: '#E1306C', desc: 'Social media, content' },
-  { slug: 'targeting',   label: 'Targeting',       icon: Target,    color: '#1877F2', desc: 'Ads, leads' },
-  { slug: 'copywriting', label: 'Copywriting',     icon: PenLine,   color: '#10B981', desc: 'Text, SEO, email' },
-  { slug: 'video',       label: 'Video editing',   icon: Video,     color: '#EF4444', desc: 'Videos, Reels, editing' },
-  { slug: 'tg-bots',     label: 'Telegram bots',   icon: Bot,       color: '#229ED9', desc: 'Bots, mini-apps' },
-  { slug: 'ai-ml',       label: 'AI / ML',         icon: Brain,     color: '#8B5CF6', desc: 'Neural nets, automation' },
-  { slug: 'nocode',      label: 'No-code',         icon: Blocks,    color: '#F59E0B', desc: 'Bubble, Webflow, Make' },
-  { slug: '3d-art',      label: '3D / AI art',     icon: Sparkles,  color: '#EC4899', desc: 'Illustrations, 3D' },
+  { slug: 'dev',         icon: Code2,     color: '#27a644', labelKey: 'catDevLabel',        descKey: 'catDevDesc' },
+  { slug: 'ux-ui',       icon: PenSquare, color: '#F24E1E', labelKey: 'catUxUiLabel',       descKey: 'catUxUiDesc' },
+  { slug: 'smm',         icon: BarChart2, color: '#E1306C', labelKey: 'catSmmLabel',        descKey: 'catSmmDesc' },
+  { slug: 'targeting',   icon: Target,    color: '#1877F2', labelKey: 'catTargetingLabel',  descKey: 'catTargetingDesc' },
+  { slug: 'copywriting', icon: PenLine,   color: '#10B981', labelKey: 'catCopyLabel',       descKey: 'catCopyDesc' },
+  { slug: 'video',       icon: Video,     color: '#EF4444', labelKey: 'catVideoLabel',      descKey: 'catVideoDesc' },
+  { slug: 'tg-bots',     icon: Bot,       color: '#229ED9', labelKey: 'catTgBotsLabel',     descKey: 'catTgBotsDesc' },
+  { slug: 'ai-ml',       icon: Brain,     color: '#8B5CF6', labelKey: 'catAiMlLabel',       descKey: 'catAiMlDesc' },
+  { slug: 'nocode',      icon: Blocks,    color: '#F59E0B', labelKey: 'catNocodeLabel',     descKey: 'catNocodeDesc' },
+  { slug: '3d-art',      icon: Sparkles,  color: '#EC4899', labelKey: 'cat3dArtLabel',      descKey: 'cat3dArtDesc' },
 ] as const
 
+// `value` stays an English token so DB rows are lang-agnostic.
+// The `urgent` flag derives from value === 'urgent' (was: value.includes('Urgent')).
 export const DEADLINES = [
-  { value: 'Urgent (1-2 days)',  label: 'Urgent',   sub: '1–2 days',  icon: '⚡' },
-  { value: 'Up to 1 week',       label: '1 week',   sub: 'up to 7d',  icon: '📅' },
-  { value: 'Up to 2 weeks',      label: '2 weeks',  sub: '7–14 days', icon: '🗓️' },
-  { value: 'Up to 1 month',      label: '1 month',  sub: '14–30 days',icon: '📆' },
-  { value: 'Over a month',       label: 'Long-term',sub: '30+ days',  icon: '🔭' },
-  { value: 'To be discussed',    label: 'Discuss',  sub: 'flexible',  icon: '💬' },
-]
+  { value: 'urgent',     labelKey: 'dlUrgentLabel',    subKey: 'dlUrgentSub',    icon: '⚡' },
+  { value: 'week',       labelKey: 'dlWeekLabel',      subKey: 'dlWeekSub',      icon: '📅' },
+  { value: 'twoWeeks',   labelKey: 'dlTwoWeeksLabel',  subKey: 'dlTwoWeeksSub',  icon: '🗓️' },
+  { value: 'month',      labelKey: 'dlMonthLabel',     subKey: 'dlMonthSub',     icon: '📆' },
+  { value: 'long',       labelKey: 'dlLongLabel',      subKey: 'dlLongSub',      icon: '🔭' },
+  { value: 'discuss',    labelKey: 'dlDiscussLabel',   subKey: 'dlDiscussSub',   icon: '💬' },
+] as const
 
 export const BUDGET_RANGES = [
-  { label: 'up to ₸10 000', min: '0',     max: '10000'  },
-  { label: '₸10–30 000',    min: '10000', max: '30000'  },
-  { label: '₸30–60 000',    min: '30000', max: '60000'  },
-  { label: '₸60–100 000',   min: '60000', max: '100000' },
-  { label: '₸100 000+',     min: '100000',max: '500000' },
-  { label: 'Negotiable',     min: '0',     max: '0'      },
-]
+  { labelKey: 'brUpTo10',    min: '0',      max: '10000'  },
+  { labelKey: 'br10to30',    min: '10000',  max: '30000'  },
+  { labelKey: 'br30to60',    min: '30000',  max: '60000'  },
+  { labelKey: 'br60to100',   min: '60000',  max: '100000' },
+  { labelKey: 'br100plus',   min: '100000', max: '500000' },
+  { labelKey: 'brNegotiable',min: '0',      max: '0'      },
+] as const
 
-export const STEPS = ['Category', 'Description', 'Details', 'Done']
+export const STEP_KEYS = ['stepCategory', 'stepDescription', 'stepDetails', 'stepDone'] as const
 
 export const slide = {
   initial: { opacity: 0, x: 30 },
