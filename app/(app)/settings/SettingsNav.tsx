@@ -1,7 +1,7 @@
 'use client'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { User, Sliders, Bell, Eye, Shield, Fingerprint } from 'lucide-react'
+import { User, Sliders, Bell, Eye, Shield, Fingerprint, Wallet } from 'lucide-react'
 import { useLang } from '@/lib/context/LanguageContext'
 
 function useNav() {
@@ -9,6 +9,7 @@ function useNav() {
   const td = t.settingsPage
   return [
     { href: '/settings',               label: td.navAccount,       icon: User        },
+    { href: '/settings/payments',      label: td.navPayments,      icon: Wallet      },
     { href: '/settings/identity',      label: td.navIdentity,      icon: Fingerprint },
     { href: '/settings/preferences',   label: td.navPreferences,   icon: Sliders     },
     { href: '/settings/notifications', label: td.navNotifications, icon: Bell        },

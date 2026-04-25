@@ -4,7 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import {
   User, Crown, ExternalLink, Trash2, ChevronRight,
-  Calendar, Mail, Sliders, Bell, Eye, Shield,
+  Calendar, Mail, Sliders, Bell, Eye, Shield, Wallet,
 } from 'lucide-react'
 import { useUser } from '@/lib/hooks/useUser'
 import { useProfile } from '@/lib/context/ProfileContext'
@@ -20,6 +20,7 @@ export default function AccountSettings() {
   const td = t.settingsPage
   const dateLocale = lang === 'en' ? 'en' : lang === 'kz' ? 'kk' : 'ru'
   const SECTIONS = [
+    { href: '/settings/payments',      icon: Wallet,  label: td.sectionPaymentsLabel,   sub: td.sectionPaymentsSub   },
     { href: '/settings/preferences',   icon: Sliders, label: td.sectionAppearanceLabel, sub: td.sectionAppearanceSub },
     { href: '/settings/notifications', icon: Bell,    label: td.sectionNotifLabel,      sub: td.sectionNotifSub      },
     { href: '/settings/privacy',       icon: Eye,     label: td.sectionPrivacyLabel,    sub: td.sectionPrivacySub    },

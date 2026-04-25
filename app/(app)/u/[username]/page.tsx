@@ -33,6 +33,7 @@ import ProfileRecommendations, { type Recommendation } from '@/components/profil
 import ProfileReels from '@/components/profile/ProfileReels'
 import type { Reel } from '@/components/reels/ReelPlayer'
 import ProfileFeaturedWork, { type FeaturedItem } from '@/components/profile/ProfileFeaturedWork'
+import ProfilePaymentMethods, { type PaymentMethod } from '@/components/profile/ProfilePaymentMethods'
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.freelance-hub.kz'
 
@@ -73,6 +74,7 @@ interface PageProfile {
   twitterUrl?: string
   youtubeUrl?: string
   tiktokUrl?: string
+  paymentMethods?: PaymentMethod[]
 }
 
 async function getProfile(username: string, fallbacks: { user: string; cis: string }): Promise<PageProfile | null> {
@@ -84,7 +86,7 @@ async function getProfile(username: string, fallbacks: { user: string; cis: stri
     // 1. Find profile by username
     const { data: profile, error: pErr } = await db
       .from('profiles')
-      .select('id, full_name, username, avatar_url, location, bio, role, is_verified')
+      .select('id, full_name, username, avatar_url, location, bio, role, is_verified, payment_methods')
       .eq('username', username)
       .single()
 
@@ -103,6 +105,7 @@ async function getProfile(username: string, fallbacks: { user: string; cis: stri
       location:    profile.location || fallbacks.cis,
       isFreelancer: false,
       isVerified:   profile.is_verified ?? false,
+      paymentMethods: Array.isArray(profile.payment_methods) ? profile.payment_methods : [],
     }
 
     // 2. Check if they have a freelancer profile
@@ -185,6 +188,7 @@ async function getProfile(username: string, fallbacks: { user: string; cis: stri
       twitterUrl:       fp.twitter_url ?? undefined,
       youtubeUrl:       fp.youtube_url ?? undefined,
       tiktokUrl:        fp.tiktok_url ?? undefined,
+      paymentMethods:   base.paymentMethods,
     }
   } catch {
     return null
@@ -346,6 +350,13 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
             </div>
           )}
         </div>
+      )}
+
+      {((p.paymentMethods?.length ?? 0) > 0 || isOwnProfile) && (
+        <ProfilePaymentMethods
+          methods={p.paymentMethods ?? []}
+          viewerLoggedIn={!!user}
+        />
       )}
 
       {p.skills && p.skills.length > 0 && (
