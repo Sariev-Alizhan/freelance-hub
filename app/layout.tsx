@@ -36,6 +36,7 @@ function detectCurrency(cookieCurrency: string | undefined, lang: Lang): Currenc
 import Toaster from '@/components/ui/Toaster'
 import MotionProvider from '@/components/providers/MotionProvider'
 import DeferredUI from '@/components/providers/DeferredUI'
+import { AuthProvider } from '@/lib/hooks/useUser'
 
 const inter = Inter({
   subsets: ['latin', 'cyrillic'],
@@ -227,11 +228,13 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <LanguageProvider initialLang={initialLang}>
           <ToastProvider>
             <CurrencyProvider initialCurrency={initialCurrency}>
-              <ProfileProvider>
-                {children}
-                <Toaster />
-                <DeferredUI />
-              </ProfileProvider>
+              <AuthProvider>
+                <ProfileProvider>
+                  {children}
+                  <Toaster />
+                  <DeferredUI />
+                </ProfileProvider>
+              </AuthProvider>
             </CurrencyProvider>
           </ToastProvider>
           </LanguageProvider>
