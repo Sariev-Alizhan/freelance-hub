@@ -196,10 +196,22 @@ export default function DocsPage() {
         </div>
       </div>
 
-      <div style={{ maxWidth: 1100, margin: '0 auto', padding: '40px 24px 80px', display: 'grid', gridTemplateColumns: '220px 1fr', gap: 40, alignItems: 'start' }}>
+      <div className="docs-shell" style={{ maxWidth: 1100, margin: '0 auto', padding: '40px 24px 80px', display: 'grid', gridTemplateColumns: '220px 1fr', gap: 40, alignItems: 'start' }}>
+        <style>{`
+          /* Mobile: sidebar nav becomes a horizontal scroll strip on top
+             so the body content gets the full viewport width (otherwise
+             "Setting up your profile…" rendered clipped behind the nav). */
+          @media (max-width: 767px) {
+            .docs-shell { grid-template-columns: 1fr !important; gap: 16px !important; padding: 24px 16px 64px !important; }
+            .docs-side-nav { position: static !important; }
+            .docs-side-nav nav { flex-direction: row !important; overflow-x: auto; padding-bottom: 8px; scrollbar-width: none; }
+            .docs-side-nav nav::-webkit-scrollbar { display: none; }
+            .docs-side-nav nav a { flex-shrink: 0; }
+          }
+        `}</style>
 
         {/* Sidebar nav */}
-        <div style={{ position: 'sticky', top: 72 }}>
+        <div className="docs-side-nav" style={{ position: 'sticky', top: 72 }}>
           <nav style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             {SECTIONS.map(s => (
               <a
