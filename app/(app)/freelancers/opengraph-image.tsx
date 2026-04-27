@@ -36,9 +36,8 @@ export default function Image() {
         <div style={{
           fontSize: '76px', fontWeight: 700, color: '#f7f8f8',
           letterSpacing: '-0.04em', lineHeight: 1.05, marginBottom: '24px',
-        }}>
-          Найди<br />специалиста
-        </div>
+          display: 'flex', flexDirection: 'column', whiteSpace: 'pre',
+        }}>{'Найди\nспециалиста'}</div>
 
         <div style={{
           fontSize: '26px', color: '#8a8f98', fontWeight: 400,
