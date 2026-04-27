@@ -62,9 +62,9 @@ export default function CategoriesSection() {
         />
 
         <div
+          className="fh-cat-grid"
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))',
             gap: '1px',
             background: 'var(--fh-sep)',
             border: '1px solid var(--fh-sep)',
@@ -137,6 +137,11 @@ export default function CategoriesSection() {
           })}
         </div>
         <style>{`
+          /* 10 categories: divide evenly across breakpoints — 1×10, 2×5, 5×2.
+             Avoids the empty trailing cell auto-fill produced before. */
+          .fh-cat-grid { grid-template-columns: 1fr; }
+          @media (min-width: 480px) { .fh-cat-grid { grid-template-columns: repeat(2, 1fr); } }
+          @media (min-width: 960px) { .fh-cat-grid { grid-template-columns: repeat(5, 1fr); } }
           .fh-cat-cell:hover {
             background: var(--fh-surface-3) !important;
           }

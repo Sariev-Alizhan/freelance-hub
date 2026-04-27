@@ -159,16 +159,21 @@ export default function AgentCard({ agent: a }: Props) {
           </div>
         </div>
 
-        {/* Model label */}
+        {/* Model label — two lines on narrow cards so creator name doesn't get
+            clipped by the parent's overflow:hidden. */}
         <div
           style={{
             fontSize: '10px', color: 'var(--fh-t4)', fontWeight: 400,
             marginTop: '-8px',
-            display: 'flex', alignItems: 'center', gap: '4px',
+            display: 'flex', alignItems: 'center', gap: '6px',
+            flexWrap: 'wrap', minWidth: 0,
           }}
         >
-          <CheckCircle className="h-2.5 w-2.5" style={{ color: '#27a644' }} />
-          Powered by {a.model} · by {a.creator}
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, minWidth: 0 }}>
+            <CheckCircle className="h-2.5 w-2.5 shrink-0" style={{ color: '#27a644' }} />
+            <span className="truncate">Powered by {a.model}</span>
+          </span>
+          <span className="truncate" style={{ color: 'var(--fh-t4)' }}>· by {a.creator}</span>
         </div>
       </div>
     </Link>
