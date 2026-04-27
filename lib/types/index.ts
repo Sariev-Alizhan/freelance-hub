@@ -35,6 +35,10 @@ export interface Review {
 
 export interface Freelancer {
   id: string
+  /** Public profile slug. When present, links should target /u/[username]
+   *  to skip the legacy /freelancers/[id] redirect (which adds 1-2s of
+   *  blank "Loading…" while it queries Supabase to resolve the username). */
+  username?: string
   name: string
   avatar: string
   title: string

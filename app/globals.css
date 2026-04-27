@@ -534,9 +534,14 @@ body.messenger-locked {
 :root { --feed-sticky-top: 0px; }
 @media (max-width: 767px) { :root { --feed-sticky-top: 52px; } }
 
-/* Mobile-only sticky action bar on profile (shown above bottom nav) */
+/* Mobile-only sticky action bar on profile (shown above bottom nav).
+   Adds 64px to body padding-bottom so the bar (62px tall) doesn't cover
+   the last bit of profile content (tabs, last post, footer). */
 .profile-sticky-actions { display: none; }
-@media (max-width: 767px) { .profile-sticky-actions { display: flex; } }
+@media (max-width: 767px) {
+  .profile-sticky-actions { display: flex; }
+  .has-profile-sticky-actions { padding-bottom: calc(64px + 52px + env(safe-area-inset-bottom, 0px) + 16px) !important; }
+}
 
 /* Typing indicator animated dots */
 .typing-dots { display: inline-flex; align-items: center; gap: 3px; margin-right: 2px; }

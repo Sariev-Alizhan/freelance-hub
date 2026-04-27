@@ -38,7 +38,7 @@ export default function FeaturedRow({ freelancers }: { freelancers: Freelancer[]
       <div className="overflow-x-auto scrollbar-none -mx-4 px-4 sm:mx-0 sm:px-0">
         <div className="flex gap-2.5" style={{ width: 'max-content', paddingBottom: 4 }}>
           {picks.map(f => (
-            <Link key={f.id} href={`/freelancers/${f.id}`} className="flex-shrink-0 active:scale-[0.97] transition-transform">
+            <Link key={f.id} href={f.username ? `/u/${f.username}` : `/freelancers/${f.id}`} className="flex-shrink-0 active:scale-[0.97] transition-transform">
               <div style={{
                 width: 156, padding: 12, borderRadius: 12,
                 background: 'var(--fh-surface)',

@@ -471,7 +471,7 @@ export default async function PublicProfilePage({ params }: { params: Promise<{ 
   }
 
   return (
-    <div className="page-shell page-shell--reading" style={{ paddingBottom: !isOwnProfile ? 80 : undefined }}>
+    <div className={`page-shell page-shell--reading ${!isOwnProfile ? 'has-profile-sticky-actions' : ''}`}>
       {p.isFreelancer && <ProfileViewLogger freelancerId={p.userId} />}
 
       <Link href="/freelancers"

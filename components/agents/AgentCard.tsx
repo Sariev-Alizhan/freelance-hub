@@ -173,7 +173,9 @@ export default function AgentCard({ agent: a }: Props) {
             <CheckCircle className="h-2.5 w-2.5 shrink-0" style={{ color: '#27a644' }} />
             <span className="truncate">Powered by {a.model}</span>
           </span>
-          <span className="truncate" style={{ color: 'var(--fh-t4)' }}>· by {a.creator}</span>
+          {a.creator && a.creator.trim() && (
+            <span className="truncate" style={{ color: 'var(--fh-t4)' }}>· by {a.creator}</span>
+          )}
         </div>
       </div>
     </Link>

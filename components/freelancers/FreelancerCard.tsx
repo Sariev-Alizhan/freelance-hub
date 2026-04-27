@@ -38,7 +38,7 @@ export default function FreelancerCard({ freelancer: f }: Props) {
         className="absolute top-3 right-3 z-10 opacity-0 group-hover/card:opacity-100 transition-opacity"
       />
 
-      <Link href={`/freelancers/${f.id}`}>
+      <Link href={f.username ? `/u/${f.username}` : `/freelancers/${f.id}`}>
         <div
           className="card-hover rounded-xl h-full flex flex-col gap-4 transition-all"
           style={{

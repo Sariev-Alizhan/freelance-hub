@@ -77,6 +77,7 @@ async function fetchRealFreelancers(): Promise<Freelancer[]> {
 
       return {
         id: fp.user_id,
+        username: profile?.username || undefined,
         name,
         avatar,
         title: fp.title,
