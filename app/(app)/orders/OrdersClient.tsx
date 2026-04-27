@@ -281,7 +281,8 @@ export default function OrdersClient({ realOrders = [], currentUserId }: Props) 
                 onClick={() => handleCategory(cat.slug)}
                 className="flex-shrink-0 transition-all active:scale-[0.97]"
                 style={{
-                  padding: '7px 14px', borderRadius: 999, fontSize: 13, fontWeight: active ? 590 : 510,
+                  minHeight: 44, display: 'inline-flex', alignItems: 'center',
+                  padding: '0 16px', borderRadius: 999, fontSize: 13, fontWeight: active ? 590 : 510,
                   background: active ? 'var(--fh-t1)' : 'var(--fh-surface-2)',
                   border: active ? '1px solid var(--fh-t1)' : '1px solid var(--fh-border)',
                   color: active ? 'var(--fh-canvas)' : 'var(--fh-t3)',

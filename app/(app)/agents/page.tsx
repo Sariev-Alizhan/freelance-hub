@@ -199,7 +199,8 @@ export default function AgentsPage() {
               onClick={() => setCategory(cat.slug)}
               className="transition-all"
               style={{
-                padding: '7px 14px',
+                minHeight: 44, display: 'inline-flex', alignItems: 'center',
+                padding: '0 16px',
                 borderRadius: 0,
                 fontSize: 13,
                 fontWeight: active ? 590 : 510,

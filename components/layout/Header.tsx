@@ -43,14 +43,14 @@ export default function Header() {
           paddingTop: 'env(safe-area-inset-top)',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 52, padding: '0 16px', gap: 8 }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 56, padding: '0 16px', gap: 8 }}>
           <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: 8, textDecoration: 'none', minWidth: 0 }}>
             <Logo size={26} showWordmark={false} />
             <span style={{ fontSize: 16, fontWeight: 700, color: 'var(--fh-t1)', letterSpacing: '-0.02em', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>FreelanceHub</span>
           </Link>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
             <Link href="/auth/login" style={{
-              minHeight: 36,
+              minHeight: 44,
               display: 'inline-flex', alignItems: 'center',
               padding: '0 14px', borderRadius: 999, fontSize: 13, fontWeight: 600,
               color: 'var(--fh-t2)', background: 'var(--fh-surface-2)',
@@ -60,7 +60,7 @@ export default function Header() {
               {t.auth.login}
             </Link>
             <Link href="/auth/register" style={{
-              minHeight: 36,
+              minHeight: 44,
               display: 'inline-flex', alignItems: 'center',
               padding: '0 14px', borderRadius: 999, fontSize: 13, fontWeight: 590,
               color: 'var(--fh-canvas)', background: 'var(--fh-t1)', textDecoration: 'none',
@@ -90,7 +90,7 @@ export default function Header() {
           transform: 'translateZ(0)',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', height: 52, padding: '0 12px', gap: 10 }}>
+        <div style={{ display: 'flex', alignItems: 'center', height: 56, padding: '0 12px', gap: 10 }}>
 
           {/* Left: plus button → opens Instagram-style create sheet */}
           <button
@@ -98,7 +98,7 @@ export default function Header() {
             aria-label="Create"
             style={{
               flexShrink: 0,
-              width: 34, height: 34, borderRadius: '50%',
+              width: 44, height: 44, borderRadius: '50%',
               background: 'var(--fh-surface-2)', border: '1px solid var(--fh-border)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               cursor: 'pointer', padding: 0,
@@ -111,10 +111,10 @@ export default function Header() {
           {/* Center: search bar — tappable, goes to /search */}
           <Link href="/search" style={{ flex: 1, minWidth: 0, textDecoration: 'none' }}>
             <div style={{
-              height: 36, borderRadius: 18,
+              height: 44, borderRadius: 22,
               background: 'var(--fh-surface-2)',
               border: '1px solid var(--fh-border)',
-              display: 'flex', alignItems: 'center', gap: 8, padding: '0 12px',
+              display: 'flex', alignItems: 'center', gap: 8, padding: '0 14px',
               minWidth: 0,
             }}>
               <Search style={{ width: 15, height: 15, color: 'var(--fh-t4)', flexShrink: 0 }} />
@@ -130,7 +130,7 @@ export default function Header() {
             aria-label="Notifications"
             style={{
               position: 'relative', flexShrink: 0,
-              width: 40, height: 40,
+              width: 44, height: 44,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               color: 'var(--fh-t2)', textDecoration: 'none',
               borderRadius: 12,
@@ -170,7 +170,7 @@ export default function Header() {
         paddingTop: 'env(safe-area-inset-top)',
       }}
     >
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 52, padding: '0 16px', gap: 8, minWidth: 0 }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 56, padding: '0 16px', gap: 8, minWidth: 0 }}>
         <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: 6, textDecoration: 'none', minWidth: 0, flexShrink: 1 }}>
           <Logo size={22} showWordmark={false} />
           <span className="narrow-hide" style={{ fontSize: 17, fontWeight: 700, color: 'var(--fh-t1)', letterSpacing: '-0.02em', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>FreelanceHub</span>
@@ -181,7 +181,7 @@ export default function Header() {
             aria-label="Переключить тему"
             className="narrow-hide"
             style={{
-              width: 36, height: 36, flexShrink: 0,
+              width: 44, height: 44, flexShrink: 0,
               background: 'none', border: 'none', padding: 0,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               cursor: 'pointer', color: 'var(--fh-t3)',
@@ -190,7 +190,8 @@ export default function Header() {
             {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
           </button>
           <Link href="/auth/login" style={{
-            padding: '8px 12px', borderRadius: 99, fontSize: 13, fontWeight: 600,
+            minHeight: 44, display: 'inline-flex', alignItems: 'center',
+            padding: '0 14px', borderRadius: 99, fontSize: 13, fontWeight: 600,
             color: 'var(--fh-t2)', background: 'var(--fh-surface-2)',
             border: '1px solid var(--fh-border)', textDecoration: 'none',
             whiteSpace: 'nowrap',
@@ -198,7 +199,8 @@ export default function Header() {
             {t.auth.login}
           </Link>
           <Link href="/auth/register" style={{
-            padding: '8px 14px', borderRadius: 999, fontSize: 13, fontWeight: 590,
+            minHeight: 44, display: 'inline-flex', alignItems: 'center',
+            padding: '0 14px', borderRadius: 999, fontSize: 13, fontWeight: 590,
             color: 'var(--fh-canvas)', background: 'var(--fh-t1)', textDecoration: 'none',
             whiteSpace: 'nowrap', letterSpacing: '-0.01em',
           }}>

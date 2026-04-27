@@ -386,7 +386,8 @@ export default function FreelancersClient({ realFreelancers = [], defaultCategor
                   onClick={() => handleCategory(cat.slug)}
                   className="flex-shrink-0 transition-all active:scale-[0.97] inline-flex items-center gap-1.5"
                   style={{
-                    padding: '7px 12px 7px 10px', borderRadius: 999, fontSize: 13,
+                    minHeight: 44,
+                    padding: '0 14px 0 12px', borderRadius: 999, fontSize: 13,
                     fontWeight: active ? 590 : 510,
                     background: active ? 'var(--fh-t1)' : 'var(--fh-surface-2)',
                     border: active ? '1px solid var(--fh-t1)' : '1px solid var(--fh-border)',

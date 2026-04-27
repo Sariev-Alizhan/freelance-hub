@@ -116,11 +116,14 @@ export default function HeroSection() {
            ("Kaspi · USDT · bank"). Hidden on mobile. */
         @media (max-width: 767px) {
           .fh-hero-meta { display: none !important; }
-          /* Hero on mobile: center vertically and tighten top padding —
-             flex-end + 100dvh + 96px top padding stacked all the empty
-             space above the headline. */
+        }
+        /* Hero on mobile + tablet portrait: center vertically and tighten top
+           padding — flex-end + 100dvh + 96px top padding stacked all the empty
+           space above the headline (Playwright + iPad audit). Desktop keeps
+           the editorial flex-end + ticker arrangement. */
+        @media (max-width: 1023px) {
           .fh-hero { justify-content: center !important; min-height: auto !important; }
-          .fh-hero-content { padding-top: 88px !important; padding-bottom: 32px !important; }
+          .fh-hero-content { padding-top: 96px !important; padding-bottom: 40px !important; }
         }
 
         /* Hero local design tokens — flipped per theme */
